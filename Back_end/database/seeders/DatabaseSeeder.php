@@ -22,7 +22,9 @@ class DatabaseSeeder extends Seeder
             ColorSeeder::class,
             SizeSeeder::class,
             categoriesSeeder::class,
-            codeColorSeeder::class
+            codeColorSeeder::class,
+            
         ]);
+        1
     }
 }
