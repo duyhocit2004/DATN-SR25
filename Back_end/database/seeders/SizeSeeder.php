@@ -14,10 +14,21 @@ class SizeSeeder extends Seeder
      */
     public function run(): void
     {
+        $size = [
+            'S',
+            'M',
+            'L',
+            'XL',
+            'XXL',
+            '2XL',
+        ];
         $faker = Faker::create();
-        DB::table('sizes')->insert( [
-                'name'=>$faker->name,
+        foreach ($size as $key => $value) {
+            DB::table('sizes')->insert( [
+                'name'=>$value
             ],
         );
+        }
+       
     }
 }
