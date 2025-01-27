@@ -25,6 +25,6 @@ class DatabaseSeeder extends Seeder
             codeColorSeeder::class,
             
         ]);
-        1
+        
     }
 }
