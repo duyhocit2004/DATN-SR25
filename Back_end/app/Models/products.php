@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class produtsModel extends Model
+class products extends Model
 {
     use HasFactory;
     protected $table = 'products';
@@ -20,4 +20,11 @@ class produtsModel extends Model
         'views',
         'content',
     ];
+
+    // public function categories(){
+    //     return $this->belongsTo(categories::class,'categories_id');
+    // }
+    public function cate (){
+        return "hello";
+    }
 }

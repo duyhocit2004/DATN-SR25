@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductVariantsModel extends Model
+class ProductVariants extends Model
 {
     use HasFactory;
     protected $table = 'product_variants';
@@ -16,4 +16,7 @@ class ProductVariantsModel extends Model
         'quanlity',
         'price',
     ];
+    // public function color (){
+    //     return $this->()
+    // }
 }
