@@ -1,17 +1,25 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\admin;
 
+use App\Models\products;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Database\QueryException;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * 
      */
+   
     public function index()
     {
-        //
+        $list = products::get();    
+        
+        // dd($list);
+        return view('admin.products.listProduct',compact('list'));
     }
 
     /**
