@@ -18,6 +18,7 @@ use App\Http\Controllers\admin\ProductController;
 Route::get('/', function () {
     return view('admin.index');
 });
+
 //route sản phẩm và biến sản phẩm
 route::get('product',[ProductController::class,'index'])->name('product');
 route::get('createProduct',[ProductController::class,'create'])->name('createProduct');
