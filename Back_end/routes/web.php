@@ -18,5 +18,6 @@ Route::get('/', function () {
     return view('admin.index');
 });
 
+
 Route::resource('accounts', AccountController::class);
 Route::post('/accounts/{id}/restore', [AccountController::class, 'restore'])->name('accounts.restore');
