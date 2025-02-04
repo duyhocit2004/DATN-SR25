@@ -1,5 +1,7 @@
 <?php
 
+
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\admin\colorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\ProductController;
@@ -34,6 +36,6 @@ route::put('updatecolor/{id}/update',[colorController::class,'Update'])->name("u
 route::delete('deletecolor/{id}/delete',[colorController::class,'destroy'])->name("deletecolor");
 
 Route::prefix('admmin')->middleware('admin')->group(function(){
-  
+ 
 });
 
