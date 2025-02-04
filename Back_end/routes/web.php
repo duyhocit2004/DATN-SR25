@@ -1,5 +1,7 @@
 <?php
 
+
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\admin\colorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\ProductController;
@@ -18,6 +20,7 @@ use App\Http\Controllers\admin\ProductController;
 Route::get('/', function () {
     return view('admin.index');
 });
+
 //route sản phẩm và biến sản phẩm
 route::get('product',[ProductController::class,'index'])->name('product');
 route::get('createProduct',[ProductController::class,'create'])->name('createProduct');
@@ -33,6 +36,6 @@ route::put('updatecolor/{id}/update',[colorController::class,'Update'])->name("u
 route::delete('deletecolor/{id}/delete',[colorController::class,'destroy'])->name("deletecolor");
 
 Route::prefix('admmin')->middleware('admin')->group(function(){
-  
+ 
 });
 
