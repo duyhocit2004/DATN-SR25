@@ -18,7 +18,6 @@ use App\Http\Controllers\admin\ProductController;
 Route::get('/', function () {
     return view('admin.index');
 });
-route::get('/',[ProductController::class,'index']);
 
 route::get('color',[colorController::class,'index'])->name("color");
 route::get('createcolor',[colorController::class,'create'])->name("createcolor");
