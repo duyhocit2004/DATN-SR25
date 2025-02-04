@@ -23,7 +23,9 @@
                   <div class="mb-3 mx-1" >
                     <label class="form-label" for="category">Thể loại</label>
                     <select class="form-select" id="category" name="category">
-                      <option>5</option>
+                      @foreach ( $list as $as )
+                        <option value="{{$as['categori']['id']}}">{{$as['categori']}}</option>
+                      @endforeach
                     </select>
                   </div>
                 </div>
