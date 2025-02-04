@@ -9,7 +9,6 @@
   <body>
     <!-- page-wrapper Start-->
     <!-- tap on top starts-->
-    <div class="tap-top"><i class="iconly-Arrow-Up icli"></i></div>
     <!-- tap on tap ends-->
     <!-- loader-->
     <div class="loader-wrapper">
@@ -32,6 +31,7 @@
     </div>
     <!-- jquery-->
       @include('admin.layout.js')
+      @yield('js_main')
   </body>
 
 <!-- Mirrored from admin.pixelstrap.net/admiro/template/cart.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 17 Jan 2025 17:46:44 GMT -->

@@ -21,10 +21,11 @@ class products extends Model
         'content',
     ];
 
-    // public function categories(){
-    //     return $this->belongsTo(categories::class,'categories_id');
-    // }
-    public function cate (){
-        return "hello";
+    public function categories (){
+        return $this->belongsTo(categories::class,'categories_id');
+    }
+
+    public function Variants(){
+        return $this->hasMany(ProductVariants::class,);
     }
 }

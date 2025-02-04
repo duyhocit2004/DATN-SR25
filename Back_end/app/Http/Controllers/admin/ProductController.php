@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Services\Categories\CategoryService;
+use App\Services\size\sizeService;
+use App\Services\color\ColorService;
 use App\Models\products;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+
 use Illuminate\Database\QueryException;
+use App\Services\product\ProductService;
 
 class ProductController extends Controller
 {
@@ -13,12 +18,30 @@ class ProductController extends Controller
      * Display a listing of the resource.
      * 
      */
+    public $ProductService ; 
+    public $categoryService ;
+    public $colorService ;
+    public $sizeService ;
+
+    public function __construct(
+    ProductService $ProductService, 
+    CategoryService $categoryService,
+    sizeService $sizeService,
+    ColorService $colorService ){
+
+        $this->ProductService = $ProductService;
+        $this->sizeService = $sizeService;
+        $this->colorService = $colorService;
+        $this->categoryService = $categoryService;
+    }
    
     public function index()
     {
-        $list = products::get();    
-        
-        // dd($list);
+        // $list = $this->ProductService->getAllProduct();    
+        // $phone = products::find(1)->categories;
+        // dd($phone);
+
+        $list = $this->ProductService->Getpaginate();
         return view('admin.products.listProduct',compact('list'));
     }
 
@@ -26,8 +49,13 @@ class ProductController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        //
+    {   
+        $categori = $this->categoryService->getAll();
+        $color = $this->colorService->getAll();
+        $categori = $this->categoryService->getAll();
+        $size = $this->sizeService->Getall();
+
+         return view('admin.products.createProduct',compact('list',['categori',]));
     }
 
     /**
@@ -35,7 +63,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request);
     }
 
     /**
