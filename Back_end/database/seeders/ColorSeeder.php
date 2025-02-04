@@ -14,11 +14,22 @@ class ColorSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Faker::create();
-        DB::table('colors')->insert(
-            [
-                'name'=>$faker->colorName()
-            ],
-        );
+        $colors = [
+            'red',
+            'blue',
+            'green',
+            'yellow',
+            'black' ,
+            'white',
+        ];
+        // $faker = Faker::create();
+        foreach ($colors as $as){
+            DB::table('colors')->insert(
+                [
+                    'name'=>$as
+                ],
+            );
+        }
+        
     }
 }
