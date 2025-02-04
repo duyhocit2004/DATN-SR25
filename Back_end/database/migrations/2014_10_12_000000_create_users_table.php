@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('email',255)->unique();
             $table->string('phone_number',10);
-            $table->string('address',255)->nullable();
             $table->enum('role',['Khách hàng', 'Quản lý'])->default('Khách hàng');
             $table->timestamp('email_verified_at')->nullable();
             $table->text('user_image')->nullable();

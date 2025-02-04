@@ -20,7 +20,12 @@ class DatabaseSeeder extends Seeder
         // ]);
         $this->call([
             ColorSeeder::class,
-            SizeSeeder::class
+            SizeSeeder::class,
+            categoriesSeeder::class,
+            codeColorSeeder::class,
+            productSeeder::class
+            
         ]);
+        
     }
 }
