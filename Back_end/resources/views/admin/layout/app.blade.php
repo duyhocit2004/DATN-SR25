@@ -27,7 +27,8 @@
           @include('admin.layout.aside')
         <!-- Page sidebar end-->
             @yield('main')
-            {{-- @yield('contents') --}}
+            @yield('contents')
+            @yield('content')
           @include('admin.layout.footer')
 
       </div>

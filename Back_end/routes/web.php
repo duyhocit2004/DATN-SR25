@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController;
 
 use App\Http\Controllers\admin\colorController;
 use Illuminate\Support\Facades\Route;
@@ -16,11 +17,7 @@ use App\Http\Controllers\admin\ProductController;
 |
 */
 
-Route::get('/', function () {
-    return view('admin.index');
-});
-
-route::get('/', [ProductController::class, 'index']);
+Route::get('/', [ProductController::class, 'index']);
 
 route::get('color', [colorController::class, 'index'])->name("color");
 route::get('createcolor', [colorController::class, 'create'])->name("createcolor");
@@ -28,8 +25,12 @@ route::post('postcolor', [colorController::class, 'store'])->name("postcolor");
 Route::get('/color/{id}/edit', [ColorController::class, 'edit'])->name('getcolor');
 route::put('updatecolor/{id}/update', [colorController::class, 'Update'])->name("updatecolor");
 route::delete('deletecolor/{id}/delete', [colorController::class, 'destroy'])->name("deletecolor");
-Route::prefix('admmin')->middleware('admin')->group(function () {
+Route::prefix('admmin')->middleware('admin')->group(function () {});
 
-//Tài Khoản
 
-});
+Route::get('users', [UserController::class, 'index'])->name('users.index');
+Route::post('users', [UserController::class, 'store'])->name('users.store');
+Route::get('users/create', [UserController::class, 'create'])->name('users.create');
+Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
