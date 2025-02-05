@@ -9,6 +9,7 @@
   <body>
     <!-- page-wrapper Start-->
     <!-- tap on top starts-->
+    <div class="tap-top"><i class="iconly-Arrow-Up icli"></i></div>
     <!-- tap on tap ends-->
     <!-- loader-->
     <div class="loader-wrapper">
@@ -26,15 +27,14 @@
           @include('admin.layout.aside')
         <!-- Page sidebar end-->
             @yield('main')
-            {{-- @yield('contents') --}}
+            @yield('contents')
+            @yield('content')
           @include('admin.layout.footer')
 
       </div>
     </div>
     <!-- jquery-->
       @include('admin.layout.js')
-
-      @yield('js_main')
 
   </body>
 

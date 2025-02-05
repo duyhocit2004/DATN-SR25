@@ -52,9 +52,10 @@ class ProductController extends Controller
     {   
         $categori = $this->categoryService->getAll();
         $color = $this->colorService->getAll();
+        $categori = $this->categoryService->getAll();
         $size = $this->sizeService->Getall();
 
-         return view('admin.products.createProduct',compact('categori',['color','size']));
+         return view('admin.products.createProduct',compact('list',['categori',]));
     }
 
     /**
@@ -70,7 +71,7 @@ class ProductController extends Controller
                 foreach($list['quanlity1'] as $as){
                     $sum+=$as;
                 }
-                if($list['price_sale'] != null && $list['price_sale'] > filter('') ){
+                if($list['price_sale'] != null && $list['price_sale'] ){
                     
                     $id = $this->ProductService->insert($list);                                          
 
