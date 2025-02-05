@@ -33,11 +33,9 @@
     </div>
     <!-- jquery-->
       @include('admin.layout.js')
-<<<<<<< HEAD
 
-=======
       @yield('js_main')
->>>>>>> de0e8e578469f345570d03bd4731f8aa070db8f9
+
   </body>
 
 <!-- Mirrored from admin.pixelstrap.net/admiro/template/cart.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 17 Jan 2025 17:46:44 GMT -->

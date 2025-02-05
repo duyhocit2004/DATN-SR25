@@ -24,6 +24,7 @@
                     <label class="form-label" for="category">Thể loại</label>
                     <select class="form-select" id="category" name="category">
                       <option>5</option>
+
                     </select>
                   </div>
                 </div>
