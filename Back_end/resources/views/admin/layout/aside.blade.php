@@ -1,4 +1,4 @@
-<aside class="page-sidebar"> 
+<aside class="page-sidebar">
     <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
     <div class="main-sidebar" id="main-sidebar">
       <ul class="sidebar-menu" id="simple-bar">
@@ -13,14 +13,13 @@
         </li>
 
         <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
-            <h6 class="">Quản lý thông tin </h6><i class=""></i></a>
+            <h6 class="">Quản lý màu sắc</h6><i class=""></i></a>
           <ul class="sidebar-submenu">
-            <li> <a href="general-widget.html">Danh sách</a></li>
-            <li><a href="chart-widget.html">Chi tiết</a></li>
-            <li><a href="chart-widget.html">thêm tài khoản</a></li>
+            <li> <a href="{{route('color')}}">Danh sách</a></li>
+            <li><a href="{{route('createcolor')}}">thêm màu</a></li>
           </ul>
         </li>
-        
+
         <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
             <h6 class="">Quản lý thông tin </h6><i class=""></i></a>
           <ul class="sidebar-submenu">
