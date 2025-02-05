@@ -310,9 +310,9 @@
                     </a></li>
                 <li class="profile-nav custom-dropdown">
                     <div class="user-wrap">
-                        {{-- <div class="user-img"><a href="{{route('login')}}"><img src="../assets/images/profile.png" alt="user"/></a></div> --}}
+                        <div class="user-img"><a href="{{route('login')}}"><img src="../assets/images/profile.png" alt="user"/></a></div>
                         <div class="user-content">
-                            {{-- <h6>{{ Auth::user()->name }}</h6> --}}
+                            <h6>{{ Auth::user()->name }}</h6>
                             <p class="mb-0">Admin<i class="fa-solid fa-chevron-down"></i></p>
                         </div>
                     </div>

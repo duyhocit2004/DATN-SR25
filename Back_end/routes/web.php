@@ -32,8 +32,8 @@ Route::prefix('admmin')->middleware('admin')->group(function(){
 
 });
 
-route::get('login',[AuthController::class,'login'])->name("login");
+route::get('login',[AuthController::class,'formLogin'])->name("login");
 route::post('post-login',[AuthController::class,'postLogin'])->name("post-login");
 
-route::get('register',[AuthController::class,'register'])->name("register");
+route::get('register',[AuthController::class,'formRegister'])->name("register");
 route::post('post-register',[AuthController::class,'postRegister'])->name("post-register");
