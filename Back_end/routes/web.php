@@ -32,9 +32,14 @@ Route::prefix('admmin')->middleware('admin')->group(function(){
 
 });
 
+//Route Auth
+//Đăng nhập
 route::get('login',[AuthController::class,'formLogin'])->name("login");
 route::post('post-login',[AuthController::class,'postLogin'])->name("post-login");
 
+// Đăng kí
 route::get('register',[AuthController::class,'formRegister'])->name("register");
 route::post('post-register',[AuthController::class,'postRegister'])->name("post-register");
 
+// Đăng xuất
+route::get('logout',[AuthController::class,'logout'])->name("logout");
