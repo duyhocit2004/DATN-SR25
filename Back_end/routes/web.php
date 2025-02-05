@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\AuthController;
 use App\Http\Controllers\admin\colorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\ProductController;
@@ -18,7 +19,8 @@ use App\Http\Controllers\admin\ProductController;
 Route::get('/', function () {
     return view('admin.index');
 });
-route::get('/',[ProductController::class,'index']);
+Route::get('/', [ProductController::class, 'index'])->name('index');
+
 
 route::get('color',[colorController::class,'index'])->name("color");
 route::get('createcolor',[colorController::class,'create'])->name("createcolor");
@@ -27,6 +29,12 @@ Route::get('/color/{id}/edit', [ColorController::class, 'edit'])->name('getcolor
 route::put('updatecolor/{id}/update',[colorController::class,'Update'])->name("updatecolor");
 route::delete('deletecolor/{id}/delete',[colorController::class,'destroy'])->name("deletecolor");
 Route::prefix('admmin')->middleware('admin')->group(function(){
-  
+
 });
+
+route::get('login',[AuthController::class,'formLogin'])->name("login");
+route::post('post-login',[AuthController::class,'postLogin'])->name("post-login");
+
+route::get('register',[AuthController::class,'formRegister'])->name("register");
+route::post('post-register',[AuthController::class,'postRegister'])->name("post-register");
 
