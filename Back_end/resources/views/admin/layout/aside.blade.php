@@ -20,10 +20,10 @@
         </li>
 
         <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
-            <h6 class="">Quản lý thông tin </h6><i class=""></i></a>
+            <h6 class="">Quản lý sản phẩm </h6><i class=""></i></a>
           <ul class="sidebar-submenu">
-            <li> <a href="general-widget.html">Danh sách</a></li>
-            <li><a href="chart-widget.html">Chi tiết</a></li>
+            <li> <a href="{{route('product')}}">danh sách sản phẩm </a></li>
+            <li><a href="{{route('createProduct')}}">thêm sản phẩm</a></li>
             <li><a href="chart-widget.html">thêm tài khoản</a></li>
           </ul>
         </li>

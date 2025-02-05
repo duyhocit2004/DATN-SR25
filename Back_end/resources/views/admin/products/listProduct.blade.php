@@ -11,9 +11,7 @@
       </div>
     </div>
     <!-- Container-fluid starts-->
-    <?php 
-    var_dump($list)
-    ?>
+
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-12">
@@ -23,13 +21,12 @@
                  <thead>
                   <tr class="border-bottom-secondary border-top-0">
                     <th scope="col">STT</th>
-                    <th scope="col">First Name</th>
-                    <th scope="col">Last Name</th>
-                    <th scope="col">Username</th>
-                    <th scope="col">Designation</th>
-                    <th scope="col">Company</th>
-                    <th scope="col">Language</th>
-                    <th scope="col">chức năngnăng</th>
+                    <th scope="col">hình</th>
+                    <th scope="col">tên sản phẩm</th>
+                    <th scope="col">số lượng trong kho</th>
+                    <th scope="col">giá sản phẩm</th>
+                    <th scope="col">giá giảm</th>
+                    <th scope="col">thao tác</th>
                    </tr>
                  </thead>
                 <tbody>
@@ -40,11 +37,25 @@
                     <td><img class="img-30 me-2" src="../assets/images/avtar/3.jpg" alt="profile">Ram Jacob</td>
                     <td>{{$as->name_product}}</td>
                     <td>{{$as->SKU}}</td>
+                    <td>{{number_format($as->price_regular,0,'.',',')}}VND</td>
+                    <td>{{number_format($as->price_sale,0,'.',',')}}</td>
+                    <td>
+                      <div class="my-1">
+                        <a href="" class="btn btn-success">sửa</a>
+                      </div>
+                      <div class="my-1">
+                        <form action="">
+                          <button class="btn btn-danger">xóa</button>
+                       </form>
+                      </div>
+                    
+                    </td>
                    </tr>
                   @endforeach
                  
                  </tbody>
                </table>
+               {{$list->links()}}
               </div>
           </div>
         </div>

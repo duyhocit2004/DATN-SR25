@@ -13,10 +13,20 @@ class ProductVariants extends Model
        'product_id',
         'color_id',
         'categories_id',
+        'size_id',
         'quanlity',
         'price',
     ];
-    // public function color (){
-    //     return $this->()
-    // }
+    public function color (){
+        return $this->belongsTo(color::class,'color_id');
+    }
+    public function products(){
+        return $this->belongsTo(products::class,'product_id');
+    }
+    public function categories(){
+        return $this->belongto(categories::class,'categories_id');
+    }
+    public function size(){
+        return $this->belongsTo(color::class,'size_id');
+    }
 }

@@ -4,7 +4,7 @@
 <meta name="description" content="Admiro admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities."/>
 <meta name="keywords" content="admin template, Admiro admin template, best javascript admin, dashboard template, bootstrap admin template, responsive admin template, web app"/>
 <meta name="author" content="pixelstrap"/>
-<title>Admiro - Premium Admin Template</title>
+<title>trang admin</title>
 <!-- Favicon icon-->
 <link rel="icon" href="{{asset('/admin/images/favicon.png')}}" type="image/x-icon"/>
 <link rel="shortcut icon" href="{{asset('/admin/images/favicon.png')}}" type="image/x-icon"/>
@@ -29,3 +29,4 @@
 <!-- App css -->
 <link rel="stylesheet" href="{{asset('admin/css/style.css')}}"/>
 <link id="color" rel="stylesheet" href="{{asset('admin/css/color-1.css" media="screen')}}"/>
+<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/44.1.0/ckeditor5.css">
