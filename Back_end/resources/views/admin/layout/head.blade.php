@@ -30,3 +30,4 @@
 <link rel="stylesheet" href="{{asset('admin/css/style.css')}}"/>
 <link id="color" rel="stylesheet" href="{{asset('admin/css/color-1.css" media="screen')}}"/>
 <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/44.1.0/ckeditor5.css">
+@yield('css')

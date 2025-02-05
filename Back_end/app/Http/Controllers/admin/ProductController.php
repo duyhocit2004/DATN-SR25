@@ -61,8 +61,24 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        dd($request);
+    {   
+        if($request->isMethod('POST')){
+            $list = $request->all();
+            // dd(max($list['price']));
+            $sum = 0;
+            if($request->has('quanlity1')){
+                foreach($list['quanlity1'] as $as){
+                    $sum+=$as;
+                }
+                if($list['price_sale'] != null && $list['price_sale'] > filter('') ){
+                    
+                    $id = $this->ProductService->insert($list);                                          
+
+                }else if ($list['price_regular'] != null || $list['price_regular']){
+
+                }
+            }
+        }
     }
 
     /**

@@ -20,11 +20,15 @@ class ProductRepositories {
     }
 
     public function create($data){
-        products::create($data);
+        products::create([
+            
+        ]);
         return true;
     }
     public function Update($id,$data) {
-    
+        $list = products::findOrFail($id);
+        return $list->update($data);
+
     }
 }
 

@@ -18,7 +18,11 @@
       $list = $this->IProductService->getpaginate();
       return $list ;
     }
-    public function insert($data){}
+    public function insert($data){
+      
+      $list = $this->IProductService->create($data);
+      return  $list ;
+    }
 
     public function GetId($id){}
     public function insertId($id,$data){}
