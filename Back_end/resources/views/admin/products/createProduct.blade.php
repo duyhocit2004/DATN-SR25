@@ -1,8 +1,6 @@
 @extends('admin.index')
 @section('css')
 <style>
-  
-
   #ss {
     display: flex;
   }
@@ -10,7 +8,7 @@
 @endsection
 @section('main')
 <div class="container">
-  <div class="row"> 
+  <div class="row">
     <form action="{{route('postProduct')}}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="container" id="ss">
@@ -46,7 +44,7 @@
               <div class="col">
                 <div class="mb-3 mx-1">
                   <label class="form-label" for="quanlity">Số lượng</label>
-                  <input class="form-control" id="quanlity" type="text" placeholder="200">
+                  <input class="form-control" id="quanlity" name="quanlity" type="text" placeholder="200">
                 </div>
               </div>
             </div>
@@ -73,7 +71,7 @@
               <div class="col">
                 <div class="mb-3 mx-1">
                   <label class="form-label" for="description">miêu tả</label>
-                  <textarea class="form-control" id="description"></textarea>
+                  <textarea class="form-control" name="description" id="description"></textarea>
                 </div>
               </div>
             </div>
@@ -82,6 +80,8 @@
         </div>
         {{-- thêm ảnh --}}
         <div class="col-md-5">
+
+
           <div class="card-body basic-form">
             <div class="card-header card-no-border">
               <h3>Thêm ảnh</h3>
@@ -102,8 +102,7 @@
 
       {{-- biến thể --}}
       <div class="col" id="divContainer">
-       
-        
+
       </div>
       <div class="d-flex justify-content-center  align-items-center">
         <button class="btn btn-success mx-1">thêm sản phẩm</button>
@@ -129,13 +128,15 @@
         'mediaEmbed', 'codeBlock'
       ],
       // Thêm các plugin nếu cần thiết
+      
     })
     .then(editor => {
       window.editor = editor;
     })
     .catch(error => {
       console.error(error);
-    });
+    })
+    // .CKEDITOR.config.autoParagraph = false
 
 
   const imagediv = document.getElementById('imagediv')
@@ -159,24 +160,24 @@
   const size = @json($size);
   console.log(size, color);
 
-  let variantCount = 0; 
+  let variantCount = 0;
   const divContainer = document.getElementById('divContainer');
 
   function addVariant() {
     console.log('Thêm biến thể mới');
 
-      variantCount++;
+    variantCount++;
 
-      let sizeOptions = `<option>--- Chọn Size ---</option>`;
-      size.forEach((size) => {
-        sizeOptions += `<option value="${size.id}">${size.name}</option>`;
-      })// duyệt các phần tử mảng json
-      let colorOptions = `<option>--- Chọn Size ---</option>`;
-      color.forEach((color) => {
-        colorOptions += `<option value="${color.id}">${color.name}</option>`;
-      })
+    let sizeOptions = `<option>--- Chọn Size ---</option>`;
+    size.forEach((size) => {
+      sizeOptions += `<option value="${size.id}">${size.name}</option>`;
+    })// duyệt các phần tử mảng json
+    let colorOptions = `<option>--- Chọn Size ---</option>`;
+    color.forEach((color) => {
+      colorOptions += `<option value="${color.id}">${color.name}</option>`;
+    })
 
-      var variantHtml = `
+    var variantHtml = `
         <div class="ads card-body basic-form" id="variant-${variantCount}" >
           <div class="container d-flex">
             <div class="card-header card-no-border">
@@ -189,35 +190,35 @@
           <div id="divContainer" class=" row card-wrapper border rounded-3 my-1 d-flex">
             <div class="col-3">
               <label class="form-label" for="size_id">kích cỡ</label>
-              <select class="form-select" name="size_id" id="size_${variantCount}">
+              <select class="form-select" name="variants[${variantCount}][size_id]" id="size_${variantCount}">
                 ${sizeOptions}
               </select>
             </div>
             <div class="col-3">
               <label class="form-label" for="color_id">màu</label>
-              <select class="form-select" name="color" id="color_${variantCount}">
+              <select class="form-select" name="variants[${variantCount}][color_id]" id="color_${variantCount}">
                 ${colorOptions}
               </select>
             </div>
             <div class="col-3">
               <label class="form-label" for="	quanlity">số lượng</label>
-              <input class="form-control" id="quanlity_${variantCount}" name="quanlity1[]" type="text" placeholder="30">
+              <input class="form-control" id="quanlity_${variantCount}" name="variants[${variantCount}][quanlity]" type="text" placeholder="30">
             </div>
             <div class="col-3">
               <label class="form-label" for="price">giá</label>
-              <input class="form-control" id="price_${variantCount}" name="price[]" type="text" placeholder="120,000">
+              <input class="form-control" id="price_${variantCount}" name="variants[${variantCount}][price]" type="text" placeholder="120,000">
             </div>
           </div>
       `;
-      divContainer.insertAdjacentHTML('beforeend', variantHtml);
-    }
-    function deleteVariant(variantCount) {
+    divContainer.insertAdjacentHTML('beforeend', variantHtml);
+  }
+  function deleteVariant(variantCount) {
     const variant = document.getElementById(`variant-${variantCount}`);
     if (variant) {
-        variant.remove(); // Xóa biến thể khỏi DOM
-        
-        
+      variant.remove(); // Xóa biến thể khỏi DOM
+
+
     }
-}
+  }
 </script>
 @endsection

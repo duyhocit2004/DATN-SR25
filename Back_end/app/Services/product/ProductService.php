@@ -14,6 +14,10 @@
       // dd($list);
       return $list;
     }
+    public function getoneimge($id){
+      $list = $this->IProductService->getoneimge($id);
+      return $list;
+    }
     public function Getpaginate(){
       $list = $this->IProductService->getpaginate();
       return $list ;
@@ -21,10 +25,15 @@
     public function insert($data){
       
       $list = $this->IProductService->create($data);
-      return  $list ;
+      
+      return $list;
+      // return redirect()->route('product')->with('succsee','bạn đã tạo sản phẩm thành công');
     }
 
-    public function GetId($id){}
+    public function GetId($id){
+      $list = $this->IProductService->GetOne($id);
+      return $list ;
+    }
     public function insertId($id,$data){}
 
     public function delete($id){}
