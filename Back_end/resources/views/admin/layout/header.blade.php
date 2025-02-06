@@ -310,10 +310,15 @@
                     </a></li>
                 <li class="profile-nav custom-dropdown">
                     <div class="user-wrap">
-                        <div class="user-img"><a href="{{route('login')}}"><img src="../assets/images/profile.png" alt="user"/></a></div>
+
                         <div class="user-content">
-                            <h6>{{ Auth::user()->name }}</h6>
-                            <p class="mb-0">Admin<i class="fa-solid fa-chevron-down"></i></p>
+                            @if (Auth::check())
+                                <h6>{{ Auth::user()->name }}</h6>
+                            @else
+                                <a href="{{ route('login') }}">
+                                    <h5>Login</h5>
+                                </a>
+                            @endif
                         </div>
                     </div>
                     <div class="custom-menu overflow-hidden">
@@ -343,7 +348,7 @@
                                 <svg class="svg-color">
                                     <use href="https://admin.pixelstrap.net/admiro/assets/svg/iconly-sprite.svg#Login">
                                     </use>
-                                </svg><a class="ms-2" href="{{route('logout')}}">Log Out</a>
+                                </svg><a class="ms-2" href="{{ route('logout') }}">Log Out</a>
                             </li>
                         </ul>
                     </div>

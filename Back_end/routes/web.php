@@ -20,7 +20,7 @@ Route::get('/', function () {
     return view('admin.index');
 });
 
-route::get('/',[ProductController::class,'index']);
+route::get('/',[ProductController::class,'index'])->name('index');
 
 route::get('color',[ColorController::class,'index'])->name("color");
 route::get('createcolor',[colorController::class,'create'])->name("createcolor");
