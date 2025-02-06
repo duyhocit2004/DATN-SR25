@@ -5,9 +5,11 @@ namespace App\Http\Controllers\admin;
 use App\Services\Categories\CategoryService;
 use App\Services\size\sizeService;
 use App\Services\color\ColorService;
+use App\Services\product\VariantService;
 use App\Models\products;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Repositories\IamgeRepositories;
 
 use Illuminate\Database\QueryException;
 use App\Services\product\ProductService;
@@ -18,23 +20,30 @@ class ProductController extends Controller
      * Display a listing of the resource.
      * 
      */
-    public $ProductService ; 
-    public $categoryService ;
-    public $colorService ;
-    public $sizeService ;
+    public $ProductService;
+    public $categoryService;
+    public $colorService;
+    public $sizeService;
+    public $VariantService;
+    public $IamgeRepositories;
 
     public function __construct(
-    ProductService $ProductService, 
-    CategoryService $categoryService,
-    sizeService $sizeService,
-    ColorService $colorService ){
+        ProductService $ProductService,
+        CategoryService $categoryService,
+        sizeService $sizeService,
+        ColorService $colorService,
+        VariantService $VariantService,
+        IamgeRepositories $IamgeRepositories,
+    ) {
 
         $this->ProductService = $ProductService;
         $this->sizeService = $sizeService;
         $this->colorService = $colorService;
         $this->categoryService = $categoryService;
+        $this->VariantService = $VariantService;
+        $this->IamgeRepositories = $IamgeRepositories;
     }
-   
+
     public function index()
     {
         // $list = $this->ProductService->getAllProduct();    
@@ -42,20 +51,20 @@ class ProductController extends Controller
         // dd($phone);
 
         $list = $this->ProductService->Getpaginate();
-        return view('admin.products.listProduct',compact('list'));
+        // $imageproduct =  $this->ProductService->getoneimge($list->id);
+        return view('admin.products.listProduct', compact('list'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
-    {   
+    {
         $categori = $this->categoryService->getAll();
         $color = $this->colorService->getAll();
-        $categori = $this->categoryService->getAll();
         $size = $this->sizeService->Getall();
 
-         return view('admin.products.createProduct',compact('list',['categori',]));
+        return view('admin.products.createProduct', compact('categori', ['color', 'size']));
     }
 
     /**
@@ -63,7 +72,17 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request);
+            $variant = $request->input('variants');
+            $image =$request->images;
+            $list = $request->all();
+
+            dd($request);
+            $idproduct = $this->ProductService->insert($list);
+            $this->VariantService->insert($idproduct,$variant);
+            $this->IamgeRepositories->inserImage($idproduct,$image);
+
+            return redirect()->route('product')->with('success','thêm thành công');
+        
     }
 
     /**
@@ -79,7 +98,13 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $idproduct = $this->ProductService->GetId($id);
+        // dd($id);
+        // $idvariant = $this->VariantService->GetId(['id'=>$idproduct->id]);
+        $categori = $this->categoryService->getAll();
+        $iamge = $this->IamgeRepositories->getimage(['id'=>$idproduct->id]);
+        // dd($iamge);
+        return view('admin.products.editProduct',compact('idproduct','categori','iamge'));
     }
 
     /**
@@ -98,3 +123,4 @@ class ProductController extends Controller
         //
     }
 }
+

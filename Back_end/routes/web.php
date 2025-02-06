@@ -25,6 +25,7 @@ Route::get('/', function () {
 route::get('product',[ProductController::class,'index'])->name('product');
 route::get('createProduct',[ProductController::class,'create'])->name('createProduct');
 route::post('postProduct',[ProductController::class,'Store'])->name('postProduct');
+route::get('edit/{id}/Product',[ProductController::class,'edit'])->name('get.Product');
 
 
 // route màu
@@ -46,3 +47,6 @@ Route::get('users/create', [UserController::class, 'create'])->name('users.creat
 Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
 Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
 Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+
+

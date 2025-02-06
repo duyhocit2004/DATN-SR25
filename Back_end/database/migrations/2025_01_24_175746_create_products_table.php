@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('categories_id')->constrained('categories');
+            $table->foreignId('categories_id')->constrained('categories')->onDelete('cascade');
             $table->string('name_product');
             $table->string('SKU');
+            $table->string('image')->nullable();
             $table->unsignedBigInteger('base_stock')->default(0);    // Số lượng tồn kho           
             $table->unsignedBigInteger('price_regular');                    // Giá thường
             $table->unsignedBigInteger('price_sale')->nullable();           // Giá sale
