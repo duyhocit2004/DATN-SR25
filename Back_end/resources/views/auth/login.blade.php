@@ -87,7 +87,6 @@
                                     <div class="form-group">
                                         <label class="col-form-label">Mật khẩu</label>
                                         <div class="form-input position-relative">
-                                            <input class="form-control" type="password" name="password" required="" placeholder="Nhập mật khẩu">
                                             <div class="show-hide"><span class="show"></span></div>
                                         </div>
                                     </div>
