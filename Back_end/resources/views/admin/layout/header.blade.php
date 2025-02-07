@@ -312,12 +312,22 @@
                     <div class="user-wrap">
                         <div class="user-content">
                             @if (Auth::check())
-                                <h6>{{ Auth::user()->name }}</h6>
+                                <div class="dropdown">
+                                    <button class="btn btn-primary"  data-bs-toggle="dropdown">
+                                        <h5>{{ Auth::user()->name }}</h5>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="" href="#">Tài khoản</a></li>
+                                        <li><a class="" href="#">Another action</a></li>
+                                        <li><a class="" href="{{ route('logout') }}">Đăng xuất</a></li>
+                                    </ul>
+                                </div>
                             @else
                                 <a href="{{ route('login') }}">
                                     <h5>Login</h5>
                                 </a>
                             @endif
+
                         </div>
                     </div>
                     <div class="custom-menu overflow-hidden">

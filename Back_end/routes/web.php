@@ -26,6 +26,7 @@ Route::get('/', function () {
 route::get('product',[ProductController::class,'index'])->name('product');
 route::get('createProduct',[ProductController::class,'create'])->name('createProduct');
 route::post('postProduct',[ProductController::class,'Store'])->name('postProduct');
+route::get('edit/{id}/Product',[ProductController::class,'edit'])->name('get.Product');
 
 
 // route màu
@@ -49,8 +50,16 @@ Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update
 Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
 
-route::get('login',[AuthController::class,'formLogin'])->name("login");
-route::post('post-login',[AuthController::class,'postLogin'])->name('post-login');
-
+// Route đăng kí
 route::get('register',[AuthController::class,'formRegister'])->name("register");
 route::post('post-register',[AuthController::class,'postRegister'])->name("post-register");
+// Route đăng nhập
+route::get('login',[AuthController::class,'formLogin'])->name("login");
+route::post('post-login',[AuthController::class,'postLogin'])->name('post-login');
+// Route đăng xuất
+route::get('logout',[AuthController::class,'logout'])->name("logout");
+
+
+
+
+

@@ -34,14 +34,14 @@
                   @foreach ( $list as  $as )
                   <tr class="border-bottom-success">
                     <th scope="row"></th>
-                    <td><img class="img-30 me-2" src="../assets/images/avtar/3.jpg" alt="profile">Ram Jacob</td>
+                    <td><img class="img-30 me-2" src="{{Storage::url($as->image)}}" alt="profile">Ram Jacob</td>
                     <td>{{$as->name_product}}</td>
                     <td>{{$as->SKU}}</td>
                     <td>{{number_format($as->price_regular,0,'.',',')}}VND</td>
                     <td>{{number_format($as->price_sale,0,'.',',')}}</td>
                     <td>
                       <div class="my-1">
-                        <a href="" class="btn btn-success">sửa</a>
+                        <a href="{{route('get.Product',$as->id)}}" class="btn btn-success">sửa</a>
                       </div>
                       <div class="my-1">
                         <form action="">
