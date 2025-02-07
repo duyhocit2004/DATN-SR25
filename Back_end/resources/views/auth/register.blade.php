@@ -90,6 +90,7 @@
                                             <input class="form-control" type="password" name="password" required="" placeholder="Nhập mật khẩu">
                                         </div>
                                     </div>
+                                    
                                     <div class="form-group mb-0 checkbox-checked">
                                         <div class="text-end mt-3">
                                             <button class="btn btn-primary btn-block w-100" type="submit">Đăng kí</button>

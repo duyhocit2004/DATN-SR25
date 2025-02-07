@@ -87,8 +87,21 @@
                                     <div class="form-group">
                                         <label class="col-form-label">Mật khẩu</label>
                                         <div class="form-input position-relative">
-                                            <input class="form-control" type="password" name="password" required="" placeholder="Nhập mật khẩu">
-                                            <div class="show-hide"><span class="show"></span></div>
+                                            <input class="form-control" id="pass" type="password" name="password" required="" placeholder="Nhập mật khẩu">
+                                            <div class="show-hide"><span class="show" onclick="showPass()"></span></div>
+                                            {{-- Show password --}}
+                                            <script type="text/javascript">
+                                            var x = true;
+                                                function showPass(){
+                                                   if(x){
+                                                        document.getElementById('pass').type = "text";
+                                                        x = false;
+                                                   }else{
+                                                        document.getElementById('pass').type = "password";
+                                                        x = true;
+                                                   }
+                                                }
+                                            </script>
                                         </div>
                                     </div>
 
@@ -102,9 +115,7 @@
                                             <button class="btn btn-primary btn-block w-100" type="submit">Đăng nhập</button>
                                         </div>
                                     </div>
-
-                                    <p class="mt-4 mb-0 text-center">Bạn chưa có tài khoản?<a class="ms-2"
-                                            href="{{ route('register') }}">Tạo tài khoản</a></p>
+                                    <p class="mt-4 mb-0 text-center">Bạn chưa có tài khoản?<a class="ms-2" href="{{ route('register') }}">Tạo tài khoản</a></p>
                                 </form>
                             </div>
                         </div>
