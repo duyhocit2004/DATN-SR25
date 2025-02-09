@@ -1,13 +1,52 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YoungStyle</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YoungStyle</title>
+
+  <link rel="icon" type="image/x-icon" href="assets/images/icons/favicon.png">
+
+
+  <script>
+    WebFontConfig = {
+      google: {
+        families: ['Open+Sans:300,400,600,700,800', 'Poppins:300,400,500,600,700,800', 'Oswald:300,400,500,600,700,800']
+      }
+    };
+    (function (d) {
+      var wf = d.createElement('script'),
+        s = d.scripts[0];
+      wf.src = 'assets/js/webfont.js';
+      wf.async = true;
+      s.parentNode.insertBefore(wf, s);
+    })(document);
+  </script>
+
+  <!-- Plugins CSS File -->
+  <link rel="stylesheet" href="src/assets/css/bootstrap.min.css">
+
+  <!-- Main CSS File -->
+  <link rel="stylesheet" href="src/assets/css/demo4.min.css">
+  <link rel="stylesheet" type="text/css" href="src/assets/vendor/fontawesome-free/css/all.min.css">
+</head>
+
+<body>
+  <div id="root"></div>
+ 
+  <!-- Plugins JS File -->
+  <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="src/assets/js/jquery.min.js"></script>
+  <script src="src/assets/js/bootstrap.bundle.min.js"></script>
+  <script src="src/assets/js/optional/isotope.pkgd.min.js"></script>
+  <script src="src/assets/js/plugins.min.js"></script>
+  <script src="src/assets/js/jquery.appear.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="src/assets/js/main.min.js"></script>
+
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>
