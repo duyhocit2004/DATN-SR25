@@ -14,3 +14,4 @@ class Account extends Model
     protected $fillable =[ 'username','email', 'password'];
     protected $data=['deleta_at'];
 }
+ ?>

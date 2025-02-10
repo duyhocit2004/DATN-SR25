@@ -18,7 +18,7 @@ class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * 
+     *
      */
     public $ProductService;
     public $categoryService;
@@ -46,7 +46,7 @@ class ProductController extends Controller
 
     public function index()
     {
-        // $list = $this->ProductService->getAllProduct();    
+        // $list = $this->ProductService->getAllProduct();
         // $phone = products::find(1)->categories;
         // dd($phone);
 
@@ -73,7 +73,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
             $variant = $request->input('variants');
-            $image =$request->images;
+            $image = $request->file('images');
             $list = $request->all();
 
             dd($request);
@@ -82,7 +82,7 @@ class ProductController extends Controller
             $this->IamgeRepositories->inserImage($idproduct,$image);
 
             return redirect()->route('product')->with('success','thêm thành công');
-        
+
     }
 
     /**

@@ -13,7 +13,7 @@ class ProductRepositories {
     public function getoneimge($id){
         $list = imageProduct::where('product_id','=',$id)->first();
         return $list;
-        
+
     }
     public function getpaginate(){
         $list = products::paginate(5);
@@ -39,7 +39,7 @@ class ProductRepositories {
             'description' => strip_tags($data['description']),
             'views' => 0
         ]);
-        
+
         return $list->id ; // Trả về đối tượng sản phẩm đã tạo
     }
     public function Update($id,$data) {
