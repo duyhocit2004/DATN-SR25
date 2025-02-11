@@ -1,16 +1,40 @@
-<?php 
+<?php
 
-namespace App\Services\size;
+namespace App\Services\Size;
 
 use App\Repositories\SizeRepositories;
 
- class sizeService {
-    public $SizeRepositories ; 
-    public function __construct(SizeRepositories $SizeRepositories ){
-        $this->SizeRepositories = $SizeRepositories;
-    } 
-    public function Getall() {
-        $list = $this->SizeRepositories->GetAll();
-        return $list;
+class SizeService
+{
+    protected $sizeRepositories;
+
+    public function __construct(SizeRepositories $sizeRepositories)
+    {
+        $this->sizeRepositories = $sizeRepositories;
     }
- }
+
+    public function getAll()
+    {
+        return $this->sizeRepositories->getAll();
+    }
+
+    public function getBySize($id)
+    {
+        return $this->sizeRepositories->getById($id);
+    }
+
+    public function insert($name)
+    {
+        return $this->sizeRepositories->insert($name);
+    }
+
+    public function updateById($id, $data)
+    {
+        return $this->sizeRepositories->updateById($id, $data);
+    }
+
+    public function deleteById($id)
+    {
+        return $this->sizeRepositories->deleteById($id);
+    }
+}
