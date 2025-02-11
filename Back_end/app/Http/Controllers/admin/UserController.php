@@ -28,7 +28,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'phone_number' => 'required|string|max:15',
             'password' => 'required|min:6',
-            'user_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // 'user_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $imagePath = null;
@@ -41,7 +41,7 @@ class UserController extends Controller
             'email' => $request->email,
             'phone_number' => $request->phone_number,
             'password' => Hash::make($request->password),
-            'user_image' => $imagePath,
+            // 'user_image' => $imagePath,
         ]);
         return redirect()->route('users.index')->with('success', 'Tài khoản đã được thêm');
     }
@@ -60,13 +60,13 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'phone_number' => 'required|string|max:15',
-            'user_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // 'user_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = $request->all();
-        if ($request->hasFile('user_image')) {
-            $data['user_image'] = $request->file('user_image')->store('users', 'public');
-        }
+        // if ($request->hasFile('user_image')) {
+        //     $data['user_image'] = $request->file('user_image')->store('users', 'public');
+        // }
 
         $user->update($data);
         return redirect()->route('users.index')->with('success', 'Tài khoản đã được cập nhật');
