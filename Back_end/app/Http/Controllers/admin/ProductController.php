@@ -76,7 +76,7 @@ class ProductController extends Controller
             $image =$request->images;
             $list = $request->all();
 
-            dd($request);
+            // dd($request);
             $idproduct = $this->ProductService->insert($list);
             $this->VariantService->insert($idproduct,$variant);
             $this->IamgeRepositories->inserImage($idproduct,$image);
@@ -99,8 +99,6 @@ class ProductController extends Controller
     public function edit(string $id)
     {
         $idproduct = $this->ProductService->GetId($id);
-        // dd($id);
-        // $idvariant = $this->VariantService->GetId(['id'=>$idproduct->id]);
         $categori = $this->categoryService->getAll();
         $iamge = $this->IamgeRepositories->getimage(['id'=>$idproduct->id]);
         // dd($iamge);
@@ -112,7 +110,11 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $idProduct = $id;
+        // dd($request->all());
+        $list = $request->except('_token','_method');
+        $this->ProductService->insertId($idProduct,$list);
+        return redirect()->route('product')->with('success','thêm thành công');
     }
 
     /**
