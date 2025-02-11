@@ -128,7 +128,7 @@
         'mediaEmbed', 'codeBlock'
       ],
       // Thêm các plugin nếu cần thiết
-      
+
     })
     .then(editor => {
       window.editor = editor;

@@ -310,6 +310,7 @@
                     </a></li>
                 <li class="profile-nav custom-dropdown">
                     <div class="user-wrap">
+
                         <div class="user-content">
                             @if (Auth::check())
                                 <div class="dropdown">
@@ -327,7 +328,6 @@
                                     <h5>Login</h5>
                                 </a>
                             @endif
-
                         </div>
                     </div>
                     <div class="custom-menu overflow-hidden">
@@ -353,6 +353,15 @@
                                     </use>
                                 </svg><a class="ms-2" href="to-do.html">Task</a>
                             </li>
+
+
+                            <li class="d-flex">
+                                <svg class="svg-color">
+                                    <use href="https://admin.pixelstrap.net/admiro/assets/svg/iconly-sprite.svg#Login">
+                                    </use>
+                                </svg><a class="ms-2" href="login.html">Log Out</a>
+                            </li>
+
                         </ul>
                     </div>
                 </li>

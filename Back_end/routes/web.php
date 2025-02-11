@@ -50,6 +50,7 @@ Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update
 Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
 
+
 // Route đăng kí
 route::get('register',[AuthController::class,'formRegister'])->name("register");
 route::post('post-register',[AuthController::class,'postRegister'])->name("post-register");
@@ -58,8 +59,4 @@ route::get('login',[AuthController::class,'formLogin'])->name("login");
 route::post('post-login',[AuthController::class,'postLogin'])->name('post-login');
 // Route đăng xuất
 route::get('logout',[AuthController::class,'logout'])->name("logout");
-
-
-
-
 
