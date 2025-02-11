@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\AuthController;
 use App\Http\Controllers\Admin\UserController;
 
 use App\Http\Controllers\admin\colorController;
@@ -54,4 +55,13 @@ Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.des
 Route::get('variant',[VariantController::class,'index'])->name('variant.index');
 
 
+
+// Route đăng kí
+route::get('register',[AuthController::class,'formRegister'])->name("register");
+route::post('post-register',[AuthController::class,'postRegister'])->name("post-register");
+// Route đăng nhập
+route::get('login',[AuthController::class,'formLogin'])->name("login");
+route::post('post-login',[AuthController::class,'postLogin'])->name('post-login');
+// Route đăng xuất
+route::get('logout',[AuthController::class,'logout'])->name("logout");
 
