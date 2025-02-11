@@ -39,6 +39,10 @@ class AuthController extends Controller
         //Validate
         $request->validate([
             'email' => 'required|email|unique:users,email',
+            'name' => 'required|string|max:255',
+            'phone_number' => 'required|regex:/^0[0-9]{9,10}$/',
+            'role' => 'required|in:admin,user,manager',
+            'password' => 'required|min:6',
         ], [
             'email.required' => 'Email không được để trống.',
             'email.email' => 'Email không đúng định dạng.',

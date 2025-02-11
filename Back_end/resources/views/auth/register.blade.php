@@ -78,6 +78,9 @@
                                         <label class="col-form-label">Họ tên</label>
                                         <div class="form-input position-relative">
                                             <input class="form-control" type="text" name="name" placeholder="Nhập họ tên">
+                                            @error('name')
+                                                <p style="color: red">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
 
@@ -85,6 +88,9 @@
                                         <label class="col-form-label">Số điện thoại</label>
                                         <div class="form-input position-relative">
                                             <input class="form-control" type="tel" name="phone_number" placeholder="Nhập số điện thoại">
+                                            @error('phone_number')
+                                                <p style="color: red">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
 
@@ -96,6 +102,9 @@
                                                 <option value="Khách hàng">Khách hàng</option>
                                                 <option value="Quản lý">Quản lý</option>
                                             </select>
+                                            @error('role')
+                                                <p style="color: red;">{{ $message }}</p>
+                                             @enderror
                                         </div>
                                     </div>
 
@@ -111,6 +120,9 @@
                                         <label class="col-form-label">Mật khẩu</label>
                                         <div class="form-input position-relative">
                                             <input class="form-control" type="password" name="password" placeholder="Nhập mật khẩu">
+                                            @error('password')
+                                                <p style="color: red">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
 
@@ -119,6 +131,7 @@
                                             <button class="btn btn-primary btn-block w-100" type="submit">Đăng kí</button>
                                         </div>
                                     </div>
+                                    
                                 </form>
                             </div>
                         </div>

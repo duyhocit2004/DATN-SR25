@@ -17,17 +17,17 @@
         @csrf
         <div class="form-group">
             <label for="name">Họ và tên</label>
-            <input type="text" class="form-control" id="name" name="name" required>
+            <input type="text" class="form-control" id="name" name="name">
         </div>
 
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" required>
+            <input type="email" class="form-control" id="email" name="email">
         </div>
 
         <div class="form-group">
             <label for="phone_number">Số điện thoại</label>
-            <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+            <input type="text" class="form-control" id="phone_number" name="phone_number">
         </div>
 
         <div class="form-group">
@@ -45,7 +45,7 @@
 
         <div class="form-group">
             <label for="password">Mật khẩu</label>
-            <input type="password" class="form-control" id="password" name="password" required>
+            <input type="password" class="form-control" id="password" name="password">
         </div>
 
         <button type="submit" class="btn btn-primary">Lưu</button>
