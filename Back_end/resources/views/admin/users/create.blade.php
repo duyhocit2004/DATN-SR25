@@ -30,13 +30,13 @@
             <input type="text" class="form-control" id="phone_number" name="phone_number" required>
         </div>
 
-        <div class="form-group">
+        {{-- <div class="form-group">
             <label for="role">Vai trò</label>
             <select class="form-control" id="role" name="role">
                 <option value="Khách hàng">Khách hàng</option>
                 <option value="Quản lý">Quản lý</option>
             </select>
-        </div>
+        </div> --}}
 
         <div class="form-group">
             <label for="user_image">Ảnh đại diện</label>

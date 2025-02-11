@@ -18,7 +18,7 @@ class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * 
+     *
      */
     public $ProductService;
     public $categoryService;
@@ -46,7 +46,7 @@ class ProductController extends Controller
 
     public function index()
     {
-        // $list = $this->ProductService->getAllProduct();    
+        // $list = $this->ProductService->getAllProduct();
         // $phone = products::find(1)->categories;
         // dd($phone);
 
@@ -72,17 +72,19 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-            $variant = $request->input('variants');
-            $image =$request->images;
-            $list = $request->all();
+        $variant = $request->input('variants');
 
-            // dd($request);
-            $idproduct = $this->ProductService->insert($list);
-            $this->VariantService->insert($idproduct,$variant);
-            $this->IamgeRepositories->inserImage($idproduct,$image);
 
-            return redirect()->route('product')->with('success','thêm thành công');
-        
+        $image = $request->file('images');
+
+        $list = $request->all();
+
+        $idproduct = $this->ProductService->insert($list);
+        $this->VariantService->insert($idproduct, $variant);
+        $this->IamgeRepositories->inserImage($idproduct, $image);
+
+
+        return redirect()->route('product')->with('success', 'thêm thành công');
     }
 
     /**
@@ -100,9 +102,9 @@ class ProductController extends Controller
     {
         $idproduct = $this->ProductService->GetId($id);
         $categori = $this->categoryService->getAll();
-        $iamge = $this->IamgeRepositories->getimage(['id'=>$idproduct->id]);
+        $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
         // dd($iamge);
-        return view('admin.products.editProduct',compact('idproduct','categori','iamge'));
+        return view('admin.products.editProduct', compact('idproduct', 'categori', 'iamge'));
     }
 
     /**
@@ -125,4 +127,3 @@ class ProductController extends Controller
         //
     }
 }
-
