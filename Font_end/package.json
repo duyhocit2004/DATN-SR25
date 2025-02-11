@@ -12,6 +12,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
     "antd": "^5.23.3",
+
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
     "isotope-layout": "^3.0.6",
@@ -23,6 +24,7 @@
     "react-owl-carousel": "^2.3.3",
     "react-router-dom": "^7.1.5",
     "react-toastify": "^11.0.3",
+
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
@@ -35,7 +37,8 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
+
     "typescript": "^5.7.3",
-    "vite": "^6.0.5"
+
   }
 }
