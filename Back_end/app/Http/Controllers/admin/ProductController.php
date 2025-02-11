@@ -72,27 +72,25 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-            $variant = $request->input('variants');
-<<<<<<< HEAD
-            $image =$request->images;
-=======
-            $image = $request->file('images');
->>>>>>> 32629ca79764c7796e6f0bf4f7021c68b631d910
-            $list = $request->all();
+        $variant = $request->input('variants');
 
-            dd($request);
-            $idproduct = $this->ProductService->insert($list);
-            $this->VariantService->insert($idproduct,$variant);
-            $this->IamgeRepositories->inserImage($idproduct,$image);
-<<<<<<< HEAD
+        $image = $request->images;
 
-            return redirect()->route('product')->with('success','thêm thành công');
-        
-=======
+        $image = $request->file('images');
 
-            return redirect()->route('product')->with('success','thêm thành công');
+        $list = $request->all();
 
->>>>>>> 32629ca79764c7796e6f0bf4f7021c68b631d910
+        dd($request);
+        $idproduct = $this->ProductService->insert($list);
+        $this->VariantService->insert($idproduct, $variant);
+        $this->IamgeRepositories->inserImage($idproduct, $image);
+
+
+        return redirect()->route('product')->with('success', 'thêm thành công');
+
+
+
+        return redirect()->route('product')->with('success', 'thêm thành công');
     }
 
     /**
@@ -112,9 +110,9 @@ class ProductController extends Controller
         // dd($id);
         // $idvariant = $this->VariantService->GetId(['id'=>$idproduct->id]);
         $categori = $this->categoryService->getAll();
-        $iamge = $this->IamgeRepositories->getimage(['id'=>$idproduct->id]);
+        $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
         // dd($iamge);
-        return view('admin.products.editProduct',compact('idproduct','categori','iamge'));
+        return view('admin.products.editProduct', compact('idproduct', 'categori', 'iamge'));
     }
 
     /**
@@ -133,4 +131,3 @@ class ProductController extends Controller
         //
     }
 }
-
