@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     */
-
     // Form đăng nhập
     public function formLogin()
     {
@@ -41,6 +36,19 @@ class AuthController extends Controller
     // Xử lý đăng kí
     public function postRegister(Request $request)
     {
+        //Validate
+        $request->validate([
+            'email' => 'required|email|unique:users,email',
+            'name' => 'required|string|max:255',
+            'phone_number' => 'required|regex:/^0[0-9]{9,10}$/',
+            'role' => 'required',
+            'password' => 'required|min:6',
+        ], [
+            'email.required' => 'Email không được để trống.',
+            'email.email' => 'Email không đúng định dạng.',
+            'email.unique' => 'Email này đã tồn tại, vui lòng chọn email khác.',
+        ]);
+
         $request->merge(['password' => Hash::make($request->password)]);
 
         try {
