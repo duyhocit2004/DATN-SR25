@@ -49,6 +49,8 @@
               </div>
             </div>
 
+            
+
             <div class="row">
               <div class="col">
                 <div class="mb-3 mx-1">
@@ -86,7 +88,21 @@
             <div class="card-header card-no-border">
               <h3>Thêm ảnh</h3>
             </div>
+            <div class="row">
+              <div class="col">
+                <div class="mb-3 mx-1">
+                  <label class="form-label" for="file">ảnh</label>
+                  <input class="form-control" onchange="previewImage(this, 0)" id="file" name="file" type="file" placeholder="200">
+                </div>
+                <div >
+                  <img src="" class="previewContainer" id="preview_0"  width="100px" alt="">
+              </div>
+              </div>
+            </div>
             <div class="card-wrapper border rounded-3">
+              <div class="card-header card-no-border">
+                <h3>album ảnh</h3>
+              </div>
               <div id="imagediv">
 
               </div>
@@ -98,7 +114,11 @@
         </div>
         {{-- end thêm ảnh --}}
       </div>
-
+      <div class="mb-3">
+        <input class="form-control"  id="image_product_${lengimage}" name="images[]"  type="file" accept="image/*">
+        <div >
+          <img src="" class="previewContainer" id="preview_0"  alt="">
+      </div>
 
       {{-- biến thể --}}
       <div class="col" id="divContainer">
@@ -148,13 +168,25 @@
       lengimage++;
       const addimage = `
          <div class="mb-3">
-              <input class="form-control" id="image_product_${lengimage}" name="images[]" type="file" accept="image/*">
-              <div class="previewContainer" id="previewContainer_${lengimage}"></div>
+              <input class="form-control"  id="image_product_${lengimage}" name="images[]"  type="file" accept="image/*">
+              <div >
+                <img src="" class="previewContainer" id="preview_0"  alt="">
             </div>
         `
       imagediv.insertAdjacentHTML('beforeend', addimage);
+      
     }
   })
+ 
+  function previewImage(input, rowIndex) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById(`preview_${rowIndex}`).setAttribute('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
 
   const color = @json($color); // chuyển đổi dữ liệu sang json
   const size = @json($size);
