@@ -74,20 +74,14 @@ class ProductController extends Controller
     {
         $variant = $request->input('variants');
 
-        $image = $request->images;
 
         $image = $request->file('images');
 
         $list = $request->all();
 
-        dd($request);
         $idproduct = $this->ProductService->insert($list);
         $this->VariantService->insert($idproduct, $variant);
         $this->IamgeRepositories->inserImage($idproduct, $image);
-
-
-        return redirect()->route('product')->with('success', 'thêm thành công');
-
 
 
         return redirect()->route('product')->with('success', 'thêm thành công');
