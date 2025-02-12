@@ -12,14 +12,22 @@ class VariantService implements IVariantService
    }
    public function getAllproduct()
    {
+
    }
    public function Getpaginate()
    {
+      $list = $this->VariantRepositories->getall();
+      return $list;
    }
    public function insert($id, $data)
    {
          $list =$this->VariantRepositories->create($id, $data);
          return $list;
+   }
+   public function create($data){
+      $list = $this->VariantRepositories->CreateVariant($data);
+
+      return $list;
    }
 
    public function GetId($id)
@@ -29,6 +37,9 @@ class VariantService implements IVariantService
    }
    public function insertId($id, $data)
    {
+      // dd($id);
+      $this->VariantRepositories->updateVariant($id,$data);
+      return redirect()->route('variant.index')->with('cusses','sửa biến thể sản phẩm thành công');
    }
 
    public function delete($id)

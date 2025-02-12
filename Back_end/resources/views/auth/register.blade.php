@@ -111,7 +111,7 @@
 
                                     <div class="form-group">
                                         <label class="col-form-label">Email</label>
-                                        <input class="form-control" type="email" name="email" placeholder="Nhập email">
+                                        <input class="form-control" type="text" name="email" placeholder="Nhập email">
                                         @error('email')
                                             <p style="color: red;">{{ $message }}</p>
                                         @enderror
@@ -122,6 +122,16 @@
                                         <div class="form-input position-relative">
                                             <input class="form-control" type="password" name="password" placeholder="Nhập mật khẩu">
                                             @error('password')
+                                                <p style="color: red">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-form-label">Nhập lại mật khẩu</label>
+                                        <div class="form-input position-relative">
+                                            <input class="form-control" type="password" name="password_confirmation" placeholder="Nhập lại mật khẩu">
+                                            @error('password_confirmation')
                                                 <p style="color: red">{{ $message }}</p>
                                             @enderror
                                         </div>

@@ -27,6 +27,6 @@ class ProductVariants extends Model
         return $this->belongto(categories::class,'categories_id');
     }
     public function size(){
-        return $this->belongsTo(color::class,'size_id');
+        return $this->belongsTo(size::class,'size_id');
     }
 }

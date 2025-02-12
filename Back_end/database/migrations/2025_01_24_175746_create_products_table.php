@@ -24,6 +24,8 @@ return new class extends Migration
             $table->integer('views')->default(0);                    // Lượt xem
             $table->text('content')->nullable();                            // Nội dung
             $table->timestamps();
+            $table->softDeletes();
+            
         });
     }
 

@@ -45,11 +45,13 @@
                                             <td>
                                                 <div class="my-1">
                                                     <a href="{{ route('get.Product', $as->id) }}"
-                                                        class="btn btn-success">sửa</a>
+                                                        class="btn btn-success"><i class="fas fa-wrench"></i></a>
                                                 </div>
                                                 <div class="my-1">
-                                                    <form action="">
-                                                        <button class="btn btn-danger">xóa</button>
+                                                    <form action="{{route('delete.Product',$as->id)}}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
                                                     </form>
                                                 </div>
 
