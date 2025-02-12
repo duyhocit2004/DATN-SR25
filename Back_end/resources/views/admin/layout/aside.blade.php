@@ -4,11 +4,11 @@
         <ul class="sidebar-menu" id="simple-bar">
 
             <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
-                    <h6 class="">Quản lý thông tin TK </h6><i class=""></i>
+                    <h6 class="">Quản lý Tài khoản</h6><i class=""></i>
                 </a>
                 <ul class="sidebar-submenu">
                     <li> <a href="{{ route('users.index') }}">Danh sách</a></li>
-                    <li><a href="{{ route('users.create') }}">thêm tài khoản</a></li>
+                    <li><a href="{{ route('users.create') }}">Thêm tài khoản</a></li>
                 </ul>
             </li>
 
@@ -17,7 +17,7 @@
                 </a>
                 <ul class="sidebar-submenu">
                     <li> <a href="{{ route('color') }}">Danh sách</a></li>
-                    <li><a href="{{ route('createcolor') }}">thêm màu</a></li>
+                    <li><a href="{{ route('createcolor') }}">Thêm màu sắc</a></li>
                 </ul>
             </li>
 
@@ -51,9 +51,9 @@
                     <h6 class="">Quản lý sản phẩm</h6><i class=""></i>
                 </a>
                 <ul class="sidebar-submenu">
-                    <li> <a href="{{ route('product') }}">danh sách </a></li>
-                    <li><a href="{{ route('createProduct') }}">thêm sản phẩm</a></li>
-                    <li><a href="{{ route('variant.index') }}">biến thể</a></li>
+                    <li> <a href="{{ route('product') }}">Danh sách </a></li>
+                    <li><a href="{{ route('createProduct') }}">Thêm sản phẩm</a></li>
+                    <li><a href="{{ route('variant.index') }}">Biến thể</a></li>
 
                     <li> <a href="{{ route('product') }}">Danh sách sản phẩm </a></li>
                     <li><a href="{{ route('createProduct') }}">Thêm sản phẩm</a></li>
