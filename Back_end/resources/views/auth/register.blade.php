@@ -63,16 +63,17 @@
                 <div class="col-12 p-0">
                     <div class="login-card login-dark">
                         <div>
-                            <div>
+                            {{-- Ảnh Logo --}}
+                            {{-- <div>
                                 <a class="logo" href="index.html"><img class="img-fluid for-light m-auto"
-                                        src="../assets/images/logo/logo1.png" alt="looginpage"><img
-                                        class="img-fluid for-dark" src="../assets/images/logo/logo-dark.png"
-                                        alt="logo"></a>
-                            </div>
+                                    src="../assets/images/logo/logo1.png" alt="looginpage"><img
+                                    class="img-fluid for-dark" src="../assets/images/logo/logo-dark.png" alt="logo"></a>
+                            </div> --}}
+
                             <div class="login-main">
                                 <form class="theme-form" action=" {{ route('post-register') }}" method="POST">
                                     @csrf
-                                    <h2 class="text-center">Đăng kí</h2>
+                                    <h2 class="text-center">Đăng kí tài khoản</h2>
 
                                     <div class="form-group">
                                         <label class="col-form-label">Họ tên</label>
@@ -98,7 +99,7 @@
                                         <label class="col-form-label">Vai trò</label>
                                         <div class="form-input position-relative">
                                             <select class="form-control" name="role">
-                                                <option value="selected">--Chọn vai trò--</option>
+                                                {{-- <option value="selected">--Chọn vai trò--</option> --}}
                                                 <option value="Khách hàng">Khách hàng</option>
                                                 <option value="Quản lý">Quản lý</option>
                                             </select>
@@ -131,7 +132,7 @@
                                             <button class="btn btn-primary btn-block w-100" type="submit">Đăng kí</button>
                                         </div>
                                     </div>
-                                    
+
                                 </form>
                             </div>
                         </div>
