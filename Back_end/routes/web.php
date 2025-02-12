@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\admin\colorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\admin\VariantController;
 
 /*
@@ -48,6 +49,13 @@ Route::prefix('admmin')->middleware('admin')->group(function(){
 
 });
 
+// route size
+Route::get('sizes', [SizeController::class, 'index'])->name('sizes.index');
+Route::post('sizes', [SizeController::class, 'store'])->name('sizes.store');
+Route::get('sizes/create', [SizeController::class, 'create'])->name('sizes.create');
+Route::get('sizes/{id}/edit', [SizeController::class, 'edit'])->name('sizes.edit');
+Route::put('sizes/{id}', [SizeController::class, 'update'])->name('sizes.update');
+Route::delete('sizes/{id}', [SizeController::class, 'destroy'])->name('sizes.destroy');
 
 Route::get('users', [UserController::class, 'index'])->name('users.index');
 Route::post('users', [UserController::class, 'store'])->name('users.store');

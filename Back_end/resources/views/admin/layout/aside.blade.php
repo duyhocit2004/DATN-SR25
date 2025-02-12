@@ -21,6 +21,15 @@
                 </ul>
             </li>
 
+            <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+                    <h6 class="">Quản lý size</h6><i class=""></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li><a href="{{ route('sizes.index') }}">Danh sách</a></li>
+                    <li><a href="{{ route('sizes.create') }}">Thêm size</a></li>
+                </ul>
+            </li>
+
         <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
             <h6 class=""><i class="fas fa-box"></i> Quản lý sản phẩm </h6></a>
           <ul class="sidebar-submenu">
@@ -32,6 +41,7 @@
 
           </ul>
         </li>
+
 
         </ul>
     </div>
