@@ -128,7 +128,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="col-form-label">Nhập lại mật khẩu</label>
+                                        <label class="col-form-label">Xác nhận mật khẩu</label>
                                         <div class="form-input position-relative">
                                             <input class="form-control" type="password" name="password_confirmation" placeholder="Nhập lại mật khẩu">
                                             @error('password_confirmation')
