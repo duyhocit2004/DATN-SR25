@@ -22,12 +22,12 @@
                                 <thead>
                                     <tr class="border-bottom-secondary border-top-0">
                                         <th scope="col">STT</th>
-                                        <th scope="col">hình</th>
-                                        <th scope="col">tên sản phẩm</th>
-                                        <th scope="col">số lượng trong kho</th>
-                                        <th scope="col">giá sản phẩm</th>
-                                        <th scope="col">giá giảm</th>
-                                        <th scope="col">thao tác</th>
+                                        <th scope="col">Ảnh</th>
+                                        <th scope="col">Tên sản phẩm</th>
+                                        <th scope="col">Số lượng trong kho</th>
+                                        <th scope="col">Giá sản phẩm</th>
+                                        <th scope="col">Giảm giá</th>
+                                        <th scope="col">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -57,7 +57,6 @@
                                             </td>
                                         </tr>
                                     @endforeach
-
                                 </tbody>
                             </table>
                             {{ $list->links() }}
