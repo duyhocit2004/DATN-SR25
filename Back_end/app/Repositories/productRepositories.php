@@ -65,7 +65,7 @@ class ProductRepositories {
          $id->update([
             'categories_id' => $data['categories_id'], // Sử dụng mảng thay vì đối tượng
             'name_product' => $data['product'],
-            'image'=>$filedata,
+            'image'=>$filedata, 
             'base_stock' => $data['quanlity'], // Vẫn sử dụng 'quanlity'
             'price_regular' => $data['price_regular'],
             'price_sale' => $data['price_sale'],
@@ -76,5 +76,19 @@ class ProductRepositories {
         
         return $id ;
     }
+    public function trashedProducts(){
+        $listDelete = products::onlyTrashed()->paginate(8);
+        return $listDelete;
+    }
+    public function restoreProduct($id){
+        $restoreDelete = products::withTrashed()->findOrFail($id);
+        $restoreDelete->restore();
+        return $restoreDelete;
+      }
+      public function forceDelete($id){
+        $forceDelete = products::withTrashed()->findOrFail($id);
+        $forceDelete->forceDelete();
+        return $forceDelete;
+      }
 }
 

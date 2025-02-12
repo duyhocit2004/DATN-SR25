@@ -29,7 +29,11 @@ route::get('createProduct',[ProductController::class,'create'])->name('createPro
 route::post('postProduct',[ProductController::class,'Store'])->name('postProduct');
 route::get('edit/{id}/Product',[ProductController::class,'edit'])->name('get.Product');
 route::put('update/{id}/Product',[ProductController::class,'update'])->name('update.Product');
-route::delete('delete/{id}/Product',[ProductController::class,'delete'])->name('delete.Product');
+route::delete('delete/{id}/Product',[ProductController::class,'destroy'])->name('delete.Product');
+//softDelete product
+route::get('Listdelete/Product',[ProductController::class,'trashedProducts'])->name('ListDelete.Product');
+route::get('restoneDelete/{id}/Product',[ProductController::class,'restoreProduct'])->name('restoreProduct.Product');
+route::delete('forceDelete/{id}/Product',[ProductController::class,'forceDelete'])->name('forceDelete.Product');
 
 
 // route màu
@@ -53,6 +57,12 @@ Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update
 Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
 Route::get('variant',[VariantController::class,'index'])->name('variant.index');
+Route::get('get\{id}\variant',[VariantController::class,'edit'])->name('variant.listid');
+Route::get('create\{id}\variant',[VariantController::class,'create'])->name('variant.create');
+Route::get('show\variant',[VariantController::class,'show'])->name('variant.show');
+Route::post('store\variant',[VariantController::class,'store'])->name('variant.store');
+Route::put('update\{id}\variant',[VariantController::class,'update'])->name('variant.update');
+Route::delete('delete\{id}\variant',[VariantController::class,'destroy'])->name('variant.delete');
 
 
 

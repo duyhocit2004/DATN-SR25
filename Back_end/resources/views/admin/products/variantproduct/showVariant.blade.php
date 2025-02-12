@@ -43,17 +43,9 @@
                                             <td>{{ number_format($as->price_sale, 0, '.', ',') }}</td>
                                             <td>
                                                 <div class="my-1">
-                                                    <a href="{{ route('get.Product', $as->id) }}"
-                                                        class="btn btn-success"><i class="fas fa-wrench"></i></a>
+                                                    <a href="{{ route('variant.create', $as->id) }}"
+                                                        class="btn btn-success">thêm biến thể</a>
                                                 </div>
-                                                <div class="my-1">
-                                                    <form action="{{route('delete.Product',$as->id)}}" method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                                    </form>
-                                                </div>
-
                                             </td>
                                         </tr>
                                     @endforeach
