@@ -3,26 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ProductsResource;
-use App\Models\products;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Services\product\ProductService;
 
-class ApiProductController extends Controller
+class ApiUserController extends Controller
 {
-    
-    public $ProductService ;
-    public function __construct(ProductService $ProductService ){
-        $this->ProductService = $ProductService;
-    }
+    /**
+     * Display a listing of the resource.
+     */
+
     public function index()
     {
-        // $products = products::query()->get();
-         // return response()->json($products);
-         
-        $products = $this->ProductService->getAllproduct();
-        return ProductsResource::collection($products);
-        
+        $products = User::query()->get();
+         return response()->json($products);
     }
 
     /**

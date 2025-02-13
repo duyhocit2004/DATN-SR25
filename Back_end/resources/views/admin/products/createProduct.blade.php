@@ -104,7 +104,11 @@
                 <h3>album ảnh</h3>
               </div>
               <div id="imagediv">
-
+                <div class="mb-3">
+                  <input class="form-control" onchange="onlickImage()"  id="image_product" name="images[]" multiple  type="file" accept="image/*">
+                  <div id="preview_0" >
+                    <img src="" class="previewContainer"  alt="">
+                </div>
               </div>
               <div class="d-flex justify-content-center align-items-center">
                 <div id="button" class="btn btn-secondary mx-auto">thêm ảnh</div>
@@ -153,8 +157,21 @@
       console.error(error);
     })
     // .CKEDITOR.config.autoParagraph = false
+length
 
-
+    function onlickImage(){
+      var inputImage = document.getElementById('image_product');
+      inputImage.addEventListener('changer',function(e){
+        var targetInput = e.target.files;
+        var previewIimage = document.getElementById('preview');
+        if(targetInput.input && targetInput.files){
+          for(var i ; i < targetInput.length ; i++){
+            
+          }
+        }
+      })
+    }
+  // thêm ảnh
   const imagediv = document.getElementById('imagediv')
   var lengimage = 0
   const lick = document.getElementById('button');

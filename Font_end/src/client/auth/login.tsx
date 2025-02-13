@@ -5,10 +5,10 @@ import { toast } from "react-toastify";
 
 const fetchUserRole = async (token: string) => {
   try {
-    const response = await axios.get("http://127.0.0.1:8000/api/user", {
+    const response = await axios.get("http://127.0.0.1:8000/api/users", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return response.data.role_id;
+    return response.data.role;
   } catch (error) {
     console.error("Không thể lấy thông tin người dùng:", error);
     throw error;
@@ -53,9 +53,9 @@ const Login = () => {
 
       const roleId = await fetchUserRole(token);
 
-      if (roleId === 1) {
+      if (roleId === 'Khách hàng') {
         navigate("/admin/dashboard");
-      } else if (roleId === 2) {
+      } else if (roleId === 'Quản lý') {
         navigate("/");
       } else {
         toast.error("Vai trò không hợp lệ.");

@@ -146,4 +146,6 @@ class ProductController extends Controller
         return redirect()->route('ListDelete.Product')->with('successs','xóa thành công');
     }
 
+    
+
 }

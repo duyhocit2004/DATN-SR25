@@ -3,26 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ProductsResource;
-use App\Models\products;
 use Illuminate\Http\Request;
-use App\Services\product\ProductService;
+use Illuminate\Support\Facades\Auth;
 
-class ApiProductController extends Controller
+class ApiAuthController extends Controller
 {
-    
-    public $ProductService ;
-    public function __construct(ProductService $ProductService ){
-        $this->ProductService = $ProductService;
-    }
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        // $products = products::query()->get();
-         // return response()->json($products);
-         
-        $products = $this->ProductService->getAllproduct();
-        return ProductsResource::collection($products);
-        
+        //
     }
 
     /**
@@ -30,7 +21,11 @@ class ApiProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = $request->all();
+
+        if(Auth::attempt($user)){
+            
+        }
     }
 
     /**
