@@ -53,7 +53,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'phone_number' => 'required|regex:/^0[0-9]{9,10}$/',
             'password' => 'required|min:6',
-            'password_confirmation' => 'required|confirmed'
+            'password_confirmation' => 'required'
         ], [
             'name.required' => 'Tên không được bỏ trống',
             'phone_number.required' => 'Số điện thoại không được bỏ trống',
