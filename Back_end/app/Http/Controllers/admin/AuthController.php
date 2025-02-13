@@ -22,12 +22,11 @@ class AuthController extends Controller
     {
         //Validate đăng nhập
         $request->validate([
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email',
             'password' => 'required|min:6',
         ], [
             'email.required' => 'Vui lòng nhập email',
             'email.email' => 'Email không đúng định dạng',
-            'email.unique' => 'Email đã tồn tại vui lòng nhập email khác',
             'password.required' => 'Vui lòng nhập mật khẩu',
             'password.unique' => 'Mật khẩu phải nhiều hơn 6 kí tự',
         ]);
@@ -54,7 +53,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'phone_number' => 'required|regex:/^0[0-9]{9,10}$/',
             'password' => 'required|min:6',
-            'password_confirmation' => 'required|confirmed'
+            'password_confirmation' => 'required'
         ], [
             'name.required' => 'Tên không được bỏ trống',
             'phone_number.required' => 'Số điện thoại không được bỏ trống',
@@ -63,8 +62,8 @@ class AuthController extends Controller
             'email.unique' => 'Email này đã tồn tại, vui lòng chọn email khác.',
             'password.required' => 'Vui lòng nhập mật khẩu',
             'password.min' => 'Mật khẩu phải nhiều hơn 6 kí tự',
-            'password_confirmation.required' => 'Vui lòng nhập lại mật khẩu',
-            'password_confirmation.confirmed' => 'Xác nhận mật khẩu sai.',
+            'password_confirmation.required' => 'Vui lòng xác nhận mật khẩu',
+            // 'password_confirmation.confirmed' => 'Xác nhận mật khẩu sai.',
         ]);
 
         $request->merge(['password' => Hash::make($request->password)]);
