@@ -80,7 +80,7 @@ route::post('post-register', [AuthController::class, 'postRegister'])->name("pos
 // Route đăng nhập
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/', function () {
-        return view('/');
+        return view('admin.index');
     });
 });
 route::get('login', [AuthController::class, 'formLogin'])->name("login");
