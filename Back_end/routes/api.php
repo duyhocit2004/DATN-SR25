@@ -16,15 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-<<<<<<< HEAD
 Route::middleware('auth:sanctum')->group( function (){
 Route::get('/users', [ApiUserController::class, 'user']);
 Route::delete('/logout',[ApiAuthController::class,'logout']);
 Route::get('/user',[ApiAuthController::class,'user']);
-=======
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-
->>>>>>> 83d9f00815bcb52730ca1adebd4a2f612c445fed
 });
 
 Route::get('products', [ApiProductController::class, 'index']);
