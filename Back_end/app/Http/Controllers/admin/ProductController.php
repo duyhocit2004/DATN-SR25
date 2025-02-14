@@ -107,7 +107,7 @@ class ProductController extends Controller
         $categori = $this->categoryService->getAll();
         
         $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
-        // dd($iamge);
+        // dd($iamge);  
         return view('admin.products.editProduct', compact('idproduct', 'categori', 'iamge'));
     }
 

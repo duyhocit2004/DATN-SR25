@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\products;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Response;
 
 class ApiUserController extends Controller
 {
@@ -14,8 +16,9 @@ class ApiUserController extends Controller
 
     public function index()
     {
-        $products = User::query()->get();
-         return response()->json($products);
+        $list = products::query();  
+        $list->paginate(1);
+        return Response()->json($list);
     }
 
     /**
@@ -23,7 +26,7 @@ class ApiUserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**

@@ -1,7 +1,20 @@
 @extends('admin.index')
 @section('css')
-<style>
-  #ss {
+<style> 
+.previewContainer {
+    max-width:250px; /* You can adjust this size */
+    max-height: 250x; /* You can adjust this size */
+    margin: 5px; /* Space between images */
+}
+.previewContainer1 {
+  max-width: 100px;
+  max-height: 100px;
+  margin: 5px;
+}
+#previewImage {
+  display: flex;
+  flex-wrap: wrap;
+}  #ss {
     display: flex;
   }
 </style>
@@ -12,7 +25,7 @@
     <form action="{{route('postProduct')}}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="container" id="ss">
-        <div class="col-md-7">
+        <div class="col-md-8">
           <div class="card">
             <div class="card-header card-no-border">
               <h3>Thêm sản phẩm</h3>
@@ -81,7 +94,7 @@
           </div>
         </div>
         {{-- thêm ảnh --}}
-        <div class="col-md-5">
+        <div class="col-md-4">
 
 
           <div class="card-body basic-form">
@@ -94,8 +107,8 @@
                   <label class="form-label" for="file">ảnh</label>
                   <input class="form-control" onchange="previewImage(this, 0)" id="file" name="file" type="file" placeholder="200">
                 </div>
-                <div >
-                  <img src="" class="previewContainer" id="preview_0"  width="100px" alt="">
+                <div class="d-flex justify-content-center align-items-center" >
+                  <img src="" class="previewContainer" style ="max-width:250px;max-height: 250x;" id="preview_0"  width="100px" alt="">
               </div>
               </div>
             </div>
@@ -105,14 +118,15 @@
               </div>
               <div id="imagediv">
                 <div class="mb-3">
-                  <input class="form-control" onchange="onlickImage()"  id="image_product" name="images[]" multiple  type="file" accept="image/*">
-                  <div id="preview_0" >
-                    <img src="" class="previewContainer"  alt="">
+                  <input class="form-control"  id="image_product" onchange="onlickImage()" name="images[]" multiple  type="file" accept="image/*">
+                  <div id="previewImage" >
+
+                  </div>
                 </div>
               </div>
-              <div class="d-flex justify-content-center align-items-center">
+              {{-- <div class="d-flex justify-content-center align-items-center">
                 <div id="button" class="btn btn-secondary mx-auto">thêm ảnh</div>
-              </div>
+              </div> --}}
             </div>
           </div>
         </div>
@@ -122,7 +136,7 @@
 
       {{-- biến thể --}}
       <div class="col" id="divContainer">
-
+        
       </div>
       <div class="d-flex justify-content-center  align-items-center">
         <button class="btn btn-success mx-1">thêm sản phẩm</button>
@@ -160,36 +174,45 @@
 length
 
     function onlickImage(){
-      var inputImage = document.getElementById('image_product');
-      inputImage.addEventListener('changer',function(e){
-        var targetInput = e.target.files;
-        var previewIimage = document.getElementById('preview');
-        if(targetInput.input && targetInput.files){
-          for(var i ; i < targetInput.length ; i++){
-            
-          }
-        }
-      })
+      var previewContainer  = document.getElementById('previewImage');
+      previewContainer.innerHTML = '';
+      const fileimage = document.getElementById('image_product').files;
+      console.log(fileimage)
+
+      for (let i = 0; i < fileimage.length; i++) {
+                const file = fileimage[i];
+                const reader = new FileReader();
+                console.log(file)
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    
+                    img.classList.add('previewContainer1');
+                    previewContainer.appendChild(img);
+                };
+
+                reader.readAsDataURL(file);
+            }
     }
   // thêm ảnh
-  const imagediv = document.getElementById('imagediv')
-  var lengimage = 0
-  const lick = document.getElementById('button');
-  lick.addEventListener('click', () => {
-    // console.log('hi');
-    if (lengimage < 4) {
-      lengimage++;
-      const addimage = `
-         <div class="mb-3">
-              <input class="form-control"  id="image_product_${lengimage}" name="images[]"  type="file" accept="image/*">
-              <div >
-                <img src="" class="previewContainer" id="preview_0"  alt="">
-            </div>
-        `
-      imagediv.insertAdjacentHTML('beforeend', addimage);
+  // const imagediv = document.getElementById('imagediv')
+  // var lengimage = 0
+  // const lick = document.getElementById('button');
+  // lick.addEventListener('click', () => {
+  //   // console.log('hi');
+  //   if (lengimage < 4) {
+  //     lengimage++;
+  //     const addimage = `
+  //        <div class="mb-3">
+  //             <input class="form-control"  id="image_product_${lengimage}" name="images[]"  type="file" accept="image/*">
+  //             <div >
+  //               <img src="" class="previewContainer" id="preview_0"  alt="">
+  //           </div>
+  //       `
+  //     imagediv.insertAdjacentHTML('beforeend', addimage);
       
-    }
-  })
+  //   }
+  // })
  
   function previewImage(input, rowIndex) {
     if (input.files && input.files[0]) {
