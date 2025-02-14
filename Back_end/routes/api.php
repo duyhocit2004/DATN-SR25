@@ -17,10 +17,12 @@ use App\Http\Controllers\Api\ApiProductController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    
+Route::middleware('auth:sanctum')->group( function (){
+Route::get('/users', [ApiUserController::class, 'user']);
+Route::delete('/logout',[ApiAuthController::class,'logout']);
+Route::get('/user',[ApiAuthController::class,'user']);
 });
+
 Route::get('products', [ApiProductController::class, 'index']);
-Route::get('users', [ApiUserController::class, 'index']);
 Route::post('login',[ApiAuthController::class,'login']);
 Route::post('register',[ApiAuthController::class,'register']);
