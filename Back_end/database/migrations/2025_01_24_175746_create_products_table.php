@@ -17,13 +17,15 @@ return new class extends Migration
             $table->string('name_product');
             $table->string('SKU');
             $table->string('image')->nullable();
-            $table->unsignedBigInteger('base_stock')->default(0);    // Số lượng tồn kho           
+            $table->unsignedBigInteger('base_stock')->default(0);    // Số lượng tồn kho
             $table->unsignedBigInteger('price_regular');                    // Giá thường
             $table->unsignedBigInteger('price_sale')->nullable();           // Giá sale
             $table->string('description')->nullable();                      // Mô tả
             $table->integer('views')->default(0);                    // Lượt xem
             $table->text('content')->nullable();                            // Nội dung
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 

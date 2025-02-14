@@ -114,11 +114,7 @@
         </div>
         {{-- end thêm ảnh --}}
       </div>
-      <div class="mb-3">
-        <input class="form-control"  id="image_product_${lengimage}" name="images[]"  type="file" accept="image/*">
-        <div >
-          <img src="" class="previewContainer" id="preview_0"  alt="">
-      </div>
+      
 
       {{-- biến thể --}}
       <div class="col" id="divContainer">

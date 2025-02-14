@@ -10,4 +10,7 @@ interface IProductService {
     public function insertId($id,$data);
 
     public function delete($id);
+    public function trashedProducts();
+    public function restoreProduct($id);
+    public function forceDelete($id);
 }
