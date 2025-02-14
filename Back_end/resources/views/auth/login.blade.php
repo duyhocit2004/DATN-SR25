@@ -63,10 +63,12 @@
                 <div class="col-12 p-0">
                     <div class="login-card login-dark">
                         <div>
-                            <div><a class="logo" href="index.html"><img class="img-fluid for-light m-auto"
-                                        src="../assets/images/logo/logo1.png" alt="looginpage"><img class="img-fluid for-dark" src="../assets/images/logo/logo-dark.png" alt="logo"></a></div>
-                            <div class="login-main">
+                            {{-- Ảnh logo --}}
+                            {{-- <div><a class="logo" href="index.html"><img class="img-fluid for-light m-auto"
+                                    src="../assets/images/logo/logo1.png" alt="looginpage"><img class="img-fluid for-dark" src="../assets/images/logo/logo-dark.png" alt="logo"></a></div> --}}
 
+                            {{-- Form đăng nhập --}}
+                            <div class="login-main">
                                 <form class="theme-form" action="{{ route('post-login') }}" method="POST">
                                     @csrf
                                     <h2 class="text-center">Đăng nhập vào tài khoản</h2>
@@ -81,14 +83,18 @@
 
                                     <div class="form-group">
                                         <label class="col-form-label">Email</label>
-                                        <input class="form-control" type="email" name="email" required="" placeholder="Nhập email">
+                                        <input class="form-control" type="email" name="email" placeholder="Nhập email">
+                                        @error('email')
+                                            <p style="color: red">{{ $message }}</p>
+                                        @enderror
                                     </div>
 
                                     <div class="form-group">
                                         <label class="col-form-label">Mật khẩu</label>
                                         <div class="form-input position-relative">
-                                            <input class="form-control" id="pass" type="password" name="password" required="" placeholder="Nhập mật khẩu">
+                                            <input class="form-control" id="pass" type="password" name="password" placeholder="Nhập mật khẩu">
                                             <div class="show-hide"><span class="show" onclick="showPass()"></span></div>
+
                                             {{-- Show password --}}
                                             <script type="text/javascript">
                                             var x = true;
@@ -103,6 +109,9 @@
                                                 }
                                             </script>
                                         </div>
+                                            @error('password')
+                                                    <p style="color: red">{{ $message }}</p>
+                                            @enderror
                                     </div>
 
                                     <div class="form-group mb-0 checkbox-checked">
