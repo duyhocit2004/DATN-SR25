@@ -19,6 +19,7 @@
                     <div class="card">
                         <div class="table-responsive">
                             <table class="table">
+
                                 <thead>
                                     <tr class="border-bottom-secondary border-top-0">
                                         <th scope="col">STT</th>
@@ -30,8 +31,8 @@
                                         <th scope="col">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody>
 
+                                <tbody>
                                     @foreach ($list as $as)
                                         <tr class="border-bottom-success">
                                             <th scope="row"></th>
@@ -58,6 +59,7 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
+
                             </table>
                             {{ $list->links() }}
                         </div>
