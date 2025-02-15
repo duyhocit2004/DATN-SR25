@@ -103,7 +103,7 @@ class ProductController extends Controller
         $categori = $this->categoryService->getAll();
 
         $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
-        // dd($iamge);
+        // dd($iamge);  
         return view('admin.products.editProduct', compact('idproduct', 'categori', 'iamge'));
     }
 
@@ -144,4 +144,7 @@ class ProductController extends Controller
         $this->ProductService->forceDelete($id);
         return redirect()->route('ListDelete.Product')->with('successs', 'xóa thành công');
     }
+
+    
+
 }
