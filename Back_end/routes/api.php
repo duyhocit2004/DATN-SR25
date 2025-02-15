@@ -22,7 +22,7 @@ Route::delete('/logout',[ApiAuthController::class,'logout']);
 Route::get('/user',[ApiAuthController::class,'user']);
 });
 
-Route::get('products', [ApiProductController::class, 'index']);
+// Route::get('products', [ApiProductController::class, 'index']);
 Route::post('login',[ApiAuthController::class,'login']);
 Route::post('register',[ApiAuthController::class,'register']);
 

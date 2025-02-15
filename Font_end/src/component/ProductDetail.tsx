@@ -353,7 +353,7 @@ const ProductDetail = () => {
 												<a className="star-5" href="#">5</a>
 											</span>
 
-                                            <select name="rating" id="rating" required="" style={{display: "none"}}>
+                                            <select name="rating" id="rating" required style={{display: "none"}}>
 												<option value="">Rate…</option>
 												<option value="5">Perfect</option>
 												<option value="4">Good</option>
@@ -365,7 +365,7 @@ const ProductDetail = () => {
 
                                         <div className="form-group">
                                             <label>Your review <span className="required">*</span></label>
-                                            <textarea cols="5" rows="6" className="form-control form-control-sm"></textarea>
+                                            <textarea cols={5} rows={6} className="form-control form-control-sm"></textarea>
                                         </div>
 
                                         <div className="row">
