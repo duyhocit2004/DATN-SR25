@@ -2,24 +2,53 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Services\Categories\CategoryService;
+use App\Services\size\sizeService;
+use App\Services\color\ColorService;
+use App\Services\product\VariantService;
 use App\Models\products;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Repositories\IamgeRepositories;
+
 use Illuminate\Database\QueryException;
+use App\Services\product\ProductService;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * 
-     */
-   
+    public $ProductService;
+    public $categoryService;
+    public $colorService;
+    public $sizeService;
+    public $VariantService;
+    public $IamgeRepositories;
+
+    public function __construct(
+        ProductService $ProductService,
+        CategoryService $categoryService,
+        sizeService $sizeService,
+        ColorService $colorService,
+        VariantService $VariantService,
+        IamgeRepositories $IamgeRepositories,
+    ) {
+
+        $this->ProductService = $ProductService;
+        $this->sizeService = $sizeService;
+        $this->colorService = $colorService;
+        $this->categoryService = $categoryService;
+        $this->VariantService = $VariantService;
+        $this->IamgeRepositories = $IamgeRepositories;
+    }
+
     public function index()
     {
-        $list = products::get();    
-        
-        // dd($list);
-        return view('admin.products.listProduct',compact('list'));
+        // $list = $this->ProductService->getAllProduct();
+        // $phone = products::find(1)->categories;
+        // dd($phone);
+
+        $list = $this->ProductService->Getpaginate();
+        // $imageproduct =  $this->ProductService->getoneimge($list->id);
+        return view('admin.products.listProduct', compact('list'));
     }
 
     /**
@@ -27,7 +56,11 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        $categori = $this->categoryService->getAll();
+        $color = $this->colorService->getAll();
+        $size = $this->sizeService->Getall();
+
+        return view('admin.products.createProduct', compact('categori', ['color', 'size']));
     }
 
     /**
@@ -35,7 +68,22 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $variant = $request->input('variants');
+
+
+        $image = $request->file('images');
+
+        $list = $request->all();
+
+        $idproduct = $this->ProductService->insert($list);
+        $this->VariantService->insert($idproduct, $variant);
+        if ($request->hasFile('images')) {
+            $this->IamgeRepositories->inserImage($idproduct, $image);
+        }
+
+
+
+        return redirect()->route('product')->with('success', 'thêm thành công');
     }
 
     /**
@@ -51,7 +99,12 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $idproduct = $this->ProductService->GetId($id);
+        $categori = $this->categoryService->getAll();
+
+        $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
+        // dd($iamge);  
+        return view('admin.products.editProduct', compact('idproduct', 'categori', 'iamge'));
     }
 
     /**
@@ -59,7 +112,11 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $idProduct = $id;
+        // dd($request->all());
+        $list = $request->except('_token', '_method');
+        $this->ProductService->insertId($idProduct, $list);
+        return redirect()->route('product')->with('success', 'thêm thành công');
     }
 
     /**
@@ -67,6 +124,27 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $idProduct = products::findOrFail($id);
+        $idProduct->delete();
+        return redirect()->route('product')->with('success', 'xóa sản phẩm thành công');
     }
+
+    public function trashedProducts()
+    {
+        $product = $this->ProductService->trashedProducts();
+        return view('admin.products.softDelete.listDelete', compact('product'));
+    }
+    public function restoreProduct(string $id)
+    {
+        $this->ProductService->restoreProduct($id);
+        return redirect()->route('ListDelete.Product')->with('successs', 'xóa thành công');
+    }
+    public function forceProduct(string $id)
+    {
+        $this->ProductService->forceDelete($id);
+        return redirect()->route('ListDelete.Product')->with('successs', 'xóa thành công');
+    }
+
+    
+
 }

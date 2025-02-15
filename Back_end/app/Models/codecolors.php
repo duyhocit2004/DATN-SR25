@@ -13,4 +13,7 @@ class codecolors extends Model
         'colors_id',
         'CodeColor'
     ];
+    public function user(){
+        return $this->belongsTo(color::class);
+    }
 }

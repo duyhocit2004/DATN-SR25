@@ -14,6 +14,6 @@ class categories extends Model
         'type'
     ];
     public function product (){
-        return $this->hasOne(products::class);
+        return $this->hasOne(products::class,'categories_id');
     }
 }
