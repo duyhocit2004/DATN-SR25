@@ -27609,7 +27609,11 @@ input::-webkit-inner-spin-button {
   background: var(--gray-700);
   transition: 0.5s all;
 }
+ul{
+  list-style-type: none;
+}
 .page-sidebar .sidebar-link {
+  /* list-style-type: none; */
   font-weight: 500;
   padding: 12px 20px;
   border-radius: 11px;

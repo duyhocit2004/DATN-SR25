@@ -5,7 +5,7 @@
             <div class="page-title">
                 <div class="row">
                     <div class="col-sm-6 col-12">
-                        <h2>Quản Lý Sản Phẩm</h2>
+                        <h2>Sản phẩm đã xóa</h2>
                     </div>
                 </div>
             </div>
@@ -19,21 +19,20 @@
                     <div class="card">
                         <div class="table-responsive">
                             <table class="table">
-
                                 <thead>
                                     <tr class="border-bottom-secondary border-top-0">
                                         <th scope="col">STT</th>
-                                        <th scope="col">Ảnh</th>
-                                        <th scope="col">Tên sản phẩm</th>
-                                        <th scope="col">Số lượng trong kho</th>
-                                        <th scope="col">Giá sản phẩm</th>
-                                        <th scope="col">Giảm giá</th>
-                                        <th scope="col">Thao tác</th>
+                                        <th scope="col">hình</th>
+                                        <th scope="col">tên sản phẩm</th>
+                                        <th scope="col">số lượng trong kho</th>
+                                        <th scope="col">giá sản phẩm</th>
+                                        <th scope="col">giá giảm</th>
+                                        <th scope="col">thao tác</th>
                                     </tr>
                                 </thead>
-
                                 <tbody>
-                                    @foreach ($list as $as)
+
+                                    @foreach ($product as $as)
                                         <tr class="border-bottom-success">
                                             <th scope="row"></th>
                                             <td><img class="img-30 me-2" src="{{ Storage::url($as->image) }}"
@@ -44,11 +43,11 @@
                                             <td>{{ number_format($as->price_sale, 0, '.', ',') }}</td>
                                             <td>
                                                 <div class="my-1">
-                                                    <a href="{{ route('get.Product', $as->id) }}"
-                                                        class="btn btn-success"><i class="fas fa-wrench"></i></a>
+                                                    <a href="{{ route('restoreProduct.Product', $as->id) }}"
+                                                        class="btn btn-success"><i class="fas fa-trash-restore"></i></a>
                                                 </div>
                                                 <div class="my-1">
-                                                    <form action="{{route('delete.Product',$as->id)}}" method="POST">
+                                                    <form action="{{route('forceDelete.Product',$as->id)}}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
@@ -58,10 +57,10 @@
                                             </td>
                                         </tr>
                                     @endforeach
-                                </tbody>
 
+                                </tbody>
                             </table>
-                            {{ $list->links() }}
+                            {{ $product->links() }}
                         </div>
                     </div>
                 </div>

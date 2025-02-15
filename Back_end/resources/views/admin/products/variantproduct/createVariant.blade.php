@@ -111,16 +111,16 @@
         <h3>biến thể</h3>
     </div>
     <div class="editVariant container">
-        <form action="{{route('variant.update', $listVariant->id)}}" method="POST">
+        <form action="{{route('variant.store')}}" method="POST">
             @csrf
-            @method('PUT')
 
             <div class="container" style="display:flex;">
+                <input type="text" name="product_id" value="{{$product->id}}" hidden>
                 <div class="col my-1">
                     <label for="variant" class="form-label"> màu</label>
                     <select id="variant" class="form-control" name="color_id" id="category">
                         @foreach ($color as $as)
-                            <option value="{{$as->id}}" {{$listVariant['size_id'] == $as->id ? 'selected' : ''}}>{{$as->name}}
+                            <option value="{{$as->id}}" >{{$as->name}}
                             </option>
                         @endforeach
                     </select>
@@ -129,26 +129,26 @@
                     <label for="variant" class="form-label"> kích cỡ</label>
                     <select id="variant" class="form-control" name="size_id" id="category">
                         @foreach ($size as $as)
-                            <option value="{{$as->id}}" {{$listVariant['color_id'] == $as->id ? 'selected' : ''}}>{{$as->name}}
+                            <option value="{{$as->id}}" >{{$as->name}}
                             </option>
                         @endforeach
                     </select>
                 </div>
                 <div class="col my-1" id="variant1">
                     <label for="variant" class="form-label card-border"> số lượng</label>
-                    <input type="text" id="variant" name="quanlity" value="{{$listVariant->quanlity}}" 
+                    <input type="text" id="variant" name="quanlity"  placeholder="2002"
                         class="form-control">
                 </div>
                 <div class="col my-1" id="variant1">
                     <label for="variant" class="form-label card-border"> giá</label>
-                    <input type="text" id="variant" name="price" value="{{$listVariant->price}}"
+                    <input type="text" id="variant" name="price" placeholder="20000"
                         class="form-control">
                 </div>
             </div>
             <div class=" my-2 d-flex justify-content-center  align-items-center">
                 <a class="btn btn-primary" href="{{route('variant.index')}}">quay lại</a> 
                 <button type="reset" class="btn btn-danger mx-1">reset</button>
-                <button class="btn btn-success mx-1">sửa</button>
+                <button class="btn btn-success mx-1">+ Thêm</button>
               </div>
 
         </form>

@@ -2,27 +2,65 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Services\Categories\CategoryService;
+use App\Services\size\sizeService;
+use App\Services\color\ColorService;
+use App\Services\product\VariantService;
 use App\Http\Controllers\Controller;
+use App\Repositories\IamgeRepositories;
+use App\Services\product\ProductService;
+
 use App\Models\products;
+use App\Models\ProductVariants;
 use Illuminate\Http\Request;
 
 class VariantController extends Controller
 {
+    public $ProductService;
+    public $categoryService;
+    public $colorService;
+    public $sizeService;
+    public $VariantService;
+    public $IamgeRepositories;
+
+    public function __construct(
+        ProductService $ProductService,
+        CategoryService $categoryService,
+        sizeService $sizeService,
+        ColorService $colorService,
+        VariantService $VariantService,
+        IamgeRepositories $IamgeRepositories,
+    ) {
+
+        $this->ProductService = $ProductService;
+        $this->sizeService = $sizeService;
+        $this->colorService = $colorService;
+        $this->categoryService = $categoryService;
+        $this->VariantService = $VariantService;
+        $this->IamgeRepositories = $IamgeRepositories;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $list = products::paginate(5);
+        // $list = $this->VariantService->Getpaginate();
+        $list = ProductVariants::paginate(9);
+
         return view('admin.products.variantproduct.listVariant',compact('list'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(string $id)
     {
-        //
+        $product = $this->ProductService->GetId($id);
+        // dd($product);
+        $color = $this->colorService->getAll();
+        $size = $this->sizeService->Getall();
+        return view('admin.products.variantproduct.createVariant',compact('product','color','size'));
     }
 
     /**
@@ -30,15 +68,21 @@ class VariantController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        $data = $request->all();
+        $this->VariantService->create($data);
+        return redirect()->route('variant.index')->with('cusses','thêm biến thể sản phẩm thành công');
+      
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
-        //
+        $list = $this->ProductService->Getpaginate();
+        // $imageproduct =  $this->ProductService->getoneimge($list->id);
+        return view('admin.products.variantproduct.showVariant', compact('list'));
     }
 
     /**
@@ -46,7 +90,16 @@ class VariantController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $listVariant = ProductVariants::findOrFail($id);
+
+        // lấy info sản phẩm
+        $idproduct = $listVariant->product_id;
+        $product = $this->ProductService->GetId($idproduct);
+        // dd($product);
+        $color = $this->colorService->getAll();
+        $size = $this->sizeService->Getall();
+
+        return view('admin.products.variantproduct.editVariant',compact('product','listVariant','color','size'));
     }
 
     /**
@@ -54,7 +107,9 @@ class VariantController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $listVariant = $request->all();
+        $variant = $this->VariantService->insertId($id, $listVariant);
+        return $variant;
     }
 
     /**
@@ -62,6 +117,9 @@ class VariantController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $idVariant = ProductVariants::findOrFail($id);
+        $idVariant->delete();
+        return redirect()->route('variant.index')->with('cusses','biến thể được Xóa thành công');
+      
     }
 }
