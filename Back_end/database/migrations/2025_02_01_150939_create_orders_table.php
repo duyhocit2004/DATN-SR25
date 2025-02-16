@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->nullable()->constrained()->onDelete('cascade');
             $table->string('order_code');
             $table->double('shipping_fee')->nullable(); //phí vận chuyển 
-            $table->foreignId('shipper_idid')->constrained('shipper')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('shipper_id')->constrained('shipper')->nullable()->constrained()->onDelete('cascade');
             $table->foreignIdFor(Voucher::class)->nullable()->constrained()->onDelete('cascade');
             $table->dateTime('date');
             $table->string('user_name');

@@ -34,10 +34,6 @@
                     <h6 class=""><i class="fas fa-box"></i>Quản lý sản phẩm</h6>
                 </a>
                 <ul class="sidebar-submenu">
-                    <li> <a href="{{ route('product') }}">Danh sách</a></li>
-                    <li><a href="{{ route('createProduct') }}">Thêm sản phẩm</a></li>
-                    <li><a href="{{ route('variant.index') }}">Biến thể</a></li>
-                    <li> <a href="{{ route('product') }}">Danh sách sản phẩm </a></li>
                     <li> <a href="{{ route('product') }}">Danh sách </a></li>
                     <li><a href="{{ route('createProduct') }}">Thêm sản phẩm</a></li>
                     <li><a href="{{ route('variant.index') }}">Biến thể</a></li>
