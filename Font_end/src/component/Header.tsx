@@ -122,9 +122,12 @@ const Header: React.FC = () => {
               <button className="mobile-menu-toggler text-primary mr-2" type="button">
                 <i className="fas fa-bars"></i>
               </button>
-              <NavLink to="/" className="logo">
+              {/* <NavLink to="/" className="logo">
                 <img src="assets/images/logo.png" width="111" height="44" alt="Porto Logo" />
-              </NavLink>
+              </NavLink> */}
+              <a href="/" className="logo">
+                <img src="assets/images/logo.png" width="111" height="44" alt="Porto Logo" />
+              </a>
             </div>
 
 
@@ -135,7 +138,7 @@ const Header: React.FC = () => {
                   <div className="header-search-wrapper">
                     <input type="search" className="form-control" name="q" id="q" placeholder="Search..." required />
 
-                      <button className="btn icon-magnifier p-0" title="search" type="submit"></button>
+                    <button className="btn icon-magnifier p-0" title="search" type="submit"></button>
                   </div>
                 </form>
               </div>
