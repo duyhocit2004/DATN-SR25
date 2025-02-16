@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\Api\ApiAuthController;
+use App\Http\Controllers\Api\ApiBannerController;
 use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiUserController;
 use Illuminate\Http\Request;
@@ -32,3 +33,6 @@ Route::post('products', [ApiProductController::class,'store']);
 Route::get('products/{id}', [ApiProductController::class,'show']);
 Route::put('products/{id}', [ApiProductController::class,'update']);
 Route::delete('products/{id}', [ApiProductController::class,'destroy']);
+
+//Banner trang chu
+Route::apiResource('banner',ApiBannerController::class);
