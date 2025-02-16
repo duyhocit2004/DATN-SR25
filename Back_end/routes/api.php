@@ -18,9 +18,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-
-
 Route::middleware('auth:sanctum')->group( function (){
 Route::delete('/logout',[ApiAuthController::class,'logout']);
 Route::get('/user',[ApiAuthController::class,'user']);

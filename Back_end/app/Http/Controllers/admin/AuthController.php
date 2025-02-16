@@ -14,7 +14,7 @@ class AuthController extends Controller
     // Form đăng nhập
     public function formLogin()
     {
-        return view('auth.login');
+        return view('.admin.auth.login');
     }
 
     // Xử lý đăng nhập
@@ -33,7 +33,7 @@ class AuthController extends Controller
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
 
-            return redirect()->route('product');
+            return redirect()->route('users.index');
         }
         return redirect()->back()->with('error', 'Sai email hoặc mật khẩu');
     }
@@ -41,7 +41,7 @@ class AuthController extends Controller
     // Form đăng kí
     public function formRegister()
     {
-        return view('auth.register');
+        return view('admin.auth.register');
     }
 
     // Xử lý đăng kí
@@ -80,6 +80,7 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
+
         return redirect('login');
     }
 }

@@ -73,7 +73,6 @@ Route::put('update\{id}\variant', [VariantController::class, 'update'])->name('v
 Route::delete('delete\{id}\variant', [VariantController::class, 'destroy'])->name('variant.delete');
 
 
-
 // Route đăng kí
 route::get('register', [AuthController::class, 'formRegister'])->name("register");
 route::post('post-register', [AuthController::class, 'postRegister'])->name("post-register");
