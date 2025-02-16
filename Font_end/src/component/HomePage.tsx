@@ -159,16 +159,17 @@ const HomePage = () => {
                 {/* Featured Products Section */}
                 <section className="featured-products-section">
                     <div className="container">
-                        <h2 className="section-title heading-border ls-20 border-0">Featured Products</h2>
+                        <h2 className="section-title heading-border ls-20 border-0">Sản Phẩm nổi bật</h2>
                         
                         < ProductList />
+
                     </div>
                 </section>
 
                 {/* New Arrivals Section */}
                 <section className="new-products-section">
                     <div className="container">
-                        <h2 className="section-title heading-border ls-20 border-0">New Arrivals</h2>
+                        <h2 className="section-title heading-border ls-20 border-0">Sản phẩm mới</h2>
                         <div className="products-slider custom-products owl-carousel owl-theme nav-outer show-nav-hover nav-image-center mb-2"
                             data-owl-options="{
                     'dots': false,
