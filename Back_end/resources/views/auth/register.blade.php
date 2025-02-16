@@ -78,7 +78,8 @@
                                     <div class="form-group">
                                         <label class="col-form-label">Họ tên</label>
                                         <div class="form-input position-relative">
-                                            <input class="form-control" type="text" name="name" placeholder="Nhập họ tên">
+                                            <input class="form-control" type="text" name="name" value="{{ old('name') }}"
+                                                placeholder="Nhập họ tên">
                                             @error('name')
                                                 <p style="color: red">{{ $message }}</p>
                                             @enderror
@@ -88,7 +89,8 @@
                                     <div class="form-group">
                                         <label class="col-form-label">Số điện thoại</label>
                                         <div class="form-input position-relative">
-                                            <input class="form-control" type="tel" name="phone_number" placeholder="Nhập số điện thoại">
+                                            <input class="form-control" type="tel" name="phone_number" value="{{ old('phone_number') }}"
+                                                placeholder="Nhập số điện thoại">
                                             @error('phone_number')
                                                 <p style="color: red">{{ $message }}</p>
                                             @enderror
@@ -105,13 +107,13 @@
                                             </select>
                                             @error('role')
                                                 <p style="color: red;">{{ $message }}</p>
-                                             @enderror
+                                            @enderror
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="col-form-label">Email</label>
-                                        <input class="form-control" type="text" name="email" placeholder="Nhập email">
+                                        <input class="form-control" type="text" name="email" value="{{ old('email') }}" placeholder="Nhập email">
                                         @error('email')
                                             <p style="color: red;">{{ $message }}</p>
                                         @enderror
@@ -120,7 +122,8 @@
                                     <div class="form-group">
                                         <label class="col-form-label">Mật khẩu</label>
                                         <div class="form-input position-relative">
-                                            <input class="form-control" type="password" name="password" placeholder="Nhập mật khẩu">
+                                            <input class="form-control" type="password" name="password"
+                                                placeholder="Nhập mật khẩu">
                                             @error('password')
                                                 <p style="color: red">{{ $message }}</p>
                                             @enderror
@@ -130,7 +133,8 @@
                                     <div class="form-group">
                                         <label class="col-form-label">Xác nhận mật khẩu</label>
                                         <div class="form-input position-relative">
-                                            <input class="form-control" type="password" name="password_confirmation" placeholder="Nhập lại mật khẩu">
+                                            <input class="form-control" type="password" name="password_confirmation"
+                                                placeholder="Nhập lại mật khẩu">
                                             @error('password_confirmation')
                                                 <p style="color: red">{{ $message }}</p>
                                             @enderror
