@@ -52,7 +52,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'name' => 'required|string|max:255',
             'phone_number' => 'required|regex:/^0[0-9]{9,10}$/',
-            'password' => 'required|min:6',
+            'password' => 'required|min:6|confirmed',
             'password_confirmation' => 'required'
         ], [
             'name.required' => 'Tên không được bỏ trống',
@@ -63,7 +63,7 @@ class AuthController extends Controller
             'password.required' => 'Vui lòng nhập mật khẩu',
             'password.min' => 'Mật khẩu phải nhiều hơn 6 kí tự',
             'password_confirmation.required' => 'Vui lòng xác nhận mật khẩu',
-            // 'password_confirmation.confirmed' => 'Xác nhận mật khẩu sai.',
+            'password.confirmed' => 'Xác nhận mật khẩu sai.',
         ]);
 
         $request->merge(['password' => Hash::make($request->password)]);
@@ -73,7 +73,7 @@ class AuthController extends Controller
         } catch (\Throwable $th) {
             // dd($th);
         }
-        return redirect()->route('login');
+        return redirect()->route('login')->with('success', 'Đăng kí thành công');
     }
 
     // Đăng xuất

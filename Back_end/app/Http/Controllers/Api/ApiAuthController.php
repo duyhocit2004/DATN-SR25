@@ -60,7 +60,7 @@ class ApiAuthController extends Controller
             'role' => 'Khách hàng',
         ]);
 
-       
+
 
 
         return response()->json([
