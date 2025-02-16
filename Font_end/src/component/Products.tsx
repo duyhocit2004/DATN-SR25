@@ -67,8 +67,8 @@ const Product = () => {
                                         <label>Sắp xếp theo:</label>
 
                                         <div className="select-custom">
-                                            <select name="orderby" className="form-control">
-                                                <option value="menu_order" selected="selected">Default sorting</option>
+                                            <select name="orderby" className="form-control" defaultValue="menu_order">
+                                                <option value="menu_order" >Default sorting</option>
                                                 <option value="popularity">Sort by popularity</option>
                                                 <option value="rating">Sort by average rating</option>
                                                 <option value="date">Sort by newness</option>

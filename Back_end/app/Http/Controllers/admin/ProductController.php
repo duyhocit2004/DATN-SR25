@@ -16,10 +16,6 @@ use App\Services\product\ProductService;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     */
     public $ProductService;
     public $categoryService;
     public $colorService;
@@ -81,7 +77,10 @@ class ProductController extends Controller
 
         $idproduct = $this->ProductService->insert($list);
         $this->VariantService->insert($idproduct, $variant);
-        $this->IamgeRepositories->inserImage($idproduct, $image);
+        if ($request->hasFile('images')) {
+            $this->IamgeRepositories->inserImage($idproduct, $image);
+        }
+
 
 
         return redirect()->route('product')->with('success', 'thêm thành công');
@@ -102,8 +101,9 @@ class ProductController extends Controller
     {
         $idproduct = $this->ProductService->GetId($id);
         $categori = $this->categoryService->getAll();
+
         $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
-        // dd($iamge);
+        // dd($iamge);  
         return view('admin.products.editProduct', compact('idproduct', 'categori', 'iamge'));
     }
 
@@ -114,9 +114,9 @@ class ProductController extends Controller
     {
         $idProduct = $id;
         // dd($request->all());
-        $list = $request->except('_token','_method');
-        $this->ProductService->insertId($idProduct,$list);
-        return redirect()->route('product')->with('success','thêm thành công');
+        $list = $request->except('_token', '_method');
+        $this->ProductService->insertId($idProduct, $list);
+        return redirect()->route('product')->with('success', 'thêm thành công');
     }
 
     /**
@@ -124,6 +124,27 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $idProduct = products::findOrFail($id);
+        $idProduct->delete();
+        return redirect()->route('product')->with('success', 'xóa sản phẩm thành công');
     }
+
+    public function trashedProducts()
+    {
+        $product = $this->ProductService->trashedProducts();
+        return view('admin.products.softDelete.listDelete', compact('product'));
+    }
+    public function restoreProduct(string $id)
+    {
+        $this->ProductService->restoreProduct($id);
+        return redirect()->route('ListDelete.Product')->with('successs', 'xóa thành công');
+    }
+    public function forceProduct(string $id)
+    {
+        $this->ProductService->forceDelete($id);
+        return redirect()->route('ListDelete.Product')->with('successs', 'xóa thành công');
+    }
+
+    
+
 }

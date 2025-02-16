@@ -6,7 +6,7 @@
 <meta name="keywords"
     content="admin template, Admiro admin template, best javascript admin, dashboard template, bootstrap admin template, responsive admin template, web app" />
 <meta name="author" content="pixelstrap" />
-<title>trang admin</title>
+<title>Trang Admin</title>
 <!-- Favicon icon-->
 <link rel="icon" href="{{ asset('/admin/images/favicon.png') }}" type="image/x-icon" />
 <link rel="shortcut icon" href="{{ asset('/admin/images/favicon.png') }}" type="image/x-icon" />
@@ -34,4 +34,6 @@
 <link rel="stylesheet" href="{{ asset('admin/css/style.css') }}" />
 <link id="color" rel="stylesheet" href="{{ asset('admin/css/color-1.css" media="screen') }}" />
 <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/44.1.0/ckeditor5.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 @yield('css')
+
