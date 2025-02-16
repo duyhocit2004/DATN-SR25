@@ -3,6 +3,7 @@ use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\ApiBannerController;
 use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiUserController;
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+
+
 
 Route::middleware('auth:sanctum')->group( function (){
 Route::delete('/logout',[ApiAuthController::class,'logout']);
@@ -36,3 +40,10 @@ Route::delete('products/{id}', [ApiProductController::class,'destroy']);
 
 //Banner trang chu
 Route::apiResource('banner',ApiBannerController::class);
+//users
+Route::get('users', [ApiUserController::class, 'index']);
+Route::post('users', [ApiUserController::class, 'store']);
+Route::get('users/{id}', [ApiUserController::class, 'show']);
+Route::put('users/{id}', [ApiUserController::class, 'update']);
+Route::delete('users/{id}', [ApiUserController::class, 'destroy']);
+
