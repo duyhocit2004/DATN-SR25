@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\Api\ApiAuthController;
+use App\Http\Controllers\Api\ApiBannerController;
 use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\AuthController;
@@ -37,6 +38,8 @@ Route::get('products/{id}', [ApiProductController::class,'show']);
 Route::put('products/{id}', [ApiProductController::class,'update']);
 Route::delete('products/{id}', [ApiProductController::class,'destroy']);
 
+//Banner trang chu
+Route::apiResource('banner',ApiBannerController::class);
 //users
 Route::get('users', [ApiUserController::class, 'index']);
 Route::post('users', [ApiUserController::class, 'store']);

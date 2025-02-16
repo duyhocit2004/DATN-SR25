@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\admin\VariantController;
+use App\Http\Controllers\admin\VoucherController;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,3 +88,5 @@ route::get('login', [AuthController::class, 'formLogin'])->name("login");
 route::post('post-login', [AuthController::class, 'postLogin'])->name('post-login');
 // Route đăng xuất
 route::get('logout', [AuthController::class, 'logout'])->name("logout");
+
+route::resource('Voucher',VoucherController::class);
