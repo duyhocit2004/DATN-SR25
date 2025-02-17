@@ -313,16 +313,19 @@
 
                         <div class="user-content">
                             @if (Auth::check())
-                                <div class="dropdown">
-                                    <button class="btn btn-primary"  data-bs-toggle="dropdown">
-                                        <h5>{{ Auth::user()->name }}</h5>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="" href="#">Tài khoản</a></li>
-                                        <li><a class="" href="#">Another action</a></li>
-                                        <li><a class="" href="{{ route('logout') }}">Đăng xuất</a></li>
-                                    </ul>
-                                </div>
+                            <div class="dropdown">
+                                <button class="btn btn-primary d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                                    <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-circle" width="40" height="40">
+                                    <span>{{ Auth::user()->name }}</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="{{ route('logout') }}">Logout</a></li>
+                                </ul>
+                            </div>
+
                             @else
                                 <a href="{{ route('login') }}">
                                     <h5>Login</h5>

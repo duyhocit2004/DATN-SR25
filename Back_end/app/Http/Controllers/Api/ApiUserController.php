@@ -60,6 +60,7 @@ class ApiUserController extends Controller
 
         return response()->json(['data' => $user], 200);
     }
+    
     public function update(Request $request, string $id)
     {
         $user = User::find($id);

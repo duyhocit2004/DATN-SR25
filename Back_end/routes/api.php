@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ApiBannerController;
 use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ApiColorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,9 +18,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-
-
 
 Route::middleware('auth:sanctum')->group( function (){
 Route::delete('/logout',[ApiAuthController::class,'logout']);
@@ -37,6 +35,13 @@ Route::post('products', [ApiProductController::class,'store']);
 Route::get('products/{id}', [ApiProductController::class,'show']);
 Route::put('products/{id}', [ApiProductController::class,'update']);
 Route::delete('products/{id}', [ApiProductController::class,'destroy']);
+
+// Route màu
+Route::get('colors', [ApiColorController::class,'index']);
+Route::post('colors', [ApiColorController::class,'store']);
+Route::get('colors/{id}', [ApiColorController::class,'show']);
+Route::put('colors/{id}', [ApiColorController::class,'update']);
+Route::delete('colors/{id}', [ApiColorController::class,'destroy']);
 
 //Banner trang chu
 Route::apiResource('banner',ApiBannerController::class);
