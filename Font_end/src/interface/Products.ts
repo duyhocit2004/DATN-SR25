@@ -8,4 +8,5 @@ export interface IProducts {
     description: string;
     views: number;
     content: string;
+    image: string;
 }

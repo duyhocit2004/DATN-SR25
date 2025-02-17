@@ -1,7 +1,7 @@
 import React from "react";
 
 
-const Cart = () => {
+const Cart: React.FC = () => {
     return (
         <div className="page-wrapper">
         <main className="main">
@@ -215,7 +215,7 @@ const Cart = () => {
 							</table>
 
 							<div className="checkout-methods">
-								<a href="cart.html" className="btn btn-block btn-dark">Proceed to Checkout
+								<a href="/checkout" className="btn btn-block btn-dark">Proceed to Checkout
 									<i className="fa fa-arrow-right"></i></a>
 							</div>
 						</div>

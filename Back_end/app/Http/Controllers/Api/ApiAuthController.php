@@ -24,7 +24,7 @@ class ApiAuthController extends Controller
         }
         $token = $user->createToken('authToken')->plainTextToken;
         return response()->json([
-            'token' => $token,
+            'access_token' => $token,
             'type_token' => 'Baerer',
             'success' => 'đăng nhập thành công'
         ], 200);
@@ -40,13 +40,17 @@ class ApiAuthController extends Controller
             'phone' => 'required'
         ], [
             'username.required' => 'bạn chưa nhập tên',
-            'username.max:40' => 'số lượng ký tự đối ta là 40',
+            'username.max:30' => 'số lượng ký tự đối ta là 40',
             'email.required' => 'bạn chưa nhập email',
             'password.required' => 'bạn chưa nhập mật khẩu',
             'gender.required' => 'bạn chưa chọn giới tính',
             'phone.required' => 'bạn chưa nhập số điện thoại',
         ]);
-
+        if ($validate->fails()) {
+            return response()->json([
+                'message' => $validate->errors()
+            ], 404);
+        };
         User::create([
             'name' => $request->username,
             'email' => $request->email,
@@ -56,12 +60,7 @@ class ApiAuthController extends Controller
             'role' => 'Khách hàng',
         ]);
 
-        if ($validate->fails()) {
-            return response()->json([
-                'message' => $validate->errors()
-            ], 404);
-        }
-        ;
+
 
 
         return response()->json([
@@ -79,6 +78,7 @@ class ApiAuthController extends Controller
     {
         // Lấy người dùng đang xác thực
         $user = Auth::user();
+        // user::tokens();
 
         if ($user) {
             // Lấy token từ request
