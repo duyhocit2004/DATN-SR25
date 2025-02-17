@@ -9,6 +9,8 @@ use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\admin\VariantController;
 
+use App\Http\Controllers\PostController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -72,6 +74,9 @@ Route::put('update\{id}\variant', [VariantController::class, 'update'])->name('v
 Route::delete('delete\{id}\variant', [VariantController::class, 'destroy'])->name('variant.delete');
 
 
+// Route::group(['prefix'=> 'admin'], function () {
+//     Route::get('posts', [UserController::class, 'index'])->name('posts.index');
+// });
 
 // Route đăng kí
 route::get('register', [AuthController::class, 'formRegister'])->name("register");
