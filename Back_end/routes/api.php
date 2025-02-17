@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\ApiBannerController;
+use App\Http\Controllers\Api\ApiCategoryController;
 use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\AuthController;
@@ -36,11 +37,11 @@ Route::put('products/{id}', [ApiProductController::class,'update']);
 Route::delete('products/{id}', [ApiProductController::class,'destroy']);
 
 // Route danh mục
-Route::get('categories', [ApiColorController::class,'index']);
-Route::post('categories', [ApiColorController::class,'store']);
-Route::get('categories/{id}', [ApiColorController::class,'show']);
-Route::put('categories/{id}', [ApiColorController::class,'update']);
-Route::delete('categories/{id}', [ApiColorController::class,'destroy']);
+Route::get('categories', [ApiCategoryController::class,'index']);
+Route::post('categories', [ApiCategoryController::class,'store']);
+Route::get('categories/{id}', [ApiCategoryController::class,'show']);
+Route::put('categories/{id}', [ApiCategoryController::class,'update']);
+Route::delete('categories/{id}', [ApiCategoryController::class,'destroy']);
 
 // Route màu
 Route::get('colors', [ApiColorController::class,'index']);

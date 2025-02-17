@@ -36,12 +36,11 @@
                                             <td class="d-flex gap-2">
                                                 <a class="btn btn-warning"
                                                     href="{{ route('categories.edit', $category->id) }}">Sửa</a>
-                                                <form action="{{ route('categories.destroy', $category->id) }}"
-                                                    method="post">
+                                                <form action="{{ route('categories.destroy', $category->id) }}" method="post">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <a class="btn btn-danger"
-                                                        onclick="alert confirm('Bạn có chắc chắn muốn xóa danh mục này không?')">Xóa</a>
+                                                    <button class="btn btn-danger"
+                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này không?')">Xóa</button>
                                                 </form>
                                             </td>
                                         </tr>
