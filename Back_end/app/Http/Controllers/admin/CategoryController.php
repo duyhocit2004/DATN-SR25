@@ -39,7 +39,7 @@ class CategoryController extends Controller
             'type' => 'required'
         ], [
             'name.required' => 'Tên danh mục không được bỏ trống',
-            'name.unique' => 'Tên danh mục đã bị trùng',
+            'name.unique' => 'Tên danh mục đã tồn tại',
             'name.max' => 'Tên danh mục không được quá 255 kí tự',
         ]);
 
@@ -68,7 +68,11 @@ class CategoryController extends Controller
         $category = categories::findOrFail($id);
 
         $request->validate([
-            'name' => 'required'
+            'name' => 'required|unique:categories,name|max:255',
+        ], [
+            'name.required' => 'Tên danh mục không được bỏ trống',
+            'name.unique' => 'Tên danh mục đã tồn tại',
+            'name.max' => 'Tên danh mục không được quá 255 kí tự',
         ]);
 
         $category->update([

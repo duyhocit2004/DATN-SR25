@@ -29,7 +29,7 @@
                 </a>
                 <ul class="sidebar-submenu">
                     <li><a href="{{ route('categories.index') }}">Danh sách</a></li>
-                    <li><a href="{{ route('categories.create') }}">Thêm size</a></li>
+                    <li><a href="{{ route('categories.create') }}">Thêm danh mục</a></li>
                 </ul>
             </li>
 
