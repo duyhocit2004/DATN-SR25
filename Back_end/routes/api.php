@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ApiColorController;
+use App\Http\Controllers\api\ApiSizeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -49,6 +50,12 @@ Route::post('colors', [ApiColorController::class,'store']);
 Route::get('colors/{id}', [ApiColorController::class,'show']);
 Route::put('colors/{id}', [ApiColorController::class,'update']);
 Route::delete('colors/{id}', [ApiColorController::class,'destroy']);
+
+Route::get('sizes', [ApiSizeController::class,'index']);
+Route::post('sizes', [ApiSizeController::class,'store']);
+Route::get('sizes/{id}', [ApiSizeController::class,'show']);
+Route::put('sizes/{id}', [ApiSizeController::class,'update']);
+Route::delete('sizes/{id}', [ApiSizeController::class,'destroy']);
 
 //Banner trang chủ
 Route::apiResource('banner',ApiBannerController::class);
