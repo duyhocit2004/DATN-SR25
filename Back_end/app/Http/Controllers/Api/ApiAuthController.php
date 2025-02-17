@@ -85,7 +85,7 @@ class ApiAuthController extends Controller
             $tokenId = $request->bearerToken();
 
             // Tìm token trong cơ sở dữ liệu
-            $token = $user->tokenss()->where('id', $tokenId)->first();
+            $token = $user->tokens()->where('id', $tokenId)->first();
 
             if ($token) {
                 // Hủy token
