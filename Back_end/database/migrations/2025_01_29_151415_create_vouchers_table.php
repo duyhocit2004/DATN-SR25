@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('quantity')->default(1);// số lượng giá voucher
             $table->integer('used')->default(0);// số lần đã sử dụng
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references(columns: 'id')->on('users')->onDelete('cascade');
             $table->dateTime('start_date')->nullable();// ngày bắt đầu
             $table->dateTime('end_date')->nullable();//ngày kết thúc
             $table->boolean('status')->default(1);

@@ -39,6 +39,17 @@
       $this->IProductService->Update($id,$data);
       return redirect()->route('product')->with('secssion','đã sửa sản phẩm thành công');
     }
-
     public function delete($id){}
+    public function trashedProducts(){
+      $listProductDelete = $this->IProductService->trashedProducts();
+      return $listProductDelete ;
+    }
+    public function restoreProduct($id){
+      $restoreProductDelete=$this->IProductService->restoreProduct($id);
+      return  $restoreProductDelete ;
+    }
+    public function forceDelete($id){
+      $forceProductDelete=$this->IProductService->forceDelete($id);
+      return  $forceProductDelete ;
+    }
   }

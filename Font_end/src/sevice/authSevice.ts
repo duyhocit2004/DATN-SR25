@@ -15,6 +15,7 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
   const response = await axios.post<AuthResponse>("http://127.0.0.1:8000/api/login", { email, password });
   return response.data;
 };
+
 export const logoutUser = async (): Promise<void> => {
   const token = localStorage.getItem("token");
   if (!token) {

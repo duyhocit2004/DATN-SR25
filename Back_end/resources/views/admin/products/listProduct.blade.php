@@ -19,19 +19,20 @@
                     <div class="card">
                         <div class="table-responsive">
                             <table class="table">
+
                                 <thead>
                                     <tr class="border-bottom-secondary border-top-0">
                                         <th scope="col">STT</th>
-                                        <th scope="col">hình</th>
-                                        <th scope="col">tên sản phẩm</th>
-                                        <th scope="col">số lượng trong kho</th>
-                                        <th scope="col">giá sản phẩm</th>
-                                        <th scope="col">giá giảm</th>
-                                        <th scope="col">thao tác</th>
+                                        <th scope="col">Ảnh</th>
+                                        <th scope="col">Tên sản phẩm</th>
+                                        <th scope="col">Số lượng trong kho</th>
+                                        <th scope="col">Giá sản phẩm</th>
+                                        <th scope="col">Giảm giá</th>
+                                        <th scope="col">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody>
 
+                                <tbody>
                                     @foreach ($list as $as)
                                         <tr class="border-bottom-success">
                                             <th scope="row"></th>
@@ -44,73 +45,23 @@
                                             <td>
                                                 <div class="my-1">
                                                     <a href="{{ route('get.Product', $as->id) }}"
-                                                        class="btn btn-success">sửa</a>
+                                                        class="btn btn-success"><i class="fas fa-wrench"></i></a>
                                                 </div>
                                                 <div class="my-1">
-                                                    <form action="">
-                                                        <button class="btn btn-danger">xóa</button>
+                                                    <form action="{{route('delete.Product',$as->id)}}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
                                                     </form>
                                                 </div>
 
                                             </td>
                                         </tr>
                                     @endforeach
-
                                 </tbody>
+
                             </table>
                             {{ $list->links() }}
-                        </div>
-                    </div>
-
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="card">
-                                    <div class="table-responsive">
-                                        <table class="table">
-                                            <thead>
-                                                <tr class="border-bottom-secondary border-top-0">
-                                                    <th scope="col">STT</th>
-                                                    <th scope="col">hình</th>
-                                                    <th scope="col">tên sản phẩm</th>
-                                                    <th scope="col">số lượng trong kho</th>
-                                                    <th scope="col">giá sản phẩm</th>
-                                                    <th scope="col">giá giảm</th>
-                                                    <th scope="col">thao tác</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-
-                                                @foreach ($list as $as)
-                                                    <tr class="border-bottom-success">
-                                                        <th scope="row"></th>
-                                                        <td><img class="img-30 me-2" src="{{ Storage::url($as->image) }}"
-                                                                alt="profile">Ram Jacob</td>
-                                                        <td>{{ $as->name_product }}</td>
-                                                        <td>{{ $as->SKU }}</td>
-                                                        <td>{{ number_format($as->price_regular, 0, '.', ',') }}VND</td>
-                                                        <td>{{ number_format($as->price_sale, 0, '.', ',') }}</td>
-                                                        <td>
-                                                            <div class="my-1">
-                                                                <a href="{{ route('get.Product', $as->id) }}"
-                                                                    class="btn btn-success">sửa</a>
-                                                            </div>
-                                                            <div class="my-1">
-                                                                <form action="">
-                                                                    <button class="btn btn-danger">xóa</button>
-                                                                </form>
-                                                            </div>
-
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-
-                                            </tbody>
-                                        </table>
-                                        {{ $list->links() }}
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
