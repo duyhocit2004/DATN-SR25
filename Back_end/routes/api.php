@@ -51,6 +51,7 @@ Route::get('colors/{id}', [ApiColorController::class,'show']);
 Route::put('colors/{id}', [ApiColorController::class,'update']);
 Route::delete('colors/{id}', [ApiColorController::class,'destroy']);
 
+// Route Api Size
 Route::get('sizes', [ApiSizeController::class,'index']);
 Route::post('sizes', [ApiSizeController::class,'store']);
 Route::get('sizes/{id}', [ApiSizeController::class,'show']);
