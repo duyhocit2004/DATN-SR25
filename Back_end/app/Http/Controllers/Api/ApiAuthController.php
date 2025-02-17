@@ -24,7 +24,7 @@ class ApiAuthController extends Controller
         }
         $token = $user->createToken('authToken')->plainTextToken;
         return response()->json([
-            'token' => $token,
+            'access_token' => $token,
             'type_token' => 'Baerer',
             'success' => 'đăng nhập thành công'
         ], 200);

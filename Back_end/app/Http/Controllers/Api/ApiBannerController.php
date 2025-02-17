@@ -75,7 +75,7 @@ class ApiBannerController extends Controller
             return response()->json([
                 'data' => $type
             ]);
-        }ifel
+        }
     }
 
     /**

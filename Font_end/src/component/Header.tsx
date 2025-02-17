@@ -19,7 +19,7 @@ const Header: React.FC = () => {
                 <a href="javascript:void(0);">Links</a>
                 <div className="header-menu">
                   <ul>
-                    <li><NavLink to="/account">My Account</NavLink></li>
+                    <li><NavLink to="/my_account">My Account</NavLink></li>
                     {/* <li><NavLink to="/about">About Us</NavLink></li>
                     <li><NavLink to="/blog">Blog</NavLink></li>
                     <li><NavLink to="/wishlist">My Wishlist</NavLink></li>
@@ -75,7 +75,6 @@ const Header: React.FC = () => {
                 <img src="assets/images/logo.png" width="111" height="44" alt="Porto Logo" />
               </NavLink>
             </div>
-
             <div className="header-right w-lg-max">
                     <div className="header-icon header-search header-search-inline header-search-category w-lg-max text-right mt-0">
                         <a href="#" className="search-toggle" role="button"><i className="icon-search-3"></i></a>
@@ -85,22 +84,16 @@ const Header: React.FC = () => {
                                 <div className="select-custom">
                                     <select id="cat" name="cat">
                                         <option value="">All Categories</option>
-                                        
                                     </select> 
                                 </div>
-                              
                                 <button className="btn icon-magnifier p-0" title="search" type="submit"></button>
                             </div>
-                            
                         </form>
                     </div>
-                 
-
-                    <div className="header-contact d-none d-lg-flex pl-4 pr-4">
+                                     <div className="header-contact d-none d-lg-flex pl-4 pr-4">
                         <img alt="phone" src="assets/images/phone.png" width="30" height="30" className="pb-1"/>
                         <h6><span>Call us now</span><a href="tel:#" className="text-dark font1">+123 5678 890</a></h6>
                     </div>
-
             <div className="header-right w-lg-max">
               <NavLink to="/login" className="header-icon" title="Login">
                 <i className="icon-user-2"></i>
@@ -110,11 +103,7 @@ const Header: React.FC = () => {
                 <i className="icon-wishlist-2"></i>
               </NavLink>
             </div>
-
-
           </div>
-          
-
         </div> */}
         <div className="header-middle sticky-header" data-sticky-options="{'mobile': true}">
           <div className="container">
@@ -145,7 +134,7 @@ const Header: React.FC = () => {
 
               <div className="header-contact d-none d-lg-flex pl-4 pr-4">
                 <img alt="phone" src="assets/images/phone.png" width="30" height="30" className="pb-1" />
-                <h6><span>Call us now</span><a href="tel:#" className="text-dark font1">+123 5678 890</a></h6>
+                <h6><span>Liên hệ</span><a href="tel:#" className="text-dark font1">+0962139512</a></h6>
               </div>
 
               <NavLink to="/login" className="header-icon" title="Login">
@@ -157,14 +146,12 @@ const Header: React.FC = () => {
               </NavLink>
 
               <div className="dropdown cart-dropdown">
-                <a href="#" title="Cart" className="dropdown-toggle dropdown-arrow cart-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                <a href="/cart" title="Cart">
                   <i className="minicart-icon"></i>
-                  <span className="cart-count badge-circle">3</span>
                 </a>
 
-                <div className="cart-overlay"></div>
 
-                <div className="dropdown-menu mobile-cart">
+                {/* <div className="dropdown-menu mobile-cart">
                   <a href="#" title="Close (Esc)" className="btn-close">×</a>
 
                   <div className="dropdownmenu-wrapper custom-scrollbar">
@@ -206,7 +193,7 @@ const Header: React.FC = () => {
                       <a href="checkout.html" className="btn btn-dark btn-block">Checkout</a>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
