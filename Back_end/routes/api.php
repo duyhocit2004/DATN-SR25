@@ -28,13 +28,19 @@ Route::get('/user',[ApiAuthController::class,'user']);
 Route::post('login',[ApiAuthController::class,'login']);
 Route::post('register',[ApiAuthController::class,'register']);
 
-
 // Route sản phẩm
 Route::get('products', [ApiProductController::class,'index']);
 Route::post('products', [ApiProductController::class,'store']);
 Route::get('products/{id}', [ApiProductController::class,'show']);
 Route::put('products/{id}', [ApiProductController::class,'update']);
 Route::delete('products/{id}', [ApiProductController::class,'destroy']);
+
+// Route danh mục
+Route::get('categories', [ApiColorController::class,'index']);
+Route::post('categories', [ApiColorController::class,'store']);
+Route::get('categories/{id}', [ApiColorController::class,'show']);
+Route::put('categories/{id}', [ApiColorController::class,'update']);
+Route::delete('categories/{id}', [ApiColorController::class,'destroy']);
 
 // Route màu
 Route::get('colors', [ApiColorController::class,'index']);
@@ -43,8 +49,9 @@ Route::get('colors/{id}', [ApiColorController::class,'show']);
 Route::put('colors/{id}', [ApiColorController::class,'update']);
 Route::delete('colors/{id}', [ApiColorController::class,'destroy']);
 
-//Banner trang chu
+//Banner trang chủ
 Route::apiResource('banner',ApiBannerController::class);
+
 //users
 Route::get('users', [ApiUserController::class, 'index']);
 Route::post('users', [ApiUserController::class, 'store']);
