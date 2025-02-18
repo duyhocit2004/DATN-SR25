@@ -31,9 +31,9 @@ function getItem(
 const items: MenuItem[] = [
     getItem('Tổng quan', '/admin/dashboard', <PieChartOutlined />),
     getItem('Quản lý sản phẩm', '/admin/products', <DesktopOutlined />),
-    getItem('Quản lý người dùng', 'sub1', <UserOutlined />, [
-        getItem('Danh sách người dùng', '/admin/users'),
-        getItem('Thêm người dùng', '/admin/users/add'),
+    getItem('Quản lý tài khoản', 'sub1', <UserOutlined />, [
+        getItem('Danh sách tài khoản', '/admin/users'),
+        getItem('Thêm tài khoản', '/admin/users/add'),
     ]),
     getItem('Cài đặt', '/admin/settings', <FileOutlined />),
 ];
