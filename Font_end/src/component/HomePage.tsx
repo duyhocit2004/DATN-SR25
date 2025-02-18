@@ -7,10 +7,6 @@ import { NavLink } from "react-router-dom";
 
 const HomePage = () => {
 
-
-
-
-
     return (
         <div className="page-wrapper">
 
@@ -160,7 +156,7 @@ const HomePage = () => {
                 <section className="featured-products-section">
                     <div className="container">
                         <h2 className="section-title heading-border ls-20 border-0">Sản Phẩm nổi bật</h2>
-                        
+
                         < ProductList />
 
                     </div>
