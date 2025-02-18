@@ -101,3 +101,10 @@ route::get('logout', [AuthController::class, 'logout'])->name("logout");
 route::resource('Voucher',VoucherController::class);
 
 
+// Route Cart
+Route::get('carts', [CartController::class, 'index'])->name('carts.index');
+Route::post('carts', [CartController::class, 'store'])->name('carts.store');
+Route::get('carts/create', [CartController::class, 'create'])->name('carts.create');
+Route::get('/carts/{id}/edit', [CartController::class, 'edit'])->name('carts.edit');
+Route::put('/carts/{id}', [CartController::class, 'update'])->name('carts.update');
+Route::delete('carts/{id}', [CartController::class, 'destroy'])->name('carts.destroy');

@@ -54,7 +54,7 @@
                                         <label class="form-label" for="categories_id">Thể loại</label>
                                         <select class="form-select" id="categories_id" name="categories_id">
                                             @foreach ($categori as $as)
-                                                <option value="{{ $as->id }}">{{ $as->name }}{{ $as->type }}
+                                                <option value="{{ $as->id }}">{{ $as->name }}
                                                 </option>
                                             @endforeach
                                         </select>

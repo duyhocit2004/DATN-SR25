@@ -81,8 +81,6 @@ class ProductController extends Controller
             $this->IamgeRepositories->inserImage($idproduct, $image);
         }
 
-
-
         return redirect()->route('product')->with('success', 'thêm thành công');
     }
 
@@ -103,7 +101,7 @@ class ProductController extends Controller
         $categori = $this->categoryService->getAll();
 
         $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
-        // dd($iamge);  
+        // dd($iamge);
         return view('admin.products.editProduct', compact('idproduct', 'categori', 'iamge'));
     }
 
@@ -145,6 +143,6 @@ class ProductController extends Controller
         return redirect()->route('ListDelete.Product')->with('successs', 'xóa thành công');
     }
 
-    
+
 
 }

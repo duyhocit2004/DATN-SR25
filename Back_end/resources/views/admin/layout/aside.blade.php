@@ -51,14 +51,14 @@
                 </ul>
             </li>
 
-            {{-- <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+            <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
                     <h6 class=""><i class="fas fa-shopping-cart"></i> Quản lý giỏ hàng</h6>
                 </a>
                 <ul class="sidebar-submenu">
                     <li><a href="{{ route('carts.index') }}">Danh sách</a></li>
                     {{-- <li><a href="{{ route('sizes.create') }}">Thêm size</a></li> --}}
-                {{-- </ul> --}}
-            {{-- </li> --}}
+                </ul>
+            </li>
 
             {{-- <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
                     <h6 class="">Quản lý sản phẩm</h6><i class=""></i>
