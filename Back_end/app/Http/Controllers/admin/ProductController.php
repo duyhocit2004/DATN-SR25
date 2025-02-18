@@ -77,7 +77,9 @@ class ProductController extends Controller
         $list = $request->all();
 
         $idproduct = $this->ProductService->insert($list);
-        $this->VariantService->insert($idproduct, $variant);
+        if($request->has('variants')){
+            $this->VariantService->insert($idproduct, $variant);
+        }
         if ($request->hasFile('images')) {
             $this->IamgeRepositories->inserImage($idproduct, $image);
         }

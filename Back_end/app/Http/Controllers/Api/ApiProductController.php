@@ -26,8 +26,6 @@ class ApiProductController extends Controller
 
         return response()->json([
             'data' => new ProductResource($products),
-            'success' => true,
-            'message' => 'Danh sách sản phẩm'
         ], 200);
     }
 
@@ -114,6 +112,6 @@ class ApiProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Xóa thành công'
-        ], 204);
+        ], 200);
     }
 }

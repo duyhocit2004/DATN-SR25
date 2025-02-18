@@ -8,6 +8,8 @@ const fetchUserRole = async (token: string) => {
     const response = await axios.get("http://127.0.0.1:8000/api/users", {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log("Vai trò người dùng:", response.data.role);  // Log tại đây
+    
     return response.data.role;
   } catch (error) {
     console.error("Không thể lấy thông tin người dùng:", error);
@@ -23,6 +25,8 @@ const Login = () => {
   const login = async (email: string, password: string) => {
     try {
       const response = await axios.post("http://127.0.0.1:8000/api/login", { email, password });
+      //
+      console.log("dữ liệu trả về:", response.data); 
 
       if (response.data.access_token) {
         localStorage.setItem("token", response.data.access_token);
@@ -53,9 +57,9 @@ const Login = () => {
 
       const roleId = await fetchUserRole(token);
 
-      if (roleId === 'Khách hàng') {
+      if (roleId === 'Quản lý') {
         navigate("/admin/dashboard");
-      } else if (roleId === 'Quản lý') {
+      } else if (roleId === 'Khách hàng') {
         navigate("/");
       } else {
         toast.error("Vai trò không hợp lệ.");

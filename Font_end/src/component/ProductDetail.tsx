@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import ProductDetails from '../client/home/productDetail';
 const ProductDetail = () => {
     return (
         <div className="page-wrapper">
@@ -14,7 +14,7 @@ const ProductDetail = () => {
                     </ol>
                 </nav>
 
-                <div className="product-single-container product-single-default">
+                {/* <div className="product-single-container product-single-default">
                     <div className="cart-message d-none">
                         <strong className="single-cart-notice">“Men Black Sports Shoes”</strong>
                         <span>has been added to your cart.</span>
@@ -72,8 +72,8 @@ const ProductDetail = () => {
                             </div>
                         </div>
 
-                        <div className="col-lg-7 col-md-6 product-single-details">
-                            <h1 className="product-title">Men Black Sports Shoes</h1>
+                            <div className="col-lg-7 col-md-6 product-single-details">
+                                <h1 className="product-title">Men Black Sports Shoes</h1>
 
                             <div className="product-nav">
                                 <div className="product-prev">
@@ -178,7 +178,8 @@ const ProductDetail = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
+                <ProductDetails/>
 
                 <div className="product-single-tabs">
                     <ul className="nav nav-tabs" role="tablist">

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 15, 2025 at 04:07 PM
+-- Generation Time: Feb 16, 2025 at 02:17 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -20,6 +20,67 @@ SET time_zone = "+00:00";
 --
 -- Database: `datn-spr2025`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `banners`
+--
+
+CREATE TABLE `banners` (
+  `id` bigint UNSIGNED NOT NULL,
+  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `type` enum('main','intro','advertisement') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'advertisement',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `banners`
+--
+
+INSERT INTO `banners` (`id`, `image`, `status`, `type`, `created_at`, `updated_at`) VALUES
+(1, 'anhr dep', 1, 'main', NULL, NULL),
+(2, 'anhr hay ', 1, 'intro', NULL, NULL),
+(3, 'anh qua hay', 0, 'advertisement', NULL, NULL),
+(4, '123', 1, 'advertisement', NULL, NULL),
+(5, '123', 1, 'advertisement', NULL, NULL),
+(6, NULL, 1, 'intro', '2025-02-16 05:03:28', '2025-02-16 05:03:28'),
+(7, 'Banners/uwWGHRrAztGZwDlw3Rrs3x0kJzmEVQMW8473ihs6.jpg', 1, 'intro', '2025-02-16 05:09:44', '2025-02-16 05:09:44'),
+(8, 'Banners/R6puHmDlDbe0lmFQJx7RQCt5SzXbMazMIl64yS1y.jpg', 1, 'intro', '2025-02-16 06:01:57', '2025-02-16 06:01:57'),
+(9, 'Banners/ASHTwNAmxo18zrzQ3Nd86u2u1GsVJlJAKDWpIdcS.jpg', 1, 'intro', '2025-02-16 06:02:26', '2025-02-16 06:02:26');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `carts`
+--
+
+CREATE TABLE `carts` (
+  `id` bigint UNSIGNED NOT NULL,
+  `guest_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cart_items` json DEFAULT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cart_items`
+--
+
+CREATE TABLE `cart_items` (
+  `id` bigint UNSIGNED NOT NULL,
+  `cart_id` bigint UNSIGNED NOT NULL,
+  `product_variants_id` bigint UNSIGNED NOT NULL,
+  `quantity` bigint NOT NULL,
+  `sub_total` bigint NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -43,21 +104,21 @@ INSERT INTO `categories` (`id`, `name`, `type`, `created_at`, `updated_at`) VALU
 (1, 'Form Slim Fit', 'women', NULL, NULL),
 (2, 'Regular Fit', 'man', NULL, NULL),
 (3, 'Smart Fit', 'man', NULL, NULL),
-(4, 'Form Loose Fit', 'women', NULL, NULL),
+(4, 'Form Loose Fit', 'man', NULL, NULL),
 (5, 'Form Slim Fit', 'man', NULL, NULL),
-(6, 'Regular Fit', 'women', NULL, NULL),
+(6, 'Regular Fit', 'man', NULL, NULL),
 (7, 'Smart Fit', 'women', NULL, NULL),
-(8, 'Form Loose Fit', 'women', NULL, NULL),
+(8, 'Form Loose Fit', 'man', NULL, NULL),
 (9, 'Form Slim Fit', 'man', NULL, NULL),
 (10, 'Regular Fit', 'man', NULL, NULL),
 (11, 'Smart Fit', 'man', NULL, NULL),
-(12, 'Form Loose Fit', 'man', NULL, NULL),
-(13, 'Form Slim Fit', 'man', NULL, NULL),
-(14, 'Regular Fit', 'women', NULL, NULL),
-(15, 'Smart Fit', 'women', NULL, NULL),
+(12, 'Form Loose Fit', 'women', NULL, NULL),
+(13, 'Form Slim Fit', 'women', NULL, NULL),
+(14, 'Regular Fit', 'man', NULL, NULL),
+(15, 'Smart Fit', 'man', NULL, NULL),
 (16, 'Form Loose Fit', 'women', NULL, NULL),
 (17, 'Form Slim Fit', 'women', NULL, NULL),
-(18, 'Regular Fit', 'women', NULL, NULL),
+(18, 'Regular Fit', 'man', NULL, NULL),
 (19, 'Smart Fit', 'women', NULL, NULL),
 (20, 'Form Loose Fit', 'women', NULL, NULL);
 
@@ -192,7 +253,12 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (13, '2025_02_01_150133_create_status_orders_table', 1),
 (14, '2025_02_01_150916_create_shipper_table', 1),
 (15, '2025_02_01_150939_create_orders_table', 1),
-(16, '2025_02_04_154833_create_image_product_table', 1);
+(16, '2025_02_04_154833_create_image_product_table', 1),
+(17, '2025_02_16_092030_create_post_table', 1),
+(18, '2025_02_16_092448_create_banners_table', 1),
+(19, '2025_02_16_095140_create_carts_table', 1),
+(20, '2025_02_16_095158_create_cart_items_table', 1),
+(21, '2025_02_16_102011_create_order_detail_table', 1);
 
 -- --------------------------------------------------------
 
@@ -206,7 +272,7 @@ CREATE TABLE `orders` (
   `user_id` bigint UNSIGNED DEFAULT NULL,
   `order_code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `shipping_fee` double DEFAULT NULL,
-  `shipper_idid` bigint UNSIGNED NOT NULL,
+  `shipper_id` bigint UNSIGNED NOT NULL,
   `voucher_id` bigint UNSIGNED DEFAULT NULL,
   `date` datetime NOT NULL,
   `user_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -215,6 +281,25 @@ CREATE TABLE `orders` (
   `total_price` double NOT NULL,
   `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `note` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `order_detail`
+--
+
+CREATE TABLE `order_detail` (
+  `id` bigint UNSIGNED NOT NULL,
+  `Order_id` bigint UNSIGNED NOT NULL,
+  `product_id` bigint UNSIGNED NOT NULL,
+  `product_variants_id` bigint UNSIGNED NOT NULL,
+  `color` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `size` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `quantity` int NOT NULL,
+  `total_price` double NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -253,6 +338,24 @@ CREATE TABLE `personal_access_tokens` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `post`
+--
+
+CREATE TABLE `post` (
+  `id` bigint UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `content` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `author` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `publish_date` date DEFAULT NULL,
+  `views` int UNSIGNED NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `products`
 --
 
@@ -278,7 +381,7 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `categories_id`, `name_product`, `SKU`, `image`, `base_stock`, `price_regular`, `price_sale`, `description`, `views`, `content`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 'áo khoác bommer', 'KS@@', NULL, 200, 221324, 212000, 'áo chất lượng cao', 20, 'ádsds', NULL, NULL, NULL);
+(1, 1, 'áo dài tay', 'KS@@', NULL, 200, 221324, 212000, 'áo chất lượng cao', 20, 'ádsds', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -377,9 +480,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `role`, `email_verified_at`, `gender`, `user_image`, `password`, `remember_token`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Admin User', 'admin@example.com', '0123456789', 'Khách hàng', NULL, 'male', 'default.png', '$2y$10$FdbuKV0/hGCOif0rba6.XucY8/Ptav5JA0UwPmQ/J6FQR1PHo7IaO', NULL, '2025-02-14 00:41:37', '2025-02-14 00:41:37', NULL),
-(2, 'Test User', 'test@example.com', '0987654321', 'Khách hàng', NULL, 'male', 'default.png', '$2y$10$RG4z/vkYiyr5C5bAbuTuqOQAU5N/6eaJFnhMEImqI8W7vx2NY0Gdu', NULL, '2025-02-14 00:41:38', '2025-02-14 00:41:38', NULL),
-(3, 'hoangduy111', 'duy123@gmail.com', '0337035875', 'Khách hàng', NULL, 'namad', NULL, '$2y$10$ugPDl.ke4tZfBKqkGkcb5uvFjy5OYay.Tn76FT1RDwmh/buRMyMPG', NULL, '2025-02-14 00:41:46', '2025-02-14 00:41:46', NULL);
+(1, 'Admin User', 'admin@example.com', '0123456789', 'Khách hàng', NULL, 'male', 'default.png', '$2y$10$hXNBZH.azAM.7TNJ76grRelT2gM.cANfL2cLIeKCsaji3XawuCNsy', NULL, '2025-02-16 03:50:55', '2025-02-16 03:50:55', NULL),
+(2, 'Test User', 'test@example.com', '0987654321', 'Khách hàng', NULL, 'male', 'default.png', '$2y$10$tftGOrnGHy98M/gkzF7mBed5zYHS7QYQ5d10mBdemDkCagpo4zyWG', NULL, '2025-02-16 03:50:55', '2025-02-16 03:50:55', NULL);
 
 -- --------------------------------------------------------
 
@@ -407,6 +509,27 @@ CREATE TABLE `vouchers` (
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `banners`
+--
+ALTER TABLE `banners`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `carts`
+--
+ALTER TABLE `carts`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `carts_guest_id_unique` (`guest_id`),
+  ADD KEY `carts_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `cart_items`
+--
+ALTER TABLE `cart_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `cart_items_cart_id_foreign` (`cart_id`);
 
 --
 -- Indexes for table `categories`
@@ -461,8 +584,17 @@ ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `orders_slug_unique` (`slug`),
   ADD KEY `orders_user_id_foreign` (`user_id`),
-  ADD KEY `orders_shipper_idid_foreign` (`shipper_idid`),
+  ADD KEY `orders_shipper_id_foreign` (`shipper_id`),
   ADD KEY `orders_voucher_id_foreign` (`voucher_id`);
+
+--
+-- Indexes for table `order_detail`
+--
+ALTER TABLE `order_detail`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `order_detail_order_id_foreign` (`Order_id`),
+  ADD KEY `order_detail_product_id_foreign` (`product_id`),
+  ADD KEY `order_detail_product_variants_id_foreign` (`product_variants_id`);
 
 --
 -- Indexes for table `password_reset_tokens`
@@ -477,6 +609,12 @@ ALTER TABLE `personal_access_tokens`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
   ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
+
+--
+-- Indexes for table `post`
+--
+ALTER TABLE `post`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `products`
@@ -533,6 +671,24 @@ ALTER TABLE `vouchers`
 --
 
 --
+-- AUTO_INCREMENT for table `banners`
+--
+ALTER TABLE `banners`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `carts`
+--
+ALTER TABLE `carts`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `cart_items`
+--
+ALTER TABLE `cart_items`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
@@ -572,7 +728,7 @@ ALTER TABLE `location`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `orders`
@@ -581,10 +737,22 @@ ALTER TABLE `orders`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `order_detail`
+--
+ALTER TABLE `order_detail`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `post`
+--
+ALTER TABLE `post`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -620,7 +788,7 @@ ALTER TABLE `status_orders`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `vouchers`
@@ -631,6 +799,18 @@ ALTER TABLE `vouchers`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `carts`
+--
+ALTER TABLE `carts`
+  ADD CONSTRAINT `carts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `cart_items`
+--
+ALTER TABLE `cart_items`
+  ADD CONSTRAINT `cart_items_cart_id_foreign` FOREIGN KEY (`cart_id`) REFERENCES `carts` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `code_colors`
@@ -654,9 +834,17 @@ ALTER TABLE `location`
 -- Constraints for table `orders`
 --
 ALTER TABLE `orders`
-  ADD CONSTRAINT `orders_shipper_idid_foreign` FOREIGN KEY (`shipper_idid`) REFERENCES `shipper` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `orders_shipper_id_foreign` FOREIGN KEY (`shipper_id`) REFERENCES `shipper` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `orders_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `orders_voucher_id_foreign` FOREIGN KEY (`voucher_id`) REFERENCES `vouchers` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `order_detail`
+--
+ALTER TABLE `order_detail`
+  ADD CONSTRAINT `order_detail_order_id_foreign` FOREIGN KEY (`Order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `order_detail_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `order_detail_product_variants_id_foreign` FOREIGN KEY (`product_variants_id`) REFERENCES `product_variants` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `products`
