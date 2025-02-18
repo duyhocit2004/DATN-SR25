@@ -40,6 +40,7 @@ Route::delete('products/{id}', [ApiProductController::class,'destroy']);
 
 //Banner trang chu
 Route::apiResource('banner',ApiBannerController::class);
+
 //users
 Route::get('users', [ApiUserController::class, 'index']);
 Route::post('users', [ApiUserController::class, 'store']);
