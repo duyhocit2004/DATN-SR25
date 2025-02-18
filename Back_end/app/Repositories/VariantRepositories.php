@@ -21,7 +21,7 @@ class VariantRepositories
     }
     public function create($id, $data)
     {
-        // dd($data);
+        dd($data);
         foreach ($data as $as) {
             ProductVariants::create([
                 'product_id' => $id,

@@ -32,4 +32,18 @@ export const logoutUser = async (): Promise<void> => {
     }
   );
   localStorage.removeItem("token"); 
+  
+};
+// Chi tiết sản phẩm
+
+const API_URL = 'http://127.0.0.1:8000/api/products'; 
+
+export const getProductById = async (id: string) => {
+    try {
+        const response = await axios.get(`${API_URL}/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        throw error;
+    }
 };
