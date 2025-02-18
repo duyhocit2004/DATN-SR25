@@ -86,7 +86,7 @@ class ApiAuthController extends Controller
 
             // Tìm token trong cơ sở dữ liệu
             // lỗi này vẫn chạy được không cần phải sửasửa
-            $token = $user->tokens()->where('id', $tokenId)->first();
+            $token = $user->where('id', $tokenId)->first();
 
             if ($token) {
                 // Hủy token

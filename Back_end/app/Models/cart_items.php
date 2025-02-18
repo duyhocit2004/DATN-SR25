@@ -14,4 +14,6 @@ class cart_items extends Model
         'status',
         'type',
     ];
+
+    // public function 
 }
