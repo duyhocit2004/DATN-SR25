@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\admin\AuthController;
 use App\Http\Controllers\Admin\UserController;
-
 use App\Http\Controllers\admin\colorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\ProductController;

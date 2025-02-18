@@ -146,7 +146,6 @@
                                             <button class="btn btn-primary btn-block w-100" type="submit">Đăng kí</button>
                                         </div>
                                     </div>
-
                                 </form>
                             </div>
                         </div>
