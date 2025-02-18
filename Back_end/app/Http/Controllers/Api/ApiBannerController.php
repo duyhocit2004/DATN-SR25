@@ -70,6 +70,9 @@ class ApiBannerController extends Controller
     public function show(Request $request ,string $id)
     {
         $Banner = Banners::query()->findOrFail($id);
+        return response()->json([
+            'data' => $Banner,
+        ]);
         
     }
 

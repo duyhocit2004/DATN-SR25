@@ -46,7 +46,7 @@ class ApiProductController extends Controller
         $products = Products::create($params);
 
         return response()->json([
-            'data' => new ProductResource($products),
+            'data' => $products,
             'success' => true,
             'message' => 'Thêm thành công'
         ], 201);

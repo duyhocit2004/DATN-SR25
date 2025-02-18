@@ -28,6 +28,7 @@ return new class extends Migration
 
             $table->string('color')->nullable(); // Nullable để linh hoạt hơn
             $table->string('size')->nullable();  // Nullable để linh hoạt hơn
+            
             $table->integer('quantity');
             $table->double('total_price');
             $table->timestamps();

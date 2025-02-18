@@ -36,8 +36,8 @@
     }
     public function insertId($id,$data){
       // dd($data);
-      $this->IProductService->Update($id,$data);
-      return redirect()->route('product')->with('secssion','đã sửa sản phẩm thành công');
+      return $this->IProductService->Update($id,$data);
+
     }
     public function delete($id){}
     public function trashedProducts(){

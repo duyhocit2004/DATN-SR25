@@ -24,7 +24,7 @@ class ApiAuthController extends Controller
         }
         $token = $user->createToken('authToken')->plainTextToken;
         return response()->json([
-            'token' => $token,
+           'access_token' => $token,
             'type_token' => 'Baerer',
             'success' => 'đăng nhập thành công'
         ], 200);
@@ -85,6 +85,7 @@ class ApiAuthController extends Controller
             $tokenId = $request->bearerToken();
 
             // Tìm token trong cơ sở dữ liệu
+            // lỗi này vẫn chạy được không cần phải sửasửa
             $token = $user->tokens()->where('id', $tokenId)->first();
 
             if ($token) {

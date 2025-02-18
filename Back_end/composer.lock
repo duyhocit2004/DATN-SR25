@@ -8133,10 +8133,6 @@
     "platform": {
         "php": "^8.1"
     },
-<<<<<<< HEAD
     "platform-dev": [],
-=======
-    "platform-dev": {},
->>>>>>> cb775112271747a93cc2a71e8dbde64792193640
     "plugin-api-version": "2.6.0"
 }

@@ -9,6 +9,7 @@ use App\Services\product\VariantService;
 use App\Models\products;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\ProductVariants;
 use App\Repositories\IamgeRepositories;
 
 use Illuminate\Database\QueryException;
@@ -101,10 +102,12 @@ class ProductController extends Controller
     {
         $idproduct = $this->ProductService->GetId($id);
         $categori = $this->categoryService->getAll();
-
+        $size = $this->sizeService->getAll();
+        $color = $this->colorService->getAll();
+        $variant = $this->VariantService->GetId($id);
         $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
         // dd($iamge);  
-        return view('admin.products.editProduct', compact('idproduct', 'categori', 'iamge'));
+        return view('admin.products.editProduct', compact('idproduct', 'size','categori', 'iamge','variant','color'));
     }
 
     /**
@@ -112,10 +115,35 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $idProduct = $id;
+        $variant = $request->input('variants');
         // dd($request->all());
-        $list = $request->except('_token', '_method');
-        $this->ProductService->insertId($idProduct, $list);
+        // $request->validate([
+        //     'product' => 'required|string|max:255',
+        //     'categories_id' => 'required|integer',
+        //     'quanlity' => 'required|integer',
+        //     'price_regular' => 'required|numeric',
+        //     'price_sale' => 'required|numeric',
+        //     'description' => 'nullable|string',
+        //     'variants.*.id' => 'nullable|integer',
+        //     'variants.*.size_id' => 'required|integer',
+        //     'variants.*.color_id' => 'required|integer)',
+        //     'variants.*.quantity' => 'required|integer',
+        //     'variants.*.price' => 'required|numeric',
+        // ]);
+
+        $list = $request->except('_token', '_method','variants');
+        $idproduct = $this->ProductService->insertId($id, $list);
+
+        foreach ($variant as $value) {
+            if(isset($value['id'])){
+                $existingVariant =ProductVariants::find($value['id']);
+                if(isset($existingVariant)){
+                     $this->VariantService->insertId($existingVariant->id,$value);
+                 }
+            }else{
+                $this->VariantService->createNotForeach($idproduct->id,$value);
+            }
+        }         
         return redirect()->route('product')->with('success', 'thêm thành công');
     }
 
