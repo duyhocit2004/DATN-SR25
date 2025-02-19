@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Services\Categories\CategoryService;
-use App\Services\size\sizeService;
-use App\Services\color\ColorService;
-use App\Services\product\VariantService;
 use App\Models\products;
+use App\Models\imageProduct;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Models\ProductVariants;
+use App\Services\size\sizeService;
+use App\Http\Controllers\Controller;
+use App\Services\color\ColorService;
+use Illuminate\Contracts\Cache\Store;
 use App\Repositories\IamgeRepositories;
 
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Storage;
 use App\Services\product\ProductService;
-use Illuminate\Contracts\Cache\Store;
+use App\Services\product\VariantService;
+use App\Services\Categories\CategoryService;
 
 class ProductController extends Controller
 {
@@ -118,12 +120,32 @@ class ProductController extends Controller
     {
         $list = $request->except('_token', '_method', 'variants' ,'images');
         $idproduct = $this->ProductService->insertId($id, $list);
-
         if($request->has('images')){
-            
-            $images = $request->images;
-           
-            $this->IamgeRepositories->updateImage($id,$images);
+
+            $images1 = $request->file('images');
+            $existingImages = imageProduct::where('products_id', '=', $id)->get();
+    
+            // Xóa tất cả ảnh cũ
+            foreach ($existingImages as $image) {
+                if (Storage::disk('public')->exists($image->image_link)) {
+                    Storage::disk('public')->delete($image->image_link);
+                }
+                // Xóa bản ảnh trong cơ sở dữ liệu
+                $image->delete();
+            }
+        
+            // Lưu ảnh mới
+            // dd($image);
+                foreach ($images1 as $file) {
+                        $imagePath = null;
+                        $imagePath = $file->store('public');
+                        imageProduct::create([
+                            'products_id' => $id,
+                            'image_link' => $imagePath
+                        ]);
+                }
+        
+            // $this->IamgeRepositories->updateImage($id,$images);
         }
 
         if ($request->has('variant')) {

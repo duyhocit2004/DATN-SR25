@@ -55,14 +55,6 @@
                                                     </form>
                                                 </div>
 
-                                                <form action="{{ route('carts.store') }}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="product_id" value="{{ $as->id }}">
-                                                    <label for="quantity">Số lượng:</label>
-                                                    <input type="number" name="quantity" id="quantity" value="1" min="1">
-                                                    <button type="submit">Thêm vào giỏ hàng</button>
-                                                </form>
-
                                             </td>
                                         </tr>
                                     @endforeach
