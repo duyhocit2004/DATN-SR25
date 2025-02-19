@@ -57,7 +57,7 @@ class ApiProductController extends Controller
     {
         $products = products::query()->findOrFail($id);
 
-        return new ProductResource($products);
+        // return new ProductResource($products);
 
         return response()->json([
             'data' => ProductResource::collection($products),

@@ -28,6 +28,10 @@ class products extends Model
     }
 
     public function Variants(){
-        return $this->hasMany(ProductVariants::class);
+        return $this->hasMany(ProductVariants::class, 'product_id');
+    }
+
+    public function Imagelink(){
+        return $this->hasMany(imageProduct::class);
     }
 }

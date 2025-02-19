@@ -175,7 +175,8 @@
       </div>
       <input type="text" value="{{$item->id}}" hidden name="variants[{{$index + 1}}][id]">
       <div>
-        <button type="button" class="btn btn-danger btn-sm" onclick="deleteVariant11({{ $item->id }})">Xóa</button>
+        <button type="button" class="btn btn-danger btn-sm"
+        onclick="deleteVariant11({{ $item->id }})">Xóa</button>
       </div>
       </div>
       <div class="row card-wrapper border rounded-3 my-1 d-flex">
@@ -303,70 +304,70 @@
 
     var variantHtml = `
       <div class="ads card-body basic-form" id="variant-${variantCount}" >
-        <div class="container d-flex">
-        <div class="card-header card-no-border">
-          <h3>Biến thể ${variantCount}</h3>
-        </div>
-        <div>
-          <button type="button" class="btn btn-danger btn-sm" id="delete" onclick="deleteVariant(${variantCount})">Xóa</button>
-        </div>
-        </div>
-        <div id="divContainer" class=" row card-wrapper border rounded-3 my-1 d-flex">
-        <div class="col-3">
-          <label class="form-label" for="size_id">kích cỡ</label>
-          <select class="form-select" name="variants[${variantCount}][size_id]" id="size_${variantCount}">
-          ${sizeOptions}
-          </select>
-        </div>
-        <div class="col-3">
-          <label class="form-label" for="color_id">màu</label>
-          <select class="form-select" name="variants[${variantCount}][color_id]" id="color_${variantCount}">
-          ${colorOptions}
-          </select>
-        </div>
-        <div class="col-3">
-          <label class="form-label" for="	quanlity">số lượng</label>
-          <input class="form-control" id="quanlity_${variantCount}" name="variants[${variantCount}][quanlity]" type="text" placeholder="30">
-        </div>
-        <div class="col-3">
-          <label class="form-label" for="price">giá</label>
-          <input class="form-control" id="price_${variantCount}" name="variants[${variantCount}][price]" type="text" placeholder="120,000">
-        </div>
-        </div>
+      <div class="container d-flex">
+      <div class="card-header card-no-border">
+        <h3>Biến thể ${variantCount}</h3>
+      </div>
+      <div>
+        <button type="button" class="btn btn-danger btn-sm" id="delete" onclick="deleteVariant(${variantCount})">Xóa</button>
+      </div>
+      </div>
+      <div id="divContainer" class=" row card-wrapper border rounded-3 my-1 d-flex">
+      <div class="col-3">
+        <label class="form-label" for="size_id">kích cỡ</label>
+        <select class="form-select" name="variants[${variantCount}][size_id]" id="size_${variantCount}">
+        ${sizeOptions}
+        </select>
+      </div>
+      <div class="col-3">
+        <label class="form-label" for="color_id">màu</label>
+        <select class="form-select" name="variants[${variantCount}][color_id]" id="color_${variantCount}">
+        ${colorOptions}
+        </select>
+      </div>
+      <div class="col-3">
+        <label class="form-label" for="	quanlity">số lượng</label>
+        <input class="form-control" id="quanlity_${variantCount}" name="variants[${variantCount}][quanlity]" type="text" placeholder="30">
+      </div>
+      <div class="col-3">
+        <label class="form-label" for="price">giá</label>
+        <input class="form-control" id="price_${variantCount}" name="variants[${variantCount}][price]" type="text" placeholder="120,000">
+      </div>
+      </div>
       `;
     divContainer.insertAdjacentHTML('beforeend', variantHtml);
     }
     function deleteVariant11(variantIndex) {
     const variantElement = document.getElementById(`variant-${variantIndex}`);
-    
-    if (variantElement) {
-        const variantId = variantElement.querySelector("input[name^='variants']").value; // Lấy ID biến thể
 
-        // Xóa trên giao diện trước
-        variantElement.remove();
-        
-        // Gửi request để xóa trong database
-        fetch(`/variant/${variantId}`, { // Gửi ID thực tế thay vì variantIndex
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success) {
-                console.error('Lỗi khi xóa biến thể:', data.message);
-            }
-        })
-        .catch(error => console.error('Lỗi kết nối:', error));
+    if (variantElement) {
+      const variantId = variantElement.querySelector("input[name^='variants']").value; // Lấy ID biến thể
+
+      // Xóa trên giao diện trước
+      variantElement.remove();
+
+      // Gửi request để xóa trong database
+      fetch(`/variant/${variantId}`, { // Gửi ID thực tế thay vì variantIndex
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        'Content-Type': 'application/json',
+      }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.success) {
+        console.error('Lỗi khi xóa biến thể:', data.message);
+        }
+      })
+      .catch(error => console.error('Lỗi kết nối:', error));
     }
 
     function deleteVariant(variantIndex) {
-    const variantElement = document.getElementById(`variant-${variantIndex}`);
-    variantElement.remove();
+      const variantElement = document.getElementById(`variant-${variantIndex}`);
+      variantElement.remove();
     }
-}
+    }
 
   </script>
 @endsection
