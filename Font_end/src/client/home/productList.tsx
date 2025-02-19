@@ -1,7 +1,7 @@
 // src/client/home/ProductList.tsx
 import React, { useEffect, useState } from 'react';
 import { IProducts } from '../../interface/Products';
-import { getProducts } from '../../sevice/productSevice';
+import { ListProduct } from '../../service/products/productService';
 
 
 const ProductList: React.FC = () => {
@@ -10,7 +10,7 @@ const ProductList: React.FC = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await getProducts();
+                const response = await ListProduct();
                 console.log("Dữ liệu sản phẩm nhận được:", response); // Kiểm tra dữ liệu
                 if (Array.isArray(response)) {
                     setProducts(response);
@@ -21,7 +21,7 @@ const ProductList: React.FC = () => {
                 console.error('Lỗi khi lấy sản phẩm:', error);
             }
         };
-
+                              
         fetchProducts();
     }, []);
 

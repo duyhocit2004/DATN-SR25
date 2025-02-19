@@ -1,5 +1,5 @@
-import api from "../axios/config";
-import { IUser } from "../interface/User";
+import api from "../../axios/config";
+import { IUser } from "../../interface/User";
 
 
 // Lấy danh sách Users

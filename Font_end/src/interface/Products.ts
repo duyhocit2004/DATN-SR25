@@ -1,7 +1,8 @@
 export interface IProducts {
+    id?: string | number;
     categories_id: number;
     name_product: string;
-    SKU: string; 
+    SKU: string;
     base_stock: number;
     price_regular: number;
     price_sale: number;
