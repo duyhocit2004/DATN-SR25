@@ -8,48 +8,51 @@
             </svg></a></div>
     <div class="page-main-header col">
         <div class="header-left">
-            <form class="form-inline search-full col" action="#" method="get">
-                <div class="form-group w-100">
-                    <div class="Typeahead Typeahead--twitterUsers">
-                        <div class="u-posRelative">
-                            <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text"
-                                placeholder="Search Admiro .." name="q" title="" autofocus="autofocus" />
-                            <div class="spinner-border Typeahead-spinner" role="status"><span
-                                    class="sr-only">Loading...</span></div><i class="close-search" data-feather="x"></i>
-                        </div>
-                        <div class="Typeahead-menu"></div>
-                    </div>
-                </div>
-            </form>
-            <div class="form-group-header d-lg-block d-none">
-                <div class="Typeahead Typeahead--twitterUsers">
-                    <div class="u-posRelative d-flex align-items-center">
-                        <input class="demo-input py-0 Typeahead-input form-control-plaintext w-100" type="text"
-                            placeholder="Type to Search..." name="q" title="" /><i
-                            class="search-bg iconly-Search icli"></i>
-                    </div>
-                </div>
-            </div>
+           
         </div>
         <div class="nav-right">
+            <ul class="header-right">
+                <li class="custom-dropdown">
+                    <div class="translate_wrapper">
+                        <div class="current_lang"><a class="lang" href="javascript:void(0)"><i
+                                    class="flag-icon flag-icon-us"></i>
+                                <h6 class="lang-txt f-w-700">ENG</h6>
+                            </a></div>
+                        <ul class="custom-menu profile-menu language-menu py-0 more_lang">
+                            <li class="d-block"><a class="lang" href="#" data-value="English"><i
+                                        class="flag-icon flag-icon-us"></i>
+                                    <div class="lang-txt">English</div>
+                                </a></li>
+                            <li class="d-block"><a class="lang" href="#" data-value="fr"><i
+                                        class="flag-icon flag-icon-fr"></i>
+                                    <div class="lang-txt">Français</div>
+                                </a></li>
+                            <li class="d-block"><a class="lang" href="#" data-value="es"><i
+                                        class="flag-icon flag-icon-es"></i>
+                                    <div class="lang-txt">Español</div>
+                                </a></li>
+                        </ul>
+                    </div>
+                </li>
+                
+                
+                
+                
                 <li class="profile-nav custom-dropdown">
                     <div class="user-wrap">
 
                         <div class="user-content">
                             @if (Auth::check())
-                            <div class="dropdown">
-                                <button class="btn btn-primary d-flex align-items-center gap-2" data-bs-toggle="dropdown">
-                                    <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-circle" width="40" height="40">
-                                    <span>{{ Auth::user()->name }}</span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="{{ route('logout') }}">Logout</a></li>
-                                </ul>
-                            </div>
-
+                                <div class="dropdown">
+                                    <button class="btn btn-primary"  data-bs-toggle="dropdown">
+                                        <h5>{{ Auth::user()->name }}</h5>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="" href="#">Tài khoản</a></li>
+                                        <li><a class="" href="#">Another action</a></li>
+                                        <li><a class="" href="{{ route('logout') }}">Đăng xuất</a></li>
+                                    </ul>
+                                </div>
                             @else
                                 <a href="{{ route('login') }}">
                                     <h5>Login</h5>
