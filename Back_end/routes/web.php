@@ -108,3 +108,6 @@ Route::get('carts/create', [CartController::class, 'create'])->name('carts.creat
 Route::get('/carts/{id}/edit', [CartController::class, 'edit'])->name('carts.edit');
 Route::put('/carts/{id}', [CartController::class, 'update'])->name('carts.update');
 Route::delete('carts/{id}', [CartController::class, 'destroy'])->name('carts.destroy');
+
+//Voucher 
+Route::get('Vouchers',[VoucherController::class,'index'])->name('voucher.index');

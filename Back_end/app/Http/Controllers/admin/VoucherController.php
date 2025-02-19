@@ -14,7 +14,7 @@ class VoucherController extends Controller
     public function index()
     {
         $voucher = Voucher::query()->get();
-        dd($voucher);
+        // dd($voucher);
         return view('admin.voucher.ListVoucher',compact('voucher'));
         
     }
