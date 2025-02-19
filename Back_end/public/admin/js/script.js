@@ -22,16 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
   /*=====================
         02 Tap to top js
     ==========================*/
-  const button = document.querySelector(".tap-top");
-  const displayButton = () => {
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 100) {
-        button.style.display = "block";
-      } else {
-        button.style.display = "none";
-      }
-    });
-  };
+
   const scrollToTop = () => {
     button.addEventListener("click", () => {
       window.scroll({

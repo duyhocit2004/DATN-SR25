@@ -17,11 +17,11 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('slug')->nullable()->unique();
-            $table->foreignIdFor(User::class)->nullable()->constrained();
+            $table->foreignIdFor(User::class)->nullable()->constrained()->onDelete('cascade');
             $table->string('order_code');
-            $table->double('shipping_fee')->nullable(); //phí vận chuyển 
-            $table->foreignId('shipper_idid')->constrained('shipper')->nullable()->constrained();
-            $table->foreignIdFor(Voucher::class)->nullable()->constrained();
+            $table->double('shipping')->nullable(); //phí vận chuyển 
+            $table->foreignId('shipper_id')->constrained('shipper')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Voucher::class)->nullable()->constrained()->onDelete('cascade');
             $table->dateTime('date');
             $table->string('user_name');
             $table->string('email');
