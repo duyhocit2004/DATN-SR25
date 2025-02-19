@@ -42,14 +42,14 @@ class IamgeRepositories {
         }
     
         // Lưu ảnh mới
+        // dd($image);
             foreach ($image as $file) {
-                if ($file->isValid()) {
+                    $imagePath = null;
                     $imagePath = $file->store('product', 'public');
                     imageProduct::create([
                         'products_id' => $id,
                         'image_link' => $imagePath
                     ]);
-                }
             }
     
         return true;
