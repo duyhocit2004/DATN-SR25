@@ -14,6 +14,7 @@ use App\Repositories\IamgeRepositories;
 
 use Illuminate\Database\QueryException;
 use App\Services\product\ProductService;
+use Illuminate\Contracts\Cache\Store;
 
 class ProductController extends Controller
 {
@@ -77,7 +78,7 @@ class ProductController extends Controller
         $list = $request->all();
 
         $idproduct = $this->ProductService->insert($list);
-        if($request->has('variants')){
+        if ($request->has('variants')) {
             $this->VariantService->insert($idproduct, $variant);
         }
         if ($request->hasFile('images')) {
@@ -109,7 +110,7 @@ class ProductController extends Controller
         $variant = $this->VariantService->GetId($id);
         $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
         // dd($iamge);  
-        return view('admin.products.editProduct', compact('idproduct', 'size','categori', 'iamge','variant','color'));
+        return view('admin.products.editProduct', compact('idproduct', 'size', 'categori', 'iamge', 'variant', 'color'));
     }
 
     /**
@@ -117,35 +118,35 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $variant = $request->input('variants');
-        // dd($request->all());
-        // $request->validate([
-        //     'product' => 'required|string|max:255',
-        //     'categories_id' => 'required|integer',
-        //     'quanlity' => 'required|integer',
-        //     'price_regular' => 'required|numeric',
-        //     'price_sale' => 'required|numeric',
-        //     'description' => 'nullable|string',
-        //     'variants.*.id' => 'nullable|integer',
-        //     'variants.*.size_id' => 'required|integer',
-        //     'variants.*.color_id' => 'required|integer)',
-        //     'variants.*.quantity' => 'required|integer',
-        //     'variants.*.price' => 'required|numeric',
-        // ]);
-
-        $list = $request->except('_token', '_method','variants');
+        $list = $request->except('_token', '_method', 'variants' ,'images');
         $idproduct = $this->ProductService->insertId($id, $list);
 
-        foreach ($variant as $value) {
-            if(isset($value['id'])){
-                $existingVariant =ProductVariants::find($value['id']);
-                if(isset($existingVariant)){
-                     $this->VariantService->insertId($existingVariant->id,$value);
-                 }
-            }else{
-                $this->VariantService->createNotForeach($idproduct->id,$value);
+        if($request->has('images')){
+            
+            $images = $request->images;
+           
+            $this->IamgeRepositories->updateImage($id,$images);
+        }
+
+        if ($request->has('variant')) {
+
+            $variant = $request->input('variants');
+
+            foreach ($variant as $value) {
+
+                if (isset($value['id'])) {
+                    $existingVariant = ProductVariants::find($value['id']);
+                    if (isset($existingVariant)) {
+                        $this->VariantService->insertId($existingVariant->id, $value);
+                    }
+                } else {
+                    $this->VariantService->createNotForeach($idproduct->id, $value);
+                }
+
             }
-        }         
+        }
+
+       
         return redirect()->route('product')->with('success', 'thêm thành công');
     }
 
@@ -169,12 +170,12 @@ class ProductController extends Controller
         $this->ProductService->restoreProduct($id);
         return redirect()->route('ListDelete.Product')->with('successs', 'xóa thành công');
     }
-    public function forceProduct(string $id)
+    public function forceDelete(string $id)
     {
         $this->ProductService->forceDelete($id);
         return redirect()->route('ListDelete.Product')->with('successs', 'xóa thành công');
     }
 
-    
+
 
 }

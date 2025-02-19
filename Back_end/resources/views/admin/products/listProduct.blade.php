@@ -27,21 +27,21 @@
                                         <th scope="col">Tên sản phẩm</th>
                                         <th scope="col">Số lượng trong kho</th>
                                         <th scope="col">Giá sản phẩm</th>
-                                        <th scope="col">Giảm giá</th>
+                                        {{-- <th scope="col">Giảm giá</th> --}}
                                         <th scope="col">Thao tác</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
-                                    @foreach ($list as $as)
+                                    @foreach ($list as $index => $as)
                                         <tr class="border-bottom-success">
-                                            <th scope="row"></th>
-                                            <td><img class="img-30 me-2" src="{{ Storage::url($as->image) }}"
-                                                    alt="profile">Ram Jacob</td>
+                                            <th scope="row">{{ $index + 1}}</th>
+                                            <td ư><img class="img-fluid" src="{{ Storage::url($as->image) }}  "
+                                                    alt="profile" style="width: 240px; Height: auto;"></td>
                                             <td>{{ $as->name_product }}</td>
-                                            <td>{{ $as->SKU }}</td>
+                                            <td>{{ $as->base_stock }}</td>
                                             <td>{{ number_format($as->price_regular, 0, '.', ',') }}VND</td>
-                                            <td>{{ number_format($as->price_sale, 0, '.', ',') }}</td>
+                                            {{-- <td>{{ number_format($as->price_sale, 0, '.', ',') }}</td> --}}
                                             <td>
                                                 <div class="my-1">
                                                     <a href="{{ route('get.Product', $as->id) }}"
