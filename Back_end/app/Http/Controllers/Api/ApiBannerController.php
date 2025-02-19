@@ -69,13 +69,11 @@ class ApiBannerController extends Controller
      */
     public function show(Request $request ,string $id)
     {
-        if($request->route('type')){
-            $type = $request->route('type');
-            Banners::query()->where('type' ,'=','$type');
-            return response()->json([
-                'data' => $type
-            ]);
-        }
+        $Banner = Banners::query()->findOrFail($id);
+        return response()->json([
+            'data' => $Banner,
+        ]);
+        
     }
 
     /**

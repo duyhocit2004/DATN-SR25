@@ -69,7 +69,7 @@ Route::get('create\{id}\variant', [VariantController::class, 'create'])->name('v
 Route::get('show\variant', [VariantController::class, 'show'])->name('variant.show');
 Route::post('store\variant', [VariantController::class, 'store'])->name('variant.store');
 Route::put('update\{id}\variant', [VariantController::class, 'update'])->name('variant.update');
-Route::delete('delete\{id}\variant', [VariantController::class, 'destroy'])->name('variant.delete');
+Route::delete('/variant/{id}', [VariantController::class, 'destroy'])->name('variant.delete');
 
 
 

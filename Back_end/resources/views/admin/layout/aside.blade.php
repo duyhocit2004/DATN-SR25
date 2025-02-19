@@ -37,7 +37,6 @@
                     <li> <a href="{{ route('product') }}">Danh sách </a></li>
                     <li><a href="{{ route('createProduct') }}">Thêm sản phẩm</a></li>
                     <li><a href="{{ route('variant.index') }}">Biến thể</a></li>
-                    <li><a href="{{ route('variant.show') }}">Thêm biến thể</a></li>
                     <li><a href="{{ route('ListDelete.Product') }}">Thùng rác</a></li>
                 </ul>
             </li>
