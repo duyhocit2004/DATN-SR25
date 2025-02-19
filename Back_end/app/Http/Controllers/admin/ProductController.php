@@ -107,13 +107,8 @@ class ProductController extends Controller
         $color = $this->colorService->getAll();
         $variant = $this->VariantService->GetId($id);
         $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
-<<<<<<< HEAD
         // dd($iamge);  
         return view('admin.products.editProduct', compact('idproduct', 'size', 'categori', 'iamge', 'variant', 'color'));
-=======
-        // dd($iamge);
-        return view('admin.products.editProduct', compact('idproduct', 'categori', 'iamge'));
->>>>>>> namnguyen
     }
 
     /**
