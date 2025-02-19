@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const loginApi = (email,password)=>{
-    return axios.post("/api/login",{email,password})
+const loginApi = (email: any,password: any)=>{
+    return axios.post("/login",{email,password})
 }
 export {loginApi}
