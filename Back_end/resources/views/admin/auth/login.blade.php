@@ -119,7 +119,7 @@
                                             <input class="form-check-input" id="solid6" type="checkbox">
                                             <label class="form-check-label" for="solid6">Ghi nhớ mật khẩu</label>
                                         </div>
-                                            <a class="link" href="forget-password.html">Quên mật khẩu?</a>
+                                            {{-- <a class="link" href="forget-password.html">Quên mật khẩu?</a> --}}
                                         <div class="text-end mt-3">
                                             <button class="btn btn-primary btn-block w-100" type="submit">Đăng nhập</button>
                                         </div>

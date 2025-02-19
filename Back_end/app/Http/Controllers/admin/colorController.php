@@ -10,8 +10,9 @@ use App\Services\color\ColorService;
 
 class colorController extends Controller
 {
-    public $color ;
-    public function __construct(ColorService $color ){
+    public $color;
+    public function __construct(ColorService $color)
+    {
         $this->color = $color;
     }
     /**
@@ -20,7 +21,7 @@ class colorController extends Controller
     public function index()
     {
         $list = $this->color->getAll();
-        return view('admin.color.listcolor',compact('list'));
+        return view('admin.color.listcolor', compact('list'));
     }
 
     /**
@@ -36,22 +37,18 @@ class colorController extends Controller
      */
     public function store(request $request)
     {
-            
-            // color::create([
-            //     'name'=>$request->name
-            // ]);
-            // return redirect()->route('color');
+        color::create([
+            'name' => $request->name
+        ]);
+        return redirect()->route('color');
 
-            return $this->color->insert($request->name); 
+        return $this->color->insert($request->name);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        
-    }
+    public function show(string $id) {}
 
     /**
      * Show the form for editing the specified resource.
@@ -59,7 +56,7 @@ class colorController extends Controller
     public function edit(string $id)
     {
         $list = $this->color->GetId($id);
-        return view('admin.color.edit',compact('list'));
+        return view('admin.color.edit', compact('list'));
     }
 
     /**
@@ -68,8 +65,8 @@ class colorController extends Controller
     public function update(Request $request, string $id)
     {
         // dd($id,$request);
-        $list = $request->except('_token','_method');
-        return $this->color->insertId($id,$list);
+        $list = $request->except('_token', '_method');
+        return $this->color->insertId($id, $list);
     }
 
     /**

@@ -8,8 +8,8 @@
                 <form class="row" action="{{route('postcolor')}}" method="POST">
                     @csrf
                   <div class="mb-3">
-                    <label class="form-label">tên màu</label>
-                    <input class="form-control" id="" type="text" name="name" value="{{old('namecolor')}}" placeholder="màu xanh....">
+                    <label class="form-label">Tên màu</label>
+                    <input class="form-control" id="" type="text" name="name" value="{{old('namecolor')}}" placeholder="Nhập màu...">
                     @error('namecolor')
                         <p class="alert alert-danger">{{$message}}</p>
                     @enderror
