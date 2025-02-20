@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\ApiBannerController;
+use App\Http\Controllers\api\ApiCartController;
 use App\Http\Controllers\Api\ApiCategoryController;
 use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiUserController;
@@ -51,6 +52,7 @@ Route::get('colors/{id}', [ApiColorController::class,'show']);
 Route::put('colors/{id}', [ApiColorController::class,'update']);
 Route::delete('colors/{id}', [ApiColorController::class,'destroy']);
 
+// Route Size
 Route::get('sizes', [ApiSizeController::class,'index']);
 Route::post('sizes', [ApiSizeController::class,'store']);
 Route::get('sizes/{id}', [ApiSizeController::class,'show']);
@@ -66,4 +68,11 @@ Route::post('users', [ApiUserController::class, 'store']);
 Route::get('users/{id}', [ApiUserController::class, 'show']);
 Route::put('users/{id}', [ApiUserController::class, 'update']);
 Route::delete('users/{id}', [ApiUserController::class, 'destroy']);
+
+Route::get('banners', [ApiBannerController::class, 'index']);
+Route::get('banners', [ApiBannerController::class, 'store']);
+Route::get('banners/{id}', [ApiBannerController::class, 'show']);
+
+Route::get('carts', [ApiCartController::class, 'index']);
+
 

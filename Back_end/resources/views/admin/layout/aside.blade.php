@@ -55,15 +55,8 @@
                     <h6 class=""><i class="fas fa-shopping-cart"></i> Quản lý giỏ hàng</h6>
                 </a>
                 <ul class="sidebar-submenu">
-<<<<<<< HEAD
-                    <li> <a href="{{ route('product') }}">Danh sách </a></li>
-                    <li><a href="{{ route('createProduct') }}">Thêm sản phẩm</a></li>
-                    <li><a href="{{ route('variant.index') }}">Biến thể</a></li>
-                    <li><a href="{{ route('ListDelete.Product') }}">Thùng rác</a></li>
-=======
                     <li><a href="{{ route('carts.index') }}">Danh sách</a></li>
                     {{-- <li><a href="{{ route('sizes.create') }}">Thêm size</a></li> --}}
->>>>>>> namnguyen
                 </ul>
             </li>
 

@@ -107,13 +107,8 @@ class ProductController extends Controller
         $color = $this->colorService->getAll();
         $variant = $this->VariantService->GetId($id);
         $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
-<<<<<<< HEAD
-        // dd($iamge);  
-        return view('admin.products.editProduct', compact('idproduct', 'size', 'categori', 'iamge', 'variant', 'color'));
-=======
         // dd($iamge);
         return view('admin.products.editProduct', compact('idproduct', 'categori', 'iamge'));
->>>>>>> namnguyen
     }
 
     /**
@@ -125,9 +120,9 @@ class ProductController extends Controller
         $idproduct = $this->ProductService->insertId($id, $list);
 
         if($request->has('images')){
-            
+
             $images = $request->images;
-           
+
             $this->IamgeRepositories->updateImage($id,$images);
         }
 
@@ -149,7 +144,7 @@ class ProductController extends Controller
             }
         }
 
-       
+
         return redirect()->route('product')->with('success', 'thêm thành công');
     }
 
