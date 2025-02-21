@@ -31,7 +31,7 @@ const Login = () => {
       if (response.data.access_token) {
         localStorage.setItem("token", response.data.access_token);
         toast.success("Đăng Nhập Thành Công.");
-
+        // navigate(/)
         return response.data;
       } else {
         toast.error("Đăng Nhập Không Thành Công.");

@@ -31,10 +31,7 @@ function getItem(
 const items: MenuItem[] = [
     getItem('Tổng quan', '/admin/dashboard', <PieChartOutlined />),
     getItem('Quản lý sản phẩm', '/admin/products', <DesktopOutlined />),
-    getItem('Quản lý tài khoản', 'sub1', <UserOutlined />, [
-        getItem('Danh sách tài khoản', '/admin/users'),
-        getItem('Thêm tài khoản', '/admin/users/add'),
-    ]),
+    getItem('Quản lý tài khoản', '/admin/users', <UserOutlined />),
     getItem('Cài đặt', '/admin/settings', <FileOutlined />),
 ];
 
@@ -73,7 +70,7 @@ const App: React.FC = () => {
                     </div>
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>
-                    Chinhle Entertaiment ©{new Date().getFullYear()} Bố mày không tới!! Bố mày đứng im!!
+                    DATN ©{new Date().getFullYear()} by 7 chicken code !!!
                 </Footer>
             </Layout>
         </Layout>

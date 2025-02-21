@@ -1,21 +1,17 @@
 export interface IUser {
     id: number;
-    fullname: string;
-    username: string;
+    name: string;
     email: string;
+    phone_number: string;
+    role: string;
     email_verified_at: string | null;
-    password?: string;
-    phone: string;
     gender: string;
-    role: {
-        role_id: number;
-        role: string;
-        description?: string;
-    };
-    status: string;
-    created_at?: string | null;
-    updated_at?: string | null;
+    user_image: string | null;
+    created_at: string;
+    updated_at: string;
+    deleted_at: string | null;
 }
+
 export interface AuthResponse {
     token: string;
 }
