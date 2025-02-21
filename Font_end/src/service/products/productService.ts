@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import api from "../../axios/config";
 import { IProducts } from "../../interface/Products";
 
@@ -20,8 +21,6 @@ export const ListProduct = async () => {
 };
 
 
-
-
 // Lấy thông tin chi tiết một sản phẩm theo ID
 export const GetProductById = async (id: number) => {
     try {
@@ -34,15 +33,18 @@ export const GetProductById = async (id: number) => {
 };
 
 // Thêm sản phẩm mới
+
 export const AddProduct = async (product: IProducts) => {
     try {
         const { data } = await api.post<IProducts>('/products', product);
         return data;
     } catch (error) {
-        console.error('Error creating product:', error);
+        const axiosError = error as AxiosError;
+        console.error('Error creating product:', axiosError.response?.data || axiosError.message);
         return null;
     }
 };
+
 
 // Cập nhật sản phẩm theo ID
 export const UpdateProduct = async (id: number, product: Partial<IProducts>) => {

@@ -26,60 +26,104 @@ const normFile = (e: any) => {
 const ProductAdd: React.FC = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
-    const [categories, setCategories] = useState([]); // State lưu danh mục
+    const [categories, setCategories] = useState([]);
+    const [colors, setColors] = useState([]);
+    const [sizes, setSizes] = useState([]);
 
-    // Fetch danh mục từ API
+    // Fetch dữ liệu từ API
     useEffect(() => {
-        const fetchCategories = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch("http://127.0.0.1:8000/api/categories");
-                const data = await response.json();
-                console.log("📌 Categories:", data);
-                setCategories(data);
+                // Lấy danh mục
+                const categoryRes = await fetch("http://127.0.0.1:8000/api/categories");
+                const categoryData = await categoryRes.json();
+                setCategories(categoryData);
+
+                // Lấy màu sắc
+                const colorRes = await fetch("http://127.0.0.1:8000/api/colors");
+                const colorData = await colorRes.json();
+                setColors(colorData);
+
+                // Lấy kích cỡ
+                const sizeRes = await fetch("http://127.0.0.1:8000/api/sizes");
+                const sizeData = await sizeRes.json();
+                setSizes(sizeData);
             } catch (error) {
-                console.error("Lỗi khi lấy danh mục:", error);
-                message.error("Không thể tải danh mục!");
+                console.error("Lỗi khi lấy dữ liệu:", error);
+                message.error("Không thể tải dữ liệu!");
             }
         };
 
-        fetchCategories();
+        fetchData();
     }, []);
 
     const onFinish = async (values: any) => {
         try {
-            const formData = new FormData();
-            formData.append("name_product", values.name);
-            formData.append("categories_id", values.category);
-            formData.append("base_stock", values.quantity);
-            formData.append("price_regular", values.price);
-            formData.append("price_sale", values.discount ? values.price - (values.price * values.discount) / 100 : values.price);
-            formData.append("description", values.description);
-            formData.append("content", values.content || "");
-            formData.append("color", values.color || "Chưa cập nhật");
-            formData.append("size", values.size || "Chưa cập nhật");
-
-            // Thêm ảnh đại diện
-            if (values.avatar?.[0]?.originFileObj) {
-                formData.append("image", values.avatar[0].originFileObj);
+            if (!values.avatar?.[0]?.originFileObj) {
+                message.error("Vui lòng chọn ảnh đại diện!");
+                return;
             }
 
-            // Gửi request lên API
-            const response = await fetch("http://127.0.0.1:8000/api/products", {
+            // Upload ảnh lên Cloudinary
+            const formData = new FormData();
+            formData.append("file", values.avatar[0].originFileObj);
+            formData.append("upload_preset", "DATN_2025");
+            formData.append("cloud_name", "dfcwk3b1b");
+
+            const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/dfcwk3b1b/image/upload", {
                 method: "POST",
                 body: formData,
             });
 
-            if (response.ok) {
+            const cloudinaryData = await cloudinaryRes.json();
+            if (!cloudinaryData.secure_url) {
+                console.error("Lỗi khi upload ảnh:", cloudinaryData);
+                throw new Error("Không thể upload ảnh lên Cloudinary");
+            }
+
+
+            const formDataProduct = new FormData();
+            formDataProduct.append("name_product", values.name);
+            formDataProduct.append("categories_id", values.category);
+            formDataProduct.append("base_stock", values.quantity);
+            formDataProduct.append("price_regular", values.price);
+            formDataProduct.append("price_sale", values.discount ? values.price - (values.price * values.discount) / 100 : values.price);
+            formDataProduct.append("description", values.description);
+            formDataProduct.append("content", values.content || "");
+            formDataProduct.append("image", cloudinaryData.secure_url); // imageFile phải là một file, không phải URL
+            formDataProduct.append("SKU", values.SKU || "DEFAULT_SKU");
+
+
+            const productResponse = await fetch("http://127.0.0.1:8000/api/products", {
+                method: "POST",
+                body: formDataProduct, // Chuyển object thành JSON string
+            });
+
+
+            const responseText = await productResponse.text(); // Đọc dữ liệu dưới dạng text để debug
+            console.log("Raw response:", responseText);
+
+            let responseData;
+            try {
+                responseData = JSON.parse(responseText);
+            } catch (error) {
+                console.error("Lỗi khi parse JSON:", error);
+            }
+
+            if (productResponse.ok) {
                 message.success("Thêm sản phẩm thành công!");
                 navigate("/admin/products");
             } else {
-                throw new Error("Lỗi khi thêm sản phẩm");
+                console.error("Lỗi khi thêm sản phẩm:", productResponse.status, responseData);
+                message.error(`Lỗi ${productResponse.status}: ${responseData?.message || "Không thể thêm sản phẩm!"}`);
             }
+
         } catch (error) {
             console.error("Lỗi khi gửi API:", error);
             message.error("Không thể thêm sản phẩm!");
         }
     };
+
 
     return (
         <Card title="Thêm sản phẩm mới" bordered={false} style={{ maxWidth: 800, margin: "0 auto" }}>
@@ -100,6 +144,28 @@ const ProductAdd: React.FC = () => {
                     </Select>
                 </Form.Item>
 
+                {/* Màu sắc */}
+                <Form.Item label="Màu sắc" name="color" rules={[{ required: true, message: "Vui lòng chọn màu!" }]}>
+                    <Select placeholder="Chọn màu">
+                        {colors.map((color) => (
+                            <Option key={color.id} value={color.name}>
+                                {color.name}
+                            </Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+
+                {/* Kích cỡ */}
+                <Form.Item label="Kích cỡ" name="size" rules={[{ required: true, message: "Vui lòng chọn kích cỡ!" }]}>
+                    <Select placeholder="Chọn kích cỡ">
+                        {sizes.map((size) => (
+                            <Option key={size.id} value={size.name}>
+                                {size.name}
+                            </Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+
                 {/* Số lượng */}
                 <Form.Item label="Số lượng" name="quantity" rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}>
                     <InputNumber min={1} style={{ width: "100%" }} placeholder="Nhập số lượng" />
@@ -110,29 +176,18 @@ const ProductAdd: React.FC = () => {
                     <InputNumber min={0} style={{ width: "100%" }} placeholder="Nhập giá sản phẩm" />
                 </Form.Item>
 
-                {/* Giảm giá sản phẩm */}
-                <Form.Item label="Giảm giá sản phẩm (%)" name="discount">
-                    <InputNumber min={0} max={100} style={{ width: "100%" }} placeholder="Nhập % giảm giá (Nếu có)" />
+                {/* Giảm giá sản phẩm (Không bắt buộc) */}
+                <Form.Item
+                    label="Giảm giá sản phẩm (%)"
+                    name="discount"
+                >
+                    <InputNumber min={0} max={100} style={{ width: '100%' }} placeholder="Nhập % giảm giá (Nếu có)" />
                 </Form.Item>
+
 
                 {/* Miêu tả */}
                 <Form.Item label="Miêu tả" name="description" rules={[{ required: true, message: "Vui lòng nhập miêu tả!" }]}>
                     <TextArea rows={4} placeholder="Nhập miêu tả sản phẩm" />
-                </Form.Item>
-
-                {/* Màu */}
-                <Form.Item label="Màu" name="color">
-                    <Input placeholder="Nhập màu sản phẩm" />
-                </Form.Item>
-
-                {/* Kích cỡ */}
-                <Form.Item label="Kích cỡ" name="size">
-                    <Input placeholder="Nhập kích cỡ sản phẩm" />
-                </Form.Item>
-
-                {/* Nội dung */}
-                <Form.Item label="Nội dung" name="content">
-                    <TextArea rows={4} placeholder="Nhập nội dung sản phẩm" />
                 </Form.Item>
 
                 {/* Ảnh đại diện */}
@@ -145,16 +200,6 @@ const ProductAdd: React.FC = () => {
                 >
                     <Upload name="avatar" listType="picture" maxCount={1} beforeUpload={() => false}>
                         <Button icon={<UploadOutlined />}>Chọn ảnh đại diện</Button>
-                    </Upload>
-                </Form.Item>
-
-                {/* Album ảnh */}
-                <Form.Item label="Album ảnh" name="album" valuePropName="fileList" getValueFromEvent={normFile}>
-                    <Upload name="album" listType="picture-card" multiple beforeUpload={() => false}>
-                        <div>
-                            <UploadOutlined />
-                            <div style={{ marginTop: 8 }}>Chọn ảnh</div>
-                        </div>
                     </Upload>
                 </Form.Item>
 
