@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getProductById } from '../../sevice/authSevice';
+import { getProductById } from '../../service/auth/authService';
 
 const ProductDetails: React.FC = () => {
     const params = useParams<{ id?: string }>();

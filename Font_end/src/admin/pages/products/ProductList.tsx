@@ -1,123 +1,82 @@
 import React from 'react';
 import { Table, Button, Space, Image, Card, message, Popconfirm } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { IProducts } from '../../../interface/Products';
 
-// Dữ liệu giả lập cho sản phẩm
-const products = [
-    {
-        key: '1',
-        id: 1,
-        name: 'Áo thun nam',
-        image: 'https://via.placeholder.com/100',
-        quantity: 50,
-        price: 200000,
-    },
-    {
-        key: '2',
-        id: 2,
-        name: 'Quần jeans nữ',
-        image: 'https://via.placeholder.com/100',
-        quantity: 30,
-        price: 350000,
-    },
-    {
-        key: '3',
-        id: 3,
-        name: 'Đồng hồ thời trang',
-        image: 'https://via.placeholder.com/100',
-        quantity: 10,
-        price: 1500000,
-    },
-];
+type Props = {
+    products: IProducts[];
+    loading: boolean;
+    error: string | null;
+    updateProduct: (id: number | string, updateproduct: IProducts) => void;
+    deleteProduct: (id: number | string) => void;
+  };
 
-const ProductList: React.FC = () => {
-    const navigate = useNavigate();
-
-    // Hàm xử lý khi nhấn nút "Thêm sản phẩm"
-    const handleAddProduct = () => {
-        navigate('/admin/products/add');
-    };
-
-    // Hàm xử lý khi nhấn nút "Sửa sản phẩm"
-    const handleEditProduct = (id: number) => {
-        navigate(`/admin/products/edit/${id}`);
-    };
-
-    // Hàm xử lý khi nhấn nút "Xóa sản phẩm"
-    const handleDeleteProduct = (id: number) => {
-        message.success('Xóa sản phẩm thành công!');
-        console.log('Xóa sản phẩm có ID:', id);
-    };
-
-    // Cấu hình các cột trong bảng
-    const columns = [
-        {
-            title: 'Số thứ tự',
-            dataIndex: 'key',
-            key: 'key',
-            render: (text: string, record: any, index: number) => index + 1,
-        },
-        {
-            title: 'Tên',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: 'Ảnh',
-            dataIndex: 'image',
-            key: 'image',
-            render: (image: string) => <Image width={80} src={image} alt="Ảnh sản phẩm" />,
-        },
-        {
-            title: 'Số lượng trong kho',
-            dataIndex: 'quantity',
-            key: 'quantity',
-        },
-        {
-            title: 'Giá sản phẩm (VNĐ)',
-            dataIndex: 'price',
-            key: 'price',
-            render: (price: number) => price.toLocaleString('vi-VN') + ' ₫',
-        },
-        {
-            title: 'Thao tác',
-            key: 'actions',
-            render: (text: any, record: any) => (
-                <Space size="middle">
-                    <Button type="primary" onClick={() => handleEditProduct(record.id)}>
-                        Chỉnh sửa
-                    </Button>
-                    <Popconfirm
-                        title="Bạn có chắc chắn muốn xóa sản phẩm này không?"
-                        onConfirm={() => handleDeleteProduct(record.id)}
-                        okText="Có"
-                        cancelText="Không"
-                    >
-                        <Button danger>Xóa</Button>
-                    </Popconfirm>
-                </Space>
-            ),
-        },
-    ];
+  const ListProduct: React.FC<Props> = ({ products, loading, error, deleteProduct }) => {
+    const safeproduct = Array.isArray(products) ? products : [];
 
     return (
-        <Card 
-            title="Quản lý sản phẩm" 
-            bordered={false} 
-            extra={
-                <Button type="primary" onClick={handleAddProduct}>
-                    Thêm sản phẩm
-                </Button>
-            }
-        >
-            <Table 
-                columns={columns} 
-                dataSource={products} 
-                pagination={false} 
-                rowKey="id" 
-            />
-        </Card>
+        <div>
+          <div className="table-responsive small">
+        <table className="table table-striped table-sm">
+          <thead>
+            <tr className="text-center">
+              <th scope="col">STT</th>
+              <th scope="col">Tên Sản Phẩm</th>
+              <th scope="col">SKU</th>
+              <th scope="col">Giá Gốc</th>
+              <th scope="col">Giá Sale</th>
+              <th scope="col">Tồn Kho</th>
+              <th scope="col">Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody className="text-center">
+            {loading && (
+              <tr>
+                <td colSpan={7}>Đang tải...</td>
+              </tr>
+            )}
+            {error && (
+              <tr>
+                <td colSpan={7}>Lỗi: {error}</td>
+              </tr>
+            )}
+            {safeproduct.length > 0 ? (
+              safeproduct.map((product, index) => (
+                <tr key={product.id}>
+                  <td>{index + 1}</td>
+                  <td>{product.name_product}</td>
+                  <td>{product.SKU}</td>
+                  <td>{product.price_regular}₫</td>
+                  <td>{product.price_sale}₫</td>
+                  <td>{product.base_stock}</td>
+                    <td>
+                      <div className="action-buttons">
+                        <NavLink to={`/admin/products/edit/${product.id}`}>
+                          <button type="button" className="btn btn-warning">
+                            Cập nhật
+                          </button>
+                        </NavLink>
+                        <button
+                          type="button"
+                          className="btn btn-danger"
+                          onClick={() => deleteProduct(product.id)}
+                        >
+                          Xóa
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={3}>Không có dữ liệu</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     );
 };
 
-export default ProductList;
+export default ListProduct;

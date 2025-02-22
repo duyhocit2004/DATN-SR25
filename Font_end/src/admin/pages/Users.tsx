@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Card, CardContent } from '@mui/material';
 
-const Users = () => {
+function Users() {
     return (
         <div>
             <Typography variant="h4" gutterBottom>
@@ -16,6 +16,6 @@ const Users = () => {
             </Card>
         </div>
     );
-};
+}
 
 export default Users;
