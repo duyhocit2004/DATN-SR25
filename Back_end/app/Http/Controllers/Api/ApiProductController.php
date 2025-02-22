@@ -2,22 +2,25 @@
 
 namespace App\Http\Controllers\Api;
 
+use Cloudinary\Cloudinary;
+use App\Models\products;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
-use App\Models\products;
-use App\Services\product\ProductService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Services\product\ProductService;
 
 
 class ApiProductController extends Controller
 {
     public $ProductService;
+    protected $cloudinary ;
 
-    public function __construct(ProductService $ProductService)
+    public function __construct(ProductService $ProductService, Cloudinary $cloudinary)
     {
         $this->ProductService = $ProductService;
+        $this->cloudinary = $cloudinary;
     }
 
     public function index()
@@ -34,12 +37,12 @@ class ApiProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        $params = $request->all();
-
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('uploads/products', 'public');
-            $params['image'] = $imagePath;
+        if (!$request->hasFile('image')) {
+            return response()->json(['error' => 'Image file is required'], 400);
         }
+        $params  = $request->all();
+        $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+        $params ['image'] = $uploadedFile['secure_url'];
 
         $products = Products::create($params);
 
@@ -70,22 +73,26 @@ class ApiProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(ProductRequest $request, string $id)
-    {
+{
+    try {
         $products = products::query()->findOrFail($id);
 
         $params = $request->all();
 
         if ($request->hasFile('image')) {
-
-            if ($products->image && Storage::disk('public')->exists($products->image)) {
-
-                Storage::disk('public')->delete($products->image);
+            if ($products->image) {
+                
+                // Lấy tên file không có phần mở rộng
+                $publicId = pathinfo($products->image, PATHINFO_FILENAME);
+                // Xóa hình ảnh từ Cloudinary
+                $this->cloudinary->adminApi()->delete($publicId);
             }
 
-            $imagePath = $request->file('image')->store('uploads/products', 'public');
-
-            $params['image'] = $imagePath;
+            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+            // Cập nhật URL hình ảnh trong params
+            $params['image'] = $uploadedFile['secure_url'];
         }
+
         $products->update($params);
 
         return response()->json([
@@ -93,7 +100,13 @@ class ApiProductController extends Controller
             'success' => true,
             'message' => 'Sửa thành công'
         ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+        ], 500);
     }
+}
 
     /**
      * Remove the specified resource from storage.
