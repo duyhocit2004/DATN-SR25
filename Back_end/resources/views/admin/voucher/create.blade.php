@@ -34,7 +34,7 @@
     <div class="page-title">
       <div class="row">
       <div class="col-sm-6 col-12">
-        <h2>Quản Lý Voucher</h2>
+        <h2>thêm Voucher</h2>
       </div>
       </div>
     </div>

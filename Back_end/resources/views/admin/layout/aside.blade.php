@@ -75,7 +75,17 @@
                 <li><a href="{{ route('Voucher.index') }}"> Danh sách</a></li>
                 <li><a href="{{ route('sizes.create') }}">Thêm Voucher</a></li>
             </ul>
+            
         </li>
+
+        <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+            <h6 class=""><i class="fab fa-rocketchat"></i> Tin nhắn</h6>
+        </a>
+        <ul class="sidebar-submenu">
+            <li><a href="{{ route('boxchat.index') }}">Hộp thư</a></li>
+        </ul>
+        
+    </li>
         </ul>
     </div>
     <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

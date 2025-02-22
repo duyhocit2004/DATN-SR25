@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\AuthController;
+use App\Http\Controllers\admin\BoxchatController;
 use App\Http\Controllers\admin\CartController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\admin\colorController;
@@ -111,3 +112,11 @@ Route::delete('carts/{id}', [CartController::class, 'destroy'])->name('carts.des
 
 //Voucher 
 Route::get('Vouchers',[VoucherController::class,'index'])->name('voucher.index');
+Route::get('create/Vouchers',[VoucherController::class,'create'])->name('voucher.create');
+Route::post('store/Vouchers',[VoucherController::class,'store'])->name('voucher.store');
+Route::get('get/{id}/Vouchers',[VoucherController::class,'edit'])->name('voucher.getID');
+Route::put('put/{id}/Vouchers',[VoucherController::class,'put'])->name('voucher.putVoucher');
+Route::delete('delete/{id}/Vouchers',[VoucherController::class,'delete'])->name('voucher.deleteVoucher');
+
+//Tin nhắn
+Route::get('boxchat',[BoxchatController::class,'index'])->name('boxchat.index');
