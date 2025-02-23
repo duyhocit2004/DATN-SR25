@@ -82,22 +82,28 @@ const ProductAdd: React.FC = () => {
             }
 
 
-            const formDataProduct = new FormData();
-            formDataProduct.append("name_product", values.name);
-            formDataProduct.append("categories_id", values.category);
-            formDataProduct.append("base_stock", values.quantity);
-            formDataProduct.append("price_regular", values.price);
-            formDataProduct.append("price_sale", values.discount ? values.price - (values.price * values.discount) / 100 : values.price);
-            formDataProduct.append("description", values.description);
-            formDataProduct.append("content", values.content || "");
-            formDataProduct.append("image", cloudinaryData.secure_url); // imageFile phải là một file, không phải URL
-            formDataProduct.append("SKU", values.SKU || "DEFAULT_SKU");
-
-
+            const formDataProduct = {
+                name_product: values.name,
+                categories_id: values.category,
+                base_stock: values.quantity,
+                price_regular: values.price,
+                price_sale: values.discount ? values.price - (values.price * values.discount) / 100 : values.price,
+                description: values.description,
+                content: values.content || "",
+                image: cloudinaryData.secure_url,
+                SKU: values.SKU || "DEFAULT_SKU",
+            };
+            
             const productResponse = await fetch("http://127.0.0.1:8000/api/products", {
                 method: "POST",
-                body: formDataProduct, // Chuyển object thành JSON string
+                headers: {
+                    "Content-Type": "application/json",
+                    // Nếu cần token, thêm:
+                    // "Authorization": `Bearer ${localStorage.getItem("token")}`
+                },
+                body: JSON.stringify(formDataProduct),
             });
+            
 
 
             const responseText = await productResponse.text(); // Đọc dữ liệu dưới dạng text để debug

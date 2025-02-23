@@ -1,4 +1,5 @@
 export interface IProducts {
+    data: any;
     id?: string | number;
     categories_id: number;
     name_product: string;

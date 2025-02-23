@@ -11,7 +11,7 @@ const ProductList: React.FC = () => {
         const fetchProducts = async () => {
             try {
                 const response = await ListProduct();
-                console.log("Dữ liệu sản phẩm nhận được:", response); // Kiểm tra dữ liệu
+                console.log("Dữ liệu sản phẩm nhận được:", response);
                 if (Array.isArray(response)) {
                     setProducts(response);
                 } else {
