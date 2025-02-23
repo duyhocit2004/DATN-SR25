@@ -2,22 +2,17 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Models\User;
-use App\Models\Voucher;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
-class VoucherController extends Controller
+class BoxchatController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $voucher = Voucher::query()->paginate(8);
-        // dd($voucher);
-        return view('admin.voucher.ListVoucher',compact('voucher'));
-        
+        return view('admin.boxchat.boxchat');
     }
 
     /**
@@ -25,8 +20,7 @@ class VoucherController extends Controller
      */
     public function create()
     {
-        $user = User::query()->get();
-        
+        //
     }
 
     /**
