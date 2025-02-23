@@ -86,7 +86,7 @@ const AddUser: React.FC = () => {
                     <Input placeholder="Nhập số điện thoại" />
                 </Form.Item>
 
-                <Form.Item
+                {/* <Form.Item
                     label="Vai trò"
                     name="role"
                     rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
@@ -96,14 +96,14 @@ const AddUser: React.FC = () => {
                         <Option value="moderator">Moderator</Option>
                         <Option value="customer">Khách hàng</Option>
                     </Select>
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item
                     label="Ảnh đại diện"
                     name="avatar"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
-                    rules={[{ required: false }]} // Không bắt buộc nhưng không báo lỗi khi form chưa nhận dữ liệu
+                    rules={[{ required: false }]} 
                 >
                     <Upload
                         name="avatar"

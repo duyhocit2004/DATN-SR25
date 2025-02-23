@@ -8,6 +8,16 @@ import Dashboard from '../admin/pages/Dashboard';
 import AdminLayout from '../admin/layouts/AdminLayout';
 import Products from '../admin/pages/products/Product';
 import ProductUpdate from '../admin/pages/products/ProductUpdate';
+import Colors from '../admin/pages/color/Color';
+import ColorAdd from '../admin/pages/color/ColorAdd';
+import ColorEdit from '../admin/pages/color/ColorEdit';
+import Sizes from '../admin/pages/size/Size';
+import { AddSize } from '../service/size/sizeService';
+import SizeAdd from '../admin/pages/size/SizeAdd';
+import SizeEdit from '../admin/pages/size/SizeEdit';
+import Categories from '../admin/pages/categories/Category';
+import CategoryAdd from '../admin/pages/categories/CategoryAdd';
+import CategoryEdit from '../admin/pages/categories/CategoryEdit';
 
 const AdminRoutes = () => {
   return (
@@ -17,6 +27,15 @@ const AdminRoutes = () => {
         <Route path="products" element={<Products/>} />
         <Route path="products/add-product" element={<ProductAdd />} />
         <Route path="products/edit/:id" element={<ProductUpdate />} />
+        <Route path="colors" element={<Colors/>} />
+        <Route path="colors/add-color" element={<ColorAdd />} />
+        <Route path="colors/edit/:id" element={<ColorEdit />} />
+        <Route path="categories" element={<Categories/>} />
+        <Route path="categories/add-category" element={<CategoryAdd />} />
+        <Route path="categories/edit/:id" element={<CategoryEdit />} />
+        <Route path="sizes" element={<Sizes/>} />
+        <Route path="sizes/add-size" element={<SizeAdd />} />
+        <Route path="sizes/edit/:id" element={<SizeEdit />} />
         <Route path="users" element={<Users />} />
         <Route path="users/add" element={<UserAdd />} />
         <Route path="users/edit/:id" element={<UserEdit />} />

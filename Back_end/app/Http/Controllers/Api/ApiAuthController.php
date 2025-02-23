@@ -85,10 +85,6 @@ class ApiAuthController extends Controller
             $tokenId = $request->bearerToken();
 
             // Tìm token trong cơ sở dữ liệu
-<<<<<<< HEAD
-            // lỗi này vẫn chạy được không cần phải sửasửa
-=======
->>>>>>> namnguyen
             $token = $user->tokens()->where('id', $tokenId)->first();
 
             if ($token) {
