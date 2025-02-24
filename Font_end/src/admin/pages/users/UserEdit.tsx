@@ -23,15 +23,15 @@ const UserEdit: React.FC = () => {
             try {
                 const users = await UserById(id);
                 console.log("Dữ liệu user từ API:", users); // Kiểm tra API trả về
-    
+
                 if (!users || !Array.isArray(users)) {
                     message.error("Dữ liệu từ API không hợp lệ!");
                     return;
                 }
-    
+
                 const user = users.find((u: any) => u.id.toString() === id);
                 console.log("User sau khi lọc:", user);
-    
+
                 if (user) {
                     setUserImage(user.user_image || null);
                     form.resetFields();
@@ -39,7 +39,7 @@ const UserEdit: React.FC = () => {
                         name: user.name,
                         email: user.email,
                         phone_number: user.phone_number,
-                        avatar: user.user_image ? [{ uid: '-1', name: 'avatar.png', url: user.user_image }] : [],
+                        user_image: user.user_image ? [{ uid: '-1', name: 'user_image.png', url: user.user_image }] : [],
                     });
                 } else {
                     message.error("Không tìm thấy người dùng!");
@@ -51,29 +51,29 @@ const UserEdit: React.FC = () => {
                 setLoading(false);
             }
         };
-    
+
         fetchUserData();
     }, [id, form]);
-    
+
 
     const onFinish = async (values: any) => {
         setLoading(true);
         try {
-            const { avatar, ...userData } = values;
-            let avatarUrl = userImage;
+            const { user_image, ...userData } = values;
+            let user_imageUrl = userImage;
 
-            if (avatar && avatar.length > 0 && avatar[0].originFileObj) {
+            if (user_image && user_image.length > 0 && user_image[0].originFileObj) {
                 const formData = new FormData();
-                formData.append('file', avatar[0].originFileObj);
+                formData.append('file', user_image[0].originFileObj);
                 const uploadResponse = await api.post('/upload', formData);
-                avatarUrl = uploadResponse.data.url;
+                user_imageUrl = uploadResponse.data.url;
             }
 
             if (id) {
-                await UserUpdate(id, { ...userData, user_image: avatarUrl });
+                await UserUpdate(id, { ...userData, user_image: user_imageUrl });
                 message.success('Cập nhật tài khoản thành công!');
             } else {
-                await UserAdd({ ...userData, user_image: avatarUrl });
+                await UserAdd({ ...userData, user_image: user_imageUrl });
                 message.success('Thêm tài khoản thành công!');
             }
 
@@ -108,12 +108,12 @@ const UserEdit: React.FC = () => {
                 ]}>
                     <Input placeholder="Nhập số điện thoại" />
                 </Form.Item>
-                <Form.Item label="Ảnh đại diện" name="avatar" valuePropName="fileList" getValueFromEvent={normFile}>
+                <Form.Item label="Ảnh đại diện" name="user_image" valuePropName="fileList" getValueFromEvent={normFile}>
                     <Upload
-                        name="avatar"
+                        name="user_image"
                         listType="picture"
                         maxCount={1}
-                        defaultFileList={userImage ? [{ uid: '-1', name: 'avatar.png', url: userImage }] : []}
+                        defaultFileList={userImage ? [{ uid: '-1', name: 'user_image.png', url: userImage }] : []}
                         beforeUpload={(file) => {
                             const isImage = file.type.startsWith('image/');
                             if (!isImage) {

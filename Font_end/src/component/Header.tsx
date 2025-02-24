@@ -151,7 +151,7 @@ const Header: React.FC = () => {
                 </a>
 
 
-                {/* <div className="dropdown-menu mobile-cart">
+                <div className="dropdown-menu mobile-cart">
                   <a href="#" title="Close (Esc)" className="btn-close">×</a>
 
                   <div className="dropdownmenu-wrapper custom-scrollbar">
@@ -193,7 +193,7 @@ const Header: React.FC = () => {
                       <a href="checkout.html" className="btn btn-dark btn-block">Checkout</a>
                     </div>
                   </div>
-                </div> */}
+                </div>
               </div>
             </div>
           </div>
