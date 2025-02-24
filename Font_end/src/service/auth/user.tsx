@@ -13,16 +13,17 @@ export const ListUsers = async () => {
   }
 };
 
-// Lấy thông tin User theo ID
-export const UserById = async (id: number | string) => {
+export const UserById = async (id: string) => {
   try {
-    const { data } = await api.get<{ user: IUser }>(`users/${id}`);
-    return data.user;
+      const response = await api.get(`/users`); // Đảm bảo API endpoint đúng
+      console.log("API Response:", response.data); // Kiểm tra dữ liệu trả về
+      return response.data; // Trả về danh sách users
   } catch (error) {
-    console.error("Error fetching user by ID:", error);
-    return null; // Trả về null nếu có lỗi
+      console.error("Lỗi khi gọi API UserById:", error);
+      return [];
   }
 };
+
 
 // Thêm User mới
 export const UserAdd = async (userData: IUser) => {

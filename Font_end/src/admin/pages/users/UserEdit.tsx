@@ -5,8 +5,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { UserAdd, UserById, UserUpdate } from '../../../service/auth/user';
 import api from '../../../axios/config';
 
-const { Option } = Select;
-
 const normFile = (e: any) => {
     if (Array.isArray(e)) return e;
     return e?.fileList;
@@ -18,38 +16,51 @@ const UserEdit: React.FC = () => {
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
     const [userImage, setUserImage] = useState<string | null>(null);
-
     useEffect(() => {
         const fetchUserData = async () => {
             if (!id) return;
             setLoading(true);
             try {
-                const user = await UserById(id);
+                const users = await UserById(id);
+                console.log("Dữ liệu user từ API:", users); // Kiểm tra API trả về
+    
+                if (!users || !Array.isArray(users)) {
+                    message.error("Dữ liệu từ API không hợp lệ!");
+                    return;
+                }
+    
+                const user = users.find((u: any) => u.id.toString() === id);
+                console.log("User sau khi lọc:", user);
+    
                 if (user) {
                     setUserImage(user.user_image || null);
+                    form.resetFields();
                     form.setFieldsValue({
                         name: user.name,
                         email: user.email,
                         phone_number: user.phone_number,
-                        role: user.role,
                         avatar: user.user_image ? [{ uid: '-1', name: 'avatar.png', url: user.user_image }] : [],
                     });
+                } else {
+                    message.error("Không tìm thấy người dùng!");
                 }
             } catch (error) {
+                console.error("Lỗi khi gọi API:", error);
                 message.error("Không thể tải dữ liệu người dùng!");
             } finally {
                 setLoading(false);
             }
         };
-
+    
         fetchUserData();
     }, [id, form]);
+    
 
     const onFinish = async (values: any) => {
         setLoading(true);
         try {
             const { avatar, ...userData } = values;
-            let avatarUrl = userImage; // Giữ nguyên ảnh cũ nếu không thay đổi
+            let avatarUrl = userImage;
 
             if (avatar && avatar.length > 0 && avatar[0].originFileObj) {
                 const formData = new FormData();
@@ -80,24 +91,22 @@ const UserEdit: React.FC = () => {
                 <Form.Item label="Họ và tên" name="name" rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}>
                     <Input placeholder="Nhập họ và tên" />
                 </Form.Item>
-                <Form.Item label="Email" name="email" rules={[
-                    { required: true, message: 'Vui lòng nhập email!' },
-                    { type: 'email', message: 'Email không hợp lệ!' }
-                ]}>
-                    <Input placeholder="Nhập email" />
+                <Form.Item
+                    label="Email"
+                    name="email"
+                    rules={[
+                        { required: true, message: 'Vui lòng nhập email!' },
+                        { type: 'email', message: 'Email không hợp lệ!' }
+                    ]}
+                >
+                    <Input placeholder="Nhập email" autoComplete="email" />
                 </Form.Item>
+
                 <Form.Item label="Số điện thoại" name="phone_number" rules={[
                     { required: true, message: 'Vui lòng nhập số điện thoại!' },
                     { pattern: /^[0-9]{10,11}$/, message: 'Số điện thoại không hợp lệ!' }
                 ]}>
                     <Input placeholder="Nhập số điện thoại" />
-                </Form.Item>
-                <Form.Item label="Vai trò" name="role" rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}>
-                    <Select placeholder="Chọn vai trò">
-                        <Option value="admin">Admin</Option>
-                        <Option value="moderator">Moderator</Option>
-                        <Option value="customer">Khách hàng</Option>
-                    </Select>
                 </Form.Item>
                 <Form.Item label="Ảnh đại diện" name="avatar" valuePropName="fileList" getValueFromEvent={normFile}>
                     <Upload
@@ -117,8 +126,9 @@ const UserEdit: React.FC = () => {
                     </Upload>
                 </Form.Item>
                 <Form.Item label="Mật khẩu (Để trống nếu không đổi)" name="password" rules={[{ min: 6, message: 'Mật khẩu phải ít nhất 6 ký tự!' }]}>
-                    <Input.Password placeholder="Nhập mật khẩu mới (nếu muốn đổi)" />
+                    <Input.Password placeholder="Nhập mật khẩu mới (nếu muốn đổi)" autoComplete="new-password" />
                 </Form.Item>
+
                 <Form.Item>
                     <Button type="primary" htmlType="submit" loading={loading}>
                         {id ? "Cập nhật tài khoản" : "Thêm tài khoản"}
