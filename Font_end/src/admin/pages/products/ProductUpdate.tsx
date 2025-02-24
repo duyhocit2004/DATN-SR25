@@ -57,22 +57,44 @@ const ProductUpdate: React.FC = () => {
     const onFinish = async (values: any) => {
         setLoading(true);
         try {
-            const updatedProduct: IProducts = {
-                id: Number(id),
-                name_product: values.name,
-                categories_id: parseInt(values.category),
-                base_stock: values.quantity,
-                price_regular: values.price,
-                price_sale: values.discount ? values.price - (values.price * values.discount) / 100 : values.price,
-                description: values.description,
-                image: values.avatar?.[0]?.url || null,
-                SKU: '',
-                views: 0,
-                content: '',
-                data: undefined
-            };
+            // const updatedProduct: IProducts = {
+            //     id: Number(id),
+            //     name_product: values.name,
+            //     categories_id: parseInt(values.category),
+            //     base_stock: values.quantity,
+            //     price_regular: values.price,
+            //     price_sale: values.discount ? values.price - (values.price * values.discount) / 100 : values.price,
+            //     description: values.description,
+            //     image: values.avatar?.[0]?.url || null,
+            //     SKU: '',
+            //     views: 0,
+            //     content: '',
+            //     data: undefined
+            // };
+            console.log(values.avatar[0]);
+            
 
-            await UpdateProduct(id, updatedProduct);
+            const formDataProduct = new FormData();
+            formDataProduct.append("id", id?id:'');
+            formDataProduct.append("name_product", values.name);
+            formDataProduct.append("categories_id", values.category);
+            formDataProduct.append("base_stock", values.quantity);
+            formDataProduct.append("price_regular", values.price);
+            formDataProduct.append("price_sale", values.discount ? values.price - (values.price * values.discount) / 100 : values.price);
+            formDataProduct.append("description", values.description);
+            formDataProduct.append("content", values.content || "");
+            formDataProduct.append("image", values.avatar[0].originFileObj || values.avatar[0].url); // Gửi URL ảnh thay vì file
+            formDataProduct.append("SKU", values.SKU || "DEFAULT_SKU");
+            formDataProduct.append("_method", "PUT");
+
+            // await UpdateProduct(Number(id), formDataProduct);
+            const productResponse = await fetch("http://127.0.0.1:8000/api/products/"+id, {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json" 
+                },
+                body: formDataProduct,
+            });
             message.success('Cập nhật sản phẩm thành công!');
             navigate('/admin/products');
         } catch (error) {

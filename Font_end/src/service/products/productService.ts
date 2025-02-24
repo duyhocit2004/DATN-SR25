@@ -45,7 +45,7 @@ export const AddProduct = async (product: IProducts) => {
 
 
 // Cập nhật sản phẩm theo ID
-export const UpdateProduct = async (id: number, product: Partial<IProducts>) => {
+export const UpdateProduct = async (id: number, product: IProducts) => {
     try {
         const { data } = await api.put<IProducts>(`/products/${id}`, product);
         return data;

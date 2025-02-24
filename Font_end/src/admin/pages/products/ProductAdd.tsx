@@ -56,74 +56,60 @@ const ProductAdd: React.FC = () => {
 
         fetchData();
     }, []);
-
-    const onFinish = async (values: any) => {
+    const onFinish = async (values) => {
         try {
             if (!values.avatar?.[0]?.originFileObj) {
                 message.error("Vui lòng chọn ảnh đại diện!");
                 return;
             }
 
-            // Upload ảnh lên Cloudinary
-            const formData = new FormData();
-            formData.append("file", values.avatar[0].originFileObj);
-            formData.append("upload_preset", "DATN_2025");
-            formData.append("cloud_name", "dfcwk3b1b");
+            // // Upload lên Cloudinary trước
+            // const formData = new FormData();
+            // formData.append("file", values.avatar[0].originFileObj);
+            // formData.append("upload_preset", "DATN_2025");
 
-            const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/dfcwk3b1b/image/upload", {
-                method: "POST",
-                body: formData,
-            });
+            // const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/dfcwk3b1b/image/upload", {
+            //     method: "POST",
+            //     body: formData,
+            // });
 
-            const cloudinaryData = await cloudinaryRes.json();
-            if (!cloudinaryData.secure_url) {
-                console.error("Lỗi khi upload ảnh:", cloudinaryData);
-                throw new Error("Không thể upload ảnh lên Cloudinary");
+            // const cloudinaryData = await cloudinaryRes.json();
+            // if (!cloudinaryData.secure_url) {
+            //     throw new Error("Không thể upload ảnh lên Cloudinary");
+            // }
+
+            // Sau khi có URL ảnh, gửi lên backend
+            const formDataProduct = new FormData();
+            formDataProduct.append("name_product", values.name);
+            formDataProduct.append("categories_id", values.category);
+            formDataProduct.append("base_stock", values.quantity);
+            formDataProduct.append("price_regular", values.price);
+            formDataProduct.append("price_sale", values.discount ? values.price - (values.price * values.discount) / 100 : values.price);
+            formDataProduct.append("description", values.description);
+            formDataProduct.append("content", values.content || "");
+            formDataProduct.append("image", values.avatar[0].originFileObj); // Gửi URL ảnh thay vì file
+            formDataProduct.append("SKU", values.SKU || "DEFAULT_SKU");
+
+            console.log("Form Data gửi lên backend:");
+            for (let [key, value] of formDataProduct.entries()) {
+                console.log(key, value);
             }
 
 
-            const formDataProduct = {
-                name_product: values.name,
-                categories_id: values.category,
-                base_stock: values.quantity,
-                price_regular: values.price,
-                price_sale: values.discount ? values.price - (values.price * values.discount) / 100 : values.price,
-                description: values.description,
-                content: values.content || "",
-                image: cloudinaryData.secure_url,
-                SKU: values.SKU || "DEFAULT_SKU",
-            };
-            
             const productResponse = await fetch("http://127.0.0.1:8000/api/products", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    // Nếu cần token, thêm:
-                    // "Authorization": `Bearer ${localStorage.getItem("token")}`
-                },
-                body: JSON.stringify(formDataProduct),
+                body: formDataProduct,
             });
-            
 
-
-            const responseText = await productResponse.text(); // Đọc dữ liệu dưới dạng text để debug
+            const responseText = await productResponse.text();
             console.log("Raw response:", responseText);
-
-            let responseData;
-            try {
-                responseData = JSON.parse(responseText);
-            } catch (error) {
-                console.error("Lỗi khi parse JSON:", error);
-            }
 
             if (productResponse.ok) {
                 message.success("Thêm sản phẩm thành công!");
                 navigate("/admin/products");
             } else {
-                console.error("Lỗi khi thêm sản phẩm:", productResponse.status, responseData);
-                message.error(`Lỗi ${productResponse.status}: ${responseData?.message || "Không thể thêm sản phẩm!"}`);
+                message.error(`Lỗi ${productResponse.status}: Không thể thêm sản phẩm!`);
             }
-
         } catch (error) {
             console.error("Lỗi khi gửi API:", error);
             message.error("Không thể thêm sản phẩm!");

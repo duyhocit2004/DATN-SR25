@@ -41,7 +41,7 @@ class ApiProductController extends Controller
             return response()->json(['error' => 'Image file is required'], 400);
         }
         $params  = $request->all();
-        $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+        $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), [ 'folder' => 'products', 'verify' => false ]);
         $params ['image'] = $uploadedFile['secure_url'];
 
         $products = Products::create($params);
@@ -58,12 +58,12 @@ class ApiProductController extends Controller
      */
     public function show(string $id)
     {
-        $products = products::query()->findOrFail($id);
+        $products = Products::query()->findOrFail($id);
 
-        // return new ProductResource($products);
+        // // return new ProductResource($products);
 
         return response()->json([
-            'data' => ProductResource::collection($products),
+            'data' => $products,
             'success' => true,
             'message' => 'Chi tiết sản phẩm'
         ], 200);
@@ -72,31 +72,47 @@ class ApiProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductRequest $request, string $id)
+    public function update(string $id,ProductRequest $request)
 {
     try {
         $products = products::query()->findOrFail($id);
-
         $params = $request->all();
-
-        if ($request->hasFile('image')) {
-            if ($products->image) {
-                
-                // Lấy tên file không có phần mở rộng
-                $publicId = pathinfo($products->image, PATHINFO_FILENAME);
-                // Xóa hình ảnh từ Cloudinary
-                $this->cloudinary->adminApi()->delete($publicId);
+    
+        //Nếu `image` tồn tại trong request
+        if ($request->has('image')) {
+            $image = $request->input('image');
+    
+            //Nếu `image` là string (URL) => Giữ nguyên, không làm gì cả
+            if (is_string($image)) {
+                $params['image'] = $image;
             }
-
-            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
-            // Cập nhật URL hình ảnh trong params
-            $params['image'] = $uploadedFile['secure_url'];
+            //Nếu `image` là file => Xóa ảnh cũ và upload ảnh mới lên Cloudinary
+            elseif ($request->hasFile('image')) {
+                // Xóa ảnh cũ trên Cloudinary nếu tồn tại
+                // if ($products->image) {
+                //     $publicId = pathinfo($products->image, PATHINFO_FILENAME);
+                //     $this->cloudinary->uploadApi()->destroy($publicId);
+                // }
+    
+                // Upload ảnh mới lên Cloudinary
+                $uploadedFile = $this->cloudinary->uploadApi()->upload(
+                    $request->file('image')->getRealPath(),
+                    ['folder' => 'products', 'verify' => false]
+                );
+    
+                // Cập nhật URL hình ảnh mới vào `params`
+                $params['image'] = $uploadedFile['secure_url'];
+            }
+        } else {
+            //Nếu không có trường `image` trong request => Giữ nguyên ảnh cũ
+            $params['image'] = $products->image;
         }
-
+    
+        // Cập nhật sản phẩm
         $products->update($params);
-
+    
         return response()->json([
-            'data' => new ProductResource($products),
+            'data' => $products,
             'success' => true,
             'message' => 'Sửa thành công'
         ], 200);
@@ -106,6 +122,7 @@ class ApiProductController extends Controller
             'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
         ], 500);
     }
+    
 }
 
     /**
