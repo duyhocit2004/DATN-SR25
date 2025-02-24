@@ -60,14 +60,14 @@
                 </ul>
             </li>
 
-            {{-- <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
-                    <h6 class="">Quản lý sản phẩm</h6><i class=""></i>
+            <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+                    <h6 class=""><i class="fas fa-tags"></i> Quản lý voucher</h6>
                 </a>
                 <ul class="sidebar-submenu">
-                        <li> <a href="{{ route('color') }}">Danh sách</a></li>
-                        <li><a href="{{ route('createcolor') }}">Thêm màu</a></li>
+                        <li> <a href="{{ route('vouchers.index') }}">Danh sách</a></li>
+                        {{-- <li><a href="{{ route('createcolor') }}">Thêm màu</a></li> --}}
                     </ul>
-            </li> --}}
+            </li>
         </ul>
     </div>
     <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

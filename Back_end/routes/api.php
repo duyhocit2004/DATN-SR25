@@ -73,6 +73,12 @@ Route::get('banners', [ApiBannerController::class, 'index']);
 Route::get('banners', [ApiBannerController::class, 'store']);
 Route::get('banners/{id}', [ApiBannerController::class, 'show']);
 
-Route::get('carts', [ApiCartController::class, 'index']);
+// Route Api Cart
+Route::prefix('carts')->group(function () {
+    Route::get('/', [ApiCartController::class, 'index']); // Lấy giỏ hàng hiện tại
+    Route::post('/add', [ApiCartController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
+    Route::put('/update/{cartItem}', [ApiCartController::class, 'update']); // Cập nhật số lượng sản phẩm
+    Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
+});
 
 

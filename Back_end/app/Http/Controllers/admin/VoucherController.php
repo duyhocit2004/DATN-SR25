@@ -14,9 +14,9 @@ class VoucherController extends Controller
     public function index()
     {
         $voucher = Voucher::query()->get();
-        dd($voucher);
-        return view('admin.voucher.ListVoucher',compact('voucher'));
-        
+        // dd($voucher);
+        return view('admin.vouchers.index',compact('voucher'));
+
     }
 
     /**
@@ -24,7 +24,7 @@ class VoucherController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.vouchers.create');
     }
 
     /**
@@ -32,7 +32,23 @@ class VoucherController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'code' => 'required',
+        ]);
+
+        Voucher::create([
+            'code' => $request->code,
+            'discount_type' => $request->discount_type,
+            'discount_value' => $request->discount_value,
+            'min_order_value' => $request->min_order_value,
+            'max_discount' => $request->max_discount,
+            'quantity' => $request->quantity,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+        ]);
+
+        return redirect()->route('vouchers.index')
+        -> with('success', 'Thêm thành công');
     }
 
     /**
@@ -48,7 +64,7 @@ class VoucherController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('admin.vouchers.edit');
     }
 
     /**
@@ -64,6 +80,12 @@ class VoucherController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $voucher = Voucher::findorFail($id);
+
+        $voucher->delete();
+
+        return redirect()->route('vouchers.index')
+
+        -> with('sucess', 'Xóa thành công');
     }
 }

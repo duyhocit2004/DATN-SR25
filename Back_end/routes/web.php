@@ -108,3 +108,12 @@ Route::get('carts/create', [CartController::class, 'create'])->name('carts.creat
 Route::get('/carts/{id}/edit', [CartController::class, 'edit'])->name('carts.edit');
 Route::put('/carts/{id}', [CartController::class, 'update'])->name('carts.update');
 Route::delete('carts/{id}', [CartController::class, 'destroy'])->name('carts.destroy');
+
+
+// Route Voucher
+Route::get('vouchers', [VoucherController::class, 'index']) -> name('vouchers.index');
+Route::get('vouchers/crate', [VoucherController::class, 'create']) -> name('vouchers.create');
+Route::post('vouchers', [VoucherController::class, 'store']) -> name('vouchers.store');
+Route::get('voucher/{id}/edit', [VoucherController::class, 'edit']) -> name('vouchers.edit');
+Route::put('vouchers/{id}', [VoucherController::class, 'update']) -> name('vouchers.update');
+Route::delete('vouchers/{id}', [VoucherController::class, 'destroy']) -> name('vouchers.destroy');
