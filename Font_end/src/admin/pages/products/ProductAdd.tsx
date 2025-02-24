@@ -62,22 +62,6 @@ const ProductAdd: React.FC = () => {
                 message.error("Vui lòng chọn ảnh đại diện!");
                 return;
             }
-
-            // // Upload lên Cloudinary trước
-            // const formData = new FormData();
-            // formData.append("file", values.avatar[0].originFileObj);
-            // formData.append("upload_preset", "DATN_2025");
-
-            // const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/dfcwk3b1b/image/upload", {
-            //     method: "POST",
-            //     body: formData,
-            // });
-
-            // const cloudinaryData = await cloudinaryRes.json();
-            // if (!cloudinaryData.secure_url) {
-            //     throw new Error("Không thể upload ảnh lên Cloudinary");
-            // }
-
             // Sau khi có URL ảnh, gửi lên backend
             const formDataProduct = new FormData();
             formDataProduct.append("name_product", values.name);

@@ -9,8 +9,8 @@ import { GetProductById, UpdateProduct } from '../../../service/products/product
 const ProductUpdate: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-        const [categories, setCategories] = useState([]);
-    
+    const [categories, setCategories] = useState([]);
+
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
 
@@ -19,63 +19,47 @@ const ProductUpdate: React.FC = () => {
             try {
                 const response = await GetProductById(id);
                 console.log("API Response:", response);
-    
+
                 const data = response.data || response; // Kiểm tra có cần .data không
                 console.log("Processed Data:", data);
 
-                    // Lấy danh mục
-                    const categoryRes = await fetch("http://127.0.0.1:8000/api/categories");
-                    const categoryData = await categoryRes.json();
-                    setCategories(categoryData);
-    
+                // Lấy danh mục
+                const categoryRes = await fetch("http://127.0.0.1:8000/api/categories");
+                const categoryData = await categoryRes.json();
+                setCategories(categoryData);
+
                 if (!data) {
                     message.error("Không tìm thấy sản phẩm!");
                     return;
                 }
-    
+
                 form.setFieldsValue({
                     name: data.name_product || '',
-                    category: data.categories_id ? data.categories_id.toString() : '',  
+                    category: data.categories_id ? data.categories_id.toString() : '',
                     quantity: data.base_stock || 0,
                     price: data.price_regular || 0,
                     discount: data.price_sale ? ((1 - data.price_sale / data.price_regular) * 100).toFixed(2) : 0,
                     description: data.description || '',
                     avatar: data.image ? [{ url: data.image }] : [],
                 });
-    
+
                 console.log("Đã setFieldsValue thành công!");
             } catch (error) {
                 console.error('Lỗi khi lấy dữ liệu sản phẩm:', error);
                 message.error('Không thể tải dữ liệu sản phẩm!');
             }
         };
-    
+
         if (id) fetchProduct();
     }, [id, form]);
-    
+
 
     const onFinish = async (values: any) => {
         setLoading(true);
         try {
-            // const updatedProduct: IProducts = {
-            //     id: Number(id),
-            //     name_product: values.name,
-            //     categories_id: parseInt(values.category),
-            //     base_stock: values.quantity,
-            //     price_regular: values.price,
-            //     price_sale: values.discount ? values.price - (values.price * values.discount) / 100 : values.price,
-            //     description: values.description,
-            //     image: values.avatar?.[0]?.url || null,
-            //     SKU: '',
-            //     views: 0,
-            //     content: '',
-            //     data: undefined
-            // };
             console.log(values.avatar[0]);
-            
-
             const formDataProduct = new FormData();
-            formDataProduct.append("id", id?id:'');
+            formDataProduct.append("id", id ? id : '');
             formDataProduct.append("name_product", values.name);
             formDataProduct.append("categories_id", values.category);
             formDataProduct.append("base_stock", values.quantity);
@@ -88,10 +72,10 @@ const ProductUpdate: React.FC = () => {
             formDataProduct.append("_method", "PUT");
 
             // await UpdateProduct(Number(id), formDataProduct);
-            const productResponse = await fetch("http://127.0.0.1:8000/api/products/"+id, {
+            const productResponse = await fetch("http://127.0.0.1:8000/api/products/" + id, {
                 method: "POST",
                 headers: {
-                    "Accept": "application/json" 
+                    "Accept": "application/json"
                 },
                 body: formDataProduct,
             });

@@ -3,45 +3,51 @@ import {
     Form,
     Input,
     Button,
-    Select,
     Upload,
     Card,
     message,
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import api from '../../../axios/config';
-import { UserAdd } from '../../../service/auth/user';
 
-const { Option } = Select;
-
-const normFile = (e: any) => {
+const normFile = (e) => {
     return e && e.fileList ? e.fileList : [];
 };
 
-const AddUser: React.FC = () => {
+const AddUser = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
-    const onFinish = async (values: any) => {
+    const onFinish = async (values) => {
         setLoading(true);
         try {
-            const { avatar, ...userData } = values;
-            let avatarUrl = '';
-
-            if (avatar && avatar.length > 0 && avatar[0].originFileObj) {
-                const formData = new FormData();
-                formData.append('file', avatar[0].originFileObj);
-                const uploadResponse = await api.post('/upload', formData);
-                avatarUrl = uploadResponse.data.url;
+            if (!values.user_image?.[0]?.originFileObj) {
+                message.error("Vui lòng chọn ảnh đại diện!");
+                return;
             }
 
-            await UserAdd({ ...userData, user_image: avatarUrl });
-            message.success('Thêm tài khoản thành công!');
-            navigate('/admin/accounts');
+            const formDataUser = new FormData();
+            formDataUser.append("name", values.name);
+            formDataUser.append("email", values.email);
+            formDataUser.append("phone_number", values.phone_number);
+            formDataUser.append("password", values.password);
+            formDataUser.append("user_iamge", values.user_image[0].originFileObj);
+
+            const userResponse = await fetch("http://127.0.0.1:8000/api/users", {
+                method: "POST",
+                body: formDataUser,
+            });
+
+            if (userResponse.ok) {
+                message.success("Thêm tài khoản thành công!");
+                navigate("/admin/users");
+            } else {
+                message.error(`Lỗi ${userResponse.status}: Không thể thêm tài khoản!`);
+            }
         } catch (error) {
-            message.error('Có lỗi xảy ra khi thêm tài khoản!');
+            console.error("Lỗi khi gửi API:", error);
+            message.error("Không thể thêm tài khoản!");
         } finally {
             setLoading(false);
         }
@@ -54,7 +60,6 @@ const AddUser: React.FC = () => {
                 name="AddUser"
                 layout="vertical"
                 onFinish={onFinish}
-                initialValues={{ avatar: [] }} // Fix lỗi form báo chưa nhập dù đã nhập
             >
                 <Form.Item
                     label="Họ và tên"
@@ -86,37 +91,18 @@ const AddUser: React.FC = () => {
                     <Input placeholder="Nhập số điện thoại" />
                 </Form.Item>
 
-                {/* <Form.Item
-                    label="Vai trò"
-                    name="role"
-                    rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
-                >
-                    <Select placeholder="Chọn vai trò">
-                        <Option value="admin">Admin</Option>
-                        <Option value="moderator">Moderator</Option>
-                        <Option value="customer">Khách hàng</Option>
-                    </Select>
-                </Form.Item> */}
-
                 <Form.Item
                     label="Ảnh đại diện"
-                    name="avatar"
+                    name="user_image"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
-                    rules={[{ required: false }]} 
+                    rules={[{ required: true, message: "Vui lòng chọn ảnh đại diện!" }]}
                 >
                     <Upload
-                        name="avatar"
+                        name="user_image"
                         listType="picture"
                         maxCount={1}
-                        beforeUpload={(file) => {
-                            const isImage = file.type.startsWith('image/');
-                            if (!isImage) {
-                                message.error('Bạn chỉ có thể tải lên file ảnh!');
-                            }
-                            return isImage ? false : Upload.LIST_IGNORE;
-                        }}
-                    >
+                        beforeUpload={() => false}>
                         <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
                     </Upload>
                 </Form.Item>
