@@ -43,7 +43,7 @@ class ApiBannerController extends Controller
         if ($data->fails()) {
             return response()->json([
                 'error' => $data->errors(),
-            ],422);
+            ], 422);
         }
 
         if ($request->has('image')) {
@@ -61,19 +61,18 @@ class ApiBannerController extends Controller
 
         return response()->json([
             'success' => 'thêm thành công'
-        ],201);
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request ,string $id)
+    public function show(Request $request, string $id)
     {
         $Banner = Banners::query()->findOrFail($id);
         return response()->json([
             'data' => $Banner,
         ]);
-        
     }
 
     /**

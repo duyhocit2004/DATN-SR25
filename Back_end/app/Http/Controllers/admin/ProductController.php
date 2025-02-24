@@ -109,8 +109,8 @@ class ProductController extends Controller
         $color = $this->colorService->getAll();
         $variant = $this->VariantService->GetId($id);
         $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
-        // dd($iamge);  
-        return view('admin.products.editProduct', compact('idproduct', 'size', 'categori', 'iamge', 'variant', 'color'));
+        // dd($iamge);
+        return view('admin.products.editProduct', compact('idproduct', 'categori', 'iamge'));
     }
 
     /**
@@ -122,30 +122,9 @@ class ProductController extends Controller
         $idproduct = $this->ProductService->insertId($id, $list);
         if($request->has('images')){
 
-            $images1 = $request->file('images');
-            $existingImages = imageProduct::where('products_id', '=', $id)->get();
-    
-            // Xóa tất cả ảnh cũ
-            foreach ($existingImages as $image) {
-                if (Storage::disk('public')->exists($image->image_link)) {
-                    Storage::disk('public')->delete($image->image_link);
-                }
-                // Xóa bản ảnh trong cơ sở dữ liệu
-                $image->delete();
-            }
-        
-            // Lưu ảnh mới
-            // dd($image);
-                foreach ($images1 as $file) {
-                        $imagePath = null;
-                        $imagePath = $file->store('public');
-                        imageProduct::create([
-                            'products_id' => $id,
-                            'image_link' => $imagePath
-                        ]);
-                }
-        
-            // $this->IamgeRepositories->updateImage($id,$images);
+            $images = $request->images;
+
+            $this->IamgeRepositories->updateImage($id,$images);
         }
 
         if ($request->has('variant')) {
@@ -166,7 +145,6 @@ class ProductController extends Controller
             }
         }
 
-       
         return redirect()->route('product')->with('success', 'thêm thành công');
     }
 
