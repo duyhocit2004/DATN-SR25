@@ -2,21 +2,25 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Models\products;
-use App\Models\imageProduct;
-use Illuminate\Http\Request;
-use App\Models\ProductVariants;
-use App\Services\size\sizeService;
-use App\Http\Controllers\Controller;
-use App\Services\color\ColorService;
-use Illuminate\Contracts\Cache\Store;
-use App\Repositories\IamgeRepositories;
 
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Cache\Store;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Storage;
+use Cloudinary\Cloudinary;
+
+use App\Models\products;
+use App\Models\imageProduct;
+use App\Models\ProductVariants;
+
 use App\Services\product\ProductService;
 use App\Services\product\VariantService;
 use App\Services\Categories\CategoryService;
+use App\Services\size\sizeService;
+use App\Services\color\ColorService;
+
+use App\Repositories\IamgeRepositories;
 
 class ProductController extends Controller
 {
@@ -26,6 +30,7 @@ class ProductController extends Controller
     public $sizeService;
     public $VariantService;
     public $IamgeRepositories;
+    private $Cloudinary;
 
     public function __construct(
         ProductService $ProductService,
@@ -34,6 +39,7 @@ class ProductController extends Controller
         ColorService $colorService,
         VariantService $VariantService,
         IamgeRepositories $IamgeRepositories,
+        Cloudinary $Cloudinary
     ) {
 
         $this->ProductService = $ProductService;
@@ -42,6 +48,7 @@ class ProductController extends Controller
         $this->categoryService = $categoryService;
         $this->VariantService = $VariantService;
         $this->IamgeRepositories = $IamgeRepositories;
+        $this->Cloudinary = $Cloudinary;
     }
 
     public function index()
@@ -73,18 +80,27 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $variant = $request->input('variants');
-
-
         $image = $request->file('images');
-
         $list = $request->all();
 
+
+        // Xử lý hình ảnh chính
+        if ($request->hasFile('file')) {
+            $uploadedFile = $this->Cloudinary->uploadApi()->upload($request->file('file')->getRealPath());
+            $list['file'] = $uploadedFile['secure_url'];
+        }
         $idproduct = $this->ProductService->insert($list);
+
         if ($request->has('variants')) {
             $this->VariantService->insert($idproduct, $variant);
         }
         if ($request->hasFile('images')) {
-            $this->IamgeRepositories->inserImage($idproduct, $image);
+            foreach ($image as $images) {
+                // Tải lên từng hình ảnh
+                $uploadedFile = $this->Cloudinary->uploadApi()->upload($images->getRealPath());
+                // Lưu URL hình ảnh vào cơ sở dữ liệu
+                $this->IamgeRepositories->inserImage($idproduct, $uploadedFile['secure_url']);
+            }
         }
 
         return redirect()->route('product')->with('success', 'thêm thành công');
@@ -109,7 +125,6 @@ class ProductController extends Controller
         $color = $this->colorService->getAll();
         $variant = $this->VariantService->GetId($id);
         $iamge = $this->IamgeRepositories->getimage(['id' => $idproduct->id]);
-        // dd($iamge);  
         return view('admin.products.editProduct', compact('idproduct', 'size', 'categori', 'iamge', 'variant', 'color'));
     }
 
@@ -118,42 +133,41 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $list = $request->except('_token', '_method', 'variants' ,'images');
+        $list = $request->except('_token', '_method', 'variants', 'images');
+
+        if($request->hasFile('file')){
+            $fileimage = $this->Cloudinary->uploadApi()->upload($request->file('file')->getRealPath());
+            $list['file']=$fileimage['secure_url'];
+        }else{
+            $listproduct = products::findOrFail($id);
+            $list['file']=$listproduct['image'];
+        }
         $idproduct = $this->ProductService->insertId($id, $list);
-        if($request->has('images')){
+;
+        if ($request->has('images')) {
 
             $images1 = $request->file('images');
             $existingImages = imageProduct::where('products_id', '=', $id)->get();
-    
-            // Xóa tất cả ảnh cũ
+
             foreach ($existingImages as $image) {
-                if (Storage::disk('public')->exists($image->image_link)) {
-                    Storage::disk('public')->delete($image->image_link);
-                }
-                // Xóa bản ảnh trong cơ sở dữ liệu
+                $publicId = pathinfo($image->image_link, PATHINFO_FILENAME);
+                $this->Cloudinary->adminApi()->deleteAssets([$publicId]);
                 $image->delete();
             }
-        
-            // Lưu ảnh mới
-            // dd($image);
-                foreach ($images1 as $file) {
-                        $imagePath = null;
-                        $imagePath = $file->store('public');
-                        imageProduct::create([
-                            'products_id' => $id,
-                            'image_link' => $imagePath
-                        ]);
-                }
-        
-            // $this->IamgeRepositories->updateImage($id,$images);
+
+            foreach ($images1 as $file) {
+                $uploadedFile = $this->Cloudinary->uploadApi()->upload($file->getRealPath());
+                imageProduct::create([
+                    'products_id' => $id,
+                    'image_link' => $uploadedFile['secure_url']
+                ]);
+            }
         }
 
         if ($request->has('variant')) {
-
             $variant = $request->input('variants');
 
             foreach ($variant as $value) {
-
                 if (isset($value['id'])) {
                     $existingVariant = ProductVariants::find($value['id']);
                     if (isset($existingVariant)) {
@@ -166,7 +180,7 @@ class ProductController extends Controller
             }
         }
 
-       
+
         return redirect()->route('product')->with('success', 'thêm thành công');
     }
 

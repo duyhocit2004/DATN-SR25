@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\admin\VariantController;
 use App\Http\Controllers\admin\VoucherController;
 use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\admin\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -120,3 +121,7 @@ Route::delete('delete/{id}/Vouchers',[VoucherController::class,'delete'])->name(
 
 //Tin nhắn
 Route::get('boxchat',[BoxchatController::class,'index'])->name('boxchat.index');
+
+//comment
+
+route::resource('comment',CommentController::class);

@@ -79,10 +79,17 @@
         </li>
 
         <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
-            <h6 class=""><i class="fab fa-rocketchat"></i> Tin nhắn</h6>
+            <h6 class=""><i class="fas fa-comments"></i> Tin nhắn(chưa làm)</h6>
         </a>
         <ul class="sidebar-submenu">
             <li><a href="{{ route('boxchat.index') }}">Hộp thư</a></li>
+        </ul>
+        
+        <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+            <h6 class=""><i class="fas fa-comment"></i> Bình luận</h6>
+        </a>
+        <ul class="sidebar-submenu">
+            <li><a href="{{ route('comment.index') }}">Danh sách</a></li>
         </ul>
         
     </li>

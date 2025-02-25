@@ -63,7 +63,7 @@ class ApiProductController extends Controller
         // return new ProductResource($products);
 
         return response()->json([
-            'data' => ProductResource::collection($products),
+            'data' => $products,
             'success' => true,
             'message' => 'Chi tiết sản phẩm'
         ], 200);
@@ -85,7 +85,7 @@ class ApiProductController extends Controller
                 // Lấy tên file không có phần mở rộng
                 $publicId = pathinfo($products->image, PATHINFO_FILENAME);
                 // Xóa hình ảnh từ Cloudinary
-                $this->cloudinary->adminApi()->delete($publicId);
+                $this->cloudinary->adminApi()->deleteAssets([$publicId]);
             }
 
             $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
@@ -125,6 +125,17 @@ class ApiProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Xóa thành công'
+        ], 200);
+    }
+    public function getid(string $id){
+        $products = products::findOrFail($id);
+
+        // return new ProductResource($products);
+
+        return response()->json([
+            'data' => $products,
+            'success' => true,
+            'message' => 'Chi tiết sản phẩm'
         ], 200);
     }
 }

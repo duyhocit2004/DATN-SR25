@@ -137,7 +137,7 @@
             placeholder="200">
           </div>
           <div class="d-flex justify-content-center align-items-center">
-            <img src="{{Storage::url($idproduct->image)  }}" class="previewContainer" id="preview_0" width="200px"
+            <img src="{{$idproduct->image }}" class="previewContainer" id="preview_0" width="200px"
             alt="">
           </div>
           </div>
@@ -152,7 +152,7 @@
             type="file" accept="image/*">
             <div id="previewImage">
             @foreach ($iamge as $as)
-        <img src="{{Storage::url($as->image_link)}}" class="previewContainer1" alt="">
+        <img src="{{$as->image_link}}" class="previewContainer1" alt="">
       @endforeach
             </div>
           </div>

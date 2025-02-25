@@ -36,6 +36,7 @@ Route::post('products', [ApiProductController::class,'store']);
 Route::get('products/{id}', [ApiProductController::class,'show']);
 Route::put('products/{id}', [ApiProductController::class,'update']);
 Route::delete('products/{id}', [ApiProductController::class,'destroy']);
+// Route::get('products/{id}/id', [ApiProductController::class,'getid']);
 
 // Route danh mục
 Route::get('categories', [ApiCategoryController::class,'index']);
@@ -66,4 +67,8 @@ Route::post('users', [ApiUserController::class, 'store']);
 Route::get('users/{id}', [ApiUserController::class, 'show']);
 Route::put('users/{id}', [ApiUserController::class, 'update']);
 Route::delete('users/{id}', [ApiUserController::class, 'destroy']);
+
+//cart
+
+//comment
 
