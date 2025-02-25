@@ -1,12 +1,13 @@
 export interface IUser {
     id: number;
-    name: string;
+    username: string;
+    fullname: string;
     email: string;
-    phone_number: string;
-    role: string;
-    email_verified_at: string | null;
+    password: string;
     gender: string;
-    user_image: string | null;
+    phone: string;
+    role: string; 
+    user_image: File | null; 
     created_at: string;
     updated_at: string;
     deleted_at: string | null;
