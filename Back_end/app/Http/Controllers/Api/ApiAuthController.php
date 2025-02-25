@@ -40,7 +40,7 @@ class ApiAuthController extends Controller
             'phone' => 'required'
         ], [
             'username.required' => 'bạn chưa nhập tên',
-            'username.max:30' => 'số lượng ký tự đối ta là 40',
+            'username.max:30' => 'số lượng ký tự đối ta là 30',
             'email.required' => 'bạn chưa nhập email',
             'password.required' => 'bạn chưa nhập mật khẩu',
             'gender.required' => 'bạn chưa chọn giới tính',
@@ -49,8 +49,9 @@ class ApiAuthController extends Controller
         if ($validate->fails()) {
             return response()->json([
                 'message' => $validate->errors()
-            ], 404);
-        };
+            ], 400);
+        }
+        ;
         User::create([
             'name' => $request->username,
             'email' => $request->email,
@@ -59,9 +60,6 @@ class ApiAuthController extends Controller
             'password' => hash::make($request->password),
             'role' => 'Khách hàng',
         ]);
-
-
-
 
         return response()->json([
             'message' => 'đăng kí thành công',
