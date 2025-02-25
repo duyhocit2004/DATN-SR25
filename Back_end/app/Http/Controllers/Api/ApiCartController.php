@@ -55,15 +55,9 @@ class ApiCartController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, cart_items $cartItem)
+    public function update(Request $request, string $id)
     {
-        $request->validate(['quantity' => 'required|integer|min:1']);
-
-        $cartItem->quantity = $request->quantity;
-        $cartItem->sub_total = $request->quantity * $cartItem->productVariant->price;
-        $cartItem->save();
-
-        return response()->json($cartItem->cart->load('items'));
+        //
     }
 
     /**
@@ -76,10 +70,14 @@ class ApiCartController extends Controller
         return response()->json($cart->load('items'));
     }
 
+
     private function getCart(Request $request, $createIfNotExists = false)
     {
         if (Auth::check()) {
-            return Carts::firstOrCreate(['user_id' => Auth::id()]);
+            return Carts::firstOrCreate(
+                ['user_id' => Auth::id()],
+                ['created_at' => now(), 'updated_at' => now()]
+            );
         }
 
         $guestId = $request->cookie('guest_id') ?? Str::uuid();
@@ -87,6 +85,9 @@ class ApiCartController extends Controller
             cookie()->queue(cookie('guest_id', $guestId, 60 * 24 * 30));
         }
 
-        return Carts::firstOrCreate(['guest_id' => $guestId]);
+        return Carts::firstOrCreate(
+            ['guest_id' => $guestId],
+            ['created_at' => now(), 'updated_at' => now()]
+        );
     }
 }
