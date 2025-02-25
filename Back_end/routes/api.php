@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ApiColorController;
 use App\Http\Controllers\api\ApiSizeController;
+use App\Http\Controllers\api\ApiVoucherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -58,6 +59,12 @@ Route::post('sizes', [ApiSizeController::class,'store']);
 Route::get('sizes/{id}', [ApiSizeController::class,'show']);
 Route::put('sizes/{id}', [ApiSizeController::class,'update']);
 Route::delete('sizes/{id}', [ApiSizeController::class,'destroy']);
+
+Route::get('vouchers', [ApiVoucherController::class,'index']);
+Route::post('vouchers', [ApiVoucherController::class,'store']);
+Route::get('vouchers/{id}', [ApiVoucherController::class,'show']);
+Route::put('vouchers/{id}', [ApiVoucherController::class,'update']);
+Route::delete('vouchers/{id}', [ApiVoucherController::class,'destroy']);
 
 //Banner trang chủ
 Route::apiResource('banner',ApiBannerController::class);
