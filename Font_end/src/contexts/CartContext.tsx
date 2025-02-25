@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from "react";
-import { addToCart } from "../service/cart/cartService";
+import { AddToCart } from "../service/cart/cartService";
+
 
 
 interface CartItem {
@@ -19,7 +20,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const addProductToCart = async (productId: string, quantity: number) => {
     try {
-      await addToCart(productId, quantity);
+      await AddToCart(productId, quantity);
       setCart((prev) => [...prev, { productId, quantity }]);
     } catch (error) {
       console.error("Failed to add product to cart", error);

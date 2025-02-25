@@ -11,16 +11,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use PhpParser\Node\Stmt\TraitUseAdaptation;
 
 class ApiCartController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
 
-        $cart = $this->getCart($request);
-        return response()->json($cart);
+        // $cart = $this->getCart($request);
+
+        // return response()->json($cart);
     }
 
     /**
@@ -28,29 +31,39 @@ class ApiCartController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'product_variants_id' => 'required',
-            'quantity' => 'required|integer',
-        ]);
-
-        $cart = $this->getCart($request, true);
-        $variant = ProductVariants::findOrFail($request->product_variants_id);
-
-        $cartItem = $cart->items()->where('product_variants_id', $variant->id)->first();
-
-        if ($cartItem) {
-            $cartItem->quantity += $request->quantity;
-            $cartItem->sub_total = $cartItem->quantity * $variant->price;
-            $cartItem->save();
-        } else {
-            $cart->items()->create([
-                'product_variants_id' => $variant->id,
-                'quantity' => $request->quantity,
-                'sub_total' => $request->quantity * $variant->price,
+        $value = false;
+        $iduser = Carts::where('user_id', '=', Auth::id())->get();
+        if (isset($iduser)) {
+            $cart = $this->getCart($request);
+            $value = true;
+        }
+        if ($value == true) {
+            $request->validate([
+                'product_variants_id' => 'required',
+                'quantity' => 'required|integer',
             ]);
+            $cart = $this->getCart($request, true);
+            $variant = ProductVariants::findOrFail($request->product_variants_id);
+
+            $cartItem = $cart->items()->where('product_variants_id', $variant->id)->first();
+
+            if ($cartItem) {
+                $cartItem->quantity += $request->quantity;
+                $cartItem->sub_total = $cartItem->quantity * $variant->price;
+                $cartItem->save();
+            } else {
+                $cart->items()->create([
+                    'product_variants_id' => $variant->id,
+                    'quantity' => $request->quantity,
+                    'sub_total' => $request->quantity * $variant->price,
+                ]);
+            }
+
+            return response()->json($cart->load('items'));
         }
 
-        return response()->json( $cart->load('items'));
+
+
     }
 
     /**
@@ -92,10 +105,11 @@ class ApiCartController extends Controller
         );
     }
 
-    public function getListCart(){
-        if(Auth::check()){
-            $id = Carts::query()->where('user_id','=',Auth::id());
-            return cart_items::query()->where('cart_id','=',$id);
+    public function getListCart()
+    {
+        if (Auth::check()) {
+            $id = Carts::query()->where('user_id', '=', Auth::id());
+            return cart_items::query()->where('cart_id', '=', $id);
         }
     }
 }

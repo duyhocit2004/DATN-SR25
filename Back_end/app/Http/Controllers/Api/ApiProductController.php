@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use Cloudinary\Cloudinary;
 use App\Models\products;
+use Cloudinary\Cloudinary;
+use App\Models\imageProduct;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
@@ -59,11 +60,13 @@ class ApiProductController extends Controller
     public function show(string $id)
     {
         $products = Products::query()->findOrFail($id);
-
+        $albumproduct = imageProduct::where('products_id','=',$id)->get();
         // // return new ProductResource($products);
 
         return response()->json([
-            'data' => $products,
+            
+            'data' => [$products,$albumproduct],
+            // 'data' => $products,
             'success' => true,
             'message' => 'Chi tiết sản phẩm'
         ], 200);
