@@ -18,7 +18,9 @@ return new class extends Migration
               $table->string('guest_id')->nullable()->unique();
               // Thêm cột để lưu giỏ hàng (dạng JSON)
               $table->json('cart_items')->nullable();
+
             $table->foreignIdFor(User::class)->nullable()->constrained()->onDelete('cascade');
+            
             $table->timestamps();
         });
     }

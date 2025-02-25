@@ -23,8 +23,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->group( function (){
-Route::delete('/logout',[ApiAuthController::class,'logout']);
-Route::get('/user',[ApiAuthController::class,'user']);
+    Route::post('/logout', [ApiAuthController::class, 'logout']);
+    Route::get('/user',[ApiAuthController::class,'user']);
 });
 
 // Route::get('products', [ApiProductController::class, 'index']);
@@ -83,6 +83,5 @@ Route::prefix('carts')->group(function () {
     Route::post('/add', [ApiCartController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
     Route::put('/update/{cartItem}', [ApiCartController::class, 'update']); // Cập nhật số lượng sản phẩm
     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
+    
 });
-
-

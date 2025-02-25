@@ -35,15 +35,9 @@
                                 <tbody>
                                     @foreach ($list as $index => $as)
                                         <tr class="border-bottom-success">
-<<<<<<< HEAD
                                             <th scope="row">{{ $index + 1}}</th>
                                             <td ư><img class="img-fluid" src="{{$as->image }}  "
                                                     alt="profile" style="width: 240px; Height: auto;"></td>
-=======
-                                            <th scope="row">{{ $as->id }}</th>
-                                            <td><img class="img-30 me-2" src="{{ Storage::url($as->image) }}"
-                                                    alt="profile"></td>
->>>>>>> namnguyen
                                             <td>{{ $as->name_product }}</td>
                                             <td>{{ $as->base_stock }}</td>
                                             <td>{{ number_format($as->price_regular, 0, '.', ',') }}VND</td>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\cart_items;
 use App\Models\Carts;
 use App\Models\ProductVariants;
+use App\Services\Cart\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -89,5 +90,12 @@ class ApiCartController extends Controller
             ['guest_id' => $guestId],
             ['created_at' => now(), 'updated_at' => now()]
         );
+    }
+
+    public function getListCart(){
+        if(Auth::check()){
+            $id = Carts::query()->where('user_id','=',Auth::id());
+            return cart_items::query()->where('cart_id','=',$id);
+        }
     }
 }

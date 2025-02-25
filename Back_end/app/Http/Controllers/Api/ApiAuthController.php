@@ -70,9 +70,9 @@ class ApiAuthController extends Controller
 
     public function user(Request $request)
     {
-        return $request->user()->load('role');
-
-
+        return response()->json([
+            'role' => $request->user()->role,
+        ]);
     }
     public function logout(Request $request)
     {
