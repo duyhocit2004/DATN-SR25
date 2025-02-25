@@ -111,13 +111,6 @@ Route::get('/carts/{id}/edit', [CartController::class, 'edit'])->name('carts.edi
 Route::put('/carts/{id}', [CartController::class, 'update'])->name('carts.update');
 Route::delete('carts/{id}', [CartController::class, 'destroy'])->name('carts.destroy');
 
-//Voucher 
-Route::get('Vouchers',[VoucherController::class,'index'])->name('voucher.index');
-Route::get('create/Vouchers',[VoucherController::class,'create'])->name('voucher.create');
-Route::post('store/Vouchers',[VoucherController::class,'store'])->name('voucher.store');
-Route::get('get/{id}/Vouchers',[VoucherController::class,'edit'])->name('voucher.getID');
-Route::put('put/{id}/Vouchers',[VoucherController::class,'put'])->name('voucher.putVoucher');
-Route::delete('delete/{id}/Vouchers',[VoucherController::class,'delete'])->name('voucher.deleteVoucher');
 
 //Tin nhắn
 Route::get('boxchat',[BoxchatController::class,'index'])->name('boxchat.index');
@@ -125,3 +118,10 @@ Route::get('boxchat',[BoxchatController::class,'index'])->name('boxchat.index');
 //comment
 
 route::resource('comment',CommentController::class);
+// Route Voucher
+Route::get('vouchers', [VoucherController::class, 'index']) -> name('vouchers.index');
+Route::get('vouchers/crate', [VoucherController::class, 'create']) -> name('vouchers.create');
+Route::post('vouchers', [VoucherController::class, 'store']) -> name('vouchers.store');
+Route::get('voucher/{id}/edit', [VoucherController::class, 'edit']) -> name('vouchers.edit');
+Route::put('vouchers/{id}', [VoucherController::class, 'update']) -> name('vouchers.update');
+Route::delete('vouchers/{id}', [VoucherController::class, 'destroy']) -> name('vouchers.destroy');

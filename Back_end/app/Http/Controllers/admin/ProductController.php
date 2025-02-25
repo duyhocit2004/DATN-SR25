@@ -180,7 +180,6 @@ class ProductController extends Controller
             }
         }
 
-
         return redirect()->route('product')->with('success', 'thêm thành công');
     }
 

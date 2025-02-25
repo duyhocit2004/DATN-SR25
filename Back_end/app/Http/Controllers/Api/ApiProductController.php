@@ -15,7 +15,7 @@ use App\Services\product\ProductService;
 class ApiProductController extends Controller
 {
     public $ProductService;
-    protected $cloudinary ;
+    protected $cloudinary;
 
     public function __construct(ProductService $ProductService, Cloudinary $cloudinary)
     {
@@ -40,9 +40,9 @@ class ApiProductController extends Controller
         if (!$request->hasFile('image')) {
             return response()->json(['error' => 'Image file is required'], 400);
         }
-        $params  = $request->all();
-        $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
-        $params ['image'] = $uploadedFile['secure_url'];
+        $params = $request->all();
+        $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
+        $params['image'] = $uploadedFile['secure_url'];
 
         $products = Products::create($params);
 
@@ -58,9 +58,9 @@ class ApiProductController extends Controller
      */
     public function show(string $id)
     {
-        $products = products::query()->findOrFail($id);
+        $products = Products::query()->findOrFail($id);
 
-        // return new ProductResource($products);
+        // // return new ProductResource($products);
 
         return response()->json([
             'data' => $products,
@@ -72,41 +72,49 @@ class ApiProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductRequest $request, string $id)
-{
-    try {
-        $products = products::query()->findOrFail($id);
+    public function update(string $id, ProductRequest $request)
+    {
+        try {
+            $products = products::query()->findOrFail($id);
+            $params = $request->all();
 
-        $params = $request->all();
+            if ($request->hasFile('image')) {
+                if ($products->image) {
 
-        if ($request->hasFile('image')) {
-            if ($products->image) {
-                
-                // Lấy tên file không có phần mở rộng
-                $publicId = pathinfo($products->image, PATHINFO_FILENAME);
-                // Xóa hình ảnh từ Cloudinary
-                $this->cloudinary->adminApi()->deleteAssets([$publicId]);
+                    $publicId = pathinfo($products->image, PATHINFO_FILENAME);
+
+                    $this->cloudinary->adminApi()->deleteAssets([$publicId]);
+                } else if ($request->hasFile('image')) {
+                    // Upload ảnh mới lên Cloudinary
+                    $uploadedFile = $this->cloudinary->uploadApi()->upload(
+                        $request->file('image')->getRealPath(),
+                        ['folder' => 'products', 'verify' => false]
+                    );
+
+                    // Cập nhật URL hình ảnh mới vào `params`
+                    $params['image'] = $uploadedFile['secure_url'];
+                }
+            } else {
+                //Nếu không có trường `image` trong request => Giữ nguyên ảnh cũ
+                $params['image'] = $products->image;
             }
 
-            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
-            // Cập nhật URL hình ảnh trong params
-            $params['image'] = $uploadedFile['secure_url'];
+            // Cập nhật sản phẩm
+            $products->update($params);
+
+            return response()->json([
+                'data' => $products,
+                'success' => true,
+                'message' => 'Sửa thành công'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
         }
 
-        $products->update($params);
-
-        return response()->json([
-            'data' => new ProductResource($products),
-            'success' => true,
-            'message' => 'Sửa thành công'
-        ], 200);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
-        ], 500);
     }
-}
 
     /**
      * Remove the specified resource from storage.
@@ -127,7 +135,8 @@ class ApiProductController extends Controller
             'message' => 'Xóa thành công'
         ], 200);
     }
-    public function getid(string $id){
+    public function getid(string $id)
+    {
         $products = products::findOrFail($id);
 
         // return new ProductResource($products);

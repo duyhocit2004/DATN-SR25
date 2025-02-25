@@ -29,4 +29,7 @@ class ProductVariants extends Model
     public function size(){
         return $this->belongsTo(size::class,'size_id');
     }
+    public function cartItems(){
+        return $this->hasMany(cart_items::class);
+    }
 }

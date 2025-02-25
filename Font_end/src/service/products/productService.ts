@@ -6,16 +6,14 @@ import { IProducts } from "../../interface/Products";
 export const ListProduct = async () => {
     try {
         const { data } = await api.get("/products");
-        
-        // Kiểm tra và lấy data.data nếu có
         if (!Array.isArray(data.data)) {
-            console.error("❌ LỖI: API không trả về mảng", data);
+            console.error(" LỖI: API không trả về mảng", data);
             return [];
         }
-        
-        return data.data; // Trả về mảng sản phẩm
+
+        return data.data;
     } catch (error) {
-        console.error("❌ Lỗi khi gọi API sản phẩm:", error);
+        console.error(" Lỗi khi gọi API sản phẩm:", error);
         return [];
     }
 };
@@ -47,7 +45,7 @@ export const AddProduct = async (product: IProducts) => {
 
 
 // Cập nhật sản phẩm theo ID
-export const UpdateProduct = async (id: number, product: Partial<IProducts>) => {
+export const UpdateProduct = async (id: number, product: IProducts) => {
     try {
         const { data } = await api.put<IProducts>(`/products/${id}`, product);
         return data;

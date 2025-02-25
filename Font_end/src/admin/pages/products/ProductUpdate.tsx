@@ -5,33 +5,34 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IProducts } from '../../../interface/Products';
 import { GetProductById, UpdateProduct } from '../../../service/products/productService';
 
-const categories = [
-    { value: '1', label: 'Áo' },
-    { value: '2', label: 'Quần' },
-    { value: '3', label: 'Phụ kiện' },
-];
 
 const ProductUpdate: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [categories, setCategories] = useState([]);
+
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        console.log("📌 useEffect chạy, ID:", id);
         const fetchProduct = async () => {
             try {
                 const response = await GetProductById(id);
-                console.log("📌 API Response:", response);
-    
+                console.log("API Response:", response);
+
                 const data = response.data || response; // Kiểm tra có cần .data không
-                console.log("📌 Processed Data:", data);
-    
+                console.log("Processed Data:", data);
+
+                // Lấy danh mục
+                const categoryRes = await fetch("http://127.0.0.1:8000/api/categories");
+                const categoryData = await categoryRes.json();
+                setCategories(categoryData);
+
                 if (!data) {
                     message.error("Không tìm thấy sản phẩm!");
                     return;
                 }
-    
+
                 form.setFieldsValue({
                     name: data.name_product || '',
                     category: data.categories_id ? data.categories_id.toString() : '',
@@ -41,36 +42,43 @@ const ProductUpdate: React.FC = () => {
                     description: data.description || '',
                     avatar: data.image ? [{ url: data.image }] : [],
                 });
-    
-                console.log("📌 Đã setFieldsValue thành công!");
+
+                console.log("Đã setFieldsValue thành công!");
             } catch (error) {
                 console.error('Lỗi khi lấy dữ liệu sản phẩm:', error);
                 message.error('Không thể tải dữ liệu sản phẩm!');
             }
         };
-    
+
         if (id) fetchProduct();
     }, [id, form]);
-    
+
 
     const onFinish = async (values: any) => {
         setLoading(true);
         try {
-            const updatedProduct: IProducts = {
-                id: Number(id),
-                name_product: values.name,
-                categories_id: parseInt(values.category),
-                base_stock: values.quantity,
-                price_regular: values.price,
-                price_sale: values.discount ? values.price - (values.price * values.discount) / 100 : values.price,
-                description: values.description,
-                image: values.avatar?.[0]?.url || null,
-                SKU: '',
-                views: 0,
-                content: ''
-            };
+            console.log(values.avatar[0]);
+            const formDataProduct = new FormData();
+            formDataProduct.append("id", id ? id : '');
+            formDataProduct.append("name_product", values.name);
+            formDataProduct.append("categories_id", values.category);
+            formDataProduct.append("base_stock", values.quantity);
+            formDataProduct.append("price_regular", values.price);
+            formDataProduct.append("price_sale", values.discount ? values.price - (values.price * values.discount) / 100 : values.price);
+            formDataProduct.append("description", values.description);
+            formDataProduct.append("content", values.content || "");
+            formDataProduct.append("image", values.avatar[0].originFileObj || values.avatar[0].url); // Gửi URL ảnh thay vì file
+            formDataProduct.append("SKU", values.SKU || "DEFAULT_SKU");
+            formDataProduct.append("_method", "PUT");
 
-            await UpdateProduct(id, updatedProduct);
+            // await UpdateProduct(Number(id), formDataProduct);
+            const productResponse = await fetch("http://127.0.0.1:8000/api/products/" + id, {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json"
+                },
+                body: formDataProduct,
+            });
             message.success('Cập nhật sản phẩm thành công!');
             navigate('/admin/products');
         } catch (error) {
