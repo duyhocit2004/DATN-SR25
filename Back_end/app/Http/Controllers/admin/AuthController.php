@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Carts;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,7 @@ class AuthController extends Controller
             'password.required' => 'Vui lòng nhập mật khẩu',
             'password.unique' => 'Mật khẩu phải nhiều hơn 6 kí tự',
         ]);
+
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
 

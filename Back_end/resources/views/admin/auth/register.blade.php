@@ -66,20 +66,21 @@
                             {{-- Ảnh Logo --}}
                             {{-- <div>
                                 <a class="logo" href="index.html"><img class="img-fluid for-light m-auto"
-                                    src="../assets/images/logo/logo1.png" alt="looginpage"><img
-                                    class="img-fluid for-dark" src="../assets/images/logo/logo-dark.png" alt="logo"></a>
+                                        src="../assets/images/logo/logo1.png" alt="looginpage"><img
+                                        class="img-fluid for-dark" src="../assets/images/logo/logo-dark.png"
+                                        alt="logo"></a>
                             </div> --}}
 
                             <div class="login-main">
                                 <form class="theme-form" action=" {{ route('post-register') }}" method="POST">
                                     @csrf
-                                    <h2 class="text-center">Đăng kí tài khoản</h2>
+                                    <h2 class="text-center">Đăng ký tài khoản</h2>
 
                                     <div class="form-group">
                                         <label class="col-form-label">Họ tên</label>
                                         <div class="form-input position-relative">
-                                            <input class="form-control" type="text" name="name" value="{{ old('name') }}"
-                                                placeholder="Nhập họ tên">
+                                            <input class="form-control" type="text" name="name"
+                                                value="{{ old('name') }}" placeholder="Nhập họ tên">
                                             @error('name')
                                                 <p style="color: red">{{ $message }}</p>
                                             @enderror
@@ -89,8 +90,8 @@
                                     <div class="form-group">
                                         <label class="col-form-label">Số điện thoại</label>
                                         <div class="form-input position-relative">
-                                            <input class="form-control" type="tel" name="phone_number" value="{{ old('phone_number') }}"
-                                                placeholder="Nhập số điện thoại">
+                                            <input class="form-control" type="tel" name="phone_number"
+                                                value="{{ old('phone_number') }}" placeholder="Nhập số điện thoại">
                                             @error('phone_number')
                                                 <p style="color: red">{{ $message }}</p>
                                             @enderror
@@ -98,22 +99,9 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="col-form-label">Vai trò</label>
-                                        <div class="form-input position-relative">
-                                            <select class="form-control" name="role">
-                                                {{-- <option value="selected">--Chọn vai trò--</option> --}}
-                                                <option value="Khách hàng">Khách hàng</option>
-                                                <option value="Quản lý">Quản lý</option>
-                                            </select>
-                                            @error('role')
-                                                <p style="color: red;">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
                                         <label class="col-form-label">Email</label>
-                                        <input class="form-control" type="text" name="email" value="{{ old('email') }}" placeholder="Nhập email">
+                                        <input class="form-control" type="text" name="email"
+                                            value="{{ old('email') }}" placeholder="Nhập email">
                                         @error('email')
                                             <p style="color: red;">{{ $message }}</p>
                                         @enderror
@@ -143,7 +131,7 @@
 
                                     <div class="form-group mb-0 checkbox-checked">
                                         <div class="text-end mt-3">
-                                            <button class="btn btn-primary btn-block w-100" type="submit">Đăng kí</button>
+                                            <button class="btn btn-primary btn-block w-100" type="submit">Đăng ký</button>
                                         </div>
                                     </div>
                                 </form>

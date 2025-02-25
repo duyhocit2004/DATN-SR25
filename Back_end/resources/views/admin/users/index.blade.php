@@ -21,14 +21,15 @@
         <!-- Container-fluid starts-->
         <div class="container-fluid">
 
-            <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">Thêm Người Dùng</a>
-
+            <a href="{{ route('users.create') }}" class="btn btn-success mb-3 shadow-sm" style="font-weight: 500; transition: background-color 0.3s, color 0.3s;">
+                Thêm Người Dùng
+            </a>
             <div class="row">
                 <div class="col-sm-12">
                     <div class="card">
                         <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
+                            <table class="table table-striped table-hover">
+                                <thead class="thead-light">
                                     <tr>
                                         <th>ID</th>
                                         <th>Họ và tên</th>
@@ -49,28 +50,27 @@
                                             <td>{{ $user->role }}</td>
                                             <td>
                                                 @if ($user->user_image)
-                                                    <img src="{{ asset('storage/' . $user->user_image) }}" width="50"
-                                                        height="50">
+                                                    <img src="{{ asset('storage/' . $user->user_image) }}"
+                                                        class="img-fluid rounded-circle"
+                                                        style="max-width: 50px; max-height: 50px;" alt="User Image">
                                                 @else
                                                     Không có ảnh
                                                 @endif
                                             </td>
-
                                             <td>
                                                 <a href="{{ route('users.edit', $user->id) }}"
-                                                    class="btn btn-warning">Sửa</a>
+                                                    class="btn btn-warning"><i class="fas fa-wrench"></i></a>
                                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST"
                                                     style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger"
-                                                        onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</button>
+                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa?')"><i class="fas fa-trash"></i></button>
                                                 </form>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-
                             </table>
                         </div>
                     </div>
