@@ -6,7 +6,7 @@
             <div class="page-title">
                 <div class="row">
                     <div class="col-sm-6 col-12">
-                        <h2>Quản Lý Mã Giảm Giá</h2>
+                        <h2>Mã Giảm Giá<i class="fas fa-tickets"></i></h2>
                     </div>
                 </div>
             </div>

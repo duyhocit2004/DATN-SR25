@@ -3,6 +3,7 @@
 <div class="container">
     <div class="row">
         <div class="">
+            <h2 class="mt-3">Thêm Màu</h2>
             <div class="card-body basic-form">
               <div class="card-wrapper border rounded-3">
                 <form class="row" action="{{route('postcolor')}}" method="POST">
@@ -17,8 +18,8 @@
                   <div class="row">
                     <div class="col"></div>
                     <div class="text-end">
-                      <button class="btn btn-primary me-2 btn-square" type="submit">Submit</button>
-                      <input class="btn btn-danger btn-square" type="reset" value="Cancel">
+                      <button class="btn btn-success me-2" type="submit">Submit</button>
+                      <input class="btn btn-danger" type="reset" value="Cancel">
                     </div>
                   </div>
                 </form>
