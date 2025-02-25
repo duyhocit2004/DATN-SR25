@@ -16,7 +16,8 @@ class ApiCartController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
 
         $cart = $this->getCart($request);
         return response()->json($cart);
@@ -49,7 +50,7 @@ class ApiCartController extends Controller
             ]);
         }
 
-        return response()->json( $cart->load('items'));
+        return response()->json($cart->load('items'));
     }
 
     /**
@@ -70,10 +71,21 @@ class ApiCartController extends Controller
         return response()->json($cart->load('items'));
     }
 
+
     private function getCart(Request $request, $createIfNotExists = false)
     {
         if (Auth::check()) {
-            return Carts::firstOrCreate(['user_id' => Auth::id()]);
+            $guestId = $request->cookie('guest_id');
+            if ($guestId) {
+                // Chuyển giỏ hàng từ guest_id sang user_id
+                Carts::where('guest_id', $guestId)->update(['user_id' => Auth::id(), 'guest_id' => null]);
+                // Xóa cookie guest_id
+                cookie()->queue(cookie()->forget('guest_id'));
+            }
+            return Carts::firstOrCreate(
+                ['user_id' => Auth::id()],
+                ['created_at' => now(), 'updated_at' => now()]
+            );
         }
 
         $guestId = $request->cookie('guest_id') ?? Str::uuid();
@@ -81,6 +93,9 @@ class ApiCartController extends Controller
             cookie()->queue(cookie('guest_id', $guestId, 60 * 24 * 30));
         }
 
-        return Carts::firstOrCreate(['guest_id' => $guestId]);
+        return Carts::firstOrCreate(
+            ['guest_id' => $guestId],
+            ['created_at' => now(), 'updated_at' => now()]
+        );
     }
 }

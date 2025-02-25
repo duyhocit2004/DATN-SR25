@@ -34,7 +34,6 @@
                                         <th>Giảm tối đa</th>
                                         <th>Số lượng</th>
                                         <th>Đã dùng</th>
-                                        <th>User</th>
                                         <th>Bắt đầu</th>
                                         <th>Kết thúc</th>
                                         <th>Trạng thái</th>

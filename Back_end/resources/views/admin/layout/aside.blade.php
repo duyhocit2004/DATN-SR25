@@ -65,7 +65,7 @@
                 </a>
                 <ul class="sidebar-submenu">
                         <li> <a href="{{ route('vouchers.index') }}">Danh sách</a></li>
-                        {{-- <li><a href="{{ route('createcolor') }}">Thêm màu</a></li> --}}
+                        <li><a href="{{ route('vouchers.create') }}">Thêm voucher</a></li>
                     </ul>
             </li>
         </ul>
