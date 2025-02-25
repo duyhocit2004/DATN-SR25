@@ -11,63 +11,47 @@
             </div>
         </div>
         <!-- Container-fluid starts-->
-
-
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12">
+                    <a href="{{ route('createProduct') }}" class="btn btn-success mb-3 shadow-sm" style="font-weight: 500; transition: background-color 0.3s, color 0.3s;">
+                        Thêm Sản Phẩm Mới
+                    </a>
                     <div class="card">
                         <div class="table-responsive">
-                            <table class="table">
-
-                                <thead>
-                                    <tr class="border-bottom-secondary border-top-0">
+                            <table class="table table-striped table-hover">
+                                <thead class="thead-light">
+                                    <tr>
                                         <th scope="col">STT</th>
                                         <th scope="col">Ảnh</th>
                                         <th scope="col">Tên sản phẩm</th>
                                         <th scope="col">Số lượng trong kho</th>
                                         <th scope="col">Giá sản phẩm</th>
-                                        {{-- <th scope="col">Giảm giá</th> --}}
                                         <th scope="col">Thao tác</th>
                                     </tr>
                                 </thead>
-
                                 <tbody>
                                     @foreach ($list as $index => $as)
-                                        <tr class="border-bottom-success">
+                                        <tr>
                                             <th scope="row">{{ $as->id }}</th>
-                                            <td><img class="img-30 me-2" src="{{ Storage::url($as->image) }}"
-                                                    alt="profile"></td>
+                                            <td><img class="img-fluid" src="{{ Storage::url($as->image) }}" alt="profile"
+                                                    style="max-width: 50px; max-height: 50px;"></td>
                                             <td>{{ $as->name_product }}</td>
                                             <td>{{ $as->base_stock }}</td>
-                                            <td>{{ number_format($as->price_regular, 0, '.', ',') }}VND</td>
-                                            {{-- <td>{{ number_format($as->price_sale, 0, '.', ',') }}</td> --}}
+                                            <td>{{ number_format($as->price_regular, 0, '.', ',') }} VND</td>
                                             <td>
-                                                <div class="my-1">
-                                                    <a href="{{ route('get.Product', $as->id) }}"
-                                                        class="btn btn-success"><i class="fas fa-wrench"></i></a>
-                                                </div>
-                                                <div class="my-1">
-                                                    <form action="{{route('delete.Product',$as->id)}}" method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                                    </form>
-                                                </div>
-
-                                                <form action="{{ route('carts.store') }}" method="POST">
+                                                <a href="{{ route('get.Product', $as->id) }}" class="btn btn-warning"><i
+                                                        class="fas fa-wrench"></i></a>
+                                                <form action="{{ route('delete.Product', $as->id) }}" method="POST"
+                                                    style="display:inline;">
                                                     @csrf
-                                                    <input type="hidden" name="product_id" value="{{ $as->id }}">
-                                                    <label for="quantity">Số lượng:</label>
-                                                    <input type="number" name="quantity" id="quantity" value="1" min="1">
-                                                    <button type="submit">Thêm vào giỏ hàng</button>
+                                                    @method('DELETE')
+                                                    <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
                                                 </form>
-
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-
                             </table>
                             {{ $list->links() }}
                         </div>

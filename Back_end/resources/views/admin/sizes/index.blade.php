@@ -16,17 +16,19 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
+                <a href="{{ route('sizes.create') }}" class="btn btn-success mb-3 shadow-sm" style="font-weight: 500; transition: background-color 0.3s, color 0.3s;">
+                    Thêm Kích Thước
+                </a>
                 <div class="card">
                     <div class="table-responsive">
-                        <a href="{{ route('sizes.create') }}" class="btn btn-primary m-3">Thêm Kích Thước Mới</a>
 
                         @if (session('success'))
                             <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
 
-                        <table class="table">
-                            <thead>
-                                <tr class="border-bottom-secondary border-top-0">
+                        <table class="table table-striped table-hover">
+                            <thead class="thead-light">
+                                <tr>
                                     <th scope="col">STT</th>
                                     <th scope="col">Tên Kích Thước</th>
                                     <th scope="col">Chức Năng</th>
@@ -34,16 +36,18 @@
                             </thead>
                             <tbody>
                                 @foreach ($sizes as $key => $size)
-                                    <tr class="border-bottom-success">
+                                    <tr>
                                         <th scope="row">{{ $key + 1 }}</th>
                                         <td>{{ $size->name }}</td>
                                         <td>
-                                            <a class="btn btn-success btn-sm" href="{{ route('sizes.edit', $size) }}">Sửa</a>
-                                            <form action="{{ route('sizes.destroy', $size) }}" method="post" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger btn-sm" onclick="return confirm('Bạn có muốn xóa không?')">Xóa</button>
-                                            </form>
+                                            <div class="">
+                                                <a class="btn btn-warning" href="{{ route('sizes.edit', $size) }}"><i class="fas fa-gear"></i></a>
+                                                <form action="{{ route('sizes.destroy', $size) }}" method="post" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-danger" onclick="return confirm('Bạn có muốn xóa không?')"><i class="fas fa-trash"></i></button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach

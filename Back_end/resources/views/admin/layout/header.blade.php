@@ -26,7 +26,7 @@
                     <div class="u-posRelative d-flex align-items-center">
                         <input class="demo-input py-0 Typeahead-input form-control-plaintext w-100" type="text"
                             placeholder="Type to Search..." name="q" title="" /><i
-                            class="search-bg iconly-Search icli"></i>
+                            class="fas fa-search"></i>
                     </div>
                 </div>
             </div>
@@ -34,7 +34,7 @@
         <div class="nav-right">
             <ul class="header-right">
                 <li class="custom-dropdown">
-                    <div class="translate_wrapper">
+                    {{-- <div class="translate_wrapper">
                         <div class="current_lang"><a class="lang" href="javascript:void(0)"><i
                                     class="flag-icon flag-icon-us"></i>
                                 <h6 class="lang-txt f-w-700">ENG</h6>
@@ -53,7 +53,7 @@
                                     <div class="lang-txt">Español</div>
                                 </a></li>
                         </ul>
-                    </div>
+                    </div> --}}
                 </li>
                 <li class="search d-lg-none d-flex"> <a href="javascript:void(0)">
                         <svg>
@@ -99,9 +99,8 @@
                                             <div class="input-group"><span class="input-group-prepend">
                                                     <button class="btn quantity-left-minus" type="button"
                                                         data-type="minus" data-field="">-</button></span>
-                                                <input class="form-control input-number" type="text"
-                                                    name="quantity" value="1" /><span
-                                                    class="input-group-prepend">
+                                                <input class="form-control input-number" type="text" name="quantity"
+                                                    value="1" /><span class="input-group-prepend">
                                                     <button class="btn quantity-right-plus" type="button"
                                                         data-type="plus" data-field="">+</button></span>
                                             </div>
@@ -313,19 +312,23 @@
 
                         <div class="user-content">
                             @if (Auth::check())
-                            <div class="dropdown">
-                                <button class="btn btn-primary d-flex align-items-center gap-2" data-bs-toggle="dropdown">
-                                    <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-circle" width="40" height="40">
-                                    <span>{{ Auth::user()->name }}</span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="{{ route('logout') }}">Logout</a></li>
-                                </ul>
-                            </div>
-
+                                <div class="dropdown">
+                                    <button class="btn btn-primary d-flex align-items-center gap-2"
+                                        data-bs-toggle="dropdown">
+                                        <img src="https://via.placeholder.com/40" alt="Avatar"
+                                            class="rounded-circle" width="40" height="40">
+                                        <span>{{ Auth::user()->name }}</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><a class="dropdown-item text-danger"
+                                                href="{{ route('logout') }}">Logout</a></li>
+                                    </ul>
+                                </div>
                             @else
                                 <a href="{{ route('login') }}">
                                     <h5>Login</h5>
