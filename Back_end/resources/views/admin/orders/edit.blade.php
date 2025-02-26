@@ -9,26 +9,31 @@
         @method('PUT')
 
         <div class="mb-3">
-            <label class="form-label">Tên khách hàng</label>
-            <input type="text" name="customer_name" class="form-control" value="{{ $order->customer_name }}" required>
+            <label class="form-label"><strong>Khách hàng</strong></label>
+            <input type="text" name="user_name" class="form-control" value="{{ old('user_name', $order->user_name) }}" required>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Email khách hàng</label>
-            <input type="email" name="customer_email" class="form-control" value="{{ $order->customer_email }}" required>
+            <label class="form-label"><strong>Email</strong></label>
+            <input type="email" name="email" class="form-control" value="{{ old('email', $order->email) }}" required>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Địa chỉ</label>
-            <textarea name="customer_address" class="form-control" required>{{ $order->customer_address }}</textarea>
+            <label class="form-label"><strong>Địa chỉ</strong></label>
+            <textarea name="address" class="form-control" required>{{ old('address', $order->address) }}</textarea>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Trạng thái</label>
+            <label class="form-label"><strong>Tổng tiền</strong></label>
+            <input type="text" class="form-control" value="{{ number_format($order->total_price, 0, ',', '.') }} VNĐ" disabled>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><strong>Trạng thái đơn hàng</strong></label>
             <select name="status" class="form-select">
-                <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xử lý</option>
-                <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
-                <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
+                <option value="pending" {{ old('status', $order->status) == 'pending' ? 'selected' : '' }}>Chờ xử lý</option>
+                <option value="completed" {{ old('status', $order->status) == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
+                <option value="cancelled" {{ old('status', $order->status) == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
             </select>
         </div>
 

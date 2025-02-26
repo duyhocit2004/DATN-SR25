@@ -20,15 +20,17 @@ class productSeeder extends Seeder
             'áo ngắn cổ'
         ];
         DB::table('products')->insert([
-            'categories_id'=>1,
-            'name_product'=>Arr::random($list),
-            'SKU'=>"KS@@",
-            'base_stock'=>200,
-            'price_regular'=>221324,
-            'price_sale'=>212000,
-            'description'=>"áo chất lượng cao",
-            'views'=>20,
-            'content'=>"ádsds",
+            'categories_id' => 1,
+            'name_product' => Arr::random($list),
+            'SKU' => "KS@@",
+            'base_stock' => 200,
+            'price_regular' => 221324,
+            'price_sale' => 212000,
+            'description' => "áo chất lượng cao",
+            'views' => 20,
+            'content' => "ádsds",
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 }
