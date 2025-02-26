@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { GetProductById } from '../service/products/productService';
 import { IProducts } from '../interface/Products';
 import { AddToCart } from '../service/cart/cartService';
@@ -15,6 +15,7 @@ const ProductDetail: React.FC = () => {
     const [selectedColor, setSelectedColor] = useState<string | null>(null);
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const [quantity, setQuantity] = useState<number>(1);
+    const nav = useNavigate();
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -63,6 +64,7 @@ const ProductDetail: React.FC = () => {
         });
 
         alert("Sản phẩm đã được thêm vào giỏ hàng! 🛒");
+        nav("/");
     };
 
     if (loading) return <div className="loading">Đang tải...</div>;
