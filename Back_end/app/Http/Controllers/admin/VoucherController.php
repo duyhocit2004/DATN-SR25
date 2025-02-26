@@ -16,8 +16,7 @@ class VoucherController extends Controller
     {
         $voucher = Voucher::query()->get();
         // dd($voucher);
-        return view('admin.vouchers.index',compact('voucher'));
-
+        return view('admin.voucher.listVoucher', compact('voucher'));
     }
 
     /**
@@ -25,7 +24,7 @@ class VoucherController extends Controller
      */
     public function create()
     {
-        return view('admin.vouchers.create');
+        return view('admin.voucher.create');
     }
 
     /**
@@ -35,6 +34,12 @@ class VoucherController extends Controller
     {
         $request->validate([
             'code' => 'required',
+            'discount_type' => 'required',
+            'discount_value' => 'required',
+            'min_order_value' => 'required',
+            'max_discount' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
         ]);
 
         Voucher::create([
@@ -49,7 +54,7 @@ class VoucherController extends Controller
         ]);
 
         return redirect()->route('vouchers.index')
-        -> with('success', 'Thêm thành công');
+            ->with('success', 'Thêm thành công');
     }
 
     /**
@@ -57,7 +62,9 @@ class VoucherController extends Controller
      */
     public function edit(string $id)
     {
-        return view('admin.vouchers.edit');
+        $voucher = Voucher::findOrFail($id);
+
+        return view('admin.vouchers.edit', compact('voucher'));
     }
 
     /**
@@ -65,7 +72,31 @@ class VoucherController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $voucher = Voucher::findOrFail($id);
+
+        $request->validate([
+            'code' => 'required',
+            'discount_type' => 'required',
+            'discount_value' => 'required',
+            'min_order_value' => 'required',
+            'max_discount' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+        ]);
+
+        $voucher->update([
+            'code' => $request->code,
+            'discount_type' => $request->discount_type,
+            'discount_value' => $request->discount_value,
+            'min_order_value' => $request->min_order_value,
+            'max_discount' => $request->max_discount,
+            'quantity' => $request->quantity,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+        ]);
+
+        return redirect()->route('vouchers.index')
+            ->with('sucsess', 'Sửa thành công');
     }
 
     /**
@@ -79,6 +110,6 @@ class VoucherController extends Controller
 
         return redirect()->route('vouchers.index')
 
-        -> with('sucess', 'Xóa thành công');
+            ->with('sucess', 'Xóa thành công');
     }
 }

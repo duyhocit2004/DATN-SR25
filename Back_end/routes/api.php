@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\ApiBannerController;
 use App\Http\Controllers\api\ApiCartController;
@@ -6,8 +7,10 @@ use App\Http\Controllers\Api\ApiCategoryController;
 use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\ApiColorController;
 use App\Http\Controllers\api\ApiSizeController;
+use App\Http\Controllers\api\ApiVoucherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,15 +24,25 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::post('login',[ApiAuthController::class,'login']);
+Route::post('register',[ApiAuthController::class,'register']);
 
 Route::middleware('auth:sanctum')->group( function (){
-Route::delete('/logout',[ApiAuthController::class,'logout']);
-Route::get('/user',[ApiAuthController::class,'user']);
+    Route::post('/logout', [ApiAuthController::class, 'logout']);
+    Route::get('/user',[ApiAuthController::class,'user']);
+
+    Route::prefix('carts')->group(function () {
+        Route::get('/', [ApiCartController::class, 'index']); // Lấy giỏ hàng hiện tại
+        Route::get('/list', [ApiCartController::class, 'getListCart']); // Lấy giỏ hàng hiện tại
+        Route::post('/add', [ApiCartController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
+        Route::put('/update/{cartItem}', [ApiCartController::class, 'update']); // Cập nhật số lượng sản phẩm
+        Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
+        
+    });
 });
 
 // Route::get('products', [ApiProductController::class, 'index']);
-Route::post('login',[ApiAuthController::class,'login']);
-Route::post('register',[ApiAuthController::class,'register']);
+
 
 // Route sản phẩm
 Route::get('products', [ApiProductController::class,'index']);
@@ -37,6 +50,7 @@ Route::post('products', [ApiProductController::class,'store']);
 Route::get('products/{id}', [ApiProductController::class,'show']);
 Route::put('products/{id}', [ApiProductController::class,'update']);
 Route::delete('products/{id}', [ApiProductController::class,'destroy']);
+// Route::get('products/{id}/id', [ApiProductController::class,'getid']);
 
 // Route danh mục
 Route::get('categories', [ApiCategoryController::class,'index']);
@@ -59,6 +73,12 @@ Route::get('sizes/{id}', [ApiSizeController::class,'show']);
 Route::put('sizes/{id}', [ApiSizeController::class,'update']);
 Route::delete('sizes/{id}', [ApiSizeController::class,'destroy']);
 
+Route::get('vouchers', [ApiVoucherController::class,'index']);
+Route::post('vouchers', [ApiVoucherController::class,'store']);
+Route::get('vouchers/{id}', [ApiVoucherController::class,'show']);
+Route::put('vouchers/{id}', [ApiVoucherController::class,'update']);
+Route::delete('vouchers/{id}', [ApiVoucherController::class,'destroy']);
+
 //Banner trang chủ
 Route::apiResource('banner',ApiBannerController::class);
 
@@ -69,16 +89,42 @@ Route::get('users/{id}', [ApiUserController::class, 'show']);
 Route::put('users/{id}', [ApiUserController::class, 'update']);
 Route::delete('users/{id}', [ApiUserController::class, 'destroy']);
 
+//cart
+
+//comment
 Route::get('banners', [ApiBannerController::class, 'index']);
 Route::get('banners', [ApiBannerController::class, 'store']);
 Route::get('banners/{id}', [ApiBannerController::class, 'show']);
 
 // Route Api Cart
-Route::prefix('carts')->group(function () {
-    Route::get('/', [ApiCartController::class, 'index']); // Lấy giỏ hàng hiện tại
-    Route::post('/add', [ApiCartController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
-    Route::put('/update/{cartItem}', [ApiCartController::class, 'update']); // Cập nhật số lượng sản phẩm
-    Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
+// Route::middleware('auth:sanctum')->group(function () {
+// Route::prefix('carts')->group(function () {
+//     Route::get('/', [ApiCartController::class, 'index']); // Lấy giỏ hàng hiện tại
+//     Route::get('/carts', [ApiCartController::class, 'show']); // Route xem giỏ hàng
+//     Route::post('/add', [ApiCartController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
+//     Route::put('/update/{cartItem}', [ApiCartController::class, 'update']); // Cập nhật số lượng sản phẩm
+//     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
+// });
+// });
+
+// Route::prefix('carts')->group(function () {
+//     Route::get('{id}', [ApiCartController::class, 'show']);
+//     Route::post('/', [ApiCartController::class, 'store']);
+//     Route::put('{id}', [ApiCartController::class, 'update']);
+//     Route::delete('{id}', [ApiCartController::class, 'destroy']);
+
+
+    // Route::post('/add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
+    Route::get('/list', [ApiCartController::class, 'getListCart']); // Lấy giỏ hàng hiện tại
+    Route::post('/add-item', [ApiCartController::class, 'addItem'])->name('cart.addItem');
+    Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
+    Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
 });
+
+//     Route::post('/add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
+//     Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
+//     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
+// });
+
 
 

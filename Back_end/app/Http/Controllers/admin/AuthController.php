@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Carts;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +32,9 @@ class AuthController extends Controller
             'password.unique' => 'Mật khẩu phải nhiều hơn 6 kí tự',
         ]);
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        $remember = $request->has('remember'); // Lấy trạng thái checkbox Remember Me
+
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember)) {
 
             return redirect()->route('users.index');
         }
@@ -77,9 +80,13 @@ class AuthController extends Controller
     }
 
     // Đăng xuất
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
+
+        $request->session()->invalidate(); // Xóa toàn bộ session
+
+        $request->session()->regenerateToken(); // Tạo CSRF token mới
 
         return redirect('login');
     }

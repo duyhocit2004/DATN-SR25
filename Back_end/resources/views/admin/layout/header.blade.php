@@ -1,19 +1,16 @@
 <header class="page-header row">
     <div class="logo-wrapper d-flex align-items-center col-auto"><a href="index.html"><img class="light-logo img-fluid"
-                src="../assets/images/logo/logo1.png" alt="logo" /><img class="dark-logo img-fluid"
-                src="../assets/images/logo/logo-dark.png" alt="logo" /></a><a class="close-btn toggle-sidebar"
-            href="javascript:void(0)">
-            <svg class="svg-color">
-                <use href="https://admin.pixelstrap.net/admiro/assets/svg/iconly-sprite.svg#Category"></use>
-            </svg></a></div>
+                src="{{asset('logo.png')}}" alt="logo" /><img class="dark-logo img-fluid"
+                src="{{asset('admin/images/logo/logo-dark.png')}}" alt="logo" /></a><a class=""
+            href="">
+            </a></div>
     <div class="page-main-header col">
         <div class="header-left">
-           
         </div>
         <div class="nav-right">
             <ul class="header-right">
                 <li class="custom-dropdown">
-                    <div class="translate_wrapper">
+                    {{-- <div class="translate_wrapper">
                         <div class="current_lang"><a class="lang" href="javascript:void(0)"><i
                                     class="flag-icon flag-icon-us"></i>
                                 <h6 class="lang-txt f-w-700">ENG</h6>
@@ -32,8 +29,9 @@
                                     <div class="lang-txt">Español</div>
                                 </a></li>
                         </ul>
-                    </div>
+                    </div> --}}
                 </li>
+                
                 
                 
                 
@@ -44,13 +42,20 @@
                         <div class="user-content">
                             @if (Auth::check())
                                 <div class="dropdown">
-                                    <button class="btn btn-primary"  data-bs-toggle="dropdown">
-                                        <h5>{{ Auth::user()->name }}</h5>
+                                    <button class="btn btn-primary d-flex align-items-center gap-2"
+                                        data-bs-toggle="dropdown">
+                                        <img src="{{Auth::user()->user_image}}" alt="Avatar"
+                                            class="rounded-circle" width="40" height="40">
+                                        <span>{{ Auth::user()->name }}</span>
                                     </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="" href="#">Tài khoản</a></li>
-                                        <li><a class="" href="#">Another action</a></li>
-                                        <li><a class="" href="{{ route('logout') }}">Đăng xuất</a></li>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><a class="dropdown-item text-danger"
+                                                href="{{ route('logout') }}">Logout</a></li>
                                     </ul>
                                 </div>
                             @else
@@ -68,20 +73,6 @@
                                         href="https://admin.pixelstrap.net/admiro/assets/svg/iconly-sprite.svg#Profile">
                                     </use>
                                 </svg><a class="ms-2" href="user-profile.html">Account</a>
-                            </li>
-                            <li class="d-flex">
-                                <svg class="svg-color">
-                                    <use
-                                        href="https://admin.pixelstrap.net/admiro/assets/svg/iconly-sprite.svg#Message">
-                                    </use>
-                                </svg><a class="ms-2" href="letter-box.html">Inbox</a>
-                            </li>
-                            <li class="d-flex">
-                                <svg class="svg-color">
-                                    <use
-                                        href="https://admin.pixelstrap.net/admiro/assets/svg/iconly-sprite.svg#Document">
-                                    </use>
-                                </svg><a class="ms-2" href="to-do.html">Task</a>
                             </li>
 
 
