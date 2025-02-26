@@ -97,7 +97,9 @@ Route::prefix('carts')->group(function () {
     Route::put('{id}', [ApiCartController::class, 'update']);
     Route::delete('{id}', [ApiCartController::class, 'destroy']);
 
-    Route::post('/add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
+    // Route::post('/add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
+    Route::get('/list', [ApiCartController::class, 'getListCart']); // Lấy giỏ hàng hiện tại
+    Route::post('/add-item', [ApiCartController::class, 'addItem'])->name('cart.addItem');
     Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
 });
