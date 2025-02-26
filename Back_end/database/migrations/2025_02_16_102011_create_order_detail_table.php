@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -24,9 +25,16 @@ return new class extends Migration
                 ->constrained('product_variants')
                 ->onDelete('cascade');
 
-            $table->string('color')->nullable();
-            $table->string('size')->nullable();
-          
+            $table->foreignId('color_id')
+                ->nullable()
+                ->constrained('colors')
+                ->onDelete('set null');
+
+            $table->foreignId('size_id')
+                ->nullable()
+                ->constrained('sizes')
+                ->onDelete('set null');
+
             $table->integer('quantity');
             $table->double('total_price');
             $table->string('status')->default('pending');
