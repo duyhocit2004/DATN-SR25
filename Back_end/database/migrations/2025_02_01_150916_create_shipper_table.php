@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('shipper', function (Blueprint $table) {
+        Schema::create('shippers', function (Blueprint $table) {
             $table->id();
             $table->string('name_shipper', 50);
-            $table->string('phone1', 10);
+            $table->string('phone1', 10)->unique();
             $table->string('phone2', 10)->nullable();
             $table->timestamps();
         });

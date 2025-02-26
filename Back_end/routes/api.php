@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\ApiBannerController;
 use App\Http\Controllers\api\ApiCartController;
@@ -6,6 +7,7 @@ use App\Http\Controllers\Api\ApiCategoryController;
 use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\ApiColorController;
 use App\Http\Controllers\api\ApiSizeController;
 use App\Http\Controllers\api\ApiVoucherController;

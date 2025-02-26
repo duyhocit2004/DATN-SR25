@@ -9,7 +9,9 @@ use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\admin\VariantController;
 use App\Http\Controllers\admin\VoucherController;
+use App\Http\Controllers\admin\OrderController;
 use App\Http\Controllers\admin\CategoryController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -82,6 +84,14 @@ Route::post('store\variant', [VariantController::class, 'store'])->name('variant
 Route::put('update\{id}\variant', [VariantController::class, 'update'])->name('variant.update');
 Route::delete('/variant/{id}', [VariantController::class, 'destroy'])->name('variant.delete');
 
+// Route Orders
+Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
+Route::get('orders/create', [OrderController::class, 'create'])->name('orders.create');
+Route::get('orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+Route::get('orders/{id}/edit', [OrderController::class, 'edit'])->name('orders.edit');
+Route::put('orders/{id}', [OrderController::class, 'update'])->name('orders.update');
+Route::delete('orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
 // Route đăng kí
 route::get('register', [AuthController::class, 'formRegister'])->name("register");
