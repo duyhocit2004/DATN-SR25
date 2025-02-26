@@ -43,11 +43,21 @@ class VariantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // $list = $this->VariantService->Getpaginate();
-        $list = ProductVariants::paginate(9);
+        $search = $request->input('search');
 
+        if (empty($search)) {
+            // Nếu không có tìm kiếm, lấy toàn bộ danh sách sản phẩm
+            $list = ProductVariants::orderBy('id', 'DESC')->paginate(7);
+        } else {
+            // Nếu có tìm kiếm, lọc theo tên sản phẩm
+            $list = ProductVariants::join('products', 'product_variants.product_id', '=', 'products.id')
+                ->where('products.name_product', 'like', "%{$search}%")
+                ->select('product_variants.*') // Chọn tất cả các trường từ product_variants
+                ->orderBy('product_variants.id', 'DESC')
+                ->paginate(7);
+        }
         return view('admin.products.variantproduct.listVariant',compact('list'));
     }
 

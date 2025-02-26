@@ -16,7 +16,7 @@ class VoucherController extends Controller
     {
         $voucher = Voucher::query()->get();
         // dd($voucher);
-        return view('admin.vouchers.index', compact('voucher'));
+        return view('admin.voucher.listVoucher', compact('voucher'));
     }
 
     /**
@@ -24,7 +24,7 @@ class VoucherController extends Controller
      */
     public function create()
     {
-        return view('admin.vouchers.create');
+        return view('admin.voucher.create');
     }
 
     /**

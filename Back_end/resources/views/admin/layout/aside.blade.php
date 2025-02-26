@@ -4,11 +4,18 @@
         <ul class="sidebar-menu" id="simple-bar">
 
             <li class="sidebar-list mb-2"> <a class="sidebar-link" href="javascript:void(0)">
+                <h6 class=""><i class="fas fa-chart-line"></i> bảng điều khiển</h6>
+            </a>
+        </li>
+
+            <li class="sidebar-list mb-2"> <a class="sidebar-link" href="javascript:void(0)">
                     <h6 class=""><i class="fas fa-user"></i> Quản lý tài khoản</h6>
                 </a>
                 <ul class="sidebar-submenu">
-                    <li> <a href="{{ route('users.index') }}">Danh sách</a></li>
-                    <li><a href="{{ route('users.create') }}">Thêm tài khoản</a></li>
+                    <li><a href="{{ route('users.index') }}">quản trị</a></li>
+                    <li><a href="{{ route('users.show') }}">người dùng</a></li>
+                    <li><a href="{{ route('users.create') }}">Thêm tài khoản</a></li>   
+                  
                 </ul>
             </li>
 
@@ -56,17 +63,42 @@
                 </a>
                 <ul class="sidebar-submenu">
                     <li><a href="{{ route('carts.index') }}">Danh sách</a></li>
-                    {{-- <li><a href="{{ route('sizes.create') }}">Thêm size</a></li> --}}
-            {{-- </ul>
+                     <li><a href="{{ route('sizes.create') }}">Thêm size</a></li> 
+                </ul>
             </li> --}}
 
-            <li class="sidebar-list mb-2"> <a class="sidebar-link" href="javascript:void(0)">
+            {{-- <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
                     <h6 class=""><i class="fas fa-tags"></i> Quản lý voucher</h6>
                 </a>
                 <ul class="sidebar-submenu">
                     <li> <a href="{{ route('vouchers.index') }}">Danh sách</a></li>
                     <li><a href="{{ route('vouchers.create') }}">Thêm voucher</a></li>
                 </ul>
+            </li> --}}
+            <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+                    <h6 class=""><i class="fas fa-ticket-alt"></i> Voucher</h6>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li><a href="{{ route('Voucher.index') }}"> Danh sách</a></li>
+                    <li><a href="{{ route('sizes.create') }}">Thêm Voucher</a></li>
+                </ul>
+
+            </li>
+
+            <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+                    <h6 class=""><i class="fas fa-comments"></i> Tin nhắn(chưa làm)</h6>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li><a href="{{ route('boxchat.index') }}">Hộp thư</a></li>
+                </ul>
+
+            <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+                    <h6 class=""><i class="fas fa-comment"></i> Bình luận</h6>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li><a href="{{ route('comment.index') }}">Danh sách</a></li>
+                </ul>
+
             </li>
         </ul>
     </div>

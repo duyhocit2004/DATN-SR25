@@ -11,9 +11,9 @@ class Carts extends Model
 
     protected $table = "carts";
 
-    //  protected $attributes = [
-    //     'user_id' => null,
-    // ];
+     protected $attributes = [
+        'user_id' => null,
+    ];
 
     protected $fillable = [
         'guest_id',

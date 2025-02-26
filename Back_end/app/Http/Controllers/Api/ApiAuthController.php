@@ -25,7 +25,7 @@ class ApiAuthController extends Controller
         $token = $user->createToken('authToken')->plainTextToken;
         return response()->json([
             'access_token' => $token,
-            'type_token' => 'Baerer',
+            'type_token' => 'Bearer ',
             'success' => 'đăng nhập thành công'
         ], 200);
     }
@@ -68,35 +68,13 @@ class ApiAuthController extends Controller
 
     public function user(Request $request)
     {
-        return $request->user()->load('role');
-
-
+        return response()->json([
+            'role' => $request->user()->role,
+        ]);
     }
     public function logout(Request $request)
     {
-        // Lấy người dùng đang xác thực
-        $user = Auth::user();
-        // user::tokens();
-
-        if ($user) {
-            // Lấy token từ request
-            $tokenId = $request->bearerToken();
-
-            // Tìm token trong cơ sở dữ liệu
-            $token = $user->tokens()->where('id', $tokenId)->first();
-
-            if ($token) {
-                // Hủy token
-                $token->delete();
-            }
-
-            return response()->json([
-                'message' => "Đăng xuất thành công"
-            ], 200);
-        }
-
-        return response()->json([
-            'message' => "Người dùng không hợp lệ"
-        ], 401);
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'Logged out successfully'], 200);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\comments;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -12,7 +13,7 @@ class CommentController extends Controller
      */
     public function index()
     {
-    //    $list = 
+       $list = comments::query()->get();
     }
 
     /**
