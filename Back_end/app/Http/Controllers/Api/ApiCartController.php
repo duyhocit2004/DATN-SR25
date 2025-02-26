@@ -21,7 +21,7 @@ class ApiCartController extends Controller
     public function index(Request $request)
     {
 
-        // $cart = $this->getCart($request);
+        $cart = $this->getCart($request);
 
         // return response()->json($cart);
     }
@@ -105,11 +105,41 @@ class ApiCartController extends Controller
         );
     }
 
-    public function getListCart()
+    public function getListCart(Request $request)
     {
-        if (Auth::check()) {
-            $id = Carts::query()->where('user_id', '=', Auth::id());
-            return cart_items::query()->where('cart_id', '=', $id);
+         $this->getCart($request);
+        // Kiểm tra xem người dùng đã xác thực chưa
+        if (!$request->user()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Người dùng chưa được xác thực',
+                'data' => []
+            ], 401); // Trả về mã lỗi 401 nếu không xác thực
         }
+
+        // Lấy giỏ hàng của người dùng
+        $cart = Carts::where('user_id', $request->user()->id)->first();
+            
+        if (!$cart) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy giỏ hàng',
+                'data' => []
+            ]);
+        }
+
+        // Lấy các sản phẩm trong giỏ hàng
+        $cartItems = cart_items::where('cart_id', $cart->id)->get();
+
+        // Lấy thông tin sản phẩm
+        $products = $cartItems->map(function ($item) {
+            return $item->product; // Hoặc truy xuất thông tin sản phẩm theo cách cần thiết
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã lấy lại sản phẩm trong giỏ hàng thành công',
+            'data' => $products
+        ]);
     }
 }

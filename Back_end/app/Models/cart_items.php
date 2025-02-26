@@ -24,6 +24,10 @@ class cart_items extends Model
 
     public function product()
     {
+        return $this->belongsTo(products::class, 'product_id');
+    }
+    public function variants()
+    {
         return $this->belongsTo(products::class, 'product_variants_id');
     }
 }

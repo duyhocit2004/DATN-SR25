@@ -31,9 +31,10 @@
                                 <tbody>
 
                                     @foreach ($list as $as)
+                                   
                                         <tr class="border-bottom-success">
                                             <th scope="row">{{ $as->id }}</th>
-                                            <td>{{ $as->products->name_product }}</td>
+                                            <td>{{ $as->products->name_product  }}</td>
                                             <td>
                                                 <ul>
                                                     <li><span class="fw-bold">Màu sắc: </span>{{ $as->color->name }}</li>
