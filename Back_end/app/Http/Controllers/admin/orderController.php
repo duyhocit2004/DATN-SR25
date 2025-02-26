@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Shipper;
+use App\Models\Color;
+use App\Models\Size;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +34,8 @@ class OrderController extends Controller
     public function create()
     {
         $users = User::all();
+        $colors = Color::all();
+        $sizes = Size::all();
         $shippers = Shipper::all();
         $vouchers = Voucher::all();
         return view('admin.orders.create', compact('users', 'shippers', 'vouchers'));
@@ -90,6 +94,8 @@ class OrderController extends Controller
     {
         $order = Order::with('orderDetails.product')->findOrFail($id);
         // dd($order->toArray());
+        // dd($order->orderDetails);
+
         if (!$order) {
             return redirect()->back()->with('error', 'Đơn hàng không tồn tại');
         }
@@ -162,6 +168,5 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $order->delete();
         return redirect()->route('orders.index')->with('success', 'Đơn hàng đã được xóa thành công');
-
     }
 }

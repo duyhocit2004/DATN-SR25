@@ -76,7 +76,6 @@
                     <li><a href="{{ route('orders.create') }}">Thêm đơn hàng</a></li>
                 </ul>
             </li>
-            {{-- <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
 
             <li class="sidebar-list mb-2"> <a class="sidebar-link" href="javascript:void(0)">
                     <h6 class=""><i class="fas fa-tags"></i> Voucher</h6>

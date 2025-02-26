@@ -3,6 +3,7 @@ import SizeList from "./SizeList";
 import { DeleteSize, ListSize, UpdateSize } from "../../../service/size/sizeService";
 import { ISize } from "../../../interface/Size";
 import { useEffect, useState } from "react";
+import { Alert, Button, Spin } from "antd";
 
 const Sizes: React.FC = () => {
     const [sizes, setSizes] = useState<ISize[]>([]);
@@ -54,39 +55,27 @@ const Sizes: React.FC = () => {
     };
 
     return (
-        <div>
-            <div className="dashboards">
-                <div>
-                    <div className="container-fluid">
-                        <div className="row">
-                            <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                                <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                                    <h1 className="h2">Danh Sách Size</h1>
-                                    <div className="btn-toolbar mb-2 mb-md-0">
-                                        <div className="btn-group me-2">
-                                            <NavLink to={`/admin/sizes/add-size`}>
-                                                <button type="button" className="btn btn-sm btn-outline-secondary">
-                                                    Thêm Size
-                                                </button>
-                                            </NavLink>
-                                        </div>
-                                    </div>
-                                </div>
-                                {loading && <p>Đang tải dữ liệu...</p>}
-                                {error && <p>Lỗi: {error}</p>}
-                                {!loading && !error && (
-                                    <SizeList
-                                        sizes={sizes}
-                                        updateSize={updateSizes}
-                                        deleteSize={deleteSizes}
-                                    />
-                                )}
-                            </main>
-                        </div>
-                    </div>
-                </div>
+        <>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 16px" }}>
+                <h1 style={{ margin: 0 }}>Danh Sách Size</h1>
+                <NavLink to={`/admin/sizes/add-size`}>
+                    <Button type="primary">Thêm Size</Button>
+                </NavLink>
             </div>
-        </div>
+            <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
+                {loading && <Spin tip="Đang tải dữ liệu..." />}
+                {error && <Alert message={`Lỗi: ${error}`} type="error" />}
+                {!loading && !error && (
+                    <SizeList
+                        sizes={sizes}
+                        updateSize={updateSizes}
+                        deleteSize={deleteSizes}
+                    />
+                )}
+            </div>
+        </>
+
+
     );
 };
 

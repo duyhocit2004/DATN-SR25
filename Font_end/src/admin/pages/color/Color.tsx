@@ -3,6 +3,10 @@ import ColorList from "./ColorList";
 import { DeleteColor, ListColor, UpdateColor } from "../../../service/color/colorService";
 import { IColor } from "../../../interface/Color";
 import { useEffect, useState } from "react";
+import { Button, Space, Spin, Typography } from "antd";
+
+
+const { Title } = Typography;
 
 const Colors: React.FC = () => {
     const [colors, setColors] = useState<IColor[]>([]);
@@ -54,39 +58,27 @@ const Colors: React.FC = () => {
     };
 
     return (
-        <div>
-            <div className="dashboards">
-                <div>
-                    <div className="container-fluid">
-                        <div className="row">
-                            <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                                <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                                    <h1 className="h2">Danh Sách Màu</h1>
-                                    <div className="btn-toolbar mb-2 mb-md-0">
-                                        <div className="btn-group me-2">
-                                            <NavLink to={`/admin/colors/add-color`}>
-                                                <button type="button" className="btn btn-sm btn-outline-secondary">
-                                                    Thêm Màu
-                                                </button>
-                                            </NavLink>
-                                        </div>
-                                    </div>
-                                </div>
-                                {loading && <p>Đang tải dữ liệu...</p>}
-                                {error && <p>Lỗi: {error}</p>}
-                                {!loading && !error && (
-                                    <ColorList
-                                        colors={colors}
-                                        updateColor={updateColors}
-                                        deleteColor={deleteColors}
-                                    />
-                                )}
-                            </main>
-                        </div>
-                    </div>
-                </div>
+        <>
+            <div style={{ padding: 24 }}>
+                <Space style={{ width: "100%", justifyContent: "space-between", marginBottom: 16 }}>
+                    <Title level={2}>Danh Sách Màu</Title>
+                    <NavLink to="/admin/colors/add-color">
+                        <Button type="primary">Thêm Màu</Button>
+                    </NavLink>
+                </Space>
+                {loading ? (
+                    <Spin size="large" />
+                ) : error ? (
+                    <Typography.Text type="danger">Lỗi: {error}</Typography.Text>
+                ) : (
+                    <ColorList
+                        colors={colors}
+                        updateColor={updateColors}
+                        deleteColor={deleteColors} />
+                )}
             </div>
-        </div>
+        </>
+
     );
 };
 
