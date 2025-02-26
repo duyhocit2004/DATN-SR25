@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class VoucherController extends Controller
 {
@@ -15,7 +16,7 @@ class VoucherController extends Controller
     {
         $voucher = Voucher::query()->get();
         // dd($voucher);
-        return view('admin.vouchers.index', compact('voucher'));
+        return view('admin.voucher.listVoucher', compact('voucher'));
     }
 
     /**
@@ -23,7 +24,7 @@ class VoucherController extends Controller
      */
     public function create()
     {
-        return view('admin.vouchers.create');
+        return view('admin.voucher.create');
     }
 
     /**
@@ -54,14 +55,6 @@ class VoucherController extends Controller
 
         return redirect()->route('vouchers.index')
             ->with('success', 'Thêm thành công');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**

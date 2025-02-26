@@ -186,3 +186,29 @@
   .social-buttons a:hover {
     transform: scale(1.1);
   }
+  .password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .password-container input {
+    width: 100%;
+    padding: 10px 40px 10px 10px; /* Chừa khoảng trống bên phải cho icon */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .eye-icon {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #888;
+  }
+  
+  .eye-icon:hover {
+    color: #333;
+  }
+  
