@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import ProductDetails from '../client/home/productDetail';
 const ProductDetail = () => {
     return (
         <div className="page-wrapper">
@@ -14,7 +14,7 @@ const ProductDetail = () => {
                     </ol>
                 </nav>
 
-                <div className="product-single-container product-single-default">
+                {/* <div className="product-single-container product-single-default">
                     <div className="cart-message d-none">
                         <strong className="single-cart-notice">“Men Black Sports Shoes”</strong>
                         <span>has been added to your cart.</span>
@@ -72,8 +72,8 @@ const ProductDetail = () => {
                             </div>
                         </div>
 
-                        <div className="col-lg-7 col-md-6 product-single-details">
-                            <h1 className="product-title">Men Black Sports Shoes</h1>
+                            <div className="col-lg-7 col-md-6 product-single-details">
+                                <h1 className="product-title">Men Black Sports Shoes</h1>
 
                             <div className="product-nav">
                                 <div className="product-prev">
@@ -178,7 +178,8 @@ const ProductDetail = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
+                <ProductDetails/>
 
                 <div className="product-single-tabs">
                     <ul className="nav nav-tabs" role="tablist">
@@ -353,7 +354,7 @@ const ProductDetail = () => {
 												<a className="star-5" href="#">5</a>
 											</span>
 
-                                            <select name="rating" id="rating" required="" style={{display: "none"}}>
+                                            <select name="rating" id="rating" required style={{display: "none"}}>
 												<option value="">Rate…</option>
 												<option value="5">Perfect</option>
 												<option value="4">Good</option>
@@ -365,7 +366,7 @@ const ProductDetail = () => {
 
                                         <div className="form-group">
                                             <label>Your review <span className="required">*</span></label>
-                                            <textarea cols="5" rows="6" className="form-control form-control-sm"></textarea>
+                                            <textarea cols={5} rows={6} className="form-control form-control-sm"></textarea>
                                         </div>
 
                                         <div className="row">

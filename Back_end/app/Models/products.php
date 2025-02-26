@@ -27,7 +27,11 @@ class products extends Model
         return $this->belongsTo(categories::class,'categories_id');
     }
 
-    public function Variants(){
-        return $this->hasMany(ProductVariants::class);
+    public function productVariants(){
+        return $this->hasMany(ProductVariants::class, 'product_id');
+    }
+
+    public function Imagelink(){
+        return $this->hasMany(imageProduct::class);
     }
 }

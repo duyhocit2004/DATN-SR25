@@ -26,6 +26,7 @@ return new class extends Migration
 
             $table->string('color')->nullable();
             $table->string('size')->nullable();
+          
             $table->integer('quantity');
             $table->double('total_price');
             $table->string('status')->default('pending');

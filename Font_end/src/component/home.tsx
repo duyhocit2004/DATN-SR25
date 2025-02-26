@@ -116,7 +116,7 @@ export default function Home() {
                             data-animation-name="fadeInUpShorter" data-animation-delay="200">
                             <figure className="w-100">
                                 <img src="assets/images/demoes/demo4/banners/banner-2.jpg"
-                                    style={{backgroundColor: '#ccc', alt:"banner", width:"380",height:"175"}} />
+                                    style={{backgroundColor: '#ccc', width:"380", height:"175"}} />
                             </figure>
                             <div className="banner-layer text-center">
                                 <div className="row align-items-lg-center">
@@ -153,13 +153,9 @@ export default function Home() {
 
             <section className="featured-products-section">
                 <div className="container">
-                    <h2 className="section-title heading-border ls-20 border-0">Featured Products</h2>
+                    <h2 className="section-title heading-border ls-20 border-0">Sản phẩm nổi bật</h2>
 
-                    <div className="products-slider custom-products owl-carousel owl-theme nav-outer show-nav-hover nav-image-center"
-                        data-owl-options="{
-                                            'dots': false,
-                                            'nav': true
-                                                }">
+                    <div className="products-slider custom-products owl-carousel owl-theme nav-outer show-nav-hover nav-image-center" data-owl-options="{'dots': false,'nav': true}">
                         <div className="product-default appear-animate" data-animation-name="fadeInRightShorter">
                             <figure>
                                 <a href="product.html">

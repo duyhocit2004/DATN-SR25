@@ -1,7 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ProductList from '../client/home/productList';
+import { NavLink } from "react-router-dom";
+
+
 
 const HomePage = () => {
+
     return (
         <div className="page-wrapper">
 
@@ -150,63 +155,17 @@ const HomePage = () => {
                 {/* Featured Products Section */}
                 <section className="featured-products-section">
                     <div className="container">
-                        <h2 className="section-title heading-border ls-20 border-0">Featured Products</h2>
+                        <h2 className="section-title heading-border ls-20 border-0">Sản Phẩm nổi bật</h2>
 
-                        <div className="products-slider custom-products owl-carousel owl-theme nav-outer show-nav-hover nav-image-center"
-                            data-owl-options="{'dots': false, 'nav': true}">
-                            {/* Featured Product Item */}
-                            <div className="product-default appear-animate" data-animation-name="fadeInRightShorter">
-                                <figure>
-                                    <Link to="/product">
-                                        <img src="assets/images/products/product-1.jpg" width="280" height="280" alt="product" />
-                                        <img src="assets/images/products/product-1-2.jpg" width="280" height="280" alt="product" />
-                                    </Link>
-                                    <div className="label-group">
-                                        <div className="product-label label-hot">HOT</div>
-                                        <div className="product-label label-sale">-20%</div>
-                                    </div>
-                                </figure>
-                                <div className="product-details">
-                                    <div className="category-list">
-                                        <Link to="/category" className="product-category">Category</Link>
-                                    </div>
-                                    <h3 className="product-title">
-                                        <Link to="/product">Ultimate 3D Bluetooth Speaker</Link>
-                                    </h3>
-                                    <div className="ratings-container">
-                                        <div className="product-ratings">
-                                            <span className="ratings" style={{ width: '80%' }}></span>
-                                            <span className="tooltiptext tooltip-top"></span>
-                                        </div>
-                                    </div>
-                                    <div className="price-box">
-                                        <del className="old-price">$59.00</del>
-                                        <span className="product-price">$49.00</span>
-                                    </div>
-                                    <div className="product-action">
-                                        <Link to="/wishlist" className="btn-icon-wish" title="wishlist">
-                                            <i className="icon-heart"></i>
-                                        </Link>
-                                        <Link to="/product" className="btn-icon btn-add-cart">
-                                            <i className="fa fa-arrow-right"></i>
-                                            <span>SELECT OPTIONS</span>
-                                        </Link>
-                                        <Link to="/quick-view" className="btn-quickview" title="Quick View">
-                                            <i className="fas fa-external-link-alt"></i>
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
+                        < ProductList />
 
-                            {/* Add more featured products as needed */}
-                        </div>
                     </div>
                 </section>
 
                 {/* New Arrivals Section */}
                 <section className="new-products-section">
                     <div className="container">
-                        <h2 className="section-title heading-border ls-20 border-0">New Arrivals</h2>
+                        <h2 className="section-title heading-border ls-20 border-0">Sản phẩm mới</h2>
                         <div className="products-slider custom-products owl-carousel owl-theme nav-outer show-nav-hover nav-image-center mb-2"
                             data-owl-options="{
                     'dots': false,

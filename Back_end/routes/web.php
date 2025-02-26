@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\AuthController;
-
+use App\Http\Controllers\admin\CartController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\admin\colorController;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\admin\VariantController;
 use App\Http\Controllers\admin\VoucherController;
 use App\Http\Controllers\admin\OrderController;
+use App\Http\Controllers\admin\CategoryController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +51,14 @@ route::delete('deletecolor/{id}/delete', [colorController::class, 'destroy'])->n
 
 Route::prefix('admmin')->middleware('admin')->group(function () {});
 
+// Route danh mục
+Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+Route::get('categories/create', [CategoryController::class, 'create'])->name('categories.create');
+Route::post('postCategories', [CategoryController::class, 'store'])->name('categories.store');
+Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
+Route::delete('categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
 // Route size
 Route::get('sizes', [SizeController::class, 'index'])->name('sizes.index');
 Route::post('sizes', [SizeController::class, 'store'])->name('sizes.store');
@@ -65,14 +75,14 @@ Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edi
 Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
 Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
+// Route biến thể
 Route::get('variant', [VariantController::class, 'index'])->name('variant.index');
 Route::get('get\{id}\variant', [VariantController::class, 'edit'])->name('variant.listid');
 Route::get('create\{id}\variant', [VariantController::class, 'create'])->name('variant.create');
 Route::get('show\variant', [VariantController::class, 'show'])->name('variant.show');
 Route::post('store\variant', [VariantController::class, 'store'])->name('variant.store');
 Route::put('update\{id}\variant', [VariantController::class, 'update'])->name('variant.update');
-Route::delete('delete\{id}\variant', [VariantController::class, 'destroy'])->name('variant.delete');
-
+Route::delete('/variant/{id}', [VariantController::class, 'destroy'])->name('variant.delete');
 
 // Route Orders
 Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
@@ -88,14 +98,32 @@ route::get('register', [AuthController::class, 'formRegister'])->name("register"
 route::post('post-register', [AuthController::class, 'postRegister'])->name("post-register");
 
 // Route đăng nhập
-Route::group(['middleware' => ['auth']], function () {
-    Route::get('/', function () {
-        return view('admin.index');
-    });
-});
+// Route::group(['middleware' => ['auth']], function () {
+//     Route::get('/', function () {
+//         return view('admin.index');
+//     });
+// });
 route::get('login', [AuthController::class, 'formLogin'])->name("login");
 route::post('post-login', [AuthController::class, 'postLogin'])->name('post-login');
 // Route đăng xuất
 route::get('logout', [AuthController::class, 'logout'])->name("logout");
 
 route::resource('Voucher',VoucherController::class);
+
+
+// Route Cart
+Route::get('carts', [CartController::class, 'index'])->name('carts.index');
+Route::post('carts', [CartController::class, 'store'])->name('carts.store');
+Route::get('carts/create', [CartController::class, 'create'])->name('carts.create');
+Route::get('/carts/{id}/edit', [CartController::class, 'edit'])->name('carts.edit');
+Route::put('/carts/{id}', [CartController::class, 'update'])->name('carts.update');
+Route::delete('carts/{id}', [CartController::class, 'destroy'])->name('carts.destroy');
+
+
+// Route Voucher
+Route::get('vouchers', [VoucherController::class, 'index']) -> name('vouchers.index');
+Route::get('vouchers/crate', [VoucherController::class, 'create']) -> name('vouchers.create');
+Route::post('vouchers', [VoucherController::class, 'store']) -> name('vouchers.store');
+Route::get('voucher/{id}/edit', [VoucherController::class, 'edit']) -> name('vouchers.edit');
+Route::put('vouchers/{id}', [VoucherController::class, 'update']) -> name('vouchers.update');
+Route::delete('vouchers/{id}', [VoucherController::class, 'destroy']) -> name('vouchers.destroy');

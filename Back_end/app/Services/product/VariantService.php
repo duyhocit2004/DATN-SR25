@@ -29,7 +29,11 @@ class VariantService implements IVariantService
 
       return $list;
    }
+    public function createNotForeach($idproduct,$value){
+      $list = $this->VariantRepositories->createNotForeach($idproduct,$value);
 
+      return $list;
+    }
    public function GetId($id)
    {
       $list =$this->VariantRepositories->getid($id);
@@ -37,9 +41,7 @@ class VariantService implements IVariantService
    }
    public function insertId($id, $data)
    {
-      // dd($id);
-      $this->VariantRepositories->updateVariant($id,$data);
-      return redirect()->route('variant.index')->with('cusses','sửa biến thể sản phẩm thành công');
+      return $this->VariantRepositories->updateVariant($id,$data);
    }
 
    public function delete($id)
