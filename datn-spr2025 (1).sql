@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 16, 2025 at 02:17 PM
+-- Generation Time: Feb 19, 2025 at 08:53 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -203,6 +203,14 @@ CREATE TABLE `image_product` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `image_product`
+--
+
+INSERT INTO `image_product` (`id`, `products_id`, `image_link`, `created_at`, `updated_at`) VALUES
+(12, 7, 'product/1JZvIxqagXDjIb9uDUIBtmB4urkfNqvSmYDyodq0.webp', '2025-02-19 01:30:28', '2025-02-19 01:30:28'),
+(13, 7, 'product/klFw51db4U8ZIWepB3Pro1JC4vmslY8Srmzh7tWn.webp', '2025-02-19 01:30:28', '2025-02-19 01:30:28');
+
 -- --------------------------------------------------------
 
 --
@@ -381,7 +389,9 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `categories_id`, `name_product`, `SKU`, `image`, `base_stock`, `price_regular`, `price_sale`, `description`, `views`, `content`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 'áo dài tay', 'KS@@', NULL, 200, 221324, 212000, 'áo chất lượng cao', 20, 'ádsds', NULL, NULL, NULL);
+(4, 3, 'Áo phông nam cổ tròn màu trắng - 1002', 'SKAP-3', 'uploads/products/xkQmedXZqKEK4k9DByBf7i3dnAobf6HIOMsdQObQ.webp', 250, 200000, 120000, 'ảnh chất lượng tốt', 0, 'kích cỡ : \\n72-89g : size XXL\\n60-72kg : size XL2', '2025-02-18 23:31:58', '2025-02-18 23:36:23', NULL),
+(5, 2, 'Áo thun nữ BLOCKCORE SỐ 11 Áo thun thể thao ngoại cỡ có in số 11 Trang phục đường phố cho bé gái Áo thun bóng đá Unisex', 'KS@@', 'product/u08l791D557d28xvD76NfxJcBEb6kV5CG0HrF3t3.webp', 2243, 180000, 160000, 'sản phẩm tốt', 0, NULL, '2025-02-18 23:47:11', '2025-02-19 00:46:20', '2025-02-19 00:46:20'),
+(7, 2, 'Áo thun nữ BLOCKCORE SỐ 11 Áo thun thể thao ngoại cỡ có in số 11 Trang phục đường phố cho bé gái Áo thun bóng đá Unisex', 'KS@@', 'product/iukwIkpi9HDQO0DYQQ6cenw1sq8Y7K6RKtT1hcBv.webp', 3999, 120000, 160000, 'hay', 0, NULL, '2025-02-19 00:46:15', '2025-02-19 00:46:15', NULL);
 
 -- --------------------------------------------------------
 
@@ -399,6 +409,13 @@ CREATE TABLE `product_variants` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `product_variants`
+--
+
+INSERT INTO `product_variants` (`id`, `product_id`, `color_id`, `size_id`, `quanlity`, `price`, `created_at`, `updated_at`) VALUES
+(5, 7, 1, 1, '12000', '23000', '2025-02-19 00:46:15', '2025-02-19 00:46:15');
 
 -- --------------------------------------------------------
 
@@ -481,7 +498,9 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `role`, `email_verified_at`, `gender`, `user_image`, `password`, `remember_token`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 'Admin User', 'admin@example.com', '0123456789', 'Khách hàng', NULL, 'male', 'default.png', '$2y$10$hXNBZH.azAM.7TNJ76grRelT2gM.cANfL2cLIeKCsaji3XawuCNsy', NULL, '2025-02-16 03:50:55', '2025-02-16 03:50:55', NULL),
-(2, 'Test User', 'test@example.com', '0987654321', 'Khách hàng', NULL, 'male', 'default.png', '$2y$10$tftGOrnGHy98M/gkzF7mBed5zYHS7QYQ5d10mBdemDkCagpo4zyWG', NULL, '2025-02-16 03:50:55', '2025-02-16 03:50:55', NULL);
+(2, 'Test User', 'test@example.com', '0987654321', 'Khách hàng', NULL, 'male', 'default.png', '$2y$10$tftGOrnGHy98M/gkzF7mBed5zYHS7QYQ5d10mBdemDkCagpo4zyWG', NULL, '2025-02-16 03:50:55', '2025-02-16 03:50:55', NULL),
+(3, 'duy123', 'hoangduy123@gmail.com', '0337035875', 'Khách hàng', NULL, 'bede', NULL, '$2y$10$QHFCLuRiJwCZaaWXXwcXWubAd6wGV3sgrIcyurVkYcdkhuDKwQTBu', NULL, '2025-02-16 08:50:32', '2025-02-16 08:50:32', NULL),
+(5, 'hoàng duy', 'hoangduyoffline@gmail.com', '0337035875', 'Quản lý', NULL, NULL, NULL, '$2y$10$9Yv3rE2PNV/Ocv7ao4p7tuKynjGk9AaAWGGpUmm2lNx7pvbKom2tK', NULL, '2025-02-16 09:20:46', '2025-02-16 09:20:46', NULL);
 
 -- --------------------------------------------------------
 
@@ -716,7 +735,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `image_product`
 --
 ALTER TABLE `image_product`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `location`
@@ -758,13 +777,13 @@ ALTER TABLE `post`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `product_variants`
 --
 ALTER TABLE `product_variants`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `shipper`
@@ -788,7 +807,7 @@ ALTER TABLE `status_orders`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `vouchers`

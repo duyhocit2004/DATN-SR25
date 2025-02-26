@@ -1,11 +1,11 @@
-import api from "../axios/config";
-import { IUser } from "../interface/User";
+import api from "../../axios/config";
+import { IUser } from "../../interface/User";
 
 
 // Lấy danh sách Users
 export const ListUsers = async () => {
   try {
-    const { data } = await api.get<IUser[]>("admin/users");
+    const { data } = await api.get<IUser[]>("users");
     return data;
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -13,21 +13,22 @@ export const ListUsers = async () => {
   }
 };
 
-// Lấy thông tin User theo ID
-export const UserById = async (id: number | string) => {
+export const UserById = async (id: string) => {
   try {
-    const { data } = await api.get<{ user: IUser }>(`admin/users/${id}`);
-    return data.user;
+      const response = await api.get(`/users`); // Đảm bảo API endpoint đúng
+      console.log("API Response:", response.data); // Kiểm tra dữ liệu trả về
+      return response.data; // Trả về danh sách users
   } catch (error) {
-    console.error("Error fetching user by ID:", error);
-    return null; // Trả về null nếu có lỗi
+      console.error("Lỗi khi gọi API UserById:", error);
+      return [];
   }
 };
+
 
 // Thêm User mới
 export const UserAdd = async (userData: IUser) => {
   try {
-    const { data } = await api.post<{ user: IUser }>("admin/users", userData);
+    const { data } = await api.post<{ user: IUser }>("users", userData);
     return data.user;
   } catch (error) {
     console.error("Error adding user:", error);
@@ -38,7 +39,7 @@ export const UserAdd = async (userData: IUser) => {
 // Cập nhật thông tin User
 export const UserUpdate = async (id: number | string, userData: Partial<IUser>) => {
   try {
-    const { data } = await api.put<{ user: IUser }>(`admin/users/${id}`, userData);
+    const { data } = await api.put<{ user: IUser }>(`users/${id}`, userData);
     return data.user;
   } catch (error) {
     console.error("Error updating user:", error);
@@ -49,7 +50,7 @@ export const UserUpdate = async (id: number | string, userData: Partial<IUser>) 
 // Xóa User
 export const UserDelete = async (id: number | string) => {
   try {
-    const { data } = await api.delete<{ message: string }>(`admin/users/${id}`);
+    const { data } = await api.delete<{ message: string }>(`users/${id}`);
     return data.message;
   } catch (error) {
     console.error("Error deleting user:", error);

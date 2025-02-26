@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/client.css";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { NavLink } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import icon
 
 interface IUser {
   username: string;
@@ -25,15 +26,36 @@ const Register = () => {
   } = useForm<IUser>();
 
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [userImage, setUserImage] = useState<File | null>(null);
 
   const onSubmit = async (registerData: IUser) => {
+    const formData = new FormData();
+    formData.append("username", registerData.username);
+    formData.append("email", registerData.email);
+    formData.append("password", registerData.password);
+    formData.append("phone", registerData.phone);
+    formData.append("gender", registerData.gender);
+  
+    if (userImage) {
+      formData.append("user_image", userImage); // Gửi ảnh nếu có
+    }
+  
     try {
-      const { data } = await axios.post(`http://127.0.0.1:8000/api/register`, registerData);
+      const { data } = await axios.post(
+        "http://127.0.0.1:8000/api/register",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
       toast.success("Đăng ký thành công!");
       navigate("/login");
-    } catch (error) {
-      console.error(error);
-      toast.error("Đăng ký không thành công!");
+    } catch (error: any) {
+      console.error("Lỗi đăng ký:", error);
+      if (error.response) {
+        toast.error(error.response.data.message || "Đăng ký không thành công!");
+      } else {
+        toast.error("Lỗi máy chủ, vui lòng thử lại sau!");
+      }
     }
   };
 
@@ -62,6 +84,18 @@ const Register = () => {
             />
             {errors.fullname && <p className="error-message">{errors.fullname.message}</p>}
           </div>
+          <div className="form-group">
+            <label htmlFor="user_image">Ảnh đại diện:</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setUserImage(e.target.files[0]);
+                }
+              }}
+            />
+          </div>
 
           <div className="form-group">
             <label htmlFor="email">Email:</label>
@@ -79,16 +113,25 @@ const Register = () => {
             {errors.email && <p className="error-message">{errors.email.message}</p>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group ">
             <label htmlFor="password">Mật Khẩu:</label>
-            <input
-              type="password"
-              {...register("password", {
-                required: "Mật khẩu không được để trống!",
-                minLength: { value: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" },
-              })}
-              placeholder="Nhập mật khẩu..."
-            />
+            <div className="password-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                {...register("password", {
+                  required: "Mật khẩu không được để trống!",
+                  minLength: { value: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" },
+                  pattern: {
+                    value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+                    message: "Mật khẩu phải chứa ít nhất một chữ cái, một số và một ký tự đặc biệt!",
+                  },
+                })}
+                placeholder="Nhập mật khẩu..."
+              />
+              <span className="eye-icon" onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
             {errors.password && <p className="error-message">{errors.password.message}</p>}
           </div>
 
@@ -110,7 +153,7 @@ const Register = () => {
               {...register("phone", {
                 required: "Số điện thoại không được để trống!",
                 pattern: {
-                  value: /^[0-9]{10,11}$/,
+                  value: /^0\d{9}$/,
                   message: "Số điện thoại không hợp lệ!",
                 },
               })}
@@ -128,18 +171,6 @@ const Register = () => {
           <p>
             Bạn đã có tài khoản? <NavLink to="/login">Đăng Nhập</NavLink>
           </p>
-        </div>
-
-        <div className="social-buttons">
-          <a href="#" className="btn facebook">
-            <i className="fab fa-facebook"></i>
-          </a>
-          <a href="#" className="btn google">
-            <i className="fab fa-google"></i>
-          </a>
-          <a href="#" className="btn twitter">
-            <i className="fab fa-twitter"></i>
-          </a>
         </div>
       </div>
     </div>
