@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\ApiBannerController;
 use App\Http\Controllers\api\ApiCartController;
@@ -6,8 +7,10 @@ use App\Http\Controllers\Api\ApiCategoryController;
 use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\ApiColorController;
 use App\Http\Controllers\api\ApiSizeController;
+use App\Http\Controllers\api\ApiVoucherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -70,6 +73,12 @@ Route::get('sizes/{id}', [ApiSizeController::class,'show']);
 Route::put('sizes/{id}', [ApiSizeController::class,'update']);
 Route::delete('sizes/{id}', [ApiSizeController::class,'destroy']);
 
+Route::get('vouchers', [ApiVoucherController::class,'index']);
+Route::post('vouchers', [ApiVoucherController::class,'store']);
+Route::get('vouchers/{id}', [ApiVoucherController::class,'show']);
+Route::put('vouchers/{id}', [ApiVoucherController::class,'update']);
+Route::delete('vouchers/{id}', [ApiVoucherController::class,'destroy']);
+
 //Banner trang chủ
 Route::apiResource('banner',ApiBannerController::class);
 
@@ -104,9 +113,18 @@ Route::get('banners/{id}', [ApiBannerController::class, 'show']);
 //     Route::put('{id}', [ApiCartController::class, 'update']);
 //     Route::delete('{id}', [ApiCartController::class, 'destroy']);
 
+
+    // Route::post('/add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
+    Route::get('/list', [ApiCartController::class, 'getListCart']); // Lấy giỏ hàng hiện tại
+    Route::post('/add-item', [ApiCartController::class, 'addItem'])->name('cart.addItem');
+    Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
+    Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
+});
+
 //     Route::post('/add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
 //     Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
 //     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
 // });
+
 
 

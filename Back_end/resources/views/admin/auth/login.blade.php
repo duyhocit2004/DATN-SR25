@@ -116,7 +116,7 @@
 
                                     <div class="form-group mb-0 checkbox-checked">
                                         <div class="form-check checkbox-solid-info">
-                                            <input class="form-check-input" id="solid6" type="checkbox">
+                                            <input class="form-check-input" id="solid6" type="checkbox" name="remember">
                                             <label class="form-check-label" for="solid6">Ghi nhớ mật khẩu</label>
                                         </div>
                                             {{-- <a class="link" href="forget-password.html">Quên mật khẩu?</a> --}}

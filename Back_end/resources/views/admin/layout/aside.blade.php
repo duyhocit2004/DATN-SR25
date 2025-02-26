@@ -67,8 +67,23 @@
                 </ul>
             </li> --}}
 
+
+            <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+                    <h6 class=""><i class="fas fa-box"></i>Quản lý đơn hàng</h6>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li> <a href="{{ route('orders.index') }}">Danh sách </a></li>
+                    <li><a href="{{ route('orders.create') }}">Thêm đơn hàng</a></li>
+                </ul>
+            </li>
+            {{-- <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+
+            <li class="sidebar-list mb-2"> <a class="sidebar-link" href="javascript:void(0)">
+                    <h6 class=""><i class="fas fa-tags"></i> Voucher</h6>
+
             {{-- <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
                     <h6 class=""><i class="fas fa-tags"></i> Quản lý voucher</h6>
+
                 </a>
                 <ul class="sidebar-submenu">
                     <li> <a href="{{ route('vouchers.index') }}">Danh sách</a></li>

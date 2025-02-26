@@ -32,8 +32,9 @@ class AuthController extends Controller
             'password.unique' => 'Mật khẩu phải nhiều hơn 6 kí tự',
         ]);
 
+        $remember = $request->has('remember'); // Lấy trạng thái checkbox Remember Me
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember)) {
 
             return redirect()->route('users.index');
         }
@@ -79,9 +80,13 @@ class AuthController extends Controller
     }
 
     // Đăng xuất
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
+
+        $request->session()->invalidate(); // Xóa toàn bộ session
+
+        $request->session()->regenerateToken(); // Tạo CSRF token mới
 
         return redirect('login');
     }

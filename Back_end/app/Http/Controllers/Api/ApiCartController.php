@@ -27,6 +27,18 @@ class ApiCartController extends Controller
         // return response()->json($cart);
     }
 
+
+    // Xóa giỏ hàng
+    public function destroy($id)
+    {
+        $cart = Carts::findOrFail($id);
+        $cart->delete();
+        return response()->json(['message' => 'Xóa giỏ hàng thành công'], 204);
+    }
+
+    // Thêm mục vào giỏ hàng
+
+
     // Tạo giỏ hàng mới
     public function store(Request $request)
     {
@@ -65,6 +77,7 @@ class ApiCartController extends Controller
 
     }
 
+
     // Cập nhật số lượng mục trong giỏ hàng
     public function updateItem(Request $request, $cartId, $itemId)
     {
@@ -89,22 +102,92 @@ class ApiCartController extends Controller
         return response()->json($cart->load('items'));
     }
 
-    private function getCart(Request $request, $createIfNotExists = false)
+    public function addItem(Request $request)
     {
-        // Nếu người dùng đã đăng nhập
-        if ($request->user()) {
-            return Carts::firstOrCreate(['user_id' => $request->user()->id]);
+        $request->validate([
+        'product_variants_id' => 'required|exists:product_variants,id',
+        'quantity' => 'required|integer|min:1',
+    ]);
+
+    // Lấy giỏ hàng hiện tại
+    $cart = $this->getCart($request, true);
+    $variant = ProductVariants::findOrFail($request->product_variants_id);
+
+    // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+    $existingItem = $cart->items()->where('product_variants_id', $variant->id)->first();
+
+    if ($existingItem) {
+        // Nếu sản phẩm đã tồn tại, cập nhật số lượng và tổng giá trị
+        $existingItem->quantity += $request->quantity;
+        $existingItem->sub_total = $existingItem->quantity * $variant->price;
+        $existingItem->save(); // Lưu thay đổi
+    } else {
+        // Nếu sản phẩm chưa tồn tại, thêm mới vào giỏ hàng
+        $cart->items()->create([
+            'product_variants_id' => $variant->id,
+            'quantity' => $request->quantity,
+            'sub_total' => $request->quantity * $variant->price,
+        ]);
+    }
+
+    return response()->json($cart->load('items'));
+    }
+
+    // private function getCart(Request $request, $createIfNotExists = false)
+    // {
+    //     // Nếu người dùng đã đăng nhập
+    //     if ($request->user()) {
+    //         return Carts::firstOrCreate(['user_id' => $request->user()->id]);
+    //     }
+
+    //     // Nếu là khách, kiểm tra guest_id từ cookie
+    //     $guestId = $request->cookie('guest_id') ?? Str::uuid();
+
+    //     // Set cookie guest_id nếu chưa có
+    //     if (!$request->cookie('guest_id')) {
+    //         Cookie::queue('guest_id', $guestId, 60 * 24 * 30); // 30 ngày
+    //     }
+
+    //     return Carts::firstOrCreate(['guest_id' => $guestId]);
+    // }
+    
+
+    public function getListCart(Request $request)
+    {
+         $this->getCart($request);
+        // Kiểm tra xem người dùng đã xác thực chưa
+        if (!$request->user()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Người dùng chưa được xác thực',
+                'data' => []
+            ], 401); // Trả về mã lỗi 401 nếu không xác thực
         }
 
-        // Nếu là khách, kiểm tra guest_id từ cookie
-        $guestId = $request->cookie('guest_id') ?? Str::uuid();
+        // Lấy giỏ hàng của người dùng
+        $cart = Carts::where('user_id', $request->user()->id)->first();
 
-        // Set cookie guest_id nếu chưa có
-        if (!$request->cookie('guest_id')) {
-            Cookie::queue('guest_id', $guestId, 60 * 24 * 30); // 30 ngày
+        if (!$cart) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy giỏ hàng',
+                'data' => []
+            ]);
         }
 
-        return Carts::firstOrCreate(['guest_id' => $guestId]);
+        // Lấy các sản phẩm trong giỏ hàng
+        $cartItems = cart_items::where('cart_id', $cart->id)->get();
+
+        // Lấy thông tin sản phẩm
+        $products = $cartItems->map(function ($item) {
+            return $item->product; // Hoặc truy xuất thông tin sản phẩm theo cách cần thiết
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã lấy lại sản phẩm trong giỏ hàng thành công',
+            'data' => $products
+        ]);
     }
 
     public function getListCart(Request $request)
