@@ -64,7 +64,7 @@
                 <tr>
                   <th class="border-bottom-0" scope="row">{{$index + 1}}</th>
                   <td class="border-bottom-0">{{$Vouchers->code}}</td>
-                  <td class="border-bottom-0">{{$Vouchers->discount_type}}</td>
+                  <td>{{ $Vouchers->discount_type == 'percent' ? 'Giảm %' : 'Giảm tiền' }}</td>
                   <td class="border-bottom-0">{{$Vouchers->quantity}} </td>
                   <td class="border-bottom-0">
                     <p>Bắt đầu :{{date('d/m/Y', strtotime($Vouchers->start_date))}} </p>
@@ -86,9 +86,9 @@
                   @endif
                   </td>
                   <td class="border-bottom-0">
-                    <a href="{{ route('voucher.getID', $Vouchers->id) }}"
+                    <a href="{{ route('vouchers.edit', $Vouchers->id) }}"
                       class="btn btn-warning">Sửa</a>
-                  <form action="{{ route('voucher.deleteVoucher', $Vouchers->id) }}" method="POST"
+                  <form action="{{ route('vouchers.destroy', $Vouchers->id) }}" method="POST"
                       style="display:inline;">
                       @csrf
                       @method('DELETE')

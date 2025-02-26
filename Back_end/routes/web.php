@@ -25,7 +25,7 @@ use App\Http\Controllers\admin\CommentController;
 */
 
 Route::get('/', function () {
-    return view('admin.index');
+    return view('admin.dashboard');
 });
 
 // Route sản phẩm và biến sản phẩm
@@ -49,7 +49,9 @@ Route::get('/color/{id}/edit', [ColorController::class, 'edit'])->name('getcolor
 route::put('updatecolor/{id}/update', [colorController::class, 'Update'])->name("updatecolor");
 route::delete('deletecolor/{id}/delete', [colorController::class, 'destroy'])->name("deletecolor");
 
-Route::prefix('admmin')->middleware('admin')->group(function () {});
+Route::prefix('admmin')->middleware('admin')->group(function () {
+    
+});
 
 // Route danh mục
 Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
@@ -69,6 +71,7 @@ Route::delete('sizes/{id}', [SizeController::class, 'destroy'])->name('sizes.des
 
 // Route tài khoản
 Route::get('users', [UserController::class, 'index'])->name('users.index');
+Route::get('users/show', [UserController::class, 'show'])->name('users.show');
 Route::post('users', [UserController::class, 'store'])->name('users.store');
 Route::get('users/create', [UserController::class, 'create'])->name('users.create');
 Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
@@ -89,12 +92,7 @@ Route::delete('/variant/{id}', [VariantController::class, 'destroy'])->name('var
 route::get('register', [AuthController::class, 'formRegister'])->name("register");
 route::post('post-register', [AuthController::class, 'postRegister'])->name("post-register");
 
-// Route đăng nhập
-// Route::group(['middleware' => ['auth']], function () {
-//     Route::get('/', function () {
-//         return view('admin.index');
-//     });
-// });
+
 route::get('login', [AuthController::class, 'formLogin'])->name("login");
 route::post('post-login', [AuthController::class, 'postLogin'])->name('post-login');
 // Route đăng xuất

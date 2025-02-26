@@ -70,7 +70,7 @@
             <label class="form-label" for="categories_id">Thể loại</label>
             <select class="form-select" id="categories_id" name="categories_id">
             @foreach ($categori as $as)
-        <option value="{{ $as->id }}" {{ $as->id == $idproduct->categories_id ? 'selected' : '' }}>
+        <option value="{{ old('categories_id', $as->id) }}" {{ $as->id == $idproduct->categories_id ? 'selected' : '' }}>
           {{ $as->name }}{{ $as->type }}
         </option>
       @endforeach

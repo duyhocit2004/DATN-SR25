@@ -1,6 +1,7 @@
 @extends('admin.layout.app')
 
 @section('content')
+<div class="container-sm my-2">
     <h1>Chỉnh Sửa Người Dùng</h1>
 
     @if ($errors->any())
@@ -44,10 +45,12 @@
             <label for="user_image">Ảnh đại diện</label>
             <input type="file" class="form-control" id="user_image" name="user_image">
             @if ($user->user_image)
-                <img src="{{ asset('storage/' . $user->user_image) }}" width="50" height="50">
+                <img src="{{ $user->user_image}}" width="50" height="50">
             @endif
         </div>
 
         <button type="submit" class="btn btn-success">Cập Nhật</button>
     </form>
+</div>
+
 @endsection

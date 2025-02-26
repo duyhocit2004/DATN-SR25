@@ -51,14 +51,16 @@ class ProductController extends Controller
         $this->Cloudinary = $Cloudinary;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        // $list = $this->ProductService->getAllProduct();
-        // $phone = products::find(1)->categories;
-        // dd($phone);
+        $search = $request->input('search');
 
-        $list = $this->ProductService->Getpaginate();
-        // $imageproduct =  $this->ProductService->getoneimge($list->id);
+        if (!empty($search)) {
+            $list = products::where('name_product', 'like', '%' . $search . '%')->orderBy('id', 'DESC')->paginate(10);
+        } else {
+            // Nếu không có, lấy toàn bộ danh sách sản phẩm
+            $list = products::orderBy('id', 'DESC')->paginate(10);
+        }
         return view('admin.products.listProduct', compact('list'));
     }
 
@@ -79,6 +81,25 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'product'=>'required',
+            'categories_id'=>'required|',
+            'quanlity'=>'required|',
+            'price_regular'=>'required|',
+            // 'price_sale'=>'required|',
+            'description'=>'required|',
+            'file'=>'required|image',
+            ],[
+            'product.required'=>'bạn chưa nhập tên sản phẩm',
+            'categories_id.required'=>'bạn chưa chọn thể loại',
+            'quanlity.required'=>'bạn chưa nhập số lượng',
+            'price_regular.required'=>'bạn chưa nhập giá chính',
+            // 'price_sale.required'=>'bạn chưa nhập tên hình ảnh',
+            'description.required'=>'bạn chưa nhập tiêu đề',
+            'file.required'=>'bạn chưa chọn ảnh',
+            'file.image'=>'bạn chưa chọn ảnh',
+            ]);
+
         $variant = $request->input('variants');
         $image = $request->file('images');
         $list = $request->all();
@@ -93,7 +114,9 @@ class ProductController extends Controller
 
         if ($request->has('variants')) {
             $this->VariantService->insert($idproduct, $variant);
+
         }
+
         if ($request->hasFile('images')) {
             foreach ($image as $images) {
                 // Tải lên từng hình ảnh
@@ -133,17 +156,36 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $request->validate([
+        'product'=>'required',
+        'categories_id'=>'required|',
+        'quanlity'=>'required|',
+        'price_regular'=>'required|',
+        // 'price_sale'=>'required|',
+        'description'=>'required|',
+        'file'=>'required|image',
+        ],[
+        'product.required'=>'bạn chưa nhập tên sản phẩm',
+        'categories_id.required'=>'bạn chưa chọn thể loại',
+        'quanlity.required'=>'bạn chưa nhập số lượng',
+        'price_regular.required'=>'bạn chưa nhập giá chính',
+        // 'price_sale.required'=>'bạn chưa nhập tên hình ảnh',
+        'description.required'=>'bạn chưa nhập tiêu đề',
+        'file.required'=>'bạn chưa chọn ảnh',
+        'file.image'=>'bạn chưa chọn ảnh',
+        ]);
+        
         $list = $request->except('_token', '_method', 'variants', 'images');
 
-        if($request->hasFile('file')){
+        if ($request->hasFile('file')) {
             $fileimage = $this->Cloudinary->uploadApi()->upload($request->file('file')->getRealPath());
-            $list['file']=$fileimage['secure_url'];
-        }else{
+            $list['file'] = $fileimage['secure_url'];
+        } else {
             $listproduct = products::findOrFail($id);
-            $list['file']=$listproduct['image'];
+            $list['file'] = $listproduct['image'];
         }
         $idproduct = $this->ProductService->insertId($id, $list);
-;
+        ;
         if ($request->has('images')) {
 
             $images1 = $request->file('images');
@@ -162,9 +204,10 @@ class ProductController extends Controller
                     'image_link' => $uploadedFile['secure_url']
                 ]);
             }
-        }
 
-        if ($request->has('variant')) {
+        }
+        // dd($request->has('variants'));
+        if ($request->has('variants')) {
             $variant = $request->input('variants');
 
             foreach ($variant as $value) {

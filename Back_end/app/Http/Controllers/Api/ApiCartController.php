@@ -134,9 +134,7 @@ class ApiCartController extends Controller
         $cartItems = cart_items::where('cart_id', $cart->id)->get();
 
         // Lấy thông tin sản phẩm
-        $products = $cartItems->map(function ($item) {
-            return $item->product; // Hoặc truy xuất thông tin sản phẩm theo cách cần thiết
-        });
+        $products = $cartItems;
 
         return response()->json([
             'success' => true,

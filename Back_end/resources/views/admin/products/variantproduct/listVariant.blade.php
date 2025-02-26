@@ -15,6 +15,21 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12">
+                    <div class="d-flex justify-content-between align-items-center my-1">
+                    <div></div>
+                
+                        <!-- Ô tìm kiếm -->
+                        <form action="{{route('variant.index')}}" style="max-width: 300px; width: 100%;">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Tìm kiếm sản phẩm..." name="search">
+                                <div class="input-group-append">
+                                    <button class="btn" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                     <div class="card">
                         <div class="table-responsive">
                             <table class="table">

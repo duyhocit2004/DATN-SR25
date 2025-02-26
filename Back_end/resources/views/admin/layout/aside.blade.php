@@ -4,11 +4,18 @@
         <ul class="sidebar-menu" id="simple-bar">
 
             <li class="sidebar-list mb-2"> <a class="sidebar-link" href="javascript:void(0)">
+                <h6 class=""><i class="fas fa-chart-line"></i> bảng điều khiển</h6>
+            </a>
+        </li>
+
+            <li class="sidebar-list mb-2"> <a class="sidebar-link" href="javascript:void(0)">
                     <h6 class=""><i class="fas fa-user"></i> Quản lý tài khoản</h6>
                 </a>
                 <ul class="sidebar-submenu">
-                    <li> <a href="{{ route('users.index') }}">Danh sách</a></li>
-                    <li><a href="{{ route('users.create') }}">Thêm tài khoản</a></li>
+                    <li><a href="{{ route('users.index') }}">quản trị</a></li>
+                    <li><a href="{{ route('users.show') }}">người dùng</a></li>
+                    <li><a href="{{ route('users.create') }}">Thêm tài khoản</a></li>   
+                  
                 </ul>
             </li>
 
@@ -56,26 +63,17 @@
                 </a>
                 <ul class="sidebar-submenu">
                     <li><a href="{{ route('carts.index') }}">Danh sách</a></li>
-<<<<<<< HEAD
                      <li><a href="{{ route('sizes.create') }}">Thêm size</a></li> 
                 </ul>
             </li> --}}
 
             {{-- <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
-=======
-                    {{-- <li><a href="{{ route('sizes.create') }}">Thêm size</a></li> --}}
-            {{-- </ul>
-            </li> --}}
-
-            <li class="sidebar-list mb-2"> <a class="sidebar-link" href="javascript:void(0)">
->>>>>>> 244196b624d0f0f5c7dac06fe5687efc2d2f0713
                     <h6 class=""><i class="fas fa-tags"></i> Quản lý voucher</h6>
                 </a>
                 <ul class="sidebar-submenu">
                     <li> <a href="{{ route('vouchers.index') }}">Danh sách</a></li>
                     <li><a href="{{ route('vouchers.create') }}">Thêm voucher</a></li>
                 </ul>
-<<<<<<< HEAD
             </li> --}}
             <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
                     <h6 class=""><i class="fas fa-ticket-alt"></i> Voucher</h6>
@@ -101,8 +99,6 @@
                     <li><a href="{{ route('comment.index') }}">Danh sách</a></li>
                 </ul>
 
-=======
->>>>>>> 244196b624d0f0f5c7dac06fe5687efc2d2f0713
             </li>
         </ul>
     </div>
