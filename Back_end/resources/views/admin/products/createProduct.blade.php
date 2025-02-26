@@ -32,19 +32,22 @@
             <form action="{{ route('postProduct') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="container" id="ss">
-                    <div class="col-md-8">
+                    <div class="col-md-7 mt-2">
                         <div class="card">
-                            <div class="card-header card-no-border">
-                                <h3>Thêm sản phẩm</h3>
+                            <div class="card-header">
+                                <h3>Thêm Sản Phẩm</h3>
                             </div>
 
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3 mx-1">
                                         <label class="form-label" for="product">Tên sản phẩm</label>
-                                        <input class="form-control" id="product" type="text" name="product"
-                                            placeholder="áo dài nam/nữ">
+                                        <input class="form-control" id="product" type="text" value="{{old('product')}}" name="product" placeholder="Nhập tên sản phẩm">
+                                        @error('product')
+                                        <p class="text-danger">{{ $message }}</p>
+                                        @enderror
                                     </div>
+                                   
                                 </div>
                             </div>
 
@@ -53,11 +56,16 @@
                                     <div class="mb-3 mx-1">
                                         <label class="form-label" for="categories_id">Thể loại</label>
                                         <select class="form-select" id="categories_id" name="categories_id">
+                                            <option value="" disabled selected>-- Chọn thể loại --</option> <!-- Option mặc định -->
                                             @foreach ($categori as $as)
-                                                <option value="{{ $as->id }}">{{ $as->name }}{{ $as->type }}
+                                                <option value="{{ $as->id }}" {{ old('categories_id') }}>
+                                                    {{ $as->name }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                        @error('categories_id')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -66,20 +74,23 @@
                                 <div class="col">
                                     <div class="mb-3 mx-1">
                                         <label class="form-label" for="quanlity">Số lượng</label>
-                                        <input class="form-control" id="quanlity" name="quanlity" type="text"
-                                            placeholder="200">
+                                        <input class="form-control" id="quanlity"  value="{{old('quanlity')}}"name="quanlity" type="text" placeholder="Nhập số lượng">
+                                        @error('quanlity')
+                                        <p class="text-danger">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
 
-
-
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3 mx-1">
-                                        <label class="form-label" for="price_regular">giá sản phẩm</label>
-                                        <input class="form-control" id="price_regular" name="price_regular" type="text"
-                                            placeholder="200,000">
+                                        <label class="form-label" for="price_regular">Giá sản phẩm</label>
+                                        <input class="form-control" id="price_regular" value="{{old('price_regular')}}" name="price_regular" type="text"
+                                            placeholder="Nhập giá sản phẩm">
+                                        @error('price_regular')
+                                        <p class="text-danger">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -88,8 +99,8 @@
                                 <div class="col">
                                     <div class="mb-3 mx-1">
                                         <label class="form-label" for="price_sale">Giảm giá sản phẩm(không bắt buộc)</label>
-                                        <input class="form-control" id="price_sale" name="price_sale" type="text"
-                                            placeholder="180,000">
+                                        <input class="form-control" id="price_sale" value="{{old('price_sale')}}" name="price_sale" type="text"
+                                            placeholder="Nhập giảm giá">
                                     </div>
                                 </div>
                             </div>
@@ -97,8 +108,11 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3 mx-1">
-                                        <label class="form-label" for="description">miêu tả</label>
-                                        <textarea class="form-control" name="description" id="description"></textarea>
+                                        <label class="form-label" for="description">Mô tả</label>
+                                        <textarea class="form-control" name="description" value="{{old('description')}}" id="description"></textarea>
+                                        @error('description')
+                                        <p class="text-danger">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -116,9 +130,12 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3 mx-1">
-                                        <label class="form-label" for="file">ảnh</label>
+                                        <label class="form-label" for="file">Ảnh</label>
                                         <input class="form-control" onchange="previewImage(this, 0)" id="file"
-                                            name="file" type="file" placeholder="200">
+                                            name="file" type="file" placeholder="200" value="{{old('file')}}">
+                                        @error('quanlity')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                     <div class="d-flex justify-content-center align-items-center">
                                         <img src="" class="previewContainer"
@@ -129,7 +146,7 @@
                             </div>
                             <div class="card-wrapper border rounded-3">
                                 <div class="card-header card-no-border">
-                                    <h3>album ảnh</h3>
+                                    <h3>Album ảnh</h3>
                                 </div>
                                 <div id="imagediv">
                                     <div class="mb-3">
@@ -154,10 +171,9 @@
                 <div class="col" id="divContainer">
 
                 </div>
-                <div class="d-flex justify-content-center  align-items-center">
-                    <button class="btn btn-success mx-1">thêm sản phẩm</button>
-                    <button type="button" onclick="addVariant()" id="variant " class="btn btn-success mx-1">Thêm biến
-                        thể</button>
+                <div class="d-flex justify-content-center mb-3">
+                    <button class="btn btn-success mx-1">Thêm sản phẩm</button>
+                    <button type="button" onclick="addVariant()" id="variant " class="btn btn-success mx-1">Thêm biến thể</button>
                 </div>
                 {{-- end biến thể --}}
             </form>

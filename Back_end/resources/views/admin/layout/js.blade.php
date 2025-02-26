@@ -23,3 +23,6 @@
 <!-- custom script -->
 <script src="{{ asset('admin/js/script.js') }}"></script>
 <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
+
+
+@yield('js')

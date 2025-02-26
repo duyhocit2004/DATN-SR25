@@ -1,230 +1,191 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { ICart } from "../interface/Cart";
+import "../layout/cart.css";
 
+const CART_KEY = "cart";
 
-const Cart: React.FC = () => {
+export const GetCart = (): ICart[] => {
+    const cart = localStorage.getItem(CART_KEY);
+    return cart ? JSON.parse(cart) : [];
+};
+
+const SaveCart = (cart: ICart[]) => {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    window.dispatchEvent(new Event("cartUpdated")); 
+};
+
+export const UpdateCartItem = (id: number, quantity: number, size: string, color: string) => {
+    let cart = GetCart();
+    const itemIndex = cart.findIndex((item) => item.id === id);
+    if (itemIndex !== -1) {
+        cart[itemIndex].quantity = quantity;
+        cart[itemIndex].size = size;
+        cart[itemIndex].color = color;
+    }
+    SaveCart(cart);
+    return cart;
+};
+export const AddToCart = (item: ICart) => {
+    const startTime = performance.now();
+    let cart = GetCart();
+    const itemIndex = cart.findIndex(
+        (cartItem) => cartItem.id === item.id && cartItem.size === item.size && cartItem.color === item.color
+    );
+
+    if (itemIndex !== -1) {
+        cart[itemIndex].quantity += item.quantity;
+    } else {
+        cart.push(item);
+    }
+
+    SaveCart(cart);
+    const endTime = performance.now();
+    console.log(`AddToCart took ${endTime - startTime}ms`);
+    return cart;
+};
+
+export const RemoveFromCart = (id: number) => {
+    let cart = GetCart().filter((item) => item.id !== id);
+    SaveCart(cart);
+    return cart;
+};
+
+export const GetCartLength = (): number => {
+    const cart = GetCart();
+    return cart.reduce((acc, item) => acc + item.quantity, 0);
+};
+
+const fetchColorsAndSizes = async () => {
+    try {
+        const colorsResponse = await fetch("http://127.0.0.1:8000/api/colors");
+        const sizesResponse = await fetch("http://127.0.0.1:8000/api/sizes");
+        if (!colorsResponse.ok || !sizesResponse.ok) {
+            throw new Error("Lỗi khi tải dữ liệu từ API");
+        }
+        const colors = await colorsResponse.json();
+        const sizes = await sizesResponse.json();
+        return { colors, sizes };
+    } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu màu sắc và kích thước:", error);
+        return { colors: [], sizes: [] };
+    }
+};
+
+const Cart = () => {
+    const [cart, setCart] = useState<ICart[]>([]);
+    const [total, setTotal] = useState<number>(0);
+    const [colors, setColors] = useState<any[]>([]);
+    const [sizes, setSizes] = useState<any[]>([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const cartData = GetCart();
+        setCart(cartData);
+        setTotal(cartData.reduce((acc, item) => acc + item.price * item.quantity, 0));
+
+        fetchColorsAndSizes().then((data) => {
+            setColors(data.colors || []);
+            setSizes(data.sizes || []);
+        });
+    }, []);
+
+    const handleUpdate = (id: number, quantity: number, size: string, color: string) => {
+        if (quantity < 1) return;  
+        const startTime = performance.now();
+        const updatedCart = UpdateCartItem(id, quantity, size, color);
+        setCart(updatedCart);
+        setTotal(updatedCart.reduce((acc, item) => acc + item.price * item.quantity, 0));
+        const endTime = performance.now();
+        console.log(`handleUpdate took ${endTime - startTime}ms`);
+    };
+
+    const handleRemove = (id: number) => {
+        const startTime = performance.now();
+        const updatedCart = RemoveFromCart(id);
+        setCart(updatedCart);
+        setTotal(updatedCart.reduce((acc, item) => acc + item.price * item.quantity, 0));
+        const endTime = performance.now();
+        console.log(`handleRemove took ${endTime - startTime}ms`);
+    };
+
+    const handleCheckout = () => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            navigate("/checkout");
+        } else {
+            navigate("/checkout?guest=true");
+        }
+    };
+
     return (
-        <div className="page-wrapper">
-        <main className="main">
-			<div className="container">
-				<ul className="checkout-progress-bar d-flex justify-content-center flex-wrap">
-					<li className="active">
-						<a href="cart.html">Shopping Cart</a>
-					</li>
-					<li>
-						<a href="checkout.html">Checkout</a>
-					</li>
-					<li className="disabled">
-						<a href="cart.html">Order Complete</a>
-					</li>
-				</ul>
-
-				<div className="row">
-					<div className="col-lg-8">
-						<div className="cart-table-container">
-							<table className="table table-cart">
-								<thead>
-									<tr>
-										<th className="thumbnail-col"></th>
-										<th className="product-col">Product</th>
-										<th className="price-col">Price</th>
-										<th className="qty-col">Quantity</th>
-										<th className="text-right">Subtotal</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr className="product-row">
-										<td>
-											<figure className="product-image-container">
-												<a href="product.html" className="product-image">
-													<img src="assets/images/products/product-4.jpg" alt="product" />
-												</a>
-
-												<a href="#" className="btn-remove icon-cancel" title="Remove Product"></a>
-											</figure>
-										</td>
-										<td className="product-col">
-											<h5 className="product-title">
-												<a href="product.html">Men Watch</a>
-											</h5>
-										</td>
-										<td>$17.90</td>
-										<td>
-											<div className="product-single-qty">
-												<input className="horizontal-quantity form-control" type="text" />
-											</div>
-										</td>
-										<td className="text-right"><span className="subtotal-price">$17.90</span></td>
-									</tr>
-
-									<tr className="product-row">
-										<td>
-											<figure className="product-image-container">
-												<a href="product.html" className="product-image">
-													<img src="assets/images/products/product-3.jpg" alt="product" />
-												</a>
-
-												<a href="#" className="btn-remove icon-cancel" title="Remove Product"></a>
-											</figure>
-										</td>
-										<td className="product-col">
-											<h5 className="product-title">
-												<a href="product.html">Men Watch</a>
-											</h5>
-										</td>
-										<td>$17.90</td>
-										<td>
-											<div className="product-single-qty">
-												<input className="horizontal-quantity form-control" type="text" />
-											</div>
-										</td>
-										<td className="text-right"><span className="subtotal-price">$17.90</span></td>
-									</tr>
-
-									<tr className="product-row">
-										<td>
-											<figure className="product-image-container">
-												<a href="product.html" className="product-image">
-													<img src="assets/images/products/product-6.jpg" alt="product" />
-												</a>
-
-												<a href="#" className="btn-remove icon-cancel" title="Remove Product"></a>
-											</figure>
-										</td>
-										<td className="product-col">
-											<h5 className="product-title">
-												<a href="product.html">Men Black Gentle Belt</a>
-											</h5>
-										</td>
-										<td>$17.90</td>
-										<td>
-											<div className="product-single-qty">
-												<input className="horizontal-quantity form-control" type="text" />
-											</div>
-										</td>
-										<td className="text-right"><span className="subtotal-price">$17.90</span></td>
-									</tr>
-								</tbody>
-
-
-								<tfoot>
-									<tr>
-										<td colSpan={5} className="clearfix">
-											<div className="float-left">
-												<div className="cart-discount">
-													<form action="#">
-														<div className="input-group">
-															<input type="text" className="form-control form-control-sm"
-																placeholder="Coupon Code" required />
-															<div className="input-group-append">
-																<button className="btn btn-sm" type="submit">Apply
-																	Coupon</button>
-															</div>
-														</div>
-													</form>
-												</div>
-											</div>
-											<div className="float-right">
-												<button type="submit" className="btn btn-shop btn-update-cart">
-													Update Cart
-												</button>
-											</div>
-										</td>
-									</tr>
-								</tfoot>
-							</table>
-						</div>
-					</div>
-
-					<div className="col-lg-4">
-						<div className="cart-summary">
-							<h3>CART TOTALS</h3>
-
-							<table className="table table-totals">
-								<tbody>
-									<tr>
-										<td>Subtotal</td>
-										<td>$17.90</td>
-									</tr>
-
-									<tr>
-										<td colSpan={2} className="text-left">
-											<h4>Shipping</h4>
-
-											<div className="form-group form-group-custom-control">
-												<div className="custom-control custom-radio">
-													<input type="radio" className="custom-control-input" name="radio"
-														checked />
-													<label className="custom-control-label">Local pickup</label>
-												</div>
-											</div>
-
-											<div className="form-group form-group-custom-control mb-0">
-												<div className="custom-control custom-radio mb-0">
-													<input type="radio" name="radio" className="custom-control-input" />
-													<label className="custom-control-label">Flat rate</label>
-												</div>
-											</div>
-
-											<form action="#">
-												<div className="form-group form-group-sm">
-													<label>Shipping to <strong>NY.</strong></label>
-													<div className="select-custom">
-														<select className="form-control form-control-sm">
-															<option value="USA">United States (US)</option>
-															<option value="Turkey">Turkey</option>
-															<option value="China">China</option>
-															<option value="Germany">Germany</option>
-														</select>
-													</div>
-												</div>
-
-												<div className="form-group form-group-sm">
-													<div className="select-custom">
-														<select className="form-control form-control-sm">
-															<option value="NY">New York</option>
-															<option value="CA">California</option>
-															<option value="TX">Texas</option>
-														</select>
-													</div>
-												</div>
-
-												<div className="form-group form-group-sm">
-													<input type="text" className="form-control form-control-sm"
-														placeholder="Town / City" />
-												</div>
-
-												<div className="form-group form-group-sm">
-													<input type="text" className="form-control form-control-sm"
-														placeholder="ZIP" />
-												</div>
-
-												<button type="submit" className="btn btn-shop btn-update-total">
-													Update Totals
-												</button>
-											</form>
-										</td>
-									</tr>
-								</tbody>
-
-								<tfoot>
-									<tr>
-										<td>Total</td>
-										<td>$17.90</td>
-									</tr>
-								</tfoot>
-							</table>
-
-							<div className="checkout-methods">
-								<a href="/checkout" className="btn btn-block btn-dark">Proceed to Checkout
-									<i className="fa fa-arrow-right"></i></a>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div className="mb-6"></div>
-		</main>
+        <div className="cart-container">
+            <h2>Giỏ hàng</h2>
+            {cart.length === 0 ? (
+                <p>Giỏ hàng của bạn đang trống.</p>
+            ) : (
+                <div className="cart-items">
+                    {cart.map((item) => (
+                        <div key={item.id} className="cart-item">
+                            <img src={item.image} alt={item.name} className="cart-item-image" />
+                            <div className="cart-item-info">
+                                <h3>{item.name}</h3>
+                                <label>Màu sắc:</label>
+                                <select
+                                    value={item.color}
+                                    onChange={(e) => handleUpdate(item.id, item.quantity, item.size, e.target.value)}
+                                >
+                                    {colors.map((color) => (
+                                        <option key={color.id} value={color.name}>
+                                            {color.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <label>Kích thước:</label>
+                                <select
+                                    value={item.size}
+                                    onChange={(e) => handleUpdate(item.id, item.quantity, e.target.value, item.color)}
+                                >
+                                    {sizes.map((size) => (
+                                        <option key={size.id} value={size.name}>
+                                            {size.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="quantity-control">
+                                    <button
+                                        onClick={() => handleUpdate(item.id, item.quantity - 1, item.size, item.color)}
+                                        disabled={item.quantity <= 1}
+                                    >
+                                        -
+                                    </button>
+                                    <input
+                                        type="number"
+                                        value={item.quantity}
+                                        onChange={(e) => handleUpdate(item.id, Number(e.target.value), item.size, item.color)}
+                                    />
+                                    <button onClick={() => handleUpdate(item.id, item.quantity + 1, item.size, item.color)}>
+                                        +
+                                    </button>
+                                </div>
+                                <p>
+                                    {item.quantity} x {item.price.toLocaleString()} VND
+                                </p>
+                                <p>
+                                    <b>Tổng: {(item.quantity * item.price).toLocaleString()} VND</b>
+                                </p>
+                                <button className="btn-removecart " onClick={() => handleRemove(item.id)}>
+                                    Xóa
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+            <h3>Tổng đơn hàng: {total.toLocaleString()} VND</h3>
+            <button className="btn-checkout" onClick={handleCheckout} disabled={cart.length === 0}>
+                Thanh toán COD
+            </button>
         </div>
     );
 };

@@ -70,7 +70,7 @@
             <label class="form-label" for="categories_id">Thể loại</label>
             <select class="form-select" id="categories_id" name="categories_id">
             @foreach ($categori as $as)
-        <option value="{{ $as->id }}" {{ $as->id == $idproduct->categories_id ? 'selected' : '' }}>
+        <option value="{{ old('categories_id', $as->id) }}" {{ $as->id == $idproduct->categories_id ? 'selected' : '' }}>
           {{ $as->name }}{{ $as->type }}
         </option>
       @endforeach
@@ -137,7 +137,7 @@
             placeholder="200">
           </div>
           <div class="d-flex justify-content-center align-items-center">
-            <img src="{{Storage::url($idproduct->image)  }}" class="previewContainer" id="preview_0" width="200px"
+            <img src="{{$idproduct->image }}" class="previewContainer" id="preview_0" width="200px"
             alt="">
           </div>
           </div>
@@ -152,7 +152,7 @@
             type="file" accept="image/*">
             <div id="previewImage">
             @foreach ($iamge as $as)
-        <img src="{{Storage::url($as->image_link)}}" class="previewContainer1" alt="">
+        <img src="{{$as->image_link}}" class="previewContainer1" alt="">
       @endforeach
             </div>
           </div>
@@ -164,17 +164,67 @@
         </div>
       </div>
       {{-- end thêm ảnh --}}
+
+      </div>
+      <div class="col" id="divContainer">
+      @foreach ($variant as $index => $item)
+      <div class="ads card-body basic-form" id="variant-{{ $index + 1 }}">
+      <div class="container d-flex">
+      <div class="card-header card-no-border">
+        <h3>Biến thể {{$index + 1}}</h3>
+      </div>
+      <input type="text" value="{{$item->id}}" hidden name="variants[{{$index + 1}}][id]">
+      <div>
+        <button type="button" class="btn btn-danger btn-sm"
+        onclick="deleteVariant11({{ $item->id }})">Xóa</button>
+      </div>
+      </div>
+      <div class="row card-wrapper border rounded-3 my-1 d-flex">
+      <div class="col-3">
+        <label class="form-label" for="size_{{$index + 1}}">Kích cỡ</label>
+        <select class="form-select" name="variants[{{$index + 1}}][size_id]" id="size_{{$index + 1}}">
+        @foreach ($size as $sizeitem)
+      <option value="{{$sizeitem->id}}" {{ $sizeitem->id === $item->size_id ? 'selected' : '' }}>
+      {{$sizeitem->name}}
+      </option>
+    @endforeach
+        </select>
+      </div>
+      <div class="col-3">
+        <label class="form-label" for="color_{{$index + 1}}">Màu</label>
+        <select class="form-select" name="variants[{{$index + 1}}][color_id]" id="color_{{$index + 1}}">
+        @foreach ($color as $colors)
+      <option value="{{$colors->id}}" {{ $colors->id === $item->colors_id ? 'selected' : '' }}>
+      {{$colors->name}}
+      </option>
+    @endforeach
+        </select>
+      </div>
+      <div class="col-3">
+        <label class="form-label" for="quantity_{{$index + 1}}">Số lượng</label>
+        <input class="form-control" id="quantity_{{$index + 1}}" name="variants[{{$index + 1}}][quantity]"
+        type="text" placeholder="30" value="{{$item->quanlity}}">
+      </div>
+      <div class="col-3">
+        <label class="form-label" for="price_{{$index + 1}}">Giá</label>
+        <input class="form-control" id="price_{{$index + 1}}" name="variants[{{$index + 1}}][price]" type="text"
+        placeholder="120,000" value="{{$item->price}}">
+      </div>
+      </div>
+      </div>
+    @endforeach
       </div>
       <div class="d-flex justify-content-center  align-items-center">
       <a class="btn btn-primary" href="{{route('product')}}">quay lại</a>
       <button type="reset" class="btn btn-danger mx-1">reset</button>
       <button class="btn btn-success mx-1">sửa</button>
+      <button type="button" onclick="addVariant()" id="variant " class="btn btn-success mx-1">Thêm biến
+        thể</button>
       </div>
-    </div>
-    {{-- thêm ảnh --}}
+      {{-- thêm ảnh --}}
 
     </form>
-  </div>
+    </div>
   </div>
 
 @endsection
@@ -231,6 +281,93 @@
       console.error(error);
     })
 
+    let variantCount = @json(count($variant)); // Bắt đầu từ số lượng biến thể hiện tại
+    const color = @json($color); // chuyển đổi dữ liệu sang json
+    const size = @json($size);
+    console.log(size, color);
+    // let variantCount = 0;
+    const divContainer = document.getElementById('divContainer');
+
+    function addVariant() {
+    console.log('Thêm biến thể mới');
+
+    variantCount++;
+
+    let sizeOptions = `<option>--- Chọn Size ---</option>`;
+    size.forEach((size) => {
+      sizeOptions += `<option value="${size.id}">${size.name}</option>`;
+    }) // duyệt các phần tử mảng json
+    let colorOptions = `<option>--- Chọn Size ---</option>`;
+    color.forEach((color) => {
+      colorOptions += `<option value="${color.id}">${color.name}</option>`;
+    })
+
+    var variantHtml = `
+      <div class="ads card-body basic-form" id="variant-${variantCount}" >
+      <div class="container d-flex">
+      <div class="card-header card-no-border">
+        <h3>Biến thể ${variantCount}</h3>
+      </div>
+      <div>
+        <button type="button" class="btn btn-danger btn-sm" id="delete" onclick="deleteVariant(${variantCount})">Xóa</button>
+      </div>
+      </div>
+      <div id="divContainer" class=" row card-wrapper border rounded-3 my-1 d-flex">
+      <div class="col-3">
+        <label class="form-label" for="size_id">kích cỡ</label>
+        <select class="form-select" name="variants[${variantCount}][size_id]" id="size_${variantCount}">
+        ${sizeOptions}
+        </select>
+      </div>
+      <div class="col-3">
+        <label class="form-label" for="color_id">màu</label>
+        <select class="form-select" name="variants[${variantCount}][color_id]" id="color_${variantCount}">
+        ${colorOptions}
+        </select>
+      </div>
+      <div class="col-3">
+        <label class="form-label" for="	quanlity">số lượng</label>
+        <input class="form-control" id="quanlity_${variantCount}" name="variants[${variantCount}][quanlity]" type="text" placeholder="30">
+      </div>
+      <div class="col-3">
+        <label class="form-label" for="price">giá</label>
+        <input class="form-control" id="price_${variantCount}" name="variants[${variantCount}][price]" type="text" placeholder="120,000">
+      </div>
+      </div>
+      `;
+    divContainer.insertAdjacentHTML('beforeend', variantHtml);
+    }
+    function deleteVariant11(variantIndex) {
+    const variantElement = document.getElementById(`variant-${variantIndex}`);
+
+    if (variantElement) {
+      const variantId = variantElement.querySelector("input[name^='variants']").value; // Lấy ID biến thể
+
+      // Xóa trên giao diện trước
+      variantElement.remove();
+
+      // Gửi request để xóa trong database
+      fetch(`/variant/${variantId}`, { // Gửi ID thực tế thay vì variantIndex
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        'Content-Type': 'application/json',
+      }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.success) {
+        console.error('Lỗi khi xóa biến thể:', data.message);
+        }
+      })
+      .catch(error => console.error('Lỗi kết nối:', error));
+    }
+
+    function deleteVariant(variantIndex) {
+      const variantElement = document.getElementById(`variant-${variantIndex}`);
+      variantElement.remove();
+    }
+    }
 
   </script>
 @endsection

@@ -3,7 +3,6 @@ import { Card, Col, Row, Statistic, Space, Divider } from 'antd';
 import { AppstoreOutlined, UserOutlined, DollarOutlined, WarningOutlined } from '@ant-design/icons';
 
 const Dashboard: React.FC = () => {
-    // Dữ liệu giả lập (bạn có thể thay bằng dữ liệu thực từ API)
     const statistics = [
         {
             title: 'Tổng số sản phẩm',

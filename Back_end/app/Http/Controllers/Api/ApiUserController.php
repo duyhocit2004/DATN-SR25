@@ -8,9 +8,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Cloudinary\Cloudinary;
 
 class ApiUserController extends Controller
 {
+
+    protected $cloudinary ;
+
+    public function __construct(Cloudinary $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -33,9 +42,14 @@ class ApiUserController extends Controller
         ]);
 
         $imagePath = null;
-        if ($request->hasFile('user_image')) {
-            $imagePath = $request->file('user_image')->store('users', 'public');
+        if (!$request->hasFile('user_image')) {
+            return response()->json(['error' => 'Image file is required'], 400);
         }
+       
+        $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('user_image')->getRealPath(), [ 'folder' => 'users', 'verify' => false ]);
+        $imagePath = $uploadedFile['secure_url'];
+
+    
 
         $user = User::create([
             'name' => $request->name,
@@ -60,6 +74,7 @@ class ApiUserController extends Controller
 
         return response()->json(['data' => $user], 200);
     }
+    
     public function update(Request $request, string $id)
     {
         $user = User::find($id);

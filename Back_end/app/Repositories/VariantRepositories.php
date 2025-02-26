@@ -19,9 +19,22 @@ class VariantRepositories
         $list = ProductVariants::create($data);
         return $list;
     }
+
+    public function createNotForeach($id, $data){
+        return ProductVariants::create([
+            'product_id' => $id,
+            'color_id' => $data['color_id'],
+            'size_id' => $data['size_id'],
+            'quanlity' => $data['quanlity'],
+            'price' => $data['price'],
+            'view' => 0,
+            'content' => null
+        ]);
+    }
+        
     public function create($id, $data)
     {
-        dd($data);
+        // dd($data);
         foreach ($data as $as) {
             ProductVariants::create([
                 'product_id' => $id,
@@ -40,6 +53,7 @@ class VariantRepositories
 
     }
     public function updateVariant($id,$data){
+        // dd($id);
         $id = ProductVariants::findOrFail($id);
         $id->update($data);
         return $id ;

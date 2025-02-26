@@ -24,8 +24,9 @@ class DatabaseSeeder extends Seeder
             categoriesSeeder::class,
             codeColorSeeder::class,
             productSeeder::class,
-            UsersSeeder::class
-
+            UsersSeeder::class,
+            ShipperSeeder::class,
+            OrderSeeder::class
         ]);
 
     }

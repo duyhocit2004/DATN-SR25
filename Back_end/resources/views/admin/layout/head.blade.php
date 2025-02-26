@@ -12,10 +12,10 @@
 <link rel="shortcut icon" href="{{ asset('/admin/images/favicon.png') }}" type="image/x-icon" />
 <!-- Google font-->
 <link rel="preconnect" href="https://fonts.googleapis.com/" />
-<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
-<link
+{{-- <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" /> --}}
+{{-- <link
     href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,200;6..12,300;6..12,400;6..12,500;6..12,600;6..12,700;6..12,800;6..12,900;6..12,1000&amp;display=swap"
-    rel="stylesheet" />
+    rel="stylesheet" /> --}}
 <!-- Flag icon css -->
 <link rel="stylesheet" href="{{ asset('admin/css/vendors/flag-icon.css') }}" />
 <!-- iconly-icon-->
@@ -35,5 +35,6 @@
 <link id="color" rel="stylesheet" href="{{ asset('admin/css/color-1.css" media="screen') }}" />
 <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/44.1.0/ckeditor5.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 @yield('css')
 
