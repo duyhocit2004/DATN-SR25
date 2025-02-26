@@ -4,7 +4,7 @@
         <div class="row">
             <div class="">
                 <div class="card-body">
-                    <h2 class="mb-3">Thêm Voucher</h2>
+                    <h2 class="mb-3">Thêm Mã Giảm Giá <i class="fas fa-tag"></i></h2>
                     <div class="card-wrapper border rounded-3">
                         <form class="row" action="{{ route('vouchers.store') }}" method="POST">
 

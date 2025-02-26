@@ -9,6 +9,7 @@ use App\Models\ProductVariants;
 use App\Services\Cart\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use PhpParser\Node\Stmt\TraitUseAdaptation;
@@ -26,9 +27,7 @@ class ApiCartController extends Controller
         // return response()->json($cart);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Tạo giỏ hàng mới
     public function store(Request $request)
     {
         $value = false;
@@ -66,43 +65,46 @@ class ApiCartController extends Controller
 
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // Cập nhật số lượng mục trong giỏ hàng
+    public function updateItem(Request $request, $cartId, $itemId)
     {
-        //
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $cartItem = cart_items::where('cart_id', $cartId)->findOrFail($itemId);
+        $cartItem->update([
+            'quantity' => $request->quantity,
+            'sub_total' => $request->quantity * ProductVariants::findOrFail($cartItem->product_variant_id)->price,
+        ]);
+
+        return response()->json($cartItem);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(cart_items $cartItem)
+    // Xóa mục khỏi giỏ hàng
+    public function destroyItem(cart_items $cartItem)
     {
         $cart = $cartItem->cart;
         $cartItem->delete();
         return response()->json($cart->load('items'));
     }
 
-
     private function getCart(Request $request, $createIfNotExists = false)
     {
-        if (Auth::check()) {
-            return Carts::firstOrCreate(
-                ['user_id' => Auth::id()],
-                ['created_at' => now(), 'updated_at' => now()]
-            );
+        // Nếu người dùng đã đăng nhập
+        if ($request->user()) {
+            return Carts::firstOrCreate(['user_id' => $request->user()->id]);
         }
 
+        // Nếu là khách, kiểm tra guest_id từ cookie
         $guestId = $request->cookie('guest_id') ?? Str::uuid();
+
+        // Set cookie guest_id nếu chưa có
         if (!$request->cookie('guest_id')) {
-            cookie()->queue(cookie('guest_id', $guestId, 60 * 24 * 30));
+            Cookie::queue('guest_id', $guestId, 60 * 24 * 30); // 30 ngày
         }
 
-        return Carts::firstOrCreate(
-            ['guest_id' => $guestId],
-            ['created_at' => now(), 'updated_at' => now()]
-        );
+        return Carts::firstOrCreate(['guest_id' => $guestId]);
     }
 
     public function getListCart(Request $request)
