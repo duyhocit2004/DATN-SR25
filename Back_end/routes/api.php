@@ -1,7 +1,9 @@
 <?php
 use App\Http\Controllers\Api\ApiAuthController;
+use App\Http\Controllers\Api\ApiBannerController;
 use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiUserController;
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,8 +18,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+
+
 Route::middleware('auth:sanctum')->group( function (){
-Route::get('/users', [ApiUserController::class, 'user']);
 Route::delete('/logout',[ApiAuthController::class,'logout']);
 Route::get('/user',[ApiAuthController::class,'user']);
 });
@@ -33,3 +37,13 @@ Route::post('products', [ApiProductController::class,'store']);
 Route::get('products/{id}', [ApiProductController::class,'show']);
 Route::put('products/{id}', [ApiProductController::class,'update']);
 Route::delete('products/{id}', [ApiProductController::class,'destroy']);
+
+//Banner trang chu
+Route::apiResource('banner',ApiBannerController::class);
+//users
+Route::get('users', [ApiUserController::class, 'index']);
+Route::post('users', [ApiUserController::class, 'store']);
+Route::get('users/{id}', [ApiUserController::class, 'show']);
+Route::put('users/{id}', [ApiUserController::class, 'update']);
+Route::delete('users/{id}', [ApiUserController::class, 'destroy']);
+
