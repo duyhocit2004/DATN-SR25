@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProductVariants;
 use Illuminate\Http\Request;
 
 class ApiVariantController extends Controller
@@ -12,7 +13,8 @@ class ApiVariantController extends Controller
      */
     public function index()
     {
-        // $VariantColor = 
+        $VariantColor = ProductVariants::query()->get();
+        return response()->json($VariantColor);
     }
 
     /**

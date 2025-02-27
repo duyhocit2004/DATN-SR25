@@ -6,9 +6,19 @@ import "../layout/cart.css";
 const CART_KEY = "cart";
 
 export const GetCart = (): ICart[] => {
-    const cart = localStorage.getItem(CART_KEY);
-    return cart ? JSON.parse(cart) : [];
+    try {
+        const cart = localStorage.getItem("cart");
+        const parsedCart: ICart[] = cart ? JSON.parse(cart) : [];
+        if (!Array.isArray(parsedCart)) throw new Error("Dữ liệu giỏ hàng không hợp lệ");
+
+        // Lọc bỏ phần tử null hoặc không có id
+        return parsedCart.filter(item => item && item.id !== undefined);
+    } catch (error) {
+        console.error("Lỗi khi đọc giỏ hàng từ localStorage:", error);
+        return [];
+    }
 };
+
 
 const SaveCart = (cart: ICart[]) => {
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
@@ -27,7 +37,11 @@ export const UpdateCartItem = (id: number, quantity: number, size: string, color
     return cart;
 };
 export const AddToCart = (item: ICart) => {
-    const startTime = performance.now();
+    if (!item || !item.id || !item.image) {
+        console.error("Sản phẩm không hợp lệ khi thêm vào giỏ hàng:", item);
+        return;
+    }
+
     let cart = GetCart();
     const itemIndex = cart.findIndex(
         (cartItem) => cartItem.id === item.id && cartItem.size === item.size && cartItem.color === item.color
@@ -40,10 +54,10 @@ export const AddToCart = (item: ICart) => {
     }
 
     SaveCart(cart);
-    const endTime = performance.now();
-    console.log(`AddToCart took ${endTime - startTime}ms`);
+    console.log("Giỏ hàng sau khi thêm:", cart);
     return cart;
 };
+
 
 export const RemoveFromCart = (id: number) => {
     let cart = GetCart().filter((item) => item.id !== id);
@@ -53,8 +67,10 @@ export const RemoveFromCart = (id: number) => {
 
 export const GetCartLength = (): number => {
     const cart = GetCart();
-    return cart.reduce((acc, item) => acc + item.quantity, 0);
+    if (!Array.isArray(cart)) return 0; // Kiểm tra xem cart có phải là mảng không
+    return cart.reduce((acc, item) => acc + (item?.quantity || 0), 0); // Tránh lỗi khi item bị null hoặc undefined
 };
+
 
 const fetchColorsAndSizes = async () => {
     try {
@@ -82,7 +98,7 @@ const Cart = () => {
     useEffect(() => {
         const cartData = GetCart();
         setCart(cartData);
-        setTotal(cartData.reduce((acc, item) => acc + item.price * item.quantity, 0));
+        setTotal(cartData.reduce((acc, item) => acc + ((item?.price || 0) * (item?.quantity || 0)), 0));
 
         fetchColorsAndSizes().then((data) => {
             setColors(data.colors || []);
@@ -117,6 +133,9 @@ const Cart = () => {
             navigate("/checkout?guest=true");
         }
     };
+
+
+    
 
     return (
         <div className="cart-container">

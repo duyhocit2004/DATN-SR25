@@ -153,76 +153,71 @@ class ApiCartController extends Controller
     
 
     public function getListCart(Request $request)
-    {
-         $this->getCart($request);
-        // Kiểm tra xem người dùng đã xác thực chưa
-        if (!$request->user()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Người dùng chưa được xác thực',
-                'data' => []
-            ], 401); // Trả về mã lỗi 401 nếu không xác thực
-        }
-
-        // Lấy giỏ hàng của người dùng
-        $cart = Carts::where('user_id', $request->user()->id)->first();
-
-        if (!$cart) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Không tìm thấy giỏ hàng',
-                'data' => []
-            ]);
-        }
-
-        // Lấy các sản phẩm trong giỏ hàng
-        $cartItems = cart_items::where('cart_id', $cart->id)->get();
-
-        // Lấy thông tin sản phẩm
-        $products = $cartItems->map(function ($item) {
-            return $item->product; // Hoặc truy xuất thông tin sản phẩm theo cách cần thiết
-        });
-
+{
+    // Kiểm tra xác thực người dùng
+    if (!$request->user()) {
         return response()->json([
-            'success' => true,
-            'message' => 'Đã lấy lại sản phẩm trong giỏ hàng thành công',
-            'data' => $products
+            'success' => false,
+            'message' => 'Người dùng chưa được xác thực',
+            'data' => []
+        ], 401);
+    }
+
+    // Lấy ID người dùng
+    $userId = $request->user()->id;
+
+    // Kiểm tra nếu $userId là null
+    if (!$userId) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Không tìm thấy ID người dùng',
+            'data' => []
+        ], 400);
+    }
+
+    // Lấy giỏ hàng của người dùng
+    $cart = Carts::where('user_id', $userId)->first();
+
+    if (!$cart) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Không tìm thấy giỏ hàng',
+            'data' => []
         ]);
     }
 
-    public function getListCart(Request $request)
-    {
-         $this->getCart($request);
-        // Kiểm tra xem người dùng đã xác thực chưa
-        if (!$request->user()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Người dùng chưa được xác thực',
-                'data' => []
-            ], 401); // Trả về mã lỗi 401 nếu không xác thực
-        }
+    // Lấy các sản phẩm trong giỏ hàng, tránh vấn đề N+1 bằng with('product')
+    $cartItems = Cart_items::where('cart_id', $cart->id)->get();
 
-        // Lấy giỏ hàng của người dùng
-        $cart = Carts::where('user_id', $request->user()->id)->first();
+    if ($cartItems->isEmpty()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Giỏ hàng trống',
+            'data' => []
+        ]);
+    }
+
+    // Chuẩn bị danh sách sản phẩm
+    // $products = $cartItems->map(function ($item) {
+    //     return [
+    //         'product_id' => optional($item->products->name_product),
+    //         // 'size' => ,
+    //         'name'       => optional($item->product)->name,
+    //         'price'      => optional($item->product)->price,
+    //         'quantity'   => $item->quantity,
+    //         'total'      => optional($item->product)->price * $item->quantity
+    //     ];
+    // });
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Đã lấy sản phẩm trong giỏ hàng thành công',
+        'data' => [
             
-        if (!$cart) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Không tìm thấy giỏ hàng',
-                'data' => []
-            ]);
-        }
+        ]
+    ]);
+}
 
-        // Lấy các sản phẩm trong giỏ hàng
-        $cartItems = cart_items::where('cart_id', $cart->id)->get();
 
-        // Lấy thông tin sản phẩm
-        $products = $cartItems;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Đã lấy lại sản phẩm trong giỏ hàng thành công',
-            'data' => $products
-        ]);
-    }
+    
 }

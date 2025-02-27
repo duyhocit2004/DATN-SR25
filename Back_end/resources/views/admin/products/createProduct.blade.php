@@ -73,9 +73,9 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3 mx-1">
-                                        <label class="form-label" for="quanlity">Số lượng</label>
-                                        <input class="form-control" id="quanlity"  value="{{old('quanlity')}}"name="quanlity" type="text" placeholder="Nhập số lượng">
-                                        @error('quanlity')
+                                        <label class="form-label" for="base_stock">Số lượng</label>
+                                        <input class="form-control" id="base_stock"  value="{{old('base_stock')}}"name="base_stock" type="text" placeholder="Nhập số lượng">
+                                        @error('base_stock')
                                         <p class="text-danger">{{ $message }}</p>
                                         @enderror
                                     </div>
@@ -133,7 +133,7 @@
                                         <label class="form-label" for="file">Ảnh</label>
                                         <input class="form-control" onchange="previewImage(this, 0)" id="file"
                                             name="file" type="file" placeholder="200" value="{{old('file')}}">
-                                        @error('quanlity')
+                                        @error('file')
                                             <p class="text-danger">{{ $message }}</p>
                                         @enderror
                                     </div>
@@ -301,8 +301,8 @@
               </select>
             </div>
             <div class="col-3">
-              <label class="form-label" for="	quanlity">số lượng</label>
-              <input class="form-control" id="quanlity_${variantCount}" name="variants[${variantCount}][quanlity]" type="text" placeholder="30">
+              <label class="form-label" for="quantity">số lượng</label>
+              <input class="form-control" id="quantity_${variantCount}" name="variants[${variantCount}][quantity]" type="text" placeholder="30">
             </div>
             <div class="col-3">
               <label class="form-label" for="price">giá</label>
