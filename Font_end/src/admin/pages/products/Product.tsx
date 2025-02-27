@@ -5,6 +5,11 @@ import { useEffect, useState } from "react";
 import { IProducts } from "../../../interface/Products";
 import { DeleteProduct, ListProduct, UpdateProduct } from "../../../service/products/productService";
 import ProductList from "./ProductList";
+import { Layout, Button, Space, Typography, message, Spin, Card } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+
+const { Content } = Layout;
+const { Title } = Typography;
 
 
 const Products: React.FC = () => {
@@ -65,44 +70,30 @@ const Products: React.FC = () => {
     }, []);
 
     return (
-        <div>
-            <div className="dashboards">
-                <div>
-                    <div className="container-fluid">
-                        <div className="row">
-                            <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                                <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                                    <h1 className="h2">Danh Sách Sản Phẩm</h1>
-                                    <div className="btn-toolbar mb-2 mb-md-0">
-                                        <div className="btn-group me-2">
-                                            <NavLink to={`/admin/products/add-product`}>
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-sm btn-outline-secondary"
-                                                >
-                                                    Thêm Sản Phẩm
-                                                </button>
-                                            </NavLink>
-                                        </div>
-                                    </div>
-                                </div>
-                                {loading && <p>Đang tải dữ liệu...</p>}
-                                {error && <p>Lỗi: {error}</p>}
-                                {!loading && !error && (
-                                    <ProductList
-                                        products={products}
-                                        loading={loading}
-                                        error={error}
-                                        updateProduct={updateProducts}
-                                        deleteProduct={deleteProducts}
-                                    />
-                                )}
-                            </main>
-                        </div>
-                    </div>
+        <>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Title level={2}>Danh Sách Sản Phẩm</Title>
+                    <NavLink to={`/admin/products/add-product`}>
+                        <Button type="primary" icon={<PlusOutlined />}>Thêm Sản Phẩm</Button>
+                    </NavLink>
                 </div>
-            </div>
-        </div>
+                {loading ? (
+                    <div style={{ textAlign: "center", padding: "20px" }}>
+                        <Spin size="large" />
+                    </div>
+                ) : error ? (
+                    <Typography.Text type="danger">Lỗi: {error}</Typography.Text>
+                ) : (
+                    <ProductList 
+                        products={products} 
+                        loading={loading} 
+                        error={error} 
+                        updateProduct={updateProducts} 
+                        deleteProduct={deleteProducts} 
+                    />
+                )}
+        </>
+                
     );
 };
 

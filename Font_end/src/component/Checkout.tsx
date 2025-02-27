@@ -14,46 +14,31 @@ const Checkout = () => {
     });
 
     useEffect(() => {
-        // Kiểm tra nếu là khách vãng lai
-        setIsGuest(searchParams.get("guest") === "true");
-
-        // Nếu không phải khách vãng lai, lấy thông tin user từ API
-        const token = localStorage.getItem("token");
-        if (token && !isGuest) {
-            fetch("http://127.0.0.1:8000/api/user", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-                .then((res) => res.json())
-                .then((data) => {
-                    setUser(data);
-                    setFormData({
-                        name: data.name || "",
-                        phone: data.phone || "",
-                        address: data.address || "",
-                        note: "",
-                    });
-                })
-                .catch((error) => console.error("Lỗi lấy thông tin user:", error));
+        const savedOrder = localStorage.getItem("pendingOrder");
+        if (savedOrder) {
+            console.log("Đơn hàng chưa gửi:", JSON.parse(savedOrder));
+            alert("Bạn có đơn hàng chưa gửi, vui lòng thử lại!");
         }
-    }, [searchParams]);
+    }, []);
+    
 
     // Xử lý thay đổi form
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Xử lý xác nhận đơn hàng
     const handleConfirmOrder = () => {
         const cart = localStorage.getItem("cart");
         if (!cart) return alert("Giỏ hàng rỗng!");
-
+    
         const orderData = {
             ...formData,
             cart: JSON.parse(cart),
         };
-
+    
+        // Lưu đơn hàng vào localStorage (tạm thời)
+        localStorage.setItem("pendingOrder", JSON.stringify(orderData));
+    
         fetch("http://127.0.0.1:8000/api/orders", {
             method: "POST",
             headers: {
@@ -62,14 +47,18 @@ const Checkout = () => {
             body: JSON.stringify(orderData),
         })
             .then((res) => res.json())
-            .then(() => {
+            .then((data) => {
                 alert("Đặt hàng thành công!");
                 localStorage.removeItem("cart");
-                navigate("/"); // Quay về trang chủ
+                localStorage.removeItem("pendingOrder");
+                navigate("/");
             })
-            .catch((error) => console.error("Lỗi đặt hàng:", error));
+            .catch((error) => {
+                console.error("Lỗi đặt hàng:", error);
+                alert("Đặt hàng thất bại, sẽ thử lại sau!");
+            });
     };
-
+    
     return (
         <div className="checkout-container">
             <h2>Thanh toán</h2>

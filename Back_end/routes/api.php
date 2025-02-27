@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\ApiColorController;
+use App\Http\Controllers\Api\ApiOrderController;
 use App\Http\Controllers\api\ApiSizeController;
 use App\Http\Controllers\api\ApiVoucherController;
 use Illuminate\Http\Request;
@@ -26,6 +27,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::post('login',[ApiAuthController::class,'login']);
 Route::post('register',[ApiAuthController::class,'register']);
+
 
 Route::middleware('auth:sanctum')->group( function (){
     Route::post('/logout', [ApiAuthController::class, 'logout']);
@@ -52,35 +54,44 @@ Route::put('products/{id}', [ApiProductController::class,'update']);
 Route::delete('products/{id}', [ApiProductController::class,'destroy']);
 // Route::get('products/{id}/id', [ApiProductController::class,'getid']);
 
+
 // Route danh mục
-Route::get('categories', [ApiCategoryController::class,'index']);
-Route::post('categories', [ApiCategoryController::class,'store']);
-Route::get('categories/{id}', [ApiCategoryController::class,'show']);
-Route::put('categories/{id}', [ApiCategoryController::class,'update']);
-Route::delete('categories/{id}', [ApiCategoryController::class,'destroy']);
+Route::get('categories', [ApiCategoryController::class, 'index']);
+Route::post('categories', [ApiCategoryController::class, 'store']);
+Route::get('categories/{id}', [ApiCategoryController::class, 'show']);
+Route::put('categories/{id}', [ApiCategoryController::class, 'update']);
+Route::delete('categories/{id}', [ApiCategoryController::class, 'destroy']);
 
 // Route màu
-Route::get('colors', [ApiColorController::class,'index']);
-Route::post('colors', [ApiColorController::class,'store']);
-Route::get('colors/{id}', [ApiColorController::class,'show']);
-Route::put('colors/{id}', [ApiColorController::class,'update']);
-Route::delete('colors/{id}', [ApiColorController::class,'destroy']);
+Route::get('colors', [ApiColorController::class, 'index']);
+Route::post('colors', [ApiColorController::class, 'store']);
+Route::get('colors/{id}', [ApiColorController::class, 'show']);
+Route::put('colors/{id}', [ApiColorController::class, 'update']);
+Route::delete('colors/{id}', [ApiColorController::class, 'destroy']);
 
 // Route Api Size
-Route::get('sizes', [ApiSizeController::class,'index']);
-Route::post('sizes', [ApiSizeController::class,'store']);
-Route::get('sizes/{id}', [ApiSizeController::class,'show']);
-Route::put('sizes/{id}', [ApiSizeController::class,'update']);
-Route::delete('sizes/{id}', [ApiSizeController::class,'destroy']);
+Route::get('sizes', [ApiSizeController::class, 'index']);
+Route::post('sizes', [ApiSizeController::class, 'store']);
+Route::get('sizes/{id}', [ApiSizeController::class, 'show']);
+Route::put('sizes/{id}', [ApiSizeController::class, 'update']);
+Route::delete('sizes/{id}', [ApiSizeController::class, 'destroy']);
 
-Route::get('vouchers', [ApiVoucherController::class,'index']);
-Route::post('vouchers', [ApiVoucherController::class,'store']);
-Route::get('vouchers/{id}', [ApiVoucherController::class,'show']);
-Route::put('vouchers/{id}', [ApiVoucherController::class,'update']);
-Route::delete('vouchers/{id}', [ApiVoucherController::class,'destroy']);
+Route::get('vouchers', [ApiVoucherController::class, 'index']);
+Route::post('vouchers', [ApiVoucherController::class, 'store']);
+Route::get('vouchers/{id}', [ApiVoucherController::class, 'show']);
+Route::put('vouchers/{id}', [ApiVoucherController::class, 'update']);
+Route::delete('vouchers/{id}', [ApiVoucherController::class, 'destroy']);
+
+
+//Order
+Route::get('/orders', [ApiOrderController::class, 'index']);
+Route::post('/orders', [ApiOrderController::class, 'store']);
+Route::get('/orders/{id}', [ApiOrderController::class, 'show']);
+Route::put('/orders/{id}', [ApiOrderController::class, 'update']);
+Route::delete('/orders/{id}', [ApiOrderController::class, 'destroy']);
 
 //Banner trang chủ
-Route::apiResource('banner',ApiBannerController::class);
+Route::apiResource('banner', ApiBannerController::class);
 
 //users
 Route::get('users', [ApiUserController::class, 'index']);
@@ -121,10 +132,10 @@ Route::get('banners/{id}', [ApiBannerController::class, 'show']);
     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
 
 
+
 //     Route::post('/add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
 //     Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
 //     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
 // });
-
 
 

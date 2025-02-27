@@ -1,6 +1,10 @@
 import React from 'react';
-import { Table, Button, Space } from 'antd';
+import { Table, Button, Space, Spin, Typography } from 'antd';
 import { NavLink } from 'react-router-dom';
+import type { ColumnsType } from 'antd/es/table';
+
+
+const { Text } = Typography;
 
 type Color = {
   id: number;
@@ -17,60 +21,54 @@ type Props = {
 const ListColor: React.FC<Props> = ({ colors, loading, error, deleteColor }) => {
   const safeColors = Array.isArray(colors) ? colors : [];
 
+  const columns:ColumnsType<Color> = [
+    {
+      title: 'STT',
+      dataIndex: 'index',
+      key: 'index',
+      render: (_: any, __: Color, index: number) => index + 1,
+      align: 'center',
+    },
+    {
+      title: 'Tên Màu',
+      dataIndex: 'name',
+      key: 'name',
+      align: 'center',
+    },
+    {
+      title: 'Thao Tác',
+      key: 'action',
+      align: 'center',
+      render: (_: any, record: Color) => (
+        <Space>
+          <NavLink to={`/admin/colors/edit/${record.id}`}>
+            <Button type="primary">
+              Cập nhật
+            </Button>
+          </NavLink>
+          <Button type="primary" danger onClick={() => deleteColor(record.id)}>
+            Xóa
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
+  if (loading) {
+    return <Spin tip="Đang tải..." style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }} />;
+  }
+
+  if (error) {
+    return <Text type="danger" style={{ display: 'block', textAlign: 'center', marginTop: 20 }}>{`Lỗi: ${error}`}</Text>;
+  }
+
   return (
-    <div>
-      <div className="table-responsive small">
-        <table className="table table-striped table-sm">
-          <thead>
-            <tr className="text-center">
-              <th scope="col">STT</th>
-              <th scope="col">Tên Màu</th>
-              <th scope="col">Thao Tác</th>
-            </tr>
-          </thead>
-          <tbody className="text-center">
-            {loading && (
-              <tr>
-                <td colSpan={3}>Đang tải...</td>
-              </tr>
-            )}
-            {error && (
-              <tr>
-                <td colSpan={3}>Lỗi: {error}</td>
-              </tr>
-            )}
-            {safeColors.length > 0 ? (
-              safeColors.map((color, index) => (
-                <tr key={color.id}>
-                  <td>{index + 1}</td>
-                  <td>{color.name}</td>
-                  <td>
-                    <div className="action-buttons">
-                      <NavLink to={`/admin/colors/edit/${color.id}`}>
-                        <button type="button" className="btn btn-warning">
-                          Cập nhật
-                        </button>
-                      </NavLink>
-                      <button
-                        type="button"
-                        className="btn btn-danger"
-                        onClick={() => deleteColor(color.id)}
-                      >
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={3}>Không có dữ liệu</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <Table
+      dataSource={safeColors}
+      columns={columns}
+      pagination={{ pageSize: 10 }}
+      locale={{ emptyText: 'Không có dữ liệu' }}
+    />
   );
 };
 
