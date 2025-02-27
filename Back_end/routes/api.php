@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\ApiColorController;
+use App\Http\Controllers\Api\ApiDashBoardController;
 use App\Http\Controllers\Api\ApiOrderController;
 use App\Http\Controllers\api\ApiSizeController;
 use App\Http\Controllers\api\ApiVoucherController;
@@ -137,5 +138,10 @@ Route::get('banners/{id}', [ApiBannerController::class, 'show']);
 //     Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
 //     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
 // });
+
+route::get('/count-customer',[ApiDashBoardController::class,'countCustomer']);
+route::get('/totalsum',[ApiDashBoardController::class,'totalsum']);
+route::get('/countOrder',[ApiDashBoardController::class,'countOrder']);
+route::get('/order-chart',[ApiDashBoardController::class,'getOrderDataorder']);
 
 

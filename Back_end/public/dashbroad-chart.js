@@ -7,7 +7,7 @@ document.getElementById('updateAllChartsButton').addEventListener('click', funct
         return;
     }
 
-    if (new Date(startDate) > new Date(endDate)) {
+    if (startDate > endDate) {
         alert('Ngày kết thúc phải sau ngày bắt đầu!');
         return;
     }
