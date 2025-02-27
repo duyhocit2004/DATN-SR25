@@ -60,13 +60,13 @@ class ApiProductController extends Controller
     public function show(string $id)
     {
         $products = Products::query()->findOrFail($id);
-        $albumproduct = imageProduct::where('products_id','=',$id)->get();
+        // $albumproduct = imageProduct::where('products_id','=',$id)->get();
         // // return new ProductResource($products);
 
         return response()->json([
             
-            'data' => [$products,$albumproduct],
-            // 'data' => $products,
+            // 'data' => [$products,$albumproduct],
+            'data' => $products,
             'success' => true,
             'message' => 'Chi tiết sản phẩm'
         ], 200);
@@ -147,7 +147,7 @@ class ApiProductController extends Controller
         return response()->json([
             'data' => $products,
             'success' => true,
-            'message' => 'Chi tiết sản phẩm'
+            'message' => 'Chi tiết sản phẩm getid'
         ], 200);
     }
 }

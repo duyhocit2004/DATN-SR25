@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { ICart } from "../interface/Cart";
-import { GetCartLength } from "./Cart";
+import { ICart } from "../../interface/Cart";
+import { GetCartLength } from "../Cart";
+
+
 
 
 const CART_KEY = "cart";
