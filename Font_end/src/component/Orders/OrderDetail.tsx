@@ -5,20 +5,37 @@ import { getOrderById } from "../../service/orders/orderService";
 const OrderDetail = () => {
   const { id } = useParams();
   const [order, setOrder] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true); // Thêm trạng thái loading
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     if (!id || isNaN(Number(id))) {
       setLoading(false);
       return;
     }
-    
-    getOrderById(Number(id)).then((data) => {
-      setOrder(data as any);
-      setLoading(false); // Dừng loading sau khi lấy dữ liệu
-    });
+  
+    const localOrder = localStorage.getItem(`order_${id}`);
+    if (localOrder) {
+      console.log("Lấy đơn hàng từ localStorage:", JSON.parse(localOrder));
+      setOrder(JSON.parse(localOrder));
+      setLoading(false);
+      return;
+    }
+  
+    getOrderById(Number(id))
+      .then((data) => {
+        if (data) {
+          console.log("Lưu đơn hàng vào localStorage:", data);
+          localStorage.setItem(`order_${id}`, JSON.stringify(data)); // Lưu vào localStorage
+          setOrder(data);
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy đơn hàng:", error);
+        setLoading(false);
+      });
   }, [id]);
-
+  
   if (loading) return <p>Đang tải dữ liệu...</p>;
   if (!order) return <p className="text-red-500">Không tìm thấy đơn hàng!</p>;
 
