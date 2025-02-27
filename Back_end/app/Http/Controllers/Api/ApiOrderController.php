@@ -29,7 +29,6 @@ class ApiOrderController extends Controller
      */
     public function store(Request $request)
     {
-=
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'order_code' => 'required|unique:orders,order_code',

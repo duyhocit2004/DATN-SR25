@@ -14,7 +14,7 @@ class ProductVariants extends Model
         'color_id',
         'categories_id',
         'size_id',
-        'quanlity',
+        'quantity',
         'price',
     ];
     public function color (){

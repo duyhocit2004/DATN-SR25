@@ -9,51 +9,107 @@
 </style>    
 @endsection
 @section('main')
-    <section class="container">
-         
-    </section>
-<div class="id">
-    <canvas id="myChart" width="800" height="200"></canvas>
+<div class="page-body">
+    <div class="container-fluid">
+      <div class="page-title">
+        <div class="row">
+          <div class="col-sm-6 col-12"> 
+            <h2>Chart</h2>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <section>
+      <div class="section__content section__content--p30" style="margin-bottom: 16px">
+          <div class="date-filter row align-items-center g-3">
+              <div class="container-fluid" style="margin-left: 14px">
+                  <div class="row">
+                      <div class="col">
+                          <label for="startDate" class="form-label">Từ ngày:</label>
+                          <input type="date" id="startDate" name="start_date" class="form-control">
+                      </div>
+
+                      <div class="col">
+                          <label for="endDate" class="form-label">Đến ngày:</label>
+                          <input type="date" id="endDate" name="end_date" class="form-control">
+                      </div>
+
+                      <div class="col d-flex align-items-end" style="max-width: 140px">
+                          <button id="updateAllChartsButton" class="btn btn-primary w-100">Kiểm tra</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+      <!-- Chart widget top Start-->
+      <div class="row">
+        <div class="col-xl-4 col-md-12 box-col-12">
+          <div class="card overflow-hidden">
+            <div class="chart-widget-top">
+              <div class="row card-body pb-0 m-0">
+                <div class="col-xl-9 col-lg-8 col-9 p-0">
+                  <h3 class="mb-2">Total Sale</h3>
+                  <h3>$3654.00</h3><span>Compare to last month</span>
+                </div>
+                <div class="col-xl-3 col-lg-4 col-3 text-end p-0">
+                  <h6 class="text-success">+65%</h6>
+                </div>
+              </div>
+              <div>
+                <div id="chart-widget1"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-12 box-col-12">
+          <div class="card overflow-hidden">
+            <div class="chart-widget-top">
+              <div class="row card-body pb-0 m-0">
+                <div class="col-xl-9 col-lg-8 col-9 p-0">
+                  <h3 class="mb-2">Total Project</h3>
+                  <h3>12569</h3><span>Compare to last month</span>
+                </div>
+                <div class="col-xl-3 col-lg-4 col-3 text-end p-0">
+                  <h6 class="text-success">+65%</h6>
+                </div>
+              </div>
+              <div id="chart-widget2">
+                <div class="flot-chart-placeholder" id="chart-widget-top-second"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-12 box-col-12">
+          <div class="card overflow-hidden">
+            <div class="chart-widget-top">
+              <div class="row card-body pb-0 m-0">
+                <div class="col-xl-9 col-lg-8 col-9 p-0">
+                  <h3 class="mb-2">Total Product</h3>
+                  <h3>93M</h3><span>Compare to last month</span>
+                </div>
+                <div class="col-xl-3 col-lg-4 col-3 text-end p-0">
+                  <h6 class="text-success">+65%</h6>
+                </div>
+              </div>
+              <div id="chart-widget3">
+                <div class="flot-chart-placeholder" id="chart-widget-top-third"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="container">
+    <canvas id="myChart"></canvas>
 </div>
+  
 
 @endsection
 @section('js')
-<script>
-console.log("Script đang chạy!");
- const ctx = document.getElementById('myChart').getContext('2d');
-const myChart = new Chart(ctx, {
-    type: 'bar', // Kiểu biểu đồ
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
-</script>
+  <script src="{{asset('dashbroad-chart.js')}}"></script>
+  <script src="{{asset('product-chart.js')}}"></script>
 @endsection

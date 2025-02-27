@@ -28,7 +28,7 @@ use App\Http\Controllers\admin\CommentController;
 
 Route::get('/', function () {
     return view('admin.dashboard');
-});
+})->name('/');
 
 // Route sản phẩm và biến sản phẩm
 route::get('product', [ProductController::class, 'index'])->name('product');
