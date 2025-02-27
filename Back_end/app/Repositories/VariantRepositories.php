@@ -25,7 +25,7 @@ class VariantRepositories
             'product_id' => $id,
             'color_id' => $data['color_id'],
             'size_id' => $data['size_id'],
-            'quanlity' => $data['quanlity'],
+            'quantity' => $data['quantity'],
             'price' => $data['price'],
             'view' => 0,
             'content' => null
@@ -40,7 +40,7 @@ class VariantRepositories
                 'product_id' => $id,
                 'color_id' => $as['color_id'],
                 'size_id' => $as['size_id'],
-                'quanlity' => $as['quanlity'],
+                'quantity' => $as['quantity'],
                 'price' => $as['price'],
                 'view' => 0,
                 'content' => null
