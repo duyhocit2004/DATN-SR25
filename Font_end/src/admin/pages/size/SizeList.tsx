@@ -1,6 +1,9 @@
 import React from 'react';
-import { Table, Button, Space } from 'antd';
+import { Table, Button, Space, Spin, Alert, Card, Typography } from 'antd';
 import { NavLink } from 'react-router-dom';
+import type { ColumnsType } from 'antd/es/table';
+
+const { Title, Text } = Typography;
 
 type Size = {
   id: number;
@@ -17,60 +20,69 @@ type Props = {
 const ListSize: React.FC<Props> = ({ sizes, loading, error, deleteSize }) => {
   const safeSizes = Array.isArray(sizes) ? sizes : [];
 
-  return (
-    <div>
-      <div className="table-responsive small">
-        <table className="table table-striped table-sm">
-          <thead>
-            <tr className="text-center">
-              <th scope="col">STT</th>
-              <th scope="col">Tên Size</th>
-              <th scope="col">Thao Tác</th>
-            </tr>
-          </thead>
-          <tbody className="text-center">
-            {loading && (
-              <tr>
-                <td colSpan={3}>Đang tải...</td>
-              </tr>
-            )}
-            {error && (
-              <tr>
-                <td colSpan={3}>Lỗi: {error}</td>
-              </tr>
-            )}
-            {safeSizes.length > 0 ? (
-              safeSizes.map((size, index) => (
-                <tr key={size.id}>
-                  <td>{index + 1}</td>
-                  <td>{size.name}</td>
-                  <td>
-                    <div className="action-buttons">
-                      <NavLink to={`/admin/sizes/edit/${size.id}`}>
-                        <button type="button" className="btn btn-warning">
-                          Cập nhật
-                        </button>
-                      </NavLink>
-                      <button
-                        type="button"
-                        className="btn btn-danger"
-                        onClick={() => deleteSize(size.id)}
-                      >
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={3}>Không có dữ liệu</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+  // Định nghĩa các cột cho bảng
+  const columns: ColumnsType<Size> = [
+    {
+      title: 'STT',
+      key: 'index',
+      render: (_, __, index) => index + 1, // Hiển thị số thứ tự
+      align: 'center',
+    },
+    {
+      title: 'Tên Size',
+      dataIndex: 'name',
+      key: 'name',
+      align: 'center',
+    },
+    {
+      title: 'Thao Tác',
+      key: 'actions',
+      align: 'center',
+      render: (_, record) => (
+        <Space size="middle">
+          <NavLink to={`/admin/sizes/edit/${record.id}`}>
+            <Button type="primary" style={{ backgroundColor: '#1890ff', borderColor: '#1890ff' }}>
+              Chỉnh sửa
+            </Button>
+          </NavLink>
+          <Button
+            type="primary"
+            danger
+            onClick={() => deleteSize(record.id)}
+          >
+            Xóa
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}>
+        <Spin size="large" tip="Đang tải..." />
       </div>
-    </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ margin: '20px 0' }}>
+        <Alert message={`Lỗi: ${error}`} type="error" showIcon />
+      </div>
+    );
+  }
+
+  return (
+    
+      <Table
+        dataSource={safeSizes}
+        columns={columns}
+        rowKey="id"
+        pagination={{ pageSize: 10 }}
+        locale={{ emptyText: 'Không có dữ liệu' }}
+       
+      />
   );
 };
 

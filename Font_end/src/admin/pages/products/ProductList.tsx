@@ -1,83 +1,94 @@
-import React from 'react';
-import { Table, Button, Space, Image, Card, message, Popconfirm } from 'antd';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { IProducts } from '../../../interface/Products';
+import React from "react";
+import { Table, Button, Image, Card, message, Popconfirm, Typography, Space } from "antd";
+import { NavLink } from "react-router-dom";
+import { IProducts } from "../../../interface/Products";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+
+const { Text } = Typography;
 
 type Props = {
   products: IProducts[];
   loading: boolean;
   error: string | null;
-  updateProduct: (id: number | string, updateproduct: IProducts) => void;
   deleteProduct: (id: number | string) => void;
 };
 
 const ListProduct: React.FC<Props> = ({ products, loading, error, deleteProduct }) => {
-  const safeproduct = Array.isArray(products) ? products : [];
+  const columns = [
+    {
+      title: "STT",
+      dataIndex: "index",
+      key: "index",
+      render: (_: any, __: IProducts, index: number) => <Text>{index + 1}</Text>,
+    },
+    {
+      title: "Tên Sản Phẩm",
+      dataIndex: "name_product",
+      key: "name_product",
+      render: (text: string) => <Text strong>{text}</Text>,
+    },
+    {
+      title: "Hình Ảnh",
+      dataIndex: "image",
+      key: "image",
+      render: (image: string, record: IProducts) => (
+        <Image width={50} src={image} alt={record.name_product} />
+      ),
+    },
+    {
+      title: "Giá Gốc",
+      dataIndex: "price_regular",
+      key: "price_regular",
+      render: (price: number) => <Text>{price.toLocaleString()}₫</Text>,
+    },
+    {
+      title: "Giá Sale",
+      dataIndex: "price_sale",
+      key: "price_sale",
+      render: (price: number) => (
+        <Text type="danger">{price.toLocaleString()}₫</Text>
+      ),
+    },
+    {
+      title: "Tồn Kho",
+      dataIndex: "base_stock",
+      key: "base_stock",
+      render: (stock: number) => <Text>{stock}</Text>,
+    },
+    {
+      title: "Thao Tác",
+      key: "action",
+      render: (_: any, record: IProducts) => (
+        <Space>
+          <NavLink to={`/admin/products/edit/${record.id}`}>
+            <Button type="primary" icon={<EditOutlined />} size="middle">
+              Cập nhật
+            </Button>
+          </NavLink>
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xóa?"
+            onConfirm={() => deleteProduct(record.id)}
+            okText="Xóa"
+            cancelText="Hủy"
+          >
+            <Button danger icon={<DeleteOutlined />} size="middle">
+              Xóa
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
 
   return (
-    <div>
-      <div className="table-responsive small">
-        <table className="table table-striped table-sm">
-          <thead>
-            <tr className="text-center">
-              <th scope="col">STT</th>
-              <th scope="col">Tên Sản Phẩm</th>
-              <th scope="col">image</th>
-              <th scope="col">Giá Gốc</th>
-              <th scope="col">Giá Sale</th>
-              <th scope="col">Tồn Kho</th>
-              <th scope="col">Thao Tác</th>
-            </tr>
-          </thead>
-          <tbody className="text-center">
-            {loading && (
-              <tr>
-                <td colSpan={7}>Đang tải...</td>
-              </tr>
-            )}
-            {error && (
-              <tr>
-                <td colSpan={7}>Lỗi: {error}</td>
-              </tr>
-            )}
-            {safeproduct.length > 0 ? (
-              safeproduct.map((product, index) => (
-                <tr key={product.id}>
-                  <td>{index + 1}</td>
-                  <td>{product.name_product}</td>
-                  <td>
-                    <Image width={50} src={product.image} alt={product.name_product} />
-                  </td>
-                  <td>{product.price_regular}₫</td>
-                  <td>{product.price_sale}₫</td>
-                  <td>{product.base_stock}</td>
-                  <td>
-                    <div className="action-buttons">
-                      <NavLink to={`/admin/products/edit/${product.id}`}>
-                        <button type="button" className="btn btn-warning">
-                          Cập nhật
-                        </button>
-                      </NavLink>
-                      <button
-                        type="button"
-                        className="btn btn-danger"
-                        onClick={() => deleteProduct(product.id)}
-                      >
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={3}>Không có dữ liệu</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+   
+      <Table
+        columns={columns}
+        dataSource={products.map((product, index) => ({ ...product, key: product.id, index }))}
+        loading={loading}
+        pagination={{ pageSize: 5 }}
+      />
+    
   );
 };
 

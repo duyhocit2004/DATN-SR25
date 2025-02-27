@@ -1,5 +1,9 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { Table, Button, Space, Spin, Alert, Typography } from "antd";
+import type { ColumnsType } from "antd/es/table";
+
+const { Text } = Typography;
 
 type Category = {
   id: number;
@@ -17,62 +21,74 @@ type Props = {
 const ListCategory: React.FC<Props> = ({ categories, loading, error, deleteCategory }) => {
   const safeCategories = Array.isArray(categories) ? categories : [];
 
-  return (
-    <div>
-      <div className="table-responsive small">
-        <table className="table table-striped table-sm">
-          <thead>
-            <tr className="text-center">
-              <th scope="col">STT</th>
-              <th scope="col">Tên Danh Mục</th>
-              <th scope="col">Loại Danh Mục</th>
-              <th scope="col">Thao Tác</th>
-            </tr>
-          </thead>
-          <tbody className="text-center">
-            {loading && (
-              <tr>
-                <td colSpan={4}>Đang tải...</td>
-              </tr>
-            )}
-            {error && (
-              <tr>
-                <td colSpan={4}>Lỗi: {error}</td>
-              </tr>
-            )}
-            {safeCategories.length > 0 ? (
-              safeCategories.map((category, index) => (
-                <tr key={category.id}>
-                  <td>{index + 1}</td>
-                  <td>{category.name}</td>
-                  <td>{category.type}</td>
-                  <td>
-                    <div className="action-buttons">
-                      <NavLink to={`/admin/categories/edit/${category.id}`}>
-                        <button type="button" className="btn btn-warning">
-                          Cập nhật
-                        </button>
-                      </NavLink>
-                      <button
-                        type="button"
-                        className="btn btn-danger"
-                        onClick={() => deleteCategory(category.id)}
-                      >
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4}>Không có dữ liệu</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+  // Định nghĩa các cột cho bảng
+  const columns: ColumnsType<Category> = [
+    {
+      title: 'STT',
+      key: 'index',
+      render: (_, __, index) => index + 1, // Hiển thị số thứ tự
+      align: 'center',
+    },
+    {
+      title: 'Tên Danh Mục',
+      dataIndex: 'name',
+      key: 'name',
+      align: 'center',
+    },
+    {
+      title: 'Loại Danh Mục',
+      dataIndex: 'type',
+      key: 'type',
+      align: 'center',
+    },
+    {
+      title: 'Thao Tác',
+      key: 'actions',
+      align: 'center',
+      render: (_, record) => (
+        <Space size="middle">
+          <NavLink to={`/admin/categories/edit/${record.id}`}>
+            <Button type="primary" >
+              Cập nhật
+            </Button>
+          </NavLink>
+          <Button
+            type="primary"
+            danger
+            onClick={() => deleteCategory(record.id)}
+          >
+            Xóa
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
+        <Spin size="large" tip="Đang tải..." />
       </div>
-    </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ margin: '20px 0' }}>
+        <Alert message={`Lỗi: ${error}`} type="error" showIcon />
+      </div>
+    );
+  }
+
+  return (
+    <Table
+      dataSource={safeCategories}
+      columns={columns}
+      rowKey="id"
+      pagination={{ pageSize: 10 }}
+      locale={{ emptyText: 'Không có dữ liệu' }}
+      
+    />
   );
 };
 
