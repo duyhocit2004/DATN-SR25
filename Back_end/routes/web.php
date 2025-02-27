@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\AuthController;
 use App\Http\Controllers\admin\colorController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\Admin\SizeController;
@@ -44,20 +45,26 @@ route::get('color', [colorController::class, 'index'])->name("color");
 route::get('createcolor', [colorController::class, 'create'])->name("createcolor");
 route::post('postcolor', [colorController::class, 'store'])->name("postcolor");
 Route::get('/color/{id}/edit', [ColorController::class, 'edit'])->name('getcolor');
-route::put('updatecolor/{id}/update',[colorController::class,'Update'])->name("updatecolor");
-route::delete('deletecolor/{id}/delete',[colorController::class,'destroy'])->name("deletecolor");
-Route::prefix('admmin')->middleware('admin')->group(function(){
+route::put('updatecolor/{id}/update', [colorController::class, 'Update'])->name("updatecolor");
+route::delete('deletecolor/{id}/delete', [colorController::class, 'destroy'])->name("deletecolor");
+Route::prefix('admmin')->middleware('admin')->group(function () {});
 
-});
+Route::get('users', [UserController::class, 'index'])->name('users.index');
+Route::get('users/show', [UserController::class, 'show'])->name('users.show');
+Route::post('users', [UserController::class, 'store'])->name('users.store');
+Route::get('users/create', [UserController::class, 'create'])->name('users.create');
+Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
 //Route Auth
 //Đăng nhập
-route::get('login',[AuthController::class,'formLogin'])->name("login");
-route::post('post-login',[AuthController::class,'postLogin'])->name("post-login");
+route::get('login', [AuthController::class, 'formLogin'])->name("login");
+route::post('post-login', [AuthController::class, 'postLogin'])->name("post-login");
 
 // Đăng kí
-route::get('register',[AuthController::class,'formRegister'])->name("register");
-route::post('post-register',[AuthController::class,'postRegister'])->name("post-register");
+route::get('register', [AuthController::class, 'formRegister'])->name("register");
+route::post('post-register', [AuthController::class, 'postRegister'])->name("post-register");
 
 // Đăng xuất
-route::get('logout',[AuthController::class,'logout'])->name("logout");
+route::get('logout', [AuthController::class, 'logout'])->name("logout");
