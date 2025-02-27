@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IUser } from "../../interface/User";
 import Header from "../../component/Header";
-import Footer from "../../component/Footer";
+import Footer from "../../component/Page/Footer";
 
 
 const UserProfile = () => {
