@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+
 const Product = () => {
     return (
         <div className="page-wrapper">
@@ -413,6 +414,39 @@ const Product = () => {
                                                         <div className="price-box">
                                                             <span className="product-price">$49.00</span>
                                                         </div>
+                                                        <div className="border rounded-lg shadow-md p-4 bg-white">
+      {/* Product Image */}
+      <div className="w-full h-48 bg-gray-200 flex justify-center items-center rounded-lg">
+        <img
+          src="https://via.placeholder.com/150"
+          alt="Product"
+          className="w-32 h-auto"
+        />
+      </div>
+
+      {/* Product Info */}
+      <div className="mt-4">
+        <h3 className="text-lg font-semibold">
+          <a href="/productdetail" className="text-blue-600 hover:underline">
+            Ultimate 3D Bluetooth Speaker
+          </a>
+        </h3>
+
+        {/* Ratings */}
+        <div className="flex items-center mt-2">
+          <div className="bg-yellow-400 h-4 w-24 rounded-full" style={{ width: "100%" }}></div>
+          <span className="ml-2 text-sm text-gray-600">5.0</span>
+        </div>
+
+        {/* Price */}
+        <div className="mt-2 text-red-500 font-semibold text-lg">$49.00</div>
+
+        {/* Add to Cart Button */}
+        <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+          Add to Cart
+        </button>
+      </div>
+    </div>
                                                     </div>
                                                 </div>
 

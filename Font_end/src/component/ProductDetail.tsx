@@ -562,6 +562,57 @@ const ProductDetail = () => {
                                 <div className="price-box">
                                     <span className="product-price">$49.00</span>
                                 </div>
+                                <div className="container mx-auto py-8">
+      {/* Breadcrumb */}
+      <nav className="text-gray-600 text-sm mb-4">
+        <ol className="breadcrumb flex space-x-2">
+          <li>Home</li>
+          <li>/</li>
+          <li>Product</li>
+        </ol>
+      </nav>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Product Image */}
+        <div className="bg-gray-100 p-4 rounded-lg">
+          <img
+            src="https://via.placeholder.com/400"
+            alt="Product"
+            className="w-full h-auto rounded-lg"
+          />
+        </div>
+
+        {/* Product Info */}
+        <div>
+          <h1 className="text-2xl font-bold">Men Black Sports Shoes</h1>
+          <div className="text-red-500 text-lg font-semibold mt-2">Price: $59.99</div>
+          <div className="mt-2">
+            <span className="bg-green-500 text-white px-2 py-1 rounded text-sm">HOT</span>
+            <span className="bg-red-500 text-white px-2 py-1 rounded text-sm ml-2">-16%</span>
+          </div>
+
+          <p className="text-gray-600 mt-4">
+            This is a high-quality sports shoe designed for comfort and durability.
+          </p>
+
+          {/* Quantity Selector */}
+          <div className="mt-4 flex items-center space-x-4">
+            <label className="font-semibold">Quantity:</label>
+            <input
+              type="number"
+              min="1"
+              defaultValue="1"
+              className="w-16 border px-2 py-1 rounded"
+            />
+          </div>
+
+          {/* Add to Cart Button */}
+          <button className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
                             </div>
                         </div>
 
@@ -571,6 +622,8 @@ const ProductDetail = () => {
         </main>
       
     </div>
+
+    
    
     );
 };
