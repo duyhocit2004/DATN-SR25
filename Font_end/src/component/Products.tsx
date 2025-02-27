@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -77,35 +78,32 @@ const Product = () => {
                                                 <option value="price-desc">Sort by price: high to low</option>
                                             </select>
                                         </div>
+=======
+import React from "react";
+import { useCart } from "../contexts/CartContext";
+>>>>>>> ac837e85b9c2ab138216b228990b2cb4719fa1d5
 
 
-                                    </div>
-                                </div>
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+}
 
-                                <div className="toolbox-right">
-                                    <div className="toolbox-item toolbox-show">
-                                        <label>Show:</label>
+const products: Product[] = [
+  { id: "1", name: "Áo Thun", price: 200000 },
+  { id: "2", name: "Quần Jean", price: 350000 },
+];
 
-                                        <div className="select-custom">
-                                            <select name="count" className="form-control">
-                                                <option value="12">12</option>
-                                                <option value="24">24</option>
-                                                <option value="36">36</option>
-                                            </select>
-                                        </div>
-                                    </div>
+const Products: React.FC = () => {
+  const { addProductToCart } = useCart();
 
-                                    <div className="toolbox-item layout-modes">
-                                        <a href="category.html" className="layout-btn btn-grid active" title="Grid">
-                                            <i className="icon-mode-grid"></i>
-                                        </a>
-                                        <a href="category-list.html" className="layout-btn btn-list" title="List">
-                                            <i className="icon-mode-list"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </nav>
+  const handleAddToCart = async (productId: string) => {
+    await addProductToCart(productId, 1);
+    alert("Đã thêm sản phẩm vào giỏ hàng!");
+  };
 
+<<<<<<< HEAD
                             <div className="row">
                                 <div className="col-6 col-sm-4">
                                     <div className="product-default">
@@ -468,6 +466,21 @@ const Product = () => {
 
 
     );
+=======
+  return (
+    <div>
+      <h2>Sản phẩm</h2>
+      <ul>
+        {products.map((product) => (
+          <li key={product.id}>
+            {product.name} - {product.price.toLocaleString()}₫
+            <button onClick={() => handleAddToCart(product.id)}>Thêm vào giỏ</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+>>>>>>> ac837e85b9c2ab138216b228990b2cb4719fa1d5
 };
 
-export default Product;
+export default Products;

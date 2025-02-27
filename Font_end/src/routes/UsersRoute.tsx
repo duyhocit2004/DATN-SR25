@@ -2,12 +2,12 @@ import React from 'react';
 import { Routes, Route } from "react-router-dom";
 import HomePage from "../component/HomePage";
 import Product from "../component/Products";
-import ProductDetail from "../component/ProductDetail";
 import Login from "../client/auth/login";
 import Register from "../client/auth/register";
 import Cart from "../component/Cart";
 import MyAccount from "../component/MyAccount";
 import Checkout from "../component/Checkout";
+import ProductDetail from '../component/ProductDetail';
 
 const UserRoutes = () => {
     return (
@@ -15,7 +15,7 @@ const UserRoutes = () => {
             <Routes>
                 <Route path='/' element={<HomePage />} />
                 <Route path='/products' element={<Product />} />
-                <Route path='/product_detail' element={<ProductDetail />} />
+                <Route path='/product/:id' element={<ProductDetail />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/cart" element={<Cart />} />

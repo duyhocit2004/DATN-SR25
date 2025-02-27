@@ -1,123 +1,95 @@
-import React from 'react';
-import { Table, Button, Space, Image, Card, message, Popconfirm } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { Table, Button, Image, Card, message, Popconfirm, Typography, Space } from "antd";
+import { NavLink } from "react-router-dom";
+import { IProducts } from "../../../interface/Products";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
-// Dữ liệu giả lập cho sản phẩm
-const products = [
-    {
-        key: '1',
-        id: 1,
-        name: 'Áo thun nam',
-        image: 'https://via.placeholder.com/100',
-        quantity: 50,
-        price: 200000,
-    },
-    {
-        key: '2',
-        id: 2,
-        name: 'Quần jeans nữ',
-        image: 'https://via.placeholder.com/100',
-        quantity: 30,
-        price: 350000,
-    },
-    {
-        key: '3',
-        id: 3,
-        name: 'Đồng hồ thời trang',
-        image: 'https://via.placeholder.com/100',
-        quantity: 10,
-        price: 1500000,
-    },
-];
+const { Text } = Typography;
 
-const ProductList: React.FC = () => {
-    const navigate = useNavigate();
-
-    // Hàm xử lý khi nhấn nút "Thêm sản phẩm"
-    const handleAddProduct = () => {
-        navigate('/admin/products/add');
-    };
-
-    // Hàm xử lý khi nhấn nút "Sửa sản phẩm"
-    const handleEditProduct = (id: number) => {
-        navigate(`/admin/products/edit/${id}`);
-    };
-
-    // Hàm xử lý khi nhấn nút "Xóa sản phẩm"
-    const handleDeleteProduct = (id: number) => {
-        message.success('Xóa sản phẩm thành công!');
-        console.log('Xóa sản phẩm có ID:', id);
-    };
-
-    // Cấu hình các cột trong bảng
-    const columns = [
-        {
-            title: 'Số thứ tự',
-            dataIndex: 'key',
-            key: 'key',
-            render: (text: string, record: any, index: number) => index + 1,
-        },
-        {
-            title: 'Tên',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: 'Ảnh',
-            dataIndex: 'image',
-            key: 'image',
-            render: (image: string) => <Image width={80} src={image} alt="Ảnh sản phẩm" />,
-        },
-        {
-            title: 'Số lượng trong kho',
-            dataIndex: 'quantity',
-            key: 'quantity',
-        },
-        {
-            title: 'Giá sản phẩm (VNĐ)',
-            dataIndex: 'price',
-            key: 'price',
-            render: (price: number) => price.toLocaleString('vi-VN') + ' ₫',
-        },
-        {
-            title: 'Thao tác',
-            key: 'actions',
-            render: (text: any, record: any) => (
-                <Space size="middle">
-                    <Button type="primary" onClick={() => handleEditProduct(record.id)}>
-                        Chỉnh sửa
-                    </Button>
-                    <Popconfirm
-                        title="Bạn có chắc chắn muốn xóa sản phẩm này không?"
-                        onConfirm={() => handleDeleteProduct(record.id)}
-                        okText="Có"
-                        cancelText="Không"
-                    >
-                        <Button danger>Xóa</Button>
-                    </Popconfirm>
-                </Space>
-            ),
-        },
-    ];
-
-    return (
-        <Card 
-            title="Quản lý sản phẩm" 
-            bordered={false} 
-            extra={
-                <Button type="primary" onClick={handleAddProduct}>
-                    Thêm sản phẩm
-                </Button>
-            }
-        >
-            <Table 
-                columns={columns} 
-                dataSource={products} 
-                pagination={false} 
-                rowKey="id" 
-            />
-        </Card>
-    );
+type Props = {
+  products: IProducts[];
+  loading: boolean;
+  error: string | null;
+  deleteProduct: (id: number | string) => void;
 };
 
-export default ProductList;
+const ListProduct: React.FC<Props> = ({ products, loading, error, deleteProduct }) => {
+  const columns = [
+    {
+      title: "STT",
+      dataIndex: "index",
+      key: "index",
+      render: (_: any, __: IProducts, index: number) => <Text>{index + 1}</Text>,
+    },
+    {
+      title: "Tên Sản Phẩm",
+      dataIndex: "name_product",
+      key: "name_product",
+      render: (text: string) => <Text strong>{text}</Text>,
+    },
+    {
+      title: "Hình Ảnh",
+      dataIndex: "image",
+      key: "image",
+      render: (image: string, record: IProducts) => (
+        <Image width={50} src={image} alt={record.name_product} />
+      ),
+    },
+    {
+      title: "Giá Gốc",
+      dataIndex: "price_regular",
+      key: "price_regular",
+      render: (price: number) => <Text>{price.toLocaleString()}₫</Text>,
+    },
+    {
+      title: "Giá Sale",
+      dataIndex: "price_sale",
+      key: "price_sale",
+      render: (price: number) => (
+        <Text type="danger">{price.toLocaleString()}₫</Text>
+      ),
+    },
+    {
+      title: "Tồn Kho",
+      dataIndex: "base_stock",
+      key: "base_stock",
+      render: (stock: number) => <Text>{stock}</Text>,
+    },
+    {
+      title: "Thao Tác",
+      key: "action",
+      render: (_: any, record: IProducts) => (
+        <Space>
+          <NavLink to={`/admin/products/edit/${record.id}`}>
+            <Button type="primary" icon={<EditOutlined />} size="middle">
+              Cập nhật
+            </Button>
+          </NavLink>
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xóa?"
+            onConfirm={() => deleteProduct(record.id)}
+            okText="Xóa"
+            cancelText="Hủy"
+          >
+            <Button danger icon={<DeleteOutlined />} size="middle">
+              Xóa
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+
+  return (
+   
+      <Table
+        columns={columns}
+        dataSource={products.map((product, index) => ({ ...product, key: product.id, index }))}
+        loading={loading}
+        pagination={{ pageSize: 5 }}
+      />
+    
+  );
+};
+
+export default ListProduct;

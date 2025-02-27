@@ -6,6 +6,6 @@ use App\Models\categories;
 
     class CategoryReposoties{
         public function Getall(){
-            return categories::all();
+            return categories::paginate(8);
         }
     }

@@ -18,8 +18,10 @@ class ApiOrderController extends Controller
      */
     public function index()
     {
+
         $orders = Order::latest()->paginate(10);
         return response()->json(['success' => true, 'data' => $orders], 200);
+
     }
 
     /**
@@ -70,6 +72,7 @@ class ApiOrderController extends Controller
             DB::rollBack();
             return response()->json(['success' => false, 'message' => 'Lỗi khi tạo đơn hàng.', 'error' => $e->getMessage()], 500);
         }
+
     }
 
 

@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 const fetchUserRole = async (token: string) => {
   try {
-    const response = await axios.get("http://127.0.0.1:8000/api/users", {
+    const response = await axios.get("http://127.0.0.1:8000/api/user", {
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log("Vai trò người dùng:", response.data.role);  // Log tại đây
@@ -31,7 +31,7 @@ const Login = () => {
       if (response.data.access_token) {
         localStorage.setItem("token", response.data.access_token);
         toast.success("Đăng Nhập Thành Công.");
-
+        // navigate(/)
         return response.data;
       } else {
         toast.error("Đăng Nhập Không Thành Công.");

@@ -5,20 +5,20 @@ namespace App\Repositories;
 use App\Models\products;
 use App\Models\imageProduct;
 use Illuminate\Support\Facades\Storage;
+use Cloudinary\Cloudinary;
+
 
 class IamgeRepositories {
+    private $Cloudinary;
+    public function __construct(Cloudinary $Cloudinary){
+        $this->Cloudinary = $Cloudinary;
+    }
     public function inserImage($id,$image){
-        // dd($image);
-    foreach ($image as $value) {
-        $forimage = null;
-        if($value->isValid()){
-            $forimage = $value->store('product','public');
             imageProduct::create([
                 'products_id'=>$id,
-                'image_link'=>$forimage
+                'image_link'=>$image
             ]);
-        }
-    }
+
         return true;
 
     }
@@ -42,14 +42,14 @@ class IamgeRepositories {
         }
     
         // Lưu ảnh mới
+        // dd($image);
             foreach ($image as $file) {
-                if ($file->isValid()) {
+                    $imagePath = null;
                     $imagePath = $file->store('product', 'public');
                     imageProduct::create([
                         'products_id' => $id,
                         'image_link' => $imagePath
                     ]);
-                }
             }
     
         return true;

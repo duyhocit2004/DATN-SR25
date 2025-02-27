@@ -39,8 +39,8 @@ class OrderDetailSeeder extends Seeder
                     'order_id' => $orderId,
                     'product_id' => $productId,
                     'product_variant_id' => $variantId,
-                    'color_id' => $colorId, // Sửa thành color_id
-                    'size_id' => $sizeId, // Sửa thành size_id
+                    'color_id' => $colorId, 
+                    'size_id' => $sizeId,
                     'quantity' => $quantity,
                     'total_price' => $quantity * rand(50000, 200000),
                     'status' => 'pending',
