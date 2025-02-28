@@ -4,6 +4,10 @@ namespace App\Http\Controllers\admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+<<<<<<< HEAD
+=======
+use App\Models\Carts;
+>>>>>>> master
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+<<<<<<< HEAD
     /**
      * Display a listing of the resource.
      *
@@ -20,15 +25,40 @@ class AuthController extends Controller
     public function formLogin()
     {
         return view('auth.login');
+=======
+    // Form đăng nhập
+    public function formLogin()
+    {
+        return view('.admin.auth.login');
+>>>>>>> master
     }
 
     // Xử lý đăng nhập
     public function postLogin(Request $request)
     {
+<<<<<<< HEAD
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
 
             return redirect()->route('index');
+=======
+        //Validate đăng nhập
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ], [
+            'email.required' => 'Vui lòng nhập email',
+            'email.email' => 'Email không đúng định dạng',
+            'password.required' => 'Vui lòng nhập mật khẩu',
+            'password.unique' => 'Mật khẩu phải nhiều hơn 6 kí tự',
+        ]);
+
+        $remember = $request->has('remember'); // Lấy trạng thái checkbox Remember Me
+
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember)) {
+
+            return redirect()->route('users.index');
+>>>>>>> master
         }
         return redirect()->back()->with('error', 'Sai email hoặc mật khẩu');
     }
@@ -36,12 +66,17 @@ class AuthController extends Controller
     // Form đăng kí
     public function formRegister()
     {
+<<<<<<< HEAD
         return view('auth.register');
+=======
+        return view('admin.auth.register');
+>>>>>>> master
     }
 
     // Xử lý đăng kí
     public function postRegister(Request $request)
     {
+<<<<<<< HEAD
         $request->merge(['password'=>Hash::make($request->password)]);
 
         try {
@@ -57,5 +92,46 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->back();
+=======
+        //Validate đăng kí
+        $request->validate([
+            'email' => 'required|email|unique:users,email',
+            'name' => 'required|string|max:255',
+            'phone_number' => 'required|regex:/^0[0-9]{9,10}$/',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required'
+        ], [
+            'name.required' => 'Tên không được bỏ trống',
+            'phone_number.required' => 'Số điện thoại không được bỏ trống',
+            'email.required' => 'Email không được để trống.',
+            'email.email' => 'Email không đúng định dạng.',
+            'email.unique' => 'Email này đã tồn tại, vui lòng chọn email khác.',
+            'password.required' => 'Vui lòng nhập mật khẩu',
+            'password.min' => 'Mật khẩu phải nhiều hơn 6 kí tự',
+            'password_confirmation.required' => 'Vui lòng xác nhận mật khẩu',
+            'password.confirmed' => 'Xác nhận mật khẩu sai.',
+        ]);
+
+        $request->merge(['password' => Hash::make($request->password)]);
+
+        try {
+            User::create($request->all());
+        } catch (\Throwable $th) {
+            // dd($th);
+        }
+        return redirect()->route('login')->with('success', 'Đăng kí thành công');
+    }
+
+    // Đăng xuất
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate(); // Xóa toàn bộ session
+
+        $request->session()->regenerateToken(); // Tạo CSRF token mới
+
+        return redirect('login');
+>>>>>>> master
     }
 }

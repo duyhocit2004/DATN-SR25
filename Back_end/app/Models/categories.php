@@ -14,6 +14,10 @@ class categories extends Model
         'type'
     ];
     public function product (){
+<<<<<<< HEAD
         return $this->hasOne(products::class);
+=======
+        return $this->hasOne(products::class,'categories_id');
+>>>>>>> master
     }
 }

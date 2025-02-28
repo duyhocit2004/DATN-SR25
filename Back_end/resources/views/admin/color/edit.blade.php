@@ -1,4 +1,3 @@
-
 @extends('admin.index')
 @section('main')
 <div class="container">

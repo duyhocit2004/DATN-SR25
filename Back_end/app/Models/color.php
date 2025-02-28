@@ -14,4 +14,10 @@ class color extends Model
         'created_at',
         'updated_at'
     ];
+<<<<<<< HEAD
+=======
+    public function codecolor(){
+        return $this->hasOne(codecolors::class);
+    }
+>>>>>>> master
 }

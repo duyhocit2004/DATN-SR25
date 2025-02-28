@@ -27,7 +27,6 @@ class ColorRepositories {
             return true;
         }
         return false;
-
     }
 
     public function delete($id){

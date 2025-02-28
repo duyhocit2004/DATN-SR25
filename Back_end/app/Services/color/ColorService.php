@@ -51,13 +51,10 @@ class ColorService implements IColorService  {
 
     public function delete($id){
         try {
-
             $this->ColorRepositories->delete($id);
             return redirect()->route('color')->with('xóa thành công');
         } catch (\Throwable $th) {
             return redirect()->route('color')->with('danger',$th->getMessage());
         }
     }
-
-
 }
