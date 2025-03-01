@@ -6,22 +6,37 @@ use App\Models\products;
 use Cloudinary\Cloudinary;
 use App\Models\imageProduct;
 use Illuminate\Http\Request;
+use App\Models\ProductVariants;
+use App\Services\Size\sizeService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
+use App\Models\color;
+use App\Models\Size;
+use App\Repositories\IamgeRepositories;
 use Illuminate\Support\Facades\Storage;
 use App\Services\product\ProductService;
-
+use App\Services\product\VariantService;
 
 class ApiProductController extends Controller
 {
     public $ProductService;
     protected $cloudinary;
-
-    public function __construct(ProductService $ProductService, Cloudinary $cloudinary)
+    public $VariantService;
+    public $IamgeRepositories;
+    public $sizeService;
+    public $colorService ;
+    public function __construct(ProductService $ProductService,
+     Cloudinary $cloudinary,
+     VariantService $VariantService,
+     IamgeRepositories $IamgeRepositories,
+     sizeService $sizeService)
     {
         $this->ProductService = $ProductService;
         $this->cloudinary = $cloudinary;
+        $this->VariantService = $VariantService;
+        $this->IamgeRepositories=$IamgeRepositories;
+        $this->sizeService =$sizeService;
     }
 
     public function index()
@@ -38,14 +53,44 @@ class ApiProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
+        $params = $request->only('categories_id','name_product','image','base_stock','price_regular','price_sale','description','contentcontent');
+        $variant = $request->only('variants');
+        
+        
         if (!$request->hasFile('image')) {
             return response()->json(['error' => 'Image file is required'], 400);
         }
-        $params = $request->all();
+       
         $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
         $params['image'] = $uploadedFile['secure_url'];
 
         $products = Products::create($params);
+
+        if ($request->has('variants')) {
+            $variant = $request->only('variants');
+
+            foreach ($variant as $value) {
+                if (isset($value['id'])) {
+                    $existingVariant = ProductVariants::find($value['id']);
+                    if (isset($existingVariant)) {
+                        $this->VariantService->insertId($existingVariant->id, $value);
+                    }
+                } else {
+                    $this->VariantService->createNotForeach($products->id, $value);
+                }
+
+            }
+        }
+        if ($request->hasFile('images')) {
+            $AlbumImage = $request->only('images');
+            foreach ($AlbumImage as $images) {
+                // Tải lên từng hình ảnh
+                $uploadedFile = $this->cloudinary->uploadApi()->upload($images->getRealPath());
+                // Lưu URL hình ảnh vào cơ sở dữ liệu
+                $this->IamgeRepositories->inserImage($products->id, $uploadedFile['secure_url']);
+            }
+        }
+
 
         return response()->json([
             'data' => $products,
@@ -61,11 +106,26 @@ class ApiProductController extends Controller
     {
         $products = Products::query()->findOrFail($id);
         $albumproduct = imageProduct::where('products_id','=',$id)->get();
+        $variants = ProductVariants::query()->where('product_id', '=', $id)
+         ->with(['color', 'size'])
+         ->get();
         // // return new ProductResource($products);
+        $variant = $variants->map(function ($variant) {
+            return [
+                'product_id'=>$variant->product_id,
+                'color_name' => $variant->color ? $variant->color->name : null,
+                'size_name' => $variant->size ? $variant->size->name : null,
+                'quantity'=>$variant->quantity,
+                'price'=>$variant->price,
+            ]; // Ensure you have a valid relationship to access name
+        });
+        $listSize = Size::get();
+        $listColor = color::get();
 
         return response()->json([
             
-            'data' => [$products,$albumproduct],
+            'data' => [$products,$albumproduct,$variant],
+            'list' =>[$listSize,$listColor ],
             // 'data' => $products,
             'success' => true,
             'message' => 'Chi tiết sản phẩm'

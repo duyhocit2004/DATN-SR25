@@ -32,6 +32,6 @@ class products extends Model
     }
 
     public function Imagelink(){
-        return $this->hasMany(imageProduct::class);
+        return $this->hasMany(imageProduct::class,'products_id');
     }
 }
