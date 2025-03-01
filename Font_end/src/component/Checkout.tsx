@@ -31,33 +31,32 @@ const Checkout = () => {
         const cart = localStorage.getItem("cart");
         if (!cart) return alert("Giỏ hàng rỗng!");
     
-        const orderData = {
-            ...formData,
+        const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+    
+        const newOrder = {
+            id: existingOrders.length > 0 ? existingOrders[existingOrders.length - 1].id + 1 : 1,
+            order_code: `ORD${Math.floor(Math.random() * 100000)}`,
+            user_name: formData.name,
+            email: "test@example.com",
+            phone_number: formData.phone,
+            address: formData.address,
+            total_price: JSON.parse(cart).reduce((acc: number, item: any) => acc + item.price * item.quantity, 0),
+            shipping_fee: 30000,
+            status: "Chờ xác nhận",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
             cart: JSON.parse(cart),
         };
     
-        // Lưu đơn hàng vào localStorage (tạm thời)
-        localStorage.setItem("pendingOrder", JSON.stringify(orderData));
+        existingOrders.push(newOrder);
+        localStorage.setItem("orders", JSON.stringify(existingOrders));
+        localStorage.removeItem("cart");
     
-        fetch("http://127.0.0.1:8000/api/orders", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(orderData),
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                alert("Đặt hàng thành công!");
-                localStorage.removeItem("cart");
-                localStorage.removeItem("pendingOrder");
-                navigate("/");
-            })
-            .catch((error) => {
-                console.error("Lỗi đặt hàng:", error);
-                alert("Đặt hàng thất bại, sẽ thử lại sau!");
-            });
+        alert("Đặt hàng thành công!");
+        navigate("/orders");
     };
+    
+    
     
     return (
         <div className="checkout-container">

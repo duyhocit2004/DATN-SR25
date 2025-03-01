@@ -207,7 +207,7 @@ class ApiProductController extends Controller
         return response()->json([
             'data' => $products,
             'success' => true,
-            'message' => 'Chi tiết sản phẩm'
+            'message' => 'Chi tiết sản phẩm getid'
         ], 200);
     }
 }
