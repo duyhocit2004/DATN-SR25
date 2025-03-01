@@ -1,20 +1,21 @@
 <?php
 
-use App\Http\Controllers\Api\ApiAuthController;
-use App\Http\Controllers\Api\ApiBannerController;
-use App\Http\Controllers\api\ApiCartController;
-use App\Http\Controllers\Api\ApiCategoryController;
-use App\Http\Controllers\Api\ApiProductController;
-use App\Http\Controllers\Api\ApiUserController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ImageController;
-use App\Http\Controllers\Api\ApiColorController;
-use App\Http\Controllers\Api\ApiDashBoardController;
-use App\Http\Controllers\Api\ApiOrderController;
-use App\Http\Controllers\api\ApiSizeController;
-use App\Http\Controllers\api\ApiVoucherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ImageController;
+use App\Http\Controllers\Api\ApiAuthController;
+use App\Http\Controllers\api\ApiCartController;
+use App\Http\Controllers\api\ApiSizeController;
+use App\Http\Controllers\Api\ApiUserController;
+use App\Http\Controllers\Api\ApiColorController;
+use App\Http\Controllers\Api\ApiOrderController;
+use App\Http\Controllers\Api\ApiBannerController;
+use App\Http\Controllers\Api\ApiProductController;
+use App\Http\Controllers\Api\ApiVariantController;
+use App\Http\Controllers\api\ApiVoucherController;
+use App\Http\Controllers\Api\ApiCategoryController;
+use App\Http\Controllers\Api\ApiDashBoardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -143,5 +144,8 @@ route::get('/count-customer',[ApiDashBoardController::class,'countCustomer']);
 route::get('/totalsum',[ApiDashBoardController::class,'totalsum']);
 route::get('/countOrder',[ApiDashBoardController::class,'countOrder']);
 route::get('/order-chart',[ApiDashBoardController::class,'getOrderDataorder']);
+
+// route::apiResource('/variant',[ApiVariantController::class]);
+
 
 
