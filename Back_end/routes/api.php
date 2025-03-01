@@ -91,7 +91,9 @@ Route::get('banners/{id}', [ApiBannerController::class, 'show']);
 // });
 // });
 
+// Route Api Cart
 Route::prefix('carts')->group(function () {
+    Route::get('/', [ApiCartController::class, 'index']);
     Route::get('{id}', [ApiCartController::class, 'show']);
     Route::post('/', [ApiCartController::class, 'store']);
     Route::put('{id}', [ApiCartController::class, 'update']);

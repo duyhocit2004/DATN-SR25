@@ -16,16 +16,17 @@ use PhpParser\Node\Stmt\TraitUseAdaptation;
 
 class ApiCartController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
+
+    public function index()
     {
-
-        $cart = $this->getCart($request);
-
-        return response()->json($cart);
+        $carts = Carts::with('items')->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'Danh sách giỏ hàng',
+            'data' => $carts
+        ]);
     }
+
 
     // Show chi tiết giỏ hàng
     public function show($id)
