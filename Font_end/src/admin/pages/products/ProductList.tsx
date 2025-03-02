@@ -86,7 +86,7 @@ const ListProduct: React.FC<Props> = ({ products, loading, error, deleteProduct 
         columns={columns}
         dataSource={products.map((product, index) => ({ ...product, key: product.id, index }))}
         loading={loading}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 10 }}
       />
     
   );
