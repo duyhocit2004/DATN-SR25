@@ -109,7 +109,6 @@ class ApiProductController extends Controller
         $variants = ProductVariants::query()->where('product_id', '=', $id)
          ->with(['color', 'size'])
          ->get();
-
         // // return new ProductResource($products);
         $variant = $variants->map(function ($variant) {
             return [
@@ -125,11 +124,9 @@ class ApiProductController extends Controller
 
         return response()->json([
             
-
             'data' => [$products,$albumproduct,$variant],
             'list' =>[$listSize,$listColor ],
             // 'data' => $products,
-
             'success' => true,
             'message' => 'Chi tiết sản phẩm'
         ], 200);

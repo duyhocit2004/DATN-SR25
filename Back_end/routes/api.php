@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\ApiUserController;
 use App\Http\Controllers\Api\ApiColorController;
 use App\Http\Controllers\Api\ApiOrderController;
 use App\Http\Controllers\Api\ApiBannerController;
+use App\Http\Controllers\Api\ApiCommentController;
 use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiVariantController;
 use App\Http\Controllers\api\ApiVoucherController;
@@ -43,6 +44,14 @@ Route::middleware('auth:sanctum')->group( function (){
         Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
 
     });
+
+        
+    //comment
+    Route::get('comments', [ApiCommentController::class,'index']);
+    Route::post('comments', [ApiCommentController::class,'store']);
+    Route::get('comments/{id}', [ApiCommentController::class,'show']);
+    Route::put('comments/{id}', [ApiCommentController::class,'update']);
+    Route::delete('comments/{id}', [ApiCommentController::class,'destroy']);
 });
 
 // Route::get('products', [ApiProductController::class, 'index']);
@@ -92,8 +101,6 @@ Route::get('/orders/{id}', [ApiOrderController::class, 'show']);
 Route::put('/orders/{id}', [ApiOrderController::class, 'update']);
 Route::delete('/orders/{id}', [ApiOrderController::class, 'destroy']);
 
-//Banner trang chủ
-Route::apiResource('banner', ApiBannerController::class);
 
 //users
 Route::get('users', [ApiUserController::class, 'index']);
@@ -104,10 +111,13 @@ Route::delete('users/{id}', [ApiUserController::class, 'destroy']);
 
 //cart
 
-//comment
+//banner
 Route::get('banners', [ApiBannerController::class, 'index']);
-Route::get('banners', [ApiBannerController::class, 'store']);
+Route::post('banners', [ApiBannerController::class, 'store']);
 Route::get('banners/{id}', [ApiBannerController::class, 'show']);
+Route::put('banners/{id}', [ApiBannerController::class, 'update']);
+Route::delete('banners/{id}', [ApiBannerController::class, 'destroy']);
+
 
 // Route Api Cart
 // Route::middleware('auth:sanctum')->group(function () {

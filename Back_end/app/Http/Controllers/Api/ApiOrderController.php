@@ -19,7 +19,7 @@ class ApiOrderController extends Controller
     public function index()
     {
       
-        $orders = Order::latest()->paginate(10);
+        $orders = Order::paginate(10);
         return response()->json(['success' => true, 'data' => $orders], 200);
 
     }
