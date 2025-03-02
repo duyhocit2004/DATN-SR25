@@ -84,7 +84,7 @@ class ProductController extends Controller
         $request->validate([
             'product'=>'required',
             'categories_id'=>'required|',
-            'quanlity'=>'required|',
+            'base_stock'=>'required|',
             'price_regular'=>'required|',
             // 'price_sale'=>'required|',
             'description'=>'required|',
@@ -92,15 +92,16 @@ class ProductController extends Controller
             ],[
             'product.required'=>'bạn chưa nhập tên sản phẩm',
             'categories_id.required'=>'bạn chưa chọn thể loại',
-            'quanlity.required'=>'bạn chưa nhập số lượng',
+            'base_stock.required'=>'bạn chưa nhập số lượng',
             'price_regular.required'=>'bạn chưa nhập giá chính',
             // 'price_sale.required'=>'bạn chưa nhập tên hình ảnh',
             'description.required'=>'bạn chưa nhập tiêu đề',
             'file.required'=>'bạn chưa chọn ảnh',
             'file.image'=>'bạn chưa chọn ảnh',
             ]);
-
+       
         $variant = $request->input('variants');
+        // dd($variant);
         $image = $request->file('images');
         $list = $request->all();
 
@@ -156,36 +157,44 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->validate([
-        'product'=>'required',
-        'categories_id'=>'required|',
-        'quanlity'=>'required|',
-        'price_regular'=>'required|',
-        // 'price_sale'=>'required|',
-        'description'=>'required|',
-        'file'=>'required|image',
-        ],[
-        'product.required'=>'bạn chưa nhập tên sản phẩm',
-        'categories_id.required'=>'bạn chưa chọn thể loại',
-        'quanlity.required'=>'bạn chưa nhập số lượng',
-        'price_regular.required'=>'bạn chưa nhập giá chính',
-        // 'price_sale.required'=>'bạn chưa nhập tên hình ảnh',
-        'description.required'=>'bạn chưa nhập tiêu đề',
-        'file.required'=>'bạn chưa chọn ảnh',
-        'file.image'=>'bạn chưa chọn ảnh',
-        ]);
-        
+
+        // dd($request->all());
+
+        // $request->validate([
+        // 'product'=>'required',
+        // 'categories_id'=>'required|',
+        // 'quanlity'=>'required|',
+        // 'price_regular'=>'required|',
+        // // 'price_sale'=>'required|',
+        // 'description'=>'required|',
+        // 'file'=>'required|image',
+        // ],[
+        // 'product.required'=>'bạn chưa nhập tên sản phẩm',
+        // 'categories_id.required'=>'bạn chưa chọn thể loại',
+        // 'quanlity.required'=>'bạn chưa nhập số lượng',
+        // 'price_regular.required'=>'bạn chưa nhập giá chính',
+        // // 'price_sale.required'=>'bạn chưa nhập tên hình ảnh',
+        // 'description.required'=>'bạn chưa nhập tiêu đề',
+        // 'file.required'=>'bạn chưa chọn ảnh',
+        // 'file.image'=>'bạn chưa chọn ảnh',
+        // ]);
+        // dd($request->all());
         $list = $request->except('_token', '_method', 'variants', 'images');
 
         if ($request->hasFile('file')) {
+            $listproduct = products::findOrFail($id);
+            $publicId = pathinfo($listproduct->image, PATHINFO_FILENAME);
+            $this->Cloudinary->adminApi()->deleteAssets([$publicId]);
+
             $fileimage = $this->Cloudinary->uploadApi()->upload($request->file('file')->getRealPath());
             $list['file'] = $fileimage['secure_url'];
         } else {
             $listproduct = products::findOrFail($id);
             $list['file'] = $listproduct['image'];
         }
+
         $idproduct = $this->ProductService->insertId($id, $list);
-        ;
+
         if ($request->has('images')) {
 
             $images1 = $request->file('images');
@@ -206,7 +215,7 @@ class ProductController extends Controller
             }
 
         }
-        // dd($request->has('variants'));
+       
         if ($request->has('variants')) {
             $variant = $request->input('variants');
 

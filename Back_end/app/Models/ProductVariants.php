@@ -12,9 +12,8 @@ class ProductVariants extends Model
     protected $fillable = [
        'product_id',
         'color_id',
-        'categories_id',
         'size_id',
-        'quanlity',
+        'quantity',
         'price',
     ];
     public function color (){

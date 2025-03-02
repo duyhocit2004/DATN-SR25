@@ -74,9 +74,14 @@ class UserController extends Controller
         ]);
         $data = $request->all();
         if ($request->hasFile('user_image')) {
+            
             $publicId = pathinfo($user->user_image, PATHINFO_FILENAME);
             $this->Cloudinary->adminApi()->deleteAssets([$publicId]);
-           
+            
+            $file = $this->Cloudinary->uploadApi()->upload($request->file('user_image')->getRealPath());
+            $data['user_image'] = $file['secure_url'];
+            
+
         }else{
             $data['user_image'] = $user->user_image;
         }
