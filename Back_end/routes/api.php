@@ -60,7 +60,7 @@ Route::get('categories', [ApiCategoryController::class, 'index']);
 Route::post('categories', [ApiCategoryController::class, 'store']);
 Route::get('categories/{id}', [ApiCategoryController::class, 'show']);
 Route::put('categories/{id}', [ApiCategoryController::class, 'update']);
-Route::delete('categories/{id}', [ApiCategoryController::class, 'destroy']);
+Route::delete('categories/{id}', [ApiCategoryController::class, 'destroy']); 
 
 // Route màu
 Route::get('colors', [ApiColorController::class, 'index']);
@@ -130,7 +130,6 @@ Route::get('banners/{id}', [ApiBannerController::class, 'show']);
     Route::post('/add-item', [ApiCartController::class, 'addItem'])->name('cart.addItem');
     Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
-
 
 
 //     Route::post('/add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
