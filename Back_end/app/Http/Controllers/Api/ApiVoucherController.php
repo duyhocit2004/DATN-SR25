@@ -21,9 +21,7 @@ class ApiVoucherController extends Controller
      */
     public function store(Request $request)
     {
-<<<<<<< HEAD
-        //
-=======
+
         $request->validate([
             'code' => 'required|string|max:255',
         ]);
@@ -41,7 +39,7 @@ class ApiVoucherController extends Controller
         ]);
 
         return response()->json(['message' => 'Thêm voucher thành công', 'voucher' => $voucher], 201);
->>>>>>> namnguyen
+
     }
 
     /**
@@ -49,13 +47,11 @@ class ApiVoucherController extends Controller
      */
     public function show(string $id)
     {
-<<<<<<< HEAD
-        //
-=======
+
         $voucher = Voucher::query()->findOrFail($id);
 
         return response()->json(['data' => $voucher], 200);
->>>>>>> namnguyen
+
     }
 
     /**
@@ -63,9 +59,6 @@ class ApiVoucherController extends Controller
      */
     public function update(Request $request, string $id)
     {
-<<<<<<< HEAD
-        //
-=======
         $voucher = Voucher::query()->findOrFail($id);
 
         $params = $request->all();
@@ -77,7 +70,7 @@ class ApiVoucherController extends Controller
         $voucher->update($params);
 
         return response()->json(['message' => 'Cập nhật voucher thành công', 'voucher' => $voucher], 200);
->>>>>>> namnguyen
+
     }
 
     /**
@@ -85,14 +78,12 @@ class ApiVoucherController extends Controller
      */
     public function destroy(string $id)
     {
-<<<<<<< HEAD
-        //
-=======
+
         $voucher = Voucher::query()->findOrFail($id);
 
         $voucher->delete();
 
         return response()->json(['message' => 'Xóa voucher thành công'], 200);
->>>>>>> namnguyen
+
     }
 }
