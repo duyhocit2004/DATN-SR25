@@ -16,16 +16,16 @@ class ApiCommentController extends Controller
     public function index()
     {
         $listComment = comments::get();
-        $list = $listComment->map(function ($query) {
-            return [
-                'products' => $query->product->name_product,
-                'user' => $query->user->name,
-                'content' => $query->content,
-                'rating' => $query->rating
-            ];
-        });
+        // $list = $listComment->map(function ($query) {
+        //     return [
+        //         'products' => $query->product->name_product,
+        //         'user' => $query->user->name,
+        //         'content' => $query->content,
+        //         'rating' => $query->rating
+        //     ];
+        // });
         return response()->json([
-            'data' => $list,
+            'data' => $listComment,
             'success' => 'thành công',
 
         ], 200);

@@ -135,8 +135,6 @@ const Cart = () => {
     };
 
 
-    
-
     return (
         <div className="cart-container">
             <h2>Giỏ hàng</h2>
