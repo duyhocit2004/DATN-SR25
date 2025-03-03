@@ -92,6 +92,7 @@ Route::get('banners/{id}', [ApiBannerController::class, 'show']);
 // });
 
 // Route Api Cart
+Route::middleware('auth:sanctum')->group(function () {
 Route::prefix('carts')->group(function () {
     Route::get('/', [ApiCartController::class, 'index']);
     Route::get('{id}', [ApiCartController::class, 'show']);
@@ -105,5 +106,7 @@ Route::prefix('carts')->group(function () {
     Route::delete('{cartId}/items/{cartItem}', [ApiCartController::class, 'destroyItem'])->name('carts.destroy.item');
 
 });
+});
+
 
 
