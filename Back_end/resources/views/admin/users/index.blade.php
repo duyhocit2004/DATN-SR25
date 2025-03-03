@@ -50,7 +50,7 @@
                                             <td>{{ $user->role }}</td>
                                             <td>
                                                 @if ($user->user_image)
-                                                    <img src="{{ asset('storage/' . $user->user_image) }}"
+                                                    <img src="{{ $user->user_image }}"
                                                         class="img-fluid rounded-circle"
                                                         style="max-width: 50px; max-height: 50px;" alt="User Image">
                                                 @else

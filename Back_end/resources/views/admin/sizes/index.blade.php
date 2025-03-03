@@ -6,7 +6,7 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-sm-6 col-12">
-                    <h2>Quản Lý Kích Thước</h2>
+                    <h2>Quản Lý Size <i class="fas fa-circle-check"></i></h2>
                 </div>
             </div>
         </div>
@@ -17,7 +17,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <a href="{{ route('sizes.create') }}" class="btn btn-success mb-3 shadow-sm" style="font-weight: 500; transition: background-color 0.3s, color 0.3s;">
-                    Thêm Kích Thước
+                    Thêm Size
                 </a>
                 <div class="card">
                     <div class="table-responsive">

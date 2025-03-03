@@ -59,37 +59,30 @@ class ApiCartController extends Controller
     // Tạo giỏ hàng mới
     public function store(Request $request)
     {
-        $value = false;
-        $iduser = Carts::where('user_id', '=', Auth::id())->get();
-        if (isset($iduser)) {
-            $cart = $this->getCart($request);
-            $value = true;
+        // Kiểm tra người dùng đã đăng nhập chưa
+        $userId = Auth::id();
+        $guestId = $request->cookie('guest_id') ?? Str::uuid();
+
+        $cartData = [
+            'user_id' => $userId,
+            'guest_id' => $userId ? null : $guestId
+        ];
+
+        // Tạo giỏ hàng mới
+        $cart = Carts::create($cartData);
+
+        // Nếu là khách, lưu guest_id vào cookie
+        if (!$userId) {
+            Cookie::queue('guest_id', $guestId, 60 * 24 * 30); // 30 ngày
         }
-        if ($value == true) {
-            $request->validate([
-                'product_variants_id' => 'required',
-                'quantity' => 'required|integer',
-            ]);
-            $cart = $this->getCart($request, true);
-            $variant = ProductVariants::findOrFail($request->product_variants_id);
 
-            $cartItem = $cart->items()->where('product_variants_id', $variant->id)->first();
-
-            if ($cartItem) {
-                $cartItem->quantity += $request->quantity;
-                $cartItem->sub_total = $cartItem->quantity * $variant->price;
-                $cartItem->save();
-            } else {
-                $cart->items()->create([
-                    'product_variants_id' => $variant->id,
-                    'quantity' => $request->quantity,
-                    'sub_total' => $request->quantity * $variant->price,
-                ]);
-            }
-
-            return response()->json($cart->load('items'));
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Tạo giỏ hàng thành công',
+            'data' => $cart
+        ]);
     }
+
 
 
     // Cập nhật số lượng mục trong giỏ hàng

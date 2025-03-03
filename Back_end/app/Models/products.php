@@ -32,6 +32,9 @@ class products extends Model
     }
 
     public function Imagelink(){
-        return $this->hasMany(imageProduct::class);
+        return $this->hasMany(imageProduct::class,'products_id');
+    }
+    public function comments(){
+        return $this->hasMany(comments::class,'products_id');
     }
 }

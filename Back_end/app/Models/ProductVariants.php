@@ -12,16 +12,15 @@ class ProductVariants extends Model
     protected $fillable = [
        'product_id',
         'color_id',
-        'categories_id',
         'size_id',
-        'quanlity',
+        'quantity',
         'price',
     ];
     public function color (){
         return $this->belongsTo(color::class,'color_id');
     }
     public function products(){
-        return $this->belongsTo(products::class,'product_id');
+        return $this->belongsTo(Products::class, 'product_id');
     }
     public function categories(){
         return $this->belongto(categories::class,'categories_id');

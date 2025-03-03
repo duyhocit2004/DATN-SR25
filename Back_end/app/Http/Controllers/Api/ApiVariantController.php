@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\products;
+use App\Models\ProductVariants;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 
 class ApiVariantController extends Controller
@@ -12,7 +15,8 @@ class ApiVariantController extends Controller
      */
     public function index()
     {
-        // $VariantColor = 
+        $VariantColor = ProductVariants::query()->get();
+        return response()->json($VariantColor);
     }
 
     /**
@@ -20,7 +24,7 @@ class ApiVariantController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**
@@ -36,7 +40,14 @@ class ApiVariantController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $variant = $request->all();
+        $idVariant  = ProductVariants::query()->findOrFail($id);
+        $idVariant->update($variant);
+
+        return response()->json([
+            'messae'=>"sủa thành công",
+            'tatus'=>true
+        ],204);
     }
 
     /**
@@ -44,6 +55,10 @@ class ApiVariantController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $id = ProductVariants::findOrFail($id);
+        $id->delete();
+        return Response()->json([
+            'success' => 'xóa thành công'
+        ],204);
     }
 }

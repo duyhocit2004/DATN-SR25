@@ -6,12 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Cloudinary\Cloudinary;
 
 class UserController extends Controller
 {
+    private $Cloudinary;
+    public function __construct(Cloudinary $Cloudinary){
+        $this->Cloudinary = $Cloudinary;
+    }
     public function index()
     {
-        $users = User::all();
+        $users = User::where('role', 'Quản lý')->get();
         return view('admin.users.index', compact('users'));
     }
 
@@ -33,7 +38,8 @@ class UserController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('user_image')) {
-            $imagePath = $request->file('user_image')->store('users', 'public');
+            $file = $this->Cloudinary->uploadApi()->upload($request->file('user_image')->getRealPath());
+            $imagePath = $file['secure_url'];
         }
 
         User::create([
@@ -46,6 +52,10 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'Tài khoản đã được thêm');
     }
 
+    public function show(){
+        $users = User::query()->where('role' ,'=','Khách hàng')->get();
+        return view('admin.users.show', compact('users'));
+    }
     public function edit($id)
     {
         $user = User::findOrFail($id);
@@ -60,13 +70,24 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'phone_number' => 'required|string|max:15',
-            'user_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // 'user_image' => 'nullable|max:2048',
         ]);
-
         $data = $request->all();
         if ($request->hasFile('user_image')) {
-            $data['user_image'] = $request->file('user_image')->store('users', 'public');
+            
+            $publicId = pathinfo($user->user_image, PATHINFO_FILENAME);
+            $this->Cloudinary->adminApi()->deleteAssets([$publicId]);
+            
+            $file = $this->Cloudinary->uploadApi()->upload($request->file('user_image')->getRealPath());
+            $data['user_image'] = $file['secure_url'];
+            
+
+        }else{
+            $data['user_image'] = $user->user_image;
         }
+     
+
+      
 
         $user->update($data);
         return redirect()->route('users.index')->with('success', 'Tài khoản đã được cập nhật');

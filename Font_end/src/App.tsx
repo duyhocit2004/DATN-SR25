@@ -1,9 +1,11 @@
 import React from "react";
-import Header from "./component/Header";
-import Footer from "./component/Footer";
+
 import UserRoutes from "./routes/UsersRoute";
 import AdminRoutes from "./routes/AdminRoute";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom"
+import Header from "./component/Header";
+import Footer from "./component/Footer";
+
 
 
 function App() {
@@ -23,9 +25,9 @@ function App() {
 
         {/* Route cho Admin: Không có Header và Footer */}
         <Route path="/admin/*" element={<AdminRoutes />} />
-      </Routes>
+      </Routes>   
     </>
   );
 }
 
-export default App;
+export default App; 

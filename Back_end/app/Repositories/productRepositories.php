@@ -5,9 +5,14 @@ namespace App\Repositories;
 use App\Models\imageProduct;
 use App\Models\products;
 use Illuminate\Support\Facades\Storage;
+use Cloudinary\Cloudinary;
 
 class ProductRepositories
 {
+    // protected $Cloudinary;
+    // public function __construct(Cloudinary $Cloudinary){
+    //     $this->Cloudinary = $Cloudinary;
+    // }
     public function GetAll()
     {
         $list = products::get();
@@ -31,14 +36,12 @@ class ProductRepositories
 
     public function create($data)
     {
-        $image = $data['file'];
-        $filedata = null;
-        $filedata = $image->store('product', 'public');
+
         $list = products::create([
-            'categories_id' => $data['categories_id'], // Sử dụng mảng thay vì đối tượng
+            'categories_id' => $data['categories_id'],
             'name_product' => $data['product'],
-            'image' => $filedata,
-            'base_stock' => $data['quanlity'], // Vẫn sử dụng 'quanlity'
+            'image' => $data['file'],
+            'base_stock' => $data['base_stock'],
             'price_regular' => $data['price_regular'],
             'price_sale' => $data['price_sale'],
             'SKU' => 'KS@@',
@@ -46,33 +49,19 @@ class ProductRepositories
             'views' => 0
         ]);
 
-        return $list->id; // Trả về đối tượng sản phẩm đã tạo
+        return $list->id;
         
     }
     public function Update($id, $data)
     {
-        // lấy dữ liệu từ ID
+
         $id = products::findOrFail($id);
 
-        // tạo 1 biến để lưu trữ ảnh mới
-        $filedata = null;
-        // kiểm tra ảnh có tồn tại hay không
-        if (isset($data['file']) && $data['file']) {
-            $oldImagePath = public_path('product/' . $id->image); // Đường dẫn tới hình ảnh cũ
-            if (file_exists($oldImagePath)) {
-                unlink($oldImagePath); // Xóa file
-            }
-            $filedata = $data['file']->Store('product', 'public');
-        } else {
-            // Giữ nguyên hình ảnh cũ nếu không có hình mới
-            $filedata = $id->image;
-        }
-        //  dd($filedata);
         $id->update([
-            'categories_id' => $data['categories_id'], // Sử dụng mảng thay vì đối tượng
+            'categories_id' => $data['categories_id'], 
             'name_product' => $data['product'],
-            'image' => $filedata,
-            'base_stock' => $data['quanlity'], // Vẫn sử dụng 'quanlity'
+            'image' => $data['file'],
+            'base_stock' => $data['base_stock'], 
             'price_regular' => $data['price_regular'],
             'price_sale' => $data['price_sale'],
             'SKU' => 'KS@@',

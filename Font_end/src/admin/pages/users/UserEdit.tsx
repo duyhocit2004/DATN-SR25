@@ -1,23 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Form,
-    Input,
-    Button,
-    Select,
-    Upload,
-    Card,
-    message,
-} from 'antd';
+import { Form, Input, Button, Select, Upload, Card, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { UserAdd, UserById, UserUpdate } from '../../../service/auth/user';
+import api from '../../../axios/config';
 
-const { Option } = Select;
-
-// Hàm xử lý upload ảnh
 const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-        return e;
-    }
+    if (Array.isArray(e)) return e;
     return e?.fileList;
 };
 
@@ -26,133 +15,125 @@ const UserEdit: React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
-
-    // Giả lập dữ liệu từ API khi mở trang chỉnh sửa
+    const [userImage, setUserImage] = useState<string | null>(null);
     useEffect(() => {
-        // Ví dụ: lấy thông tin tài khoản từ API theo ID
         const fetchUserData = async () => {
+            if (!id) return;
             setLoading(true);
-            // Giả lập dữ liệu (bạn thay bằng API thật)
-            const userData = {
-                name: 'Nguyễn Văn A',
-                email: 'example@example.com',
-                phone: '0987654321',
-                role: 'customer',
-                avatar: [], // Nếu có ảnh thì truyền vào đây
-            };
-            form.setFieldsValue(userData);
-            setLoading(false);
+            try {
+                const users = await UserById(id);
+                console.log("Dữ liệu user từ API:", users); // Kiểm tra API trả về
+
+                if (!users || !Array.isArray(users)) {
+                    message.error("Dữ liệu từ API không hợp lệ!");
+                    return;
+                }
+
+                const user = users.find((u: any) => u.id.toString() === id);
+                console.log("User sau khi lọc:", user);
+
+                if (user) {
+                    setUserImage(user.user_image || null);
+                    form.resetFields();
+                    form.setFieldsValue({
+                        name: user.name,
+                        email: user.email,
+                        phone_number: user.phone_number,
+                        user_image: user.user_image ? [{ uid: '-1', name: 'user_image.png', url: user.user_image }] : [],
+                    });
+                } else {
+                    message.error("Không tìm thấy người dùng!");
+                }
+            } catch (error) {
+                console.error("Lỗi khi gọi API:", error);
+                message.error("Không thể tải dữ liệu người dùng!");
+            } finally {
+                setLoading(false);
+            }
         };
 
         fetchUserData();
     }, [id, form]);
 
-    const onFinish = (values: any) => {
-        console.log('Giá trị form:', values);
-        message.success('Cập nhật tài khoản thành công!');
-        navigate('/admin/accounts');
-    };
 
-    const onFinishFailed = (errorInfo: any) => {
-        console.log('Lỗi:', errorInfo);
-        message.error('Vui lòng kiểm tra lại thông tin!');
+    const onFinish = async (values: any) => {
+        setLoading(true);
+        try {
+            const { user_image, ...userData } = values;
+            let user_imageUrl = userImage;
+
+            if (user_image && user_image.length > 0 && user_image[0].originFileObj) {
+                const formData = new FormData();
+                formData.append('file', user_image[0].originFileObj);
+                const uploadResponse = await api.post('/upload', formData);
+                user_imageUrl = uploadResponse.data.url;
+            }
+
+            if (id) {
+                await UserUpdate(id, { ...userData, user_image: user_imageUrl });
+                message.success('Cập nhật tài khoản thành công!');
+            } else {
+                await UserAdd({ ...userData, user_image: user_imageUrl });
+                message.success('Thêm tài khoản thành công!');
+            }
+
+            navigate('/admin/accounts');
+        } catch (error) {
+            message.error('Có lỗi xảy ra khi lưu dữ liệu!');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <Card title="Chỉnh sửa tài khoản" bordered={false} style={{ maxWidth: 600, margin: '0 auto' }} loading={loading}>
-            <Form
-                form={form}
-                name="userEdit"
-                layout="vertical"
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-            >
-                {/* Họ và tên */}
-                <Form.Item
-                    label="Họ và tên"
-                    name="name"
-                    rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}
-                >
+        <Card title={id ? "Chỉnh sửa tài khoản" : "Thêm tài khoản"} bordered={false} style={{ maxWidth: 600, margin: '0 auto' }} loading={loading}>
+            <Form form={form} name="userEdit" layout="vertical" onFinish={onFinish}>
+                <Form.Item label="Họ và tên" name="name" rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}>
                     <Input placeholder="Nhập họ và tên" />
                 </Form.Item>
-
-                {/* Email */}
                 <Form.Item
                     label="Email"
                     name="email"
                     rules={[
                         { required: true, message: 'Vui lòng nhập email!' },
-                        { type: 'email', message: 'Email không hợp lệ!' },
+                        { type: 'email', message: 'Email không hợp lệ!' }
                     ]}
                 >
-                    <Input placeholder="Nhập email" />
+                    <Input placeholder="Nhập email" autoComplete="email" />
                 </Form.Item>
 
-                {/* Số điện thoại */}
-                <Form.Item
-                    label="Số điện thoại"
-                    name="phone"
-                    rules={[
-                        { required: true, message: 'Vui lòng nhập số điện thoại!' },
-                        {
-                            pattern: /^[0-9]{10,11}$/,
-                            message: 'Số điện thoại không hợp lệ!',
-                        },
-                    ]}
-                >
+                <Form.Item label="Số điện thoại" name="phone_number" rules={[
+                    { required: true, message: 'Vui lòng nhập số điện thoại!' },
+                    { pattern: /^[0-9]{10,11}$/, message: 'Số điện thoại không hợp lệ!' }
+                ]}>
                     <Input placeholder="Nhập số điện thoại" />
                 </Form.Item>
-
-                {/* Vai trò */}
-                <Form.Item
-                    label="Vai trò"
-                    name="role"
-                    rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
-                >
-                    <Select placeholder="Chọn vai trò">
-                        <Option value="admin">Admin</Option>
-                        <Option value="moderator">Moderator</Option>
-                        <Option value="customer">Khách hàng</Option>
-                    </Select>
-                </Form.Item>
-
-                {/* Ảnh đại diện */}
-                <Form.Item
-                    label="Ảnh đại diện"
-                    name="avatar"
-                    valuePropName="fileList"
-                    getValueFromEvent={normFile}
-                >
+                <Form.Item label="Ảnh đại diện" name="user_image" valuePropName="fileList" getValueFromEvent={normFile}>
                     <Upload
-                        name="avatar"
+                        name="user_image"
                         listType="picture"
                         maxCount={1}
-                        beforeUpload={() => false} // Không tự động upload
+                        defaultFileList={userImage ? [{ uid: '-1', name: 'user_image.png', url: userImage }] : []}
+                        beforeUpload={(file) => {
+                            const isImage = file.type.startsWith('image/');
+                            if (!isImage) {
+                                message.error('Bạn chỉ có thể tải lên file ảnh!');
+                            }
+                            return isImage ? false : Upload.LIST_IGNORE;
+                        }}
                     >
                         <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
                     </Upload>
                 </Form.Item>
-
-                {/* Mật khẩu */}
-                <Form.Item
-                    label="Mật khẩu (Để trống nếu không đổi)"
-                    name="password"
-                    rules={[
-                        { min: 6, message: 'Mật khẩu phải ít nhất 6 ký tự!' },
-                    ]}
-                >
-                    <Input.Password placeholder="Nhập mật khẩu mới (nếu muốn đổi)" />
+                <Form.Item label="Mật khẩu (Để trống nếu không đổi)" name="password" rules={[{ min: 6, message: 'Mật khẩu phải ít nhất 6 ký tự!' }]}>
+                    <Input.Password placeholder="Nhập mật khẩu mới (nếu muốn đổi)" autoComplete="new-password" />
                 </Form.Item>
 
-                {/* Nút hành động */}
                 <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        Cập nhật tài khoản
+                    <Button type="primary" htmlType="submit" loading={loading}>
+                        {id ? "Cập nhật tài khoản" : "Thêm tài khoản"}
                     </Button>
-                    <Button
-                        style={{ marginLeft: 8 }}
-                        onClick={() => navigate('/admin/accounts')}
-                    >
+                    <Button style={{ marginLeft: 8 }} onClick={() => navigate('/admin/accounts')}>
                         Hủy
                     </Button>
                 </Form.Item>

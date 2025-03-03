@@ -53,6 +53,7 @@
                         </div>
                     </div>
                 </div>
+                {{$listCategory->links()}}
             </div>
         </div>
     </div>
