@@ -1,8 +1,7 @@
 <header class="page-header row">
     <div class="logo-wrapper d-flex align-items-center col-auto"><a href="index.html"><img class="light-logo img-fluid"
                 src="{{ asset('logo.png') }}" alt="logo" /><img class="dark-logo img-fluid"
-                src="{{ asset('logo.png') }}" alt="logo" /></a><a class="" href="">
-        </a></div>
+                src="{{ asset('logo.png') }}" alt="logo" /></a></div>
     <div class="page-main-header col">
         <div class="header-left">
         </div>
@@ -45,7 +44,7 @@
                                             <span class="status-dot position-absolute bg-success rounded-circle"></span>
                                         </div>
                                         <div class="user-info">
-                                            <span class="fw-bold text-primary">{{ Auth::user()->name }}</span>
+                                            <span class="fw-bold text-success">{{ Auth::user()->name }}</span>
                                             {{-- <small class="d-block text-muted">@{{ strtolower(Auth::user() - > name) }}</small> --}}
                                         </div>
                                     </button>

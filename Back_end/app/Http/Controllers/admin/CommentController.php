@@ -4,6 +4,8 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\comments;
+use App\Models\products;
+use App\Models\User;
 use App\Services\product\ProductService;
 use App\Services\user\UserService;
 use Illuminate\Http\Request;
@@ -28,7 +30,10 @@ class CommentController extends Controller
     {
         $list = comments::latest()->paginate(10);
 
-        return view('admin.comment.list', compact('list'));
+        $product = products::all();
+        $user = User::all();
+
+        return view('admin.comment.list', compact('list', ['product', 'user']));
     }
 
     /**

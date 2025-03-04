@@ -41,11 +41,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($list as $comment)
+                                    @foreach ($list as $key => $comment)
                                         <tr>
-                                            <td>{{ $comment->id }}</td>
-                                            <td>{{ $comment->products_id }}</td>
-                                            <td>{{ $comment->user_id }}</td>
+                                            <td>{{ $key + 1 }}</td>
+                                            <td>{{ $comment->user->name}}</td>
+                                            <td>{{ $comment->product->name_product}}</td>
                                             <td>{{ $comment->content }}</td>
                                             <td>
                                                 <div class="d-flex">
@@ -53,8 +53,6 @@
                                                         @for ($i = 1; $i <= 5; $i++)
                                                             @if ($i <= $comment->rating)
                                                                 <i class="fas fa-star text-warning"></i>
-                                                            @else
-                                                                {{-- <i class="far fa-star text-muted"></i> --}}
                                                             @endif
                                                         @endfor
                                                     </div>
@@ -62,18 +60,19 @@
                                             </td>
                                             <td>
                                                 <a href="{{ route('comments.edit', $comment->id) }}" class="btn btn-warning"><i class="fas fa-wrench"></i></a>
-                                                <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display:inline;">
+                                                <form action="{{ route('comments.destroy', $comment->id) }}" method="POST"
+                                                    style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger"
-                                                        onclick="return confirm('Bạn có chắc muốn xóa?')"><i class="fas fa-trash"></i>
+                                                        onclick="return confirm('Bạn có chắc muốn xóa?')">
+                                                        <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-
                             </table>
                         </div>
                     </div>
