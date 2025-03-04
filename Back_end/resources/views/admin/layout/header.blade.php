@@ -40,8 +40,8 @@
                                         class="btn btn-profile d-flex align-items-center gap-2 rounded-pill shadow-sm"
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         <div class="avatar-container position-relative">
-                                            <img src="{{ Auth::user()->user_image }}"
-                                                {{-- alt="{{ Auth::user()->name }}'s Avatar" --}} class="rounded-circle object-fit-cover" width="45" height="45">
+                                            <img src="{{ Auth::user()->user_image }}" {{-- alt="{{ Auth::user()->name }}'s Avatar" --}}
+                                                class="rounded-circle object-fit-cover" width="45" height="45">
                                             <span class="status-dot position-absolute bg-success rounded-circle"></span>
                                         </div>
                                         <div class="user-info">
