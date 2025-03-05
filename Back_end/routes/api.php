@@ -52,6 +52,8 @@ Route::middleware('auth:sanctum')->group( function (){
     Route::get('comments/{id}', [ApiCommentController::class,'show']);
     Route::put('comments/{id}', [ApiCommentController::class,'update']);
     Route::delete('comments/{id}', [ApiCommentController::class,'destroy']);
+
+    //get list user
 });
 
 // Route::get('products', [ApiProductController::class, 'index']);
@@ -119,6 +121,14 @@ Route::put('banners/{id}', [ApiBannerController::class, 'update']);
 Route::delete('banners/{id}', [ApiBannerController::class, 'destroy']);
 
 
+//Varants
+Route::get('Variant', [ApiBannerController::class, 'index']);
+Route::post('Variant', [ApiBannerController::class, 'store']);
+Route::get('Variant/{id}', [ApiBannerController::class, 'show']);
+Route::put('Variant/{id}', [ApiBannerController::class, 'update']);
+Route::delete('Variant/{id}', [ApiBannerController::class, 'destroy']);
+
+
 // Route Api Cart
 // Route::middleware('auth:sanctum')->group(function () {
 // Route::prefix('carts')->group(function () {
@@ -148,3 +158,9 @@ Route::prefix('carts')->group(function () {
 //     Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
 //     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
 });
+
+Route::post('count-customer', [ApiDashBoardController::class, 'countCustomer']);
+Route::post('totalsum', [ApiDashBoardController::class, 'totalsum']);
+Route::post('countOrder', [ApiDashBoardController::class, 'countOrder']);
+Route::get('productExpired', [ApiDashBoardController::class, 'productExpired']);
+Route::get('sumproduct', [ApiDashBoardController::class, 'sumproduct']);

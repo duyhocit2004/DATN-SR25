@@ -63,7 +63,7 @@ class ApiCommentController extends Controller
      */
     public function show(string $id)
     {
-        //
+        
     }
 
     /**
