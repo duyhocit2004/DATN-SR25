@@ -8,6 +8,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\products;
 
 class ApiDashBoardController extends Controller
 {
@@ -31,7 +32,7 @@ class ApiDashBoardController extends Controller
             ])->sum('total_price');
         } else {
             // Nếu có ngày bắt đầu và ngày kết thúc, tính tổng trong khoảng thời gian đó
-            $sum = Order::whereBetween('created_at', [$startDate, $endDate])
+            $sum = Order::whereBetween('created_at',  [$startDate, $endDate])
                 ->sum('total_price');
         }
 
@@ -68,4 +69,14 @@ class ApiDashBoardController extends Controller
 
         return $revenues;
     }
+    public function productExpired(){
+        $countStock = products::Where('base_stock','<=',20)
+        ->count();
+        return $countStock;
+    }
+    public function sumproduct(){
+        $countStock = products::count();
+        return $countStock;
+    }
+
 }

@@ -21,7 +21,25 @@ class ApiVoucherController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'code' => 'required|string|max:255',
+        ]);
+
+        $voucher = Voucher::create([
+            'code' => $request->code,
+            'discount_type' => $request->discount_type,
+            'discount_value' => $request->discount_value,
+            'min_order_value' => $request->min_order_value,
+            'max_discount' => $request->max_discount,
+            'quantity' => $request->quantity,
+            'used' => $request->used,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+        ]);
+
+        return response()->json(['message' => 'Thêm voucher thành công', 'voucher' => $voucher], 201);
+
     }
 
     /**
@@ -29,7 +47,11 @@ class ApiVoucherController extends Controller
      */
     public function show(string $id)
     {
-        //
+
+        $voucher = Voucher::query()->findOrFail($id);
+
+        return response()->json(['data' => $voucher], 200);
+
     }
 
     /**
@@ -37,7 +59,18 @@ class ApiVoucherController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $voucher = Voucher::query()->findOrFail($id);
+
+        $params = $request->all();
+
+        $request->validate([
+            'code' => 'required|string|max:255',
+        ]);
+
+        $voucher->update($params);
+
+        return response()->json(['message' => 'Cập nhật voucher thành công', 'voucher' => $voucher], 200);
+
     }
 
     /**
@@ -45,6 +78,12 @@ class ApiVoucherController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+
+        $voucher = Voucher::query()->findOrFail($id);
+
+        $voucher->delete();
+
+        return response()->json(['message' => 'Xóa voucher thành công'], 200);
+
     }
 }

@@ -1,0 +1,187 @@
+[33m7ce33022[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mhoangduy[m[33m, [m[1;31morigin/hoangduy[m[33m)[m HEAD@{0}: reset: moving to HEAD
+[33m7ce33022[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mhoangduy[m[33m, [m[1;31morigin/hoangduy[m[33m)[m HEAD@{1}: pull origin hoangduy: Fast-forward
+[33m8c90723d[m HEAD@{2}: checkout: moving from main_backend to hoangduy
+[33mf25b9e11[m[33m ([m[1;31morigin/main_backend[m[33m, [m[1;32mmain_backend[m[33m)[m HEAD@{3}: commit: Capnhat
+[33md8e451ed[m HEAD@{4}: checkout: moving from master to main_backend
+[33m244196b6[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{5}: commit (merge): CapnhatApiCart
+[33mba020916[m HEAD@{6}: pull origin master: Fast-forward
+[33m6f2a8df8[m HEAD@{7}: checkout: moving from main_backend to master
+[33md8e451ed[m HEAD@{8}: commit (merge): CapNhatApiCart
+[33m57495e51[m HEAD@{9}: checkout: moving from namnguyen to main_backend
+[33mb1436599[m[33m ([m[1;31morigin/namnguyen[m[33m, [m[1;32mnamnguyen[m[33m)[m HEAD@{10}: commit: CapNhatApiCart
+[33m9fefeeeb[m HEAD@{11}: checkout: moving from main_backend to namnguyen
+[33m57495e51[m HEAD@{12}: commit: Capnhat
+[33maf8e9801[m HEAD@{13}: commit: Capnhat
+[33m9fefeeeb[m HEAD@{14}: checkout: moving from namnguyen to main_backend
+[33m9fefeeeb[m HEAD@{15}: checkout: moving from master to namnguyen
+[33m6f2a8df8[m HEAD@{16}: pull origin master: Fast-forward
+[33m12dd03b5[m HEAD@{17}: checkout: moving from main_backend to master
+[33m9fefeeeb[m HEAD@{18}: merge namnguyen: Fast-forward
+[33md6b5b410[m HEAD@{19}: checkout: moving from namnguyen to main_backend
+[33m9fefeeeb[m HEAD@{20}: commit: Capnhat
+[33mfef4463b[m HEAD@{21}: checkout: moving from nam to namnguyen
+[33mf7aed127[m[33m ([m[1;31morigin/nam[m[33m, [m[1;32mnam[m[33m)[m HEAD@{22}: reset: moving to HEAD
+[33mf7aed127[m[33m ([m[1;31morigin/nam[m[33m, [m[1;32mnam[m[33m)[m HEAD@{23}: checkout: moving from master to nam
+[33m12dd03b5[m HEAD@{24}: commit (merge): Capnhat
+[33m88511d06[m HEAD@{25}: pull origin master: Fast-forward
+[33mfdf054fc[m HEAD@{26}: checkout: moving from namnguyen to master
+[33mfef4463b[m HEAD@{27}: commit: Capnhat
+[33m191a589c[m HEAD@{28}: reset: moving to HEAD
+[33m191a589c[m HEAD@{29}: checkout: moving from master to namnguyen
+[33mfdf054fc[m HEAD@{30}: commit (merge): ApiCart
+[33mdec11ca6[m HEAD@{31}: pull origin master: Fast-forward
+[33mfd3e3043[m HEAD@{32}: checkout: moving from namnguyen to master
+[33m191a589c[m HEAD@{33}: commit: ApiCart
+[33mc163d486[m HEAD@{34}: checkout: moving from master to namnguyen
+[33mfd3e3043[m HEAD@{35}: pull origin master: Fast-forward
+[33m1ba97061[m HEAD@{36}: checkout: moving from namnguyen to master
+[33mc163d486[m HEAD@{37}: checkout: moving from main_backend to namnguyen
+[33md6b5b410[m HEAD@{38}: checkout: moving from namnguyen to main_backend
+[33mc163d486[m HEAD@{39}: commit (merge): Capnhat
+[33m3972d8d6[m HEAD@{40}: commit: Capnhat
+[33m1ba97061[m HEAD@{41}: merge master: Fast-forward
+[33md296b03d[m HEAD@{42}: checkout: moving from master to namnguyen
+[33m1ba97061[m HEAD@{43}: commit (merge): capnhat
+[33mebf40b77[m HEAD@{44}: commit (merge): Capnhat
+[33m0701e750[m HEAD@{45}: reset: moving to HEAD
+[33m0701e750[m HEAD@{46}: commit: Api
+[33m5838599c[m HEAD@{47}: checkout: moving from namnguyen to master
+[33md296b03d[m HEAD@{48}: commit: Capnhat
+[33mc311317e[m HEAD@{49}: checkout: moving from main_backend to namnguyen
+[33md6b5b410[m HEAD@{50}: commit: UpdateApi
+[33mc311317e[m HEAD@{51}: merge namnguyen: Fast-forward
+[33ma4a8aa83[m HEAD@{52}: checkout: moving from namnguyen to main_backend
+[33mc311317e[m HEAD@{53}: commit: CapnhatApi
+[33ma4a8aa83[m HEAD@{54}: merge main_backend: Fast-forward
+[33mb4a08838[m HEAD@{55}: checkout: moving from main_backend to namnguyen
+[33ma4a8aa83[m HEAD@{56}: commit: ApiCategory
+[33mf85663d0[m HEAD@{57}: commit: Capnhat
+[33mf1cdb09a[m HEAD@{58}: commit: Capnhat
+[33m835a814c[m HEAD@{59}: commit (merge): Capnhat
+[33m8da449e6[m HEAD@{60}: checkout: moving from namnguyen to main_backend
+[33mb4a08838[m HEAD@{61}: commit: Capnhat
+[33me3458ad8[m HEAD@{62}: commit: Update
+[33m8c73708d[m HEAD@{63}: checkout: moving from main_backend to namnguyen
+[33m8da449e6[m HEAD@{64}: checkout: moving from namnguyen to main_backend
+[33m8c73708d[m HEAD@{65}: checkout: moving from main_backend to namnguyen
+[33m8da449e6[m HEAD@{66}: pull origin main_backend: Fast-forward
+[33md9b36ff1[m HEAD@{67}: checkout: moving from namnguyen to main_backend
+[33m8c73708d[m HEAD@{68}: commit: Capnhat
+[33md9b36ff1[m HEAD@{69}: merge main_backend: Fast-forward
+[33m5ae27bc8[m HEAD@{70}: checkout: moving from main_backend to namnguyen
+[33md9b36ff1[m HEAD@{71}: commit: Capnhat
+[33m08d0f5e8[m HEAD@{72}: commit: Capnhat
+[33m1a49b563[m HEAD@{73}: pull origin main_backend: Fast-forward
+[33m83d9f008[m HEAD@{74}: commit (merge): 'ApiProduct'
+[33m2fa9cb62[m HEAD@{75}: checkout: moving from namnguyen to main_backend
+[33m5ae27bc8[m HEAD@{76}: commit: 'Capnhat'
+[33mfdf7614b[m HEAD@{77}: checkout: moving from main_backend to namnguyen
+[33m2fa9cb62[m HEAD@{78}: pull origin main_backend: Fast-forward
+[33m5301d068[m HEAD@{79}: checkout: moving from namnguyen to main_backend
+[33mfdf7614b[m HEAD@{80}: commit: 'Capnhat'
+[33m5301d068[m HEAD@{81}: checkout: moving from main_backend to namnguyen
+[33m5301d068[m HEAD@{82}: checkout: moving from namnguyen to main_backend
+[33m5301d068[m HEAD@{83}: merge main_backend: Fast-forward
+[33m70ebb73d[m HEAD@{84}: checkout: moving from main_backend to namnguyen
+[33m5301d068[m HEAD@{85}: commit: 'Capnhat'
+[33mdd5f10c2[m HEAD@{86}: commit: 'Capnhat'
+[33m70ebb73d[m HEAD@{87}: merge namnguyen: Fast-forward
+[33mf8305dac[m HEAD@{88}: checkout: moving from namnguyen to main_backend
+[33m70ebb73d[m HEAD@{89}: commit: 'Capnhat'
+[33mf8305dac[m HEAD@{90}: checkout: moving from main_backend to namnguyen
+[33mf8305dac[m HEAD@{91}: merge namnguyen: Fast-forward
+[33maddd2ced[m HEAD@{92}: checkout: moving from namnguyen to main_backend
+[33mf8305dac[m HEAD@{93}: commit: 'Capnhat'
+[33m92ba901e[m HEAD@{94}: checkout: moving from main_backend to namnguyen
+[33maddd2ced[m HEAD@{95}: checkout: moving from namnguyen to main_backend
+[33m92ba901e[m HEAD@{96}: commit: 'Capnhat'
+[33mfe902a4a[m HEAD@{97}: checkout: moving from main_backend to namnguyen
+[33maddd2ced[m HEAD@{98}: checkout: moving from namnguyen to main_backend
+[33mfe902a4a[m HEAD@{99}: checkout: moving from chinhle to namnguyen
+[33m4c51efb3[m[33m ([m[1;31morigin/chinhle[m[33m, [m[1;32mchinhle[m[33m)[m HEAD@{100}: checkout: moving from namnguyen to chinhle
+[33mfe902a4a[m HEAD@{101}: commit: 'Capnhat'
+[33maddd2ced[m HEAD@{102}: checkout: moving from main_backend to namnguyen
+[33maddd2ced[m HEAD@{103}: merge namnguyen: Fast-forward
+[33m2b95df8c[m HEAD@{104}: checkout: moving from namnguyen to main_backend
+[33maddd2ced[m HEAD@{105}: commit (merge): 'Capnhat'
+[33m85b44967[m HEAD@{106}: checkout: moving from nam to namnguyen
+[33mf7aed127[m[33m ([m[1;31morigin/nam[m[33m, [m[1;32mnam[m[33m)[m HEAD@{107}: reset: moving to HEAD
+[33mf7aed127[m[33m ([m[1;31morigin/nam[m[33m, [m[1;32mnam[m[33m)[m HEAD@{108}: checkout: moving from main_backend to nam
+[33m2b95df8c[m HEAD@{109}: checkout: moving from namnguyen to main_backend
+[33m85b44967[m HEAD@{110}: checkout: moving from main_backend to namnguyen
+[33m2b95df8c[m HEAD@{111}: pull origin main_backend: Fast-forward
+[33mdb87888d[m HEAD@{112}: checkout: moving from namnguyen to main_backend
+[33m85b44967[m HEAD@{113}: commit: 'Capnhat'
+[33meeba7855[m HEAD@{114}: checkout: moving from main_backend to namnguyen
+[33mdb87888d[m HEAD@{115}: checkout: moving from namnguyen to main_backend
+[33meeba7855[m HEAD@{116}: commit: 'Capnhat'
+[33ma7fd52f1[m HEAD@{117}: commit: 'Capnhat'
+[33mdb87888d[m HEAD@{118}: checkout: moving from main_backend to namnguyen
+[33mdb87888d[m HEAD@{119}: checkout: moving from namnguyen to main_backend
+[33mdb87888d[m HEAD@{120}: merge main_backend: Fast-forward
+[33m54595d8b[m HEAD@{121}: checkout: moving from main_backend to namnguyen
+[33mdb87888d[m HEAD@{122}: commit: 'Capnhat'
+[33m758e65ed[m HEAD@{123}: checkout: moving from namnguyen to main_backend
+[33m54595d8b[m HEAD@{124}: checkout: moving from main_backend to namnguyen
+[33m758e65ed[m HEAD@{125}: commit (merge): 'Capnhat'
+[33m0a2d4039[m HEAD@{126}: pull origin main_backend: Fast-forward
+[33mce893837[m HEAD@{127}: checkout: moving from namnguyen to main_backend
+[33m54595d8b[m HEAD@{128}: commit: 'Capnhat'
+[33m55873667[m HEAD@{129}: commit: 'Capnhat'
+[33me64b8fa0[m HEAD@{130}: checkout: moving from main_backend to namnguyen
+[33mce893837[m HEAD@{131}: commit: 'Capnhat'
+[33m93c0cf85[m HEAD@{132}: rebase (continue): 'Login'
+[33mb269b508[m HEAD@{133}: checkout: moving from hoangduy to main_backend
+[33m8c90723d[m HEAD@{134}: checkout: moving from truongduong to hoangduy
+[33m5a8af739[m[33m ([m[1;31morigin/truongduong[m[33m, [m[1;32mtruongduong[m[33m)[m HEAD@{135}: checkout: moving from main_backend to truongduong
+[33mb269b508[m HEAD@{136}: commit: 'Capnhat'
+[33m84a685eb[m HEAD@{137}: commit (merge): 'Capnhat'
+[33me64b8fa0[m HEAD@{138}: checkout: moving from nam to main_backend
+[33mf7aed127[m[33m ([m[1;31morigin/nam[m[33m, [m[1;32mnam[m[33m)[m HEAD@{139}: checkout: moving from main_backend to nam
+[33me64b8fa0[m HEAD@{140}: reset: moving to HEAD
+[33me64b8fa0[m HEAD@{141}: checkout: moving from nam to main_backend
+[33mf7aed127[m[33m ([m[1;31morigin/nam[m[33m, [m[1;32mnam[m[33m)[m HEAD@{142}: checkout: moving from main_backend to nam
+[33me64b8fa0[m HEAD@{143}: checkout: moving from nam to main_backend
+[33mf7aed127[m[33m ([m[1;31morigin/nam[m[33m, [m[1;32mnam[m[33m)[m HEAD@{144}: checkout: moving from main_backend to nam
+[33me64b8fa0[m HEAD@{145}: checkout: moving from namnguyen to main_backend
+[33me64b8fa0[m HEAD@{146}: merge main_backend: Fast-forward
+[33m005996a3[m HEAD@{147}: checkout: moving from main_backend to namnguyen
+[33me64b8fa0[m HEAD@{148}: checkout: moving from nam to main_backend
+[33mf7aed127[m[33m ([m[1;31morigin/nam[m[33m, [m[1;32mnam[m[33m)[m HEAD@{149}: checkout: moving from main_backend to nam
+[33me64b8fa0[m HEAD@{150}: checkout: moving from 7101aafad50aa16431af53bfd9da82a0505828d5 to main_backend
+[33m7101aafa[m HEAD@{151}: commit: 'Capnhat'
+[33m12e118b0[m HEAD@{152}: commit: 'Capnhat'
+[33m720c3353[m HEAD@{153}: pull --rebase origin main_backend (start): checkout 720c33538706af05d5da264785e8255022876fbb
+[33me64b8fa0[m HEAD@{154}: checkout: moving from nam to main_backend
+[33mf7aed127[m[33m ([m[1;31morigin/nam[m[33m, [m[1;32mnam[m[33m)[m HEAD@{155}: checkout: moving from main_backend to nam
+[33me64b8fa0[m HEAD@{156}: commit: 'Capnhat'
+[33m635316dc[m HEAD@{157}: pull origin main_backend: updating HEAD
+[33m635316dc[m HEAD@{158}: checkout: moving from main_backend to main_backend
+[33m635316dc[m HEAD@{159}: checkout: moving from nam to main_backend
+[33mf7aed127[m[33m ([m[1;31morigin/nam[m[33m, [m[1;32mnam[m[33m)[m HEAD@{160}: commit: 'Capnhat'
+[33mf9f2d122[m HEAD@{161}: reset: moving to HEAD
+[33mf9f2d122[m HEAD@{162}: checkout: moving from main_backend to nam
+[33m635316dc[m HEAD@{163}: commit: 'Capnhat'
+[33mf37addb2[m HEAD@{164}: commit: 'Login'
+[33mcc851eb7[m HEAD@{165}: checkout: moving from nam to main_backend
+[33mf9f2d122[m HEAD@{166}: checkout: moving from main_backend to nam
+[33mcc851eb7[m HEAD@{167}: reset: moving to HEAD
+[33mcc851eb7[m HEAD@{168}: reset: moving to HEAD
+[33mcc851eb7[m HEAD@{169}: checkout: moving from nam to main_backend
+[33mf9f2d122[m HEAD@{170}: commit: Login
+[33m6c391c13[m HEAD@{171}: checkout: moving from main_backend to nam
+[33mcc851eb7[m HEAD@{172}: checkout: moving from nam to main_backend
+[33m6c391c13[m HEAD@{173}: checkout: moving from main to nam
+[33m23e76773[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m HEAD@{174}: checkout: moving from main_backend to main
+[33mcc851eb7[m HEAD@{175}: checkout: moving from nam to main_backend
+[33m6c391c13[m HEAD@{176}: commit: 'Login'
+[33ma6187654[m HEAD@{177}: checkout: moving from main to nam
+[33m23e76773[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m HEAD@{178}: commit: Login, Register, Logout
+[33mc11676e6[m HEAD@{179}: commit: Login
+[33m554ebba2[m HEAD@{180}: checkout: moving from nam to main
+[33ma6187654[m HEAD@{181}: commit: login
+[33m005996a3[m HEAD@{182}: checkout: moving from namnguyen to nam
+[33m005996a3[m HEAD@{183}: checkout: moving from main to namnguyen
+[33m554ebba2[m HEAD@{184}: checkout: moving from main to main
+[33m554ebba2[m HEAD@{185}: checkout: moving from master to main
+[33m5838599c[m HEAD@{186}: clone: from https://github.com/duyhocit2004/DATN-SR25.git
