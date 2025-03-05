@@ -153,7 +153,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
         Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
     });
-});
 //     Route::post('/add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
 //     Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
 //     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
