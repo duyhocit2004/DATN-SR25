@@ -10,7 +10,7 @@
                 <li><a href="{{ route('/') }}">Thống kê</a></li>
             </ul>
         </li>
-           
+
 
             <li class="sidebar-list mb-2"> <a class="sidebar-link" href="javascript:void(0)">
                     <h6 class=""><i class="fas fa-user"></i> Quản lý tài khoản</h6>
@@ -18,8 +18,8 @@
                 <ul class="sidebar-submenu">
                     <li><a href="{{ route('users.index') }}">quản trị</a></li>
                     <li><a href="{{ route('users.show') }}">người dùng</a></li>
-                    <li><a href="{{ route('users.create') }}">Thêm tài khoản</a></li>   
-                  
+                    <li><a href="{{ route('users.create') }}">Thêm tài khoản</a></li>
+
                 </ul>
             </li>
 
@@ -67,7 +67,7 @@
                 </a>
                 <ul class="sidebar-submenu">
                     <li><a href="{{ route('carts.index') }}">Danh sách</a></li>
-                     <li><a href="{{ route('sizes.create') }}">Thêm size</a></li> 
+                     <li><a href="{{ route('sizes.create') }}">Thêm size</a></li>
                 </ul>
             </li> --}}
 
@@ -80,13 +80,13 @@
                     <li><a href="{{ route('orders.create') }}">Thêm đơn hàng</a></li>
                 </ul>
             </li>
-            
+
             <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
                     <h6 class=""><i class="fas fa-ticket-alt"></i> Voucher</h6>
                 </a>
                 <ul class="sidebar-submenu">
                     <li><a href="{{ route('Voucher.index') }}"> Danh sách</a></li>
-                    <li><a href="{{ route('sizes.create') }}">Thêm Voucher</a></li>
+                    <li><a href="{{ route('Voucher.create') }}">Thêm Voucher</a></li>
                 </ul>
 
             </li>
@@ -102,7 +102,8 @@
                     <h6 class=""><i class="fas fa-comment"></i> Bình luận</h6>
                 </a>
                 <ul class="sidebar-submenu">
-                    <li><a href="{{ route('comment.index') }}">Danh sách</a></li>
+                    <li><a href="{{ route('comments.index') }}">Danh sách</a></li>
+                    <li><a href="{{ route('comments.create') }}">Thêm bình luận</a></li>
                 </ul>
 
             </li>

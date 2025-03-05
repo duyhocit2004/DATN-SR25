@@ -28,13 +28,14 @@ use App\Http\Controllers\Api\ApiDashBoardController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::post('login',[ApiAuthController::class,'login']);
-Route::post('register',[ApiAuthController::class,'register']);
+
+Route::post('login', [ApiAuthController::class, 'login']);
+Route::post('register', [ApiAuthController::class, 'register']);
 
 
-Route::middleware('auth:sanctum')->group( function (){
+Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [ApiAuthController::class, 'logout']);
-    Route::get('/user',[ApiAuthController::class,'user']);
+    Route::get('/user', [ApiAuthController::class, 'user']);
 
     Route::prefix('carts')->group(function () {
         Route::get('/', [ApiCartController::class, 'index']); // Lấy giỏ hàng hiện tại
@@ -45,26 +46,25 @@ Route::middleware('auth:sanctum')->group( function (){
 
     });
 
-        
-    //comment
-    Route::get('comments', [ApiCommentController::class,'index']);
-    Route::post('comments', [ApiCommentController::class,'store']);
-    Route::get('comments/{id}', [ApiCommentController::class,'show']);
-    Route::put('comments/{id}', [ApiCommentController::class,'update']);
-    Route::delete('comments/{id}', [ApiCommentController::class,'destroy']);
 
-    //get list user
+    //comment
+
+    Route::get('comments', [ApiCommentController::class, 'index']);
+    Route::post('comments', [ApiCommentController::class, 'store']);
+    Route::get('comments/{id}', [ApiCommentController::class, 'show']);
+    Route::put('comments/{id}', [ApiCommentController::class, 'update']);
+    Route::delete('comments/{id}', [ApiCommentController::class, 'destroy']);
 });
 
 // Route::get('products', [ApiProductController::class, 'index']);
 
 
 // Route sản phẩm
-Route::get('products', [ApiProductController::class,'index']);
-Route::post('products', [ApiProductController::class,'store']);
-Route::get('products/{id}', [ApiProductController::class,'show']);
-Route::put('products/{id}', [ApiProductController::class,'update']);
-Route::delete('products/{id}', [ApiProductController::class,'destroy']);
+Route::get('products', [ApiProductController::class, 'index']);
+Route::post('products', [ApiProductController::class, 'store']);
+Route::get('products/{id}', [ApiProductController::class, 'show']);
+Route::put('products/{id}', [ApiProductController::class, 'update']);
+Route::delete('products/{id}', [ApiProductController::class, 'destroy']);
 // Route::get('products/{id}/id', [ApiProductController::class,'getid']);
 
 
@@ -73,7 +73,7 @@ Route::get('categories', [ApiCategoryController::class, 'index']);
 Route::post('categories', [ApiCategoryController::class, 'store']);
 Route::get('categories/{id}', [ApiCategoryController::class, 'show']);
 Route::put('categories/{id}', [ApiCategoryController::class, 'update']);
-Route::delete('categories/{id}', [ApiCategoryController::class, 'destroy']); 
+Route::delete('categories/{id}', [ApiCategoryController::class, 'destroy']);
 
 // Route màu
 Route::get('colors', [ApiColorController::class, 'index']);
@@ -141,26 +141,25 @@ Route::delete('Variant/{id}', [ApiBannerController::class, 'destroy']);
 // });
 
 // Route Api Cart
-Route::prefix('carts')->group(function () {
-    Route::get('/', [ApiCartController::class, 'index']);
-    Route::get('{id}', [ApiCartController::class, 'show']);
-    Route::post('/', [ApiCartController::class, 'store']);
-    Route::put('{id}', [ApiCartController::class, 'update']);
-    Route::delete('{id}', [ApiCartController::class, 'destroy']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('carts')->group(function () {
+        Route::get('/', [ApiCartController::class, 'index']);
+        Route::get('{id}', [ApiCartController::class, 'show']);
+        Route::post('/', [ApiCartController::class, 'store']);
+        Route::put('{id}', [ApiCartController::class, 'update']);
+        Route::delete('{id}', [ApiCartController::class, 'destroy']);
 
-    Route::post('add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
-    Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
-    Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
-
-
-
+        Route::post('add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
+        Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
+        Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
+    });
+});
 //     Route::post('/add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
 //     Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
 //     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
-});
-
 Route::post('count-customer', [ApiDashBoardController::class, 'countCustomer']);
 Route::post('totalsum', [ApiDashBoardController::class, 'totalsum']);
 Route::post('countOrder', [ApiDashBoardController::class, 'countOrder']);
 Route::get('productExpired', [ApiDashBoardController::class, 'productExpired']);
 Route::get('sumproduct', [ApiDashBoardController::class, 'sumproduct']);
+

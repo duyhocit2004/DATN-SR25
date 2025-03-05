@@ -20,6 +20,7 @@ class ApiCartController extends Controller
     public function index()
     {
         $carts = Carts::with('items')->get();
+
         return response()->json([
             'success' => true,
             'message' => 'Danh sách giỏ hàng',
@@ -28,13 +29,13 @@ class ApiCartController extends Controller
     }
 
 
-    // Show chi tiết giỏ hàng
     public function show($id)
     {
         $cart = Carts::with('items.productVariants')->findOrFail($id);
 
         return response()->json($cart);
     }
+
 
     // Xóa giỏ hàng
     public function destroy($id)
@@ -71,7 +72,6 @@ class ApiCartController extends Controller
         // Tạo giỏ hàng mới
         $cart = Carts::create($cartData);
 
-        // Nếu là khách, lưu guest_id vào cookie
         if (!$userId) {
             Cookie::queue('guest_id', $guestId, 60 * 24 * 30); // 30 ngày
         }
@@ -85,20 +85,18 @@ class ApiCartController extends Controller
 
 
 
-    // Cập nhật số lượng mục trong giỏ hàng
+    // Cập nhật số lượng trong giỏ hàng
     public function updateItem(Request $request, $cartId, $itemId)
     {
         $request->validate([
             'quantity' => 'required|integer|min:1',
         ]);
 
-        // Kiểm tra cart item có tồn tại không
         $cartItem = cart_items::where('cart_id', $cartId)->find($itemId);
         if (!$cartItem) {
             return response()->json(['message' => 'Không tìm thấy sản phẩm trong giỏ hàng'], 404);
         }
 
-        // Cập nhật số lượng
         $cartItem->update([
             'quantity' => $request->quantity,
             'sub_total' => $request->quantity * ProductVariants::findOrFail($cartItem->product_variants_id)->price,
@@ -111,7 +109,6 @@ class ApiCartController extends Controller
     // Xóa mục khỏi giỏ hàng
     public function destroyItem($cartId, $itemId)
     {
-        // Tìm item trong giỏ hàng
         $cartItem = cart_items::where('cart_id', $cartId)->findOrFail($itemId);
 
         // Xóa item khỏi giỏ hàng
@@ -134,7 +131,6 @@ class ApiCartController extends Controller
         // Tìm giỏ hàng theo $cartId
         $cart = Carts::find($cartId);
 
-        // Nếu không có giỏ hàng, trả về lỗi
         if (!$cart) {
             return response()->json([
                 'success' => false,
@@ -155,7 +151,7 @@ class ApiCartController extends Controller
         } else {
             // Nếu chưa có, thêm mới vào giỏ hàng
             $cart->items()->create([
-                'product_variants_id' => $variant->id, // Đảm bảo lấy đúng ID sản phẩm
+                'product_variants_id' => $variant->id,
                 'quantity' => $request->quantity,
                 'sub_total' => $request->quantity * $variant->price,
             ]);
@@ -171,11 +167,9 @@ class ApiCartController extends Controller
 
     private function getCart(Request $request, $createIfNotExists = false)
     {
-        // Nếu người dùng đã đăng nhập, lấy giỏ hàng của họ
         if ($request->user()) {
             $cart = Carts::where('user_id', $request->user()->id)->first();
         } else {
-            // Nếu là khách, kiểm tra guest_id từ cookie
             $guestId = $request->cookie('guest_id');
             if (!$guestId) {
                 return null; // Không tạo mới giỏ hàng
@@ -200,7 +194,7 @@ class ApiCartController extends Controller
 
     public function getListCart(Request $request)
     {
-        // Kiểm tra xác thực người dùng
+
         if (!$request->user()) {
             return response()->json([
                 'success' => false,
@@ -209,7 +203,7 @@ class ApiCartController extends Controller
             ], 401);
         }
 
-        // Lấy ID người dùng
+        // Lấy ID
         $userId = $request->user()->id;
 
         // Kiểm tra nếu $userId là null
@@ -232,7 +226,6 @@ class ApiCartController extends Controller
             ]);
         }
 
-        // Lấy các sản phẩm trong giỏ hàng, tránh vấn đề N+1 bằng with('product')
         $cartItems = Cart_items::where('cart_id', $cart->id)->get();
 
         if ($cartItems->isEmpty()) {
