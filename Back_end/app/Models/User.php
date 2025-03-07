@@ -48,4 +48,8 @@ class User extends Authenticatable
         'is_active' => 'boolean',
     ];
 
+    public function comment(){
+        return $this->hasMany(comments::class,'user_id');
+    }
+
 }

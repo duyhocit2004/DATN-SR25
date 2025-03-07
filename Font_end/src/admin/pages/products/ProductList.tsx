@@ -1,8 +1,9 @@
 import React from "react";
-import { Table, Button, Image, Card, message, Popconfirm, Typography, Space } from "antd";
+import { Table, Button, Image, Popconfirm, Typography, Space } from "antd";
 import { NavLink } from "react-router-dom";
 import { IProducts } from "../../../interface/Products";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { ColumnsType } from "antd/es/table";
 
 const { Text } = Typography;
 
@@ -14,7 +15,7 @@ type Props = {
 };
 
 const ListProduct: React.FC<Props> = ({ products, loading, error, deleteProduct }) => {
-  const columns = [
+  const columns:ColumnsType<IProducts> = [
     {
       title: "STT",
       dataIndex: "index",

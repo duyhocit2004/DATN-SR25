@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class comments extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'comments';
     protected $fillable = [
         'products_id',
@@ -16,4 +16,10 @@ class comments extends Model
         'content',
         'rating'
     ];
+    public function product(){
+        return $this->belongsTo(products::class,'products_id');
+    }
+    public function user(){
+        return $this->belongsTo(User::class,'user_id');
+    }
 }

@@ -52,7 +52,7 @@ route::put('updatecolor/{id}/update', [colorController::class, 'Update'])->name(
 route::delete('deletecolor/{id}/delete', [colorController::class, 'destroy'])->name("deletecolor");
 
 Route::prefix('admmin')->middleware('admin')->group(function () {
-    
+
 });
 
 // Route danh mục
@@ -135,3 +135,12 @@ Route::post('vouchers', [VoucherController::class, 'store']) -> name('vouchers.s
 Route::get('voucher/{id}/edit', [VoucherController::class, 'edit']) -> name('vouchers.edit');
 Route::put('vouchers/{id}', [VoucherController::class, 'update']) -> name('vouchers.update');
 Route::delete('vouchers/{id}', [VoucherController::class, 'destroy']) -> name('vouchers.destroy');
+
+
+// Route Comment
+Route::get('comments', [CommentController::class, 'index']) -> name('comments.index');
+Route::get('comments/crate', [CommentController::class, 'create']) -> name('comments.create');
+Route::post('comments', [CommentController::class, 'store']) -> name('comments.store');
+Route::get('comments/{id}/edit', [CommentController::class, 'edit']) -> name('comments.edit');
+Route::put('comments/{id}', [CommentController::class, 'update']) -> name('comments.update');
+Route::delete('comments/{id}', [CommentController::class, 'destroy']) -> name('comments.destroy');

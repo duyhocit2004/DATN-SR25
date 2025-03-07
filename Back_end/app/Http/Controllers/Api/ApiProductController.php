@@ -54,7 +54,6 @@ class ApiProductController extends Controller
     public function store(ProductRequest $request)
     {
         $params = $request->only('categories_id','name_product','image','base_stock','price_regular','price_sale','description','contentcontent');
-        $variant = $request->only('variants');
         
         
         if (!$request->hasFile('image')) {
@@ -81,6 +80,7 @@ class ApiProductController extends Controller
 
             }
         }
+        
         if ($request->hasFile('images')) {
             $AlbumImage = $request->only('images');
             foreach ($AlbumImage as $images) {
@@ -109,7 +109,6 @@ class ApiProductController extends Controller
         $variants = ProductVariants::query()->where('product_id', '=', $id)
          ->with(['color', 'size'])
          ->get();
-
         // // return new ProductResource($products);
         $variant = $variants->map(function ($variant) {
             return [
@@ -125,11 +124,9 @@ class ApiProductController extends Controller
 
         return response()->json([
             
-
             'data' => [$products,$albumproduct,$variant],
             'list' =>[$listSize,$listColor ],
             // 'data' => $products,
-
             'success' => true,
             'message' => 'Chi tiết sản phẩm'
         ], 200);

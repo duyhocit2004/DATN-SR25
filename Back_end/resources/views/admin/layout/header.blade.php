@@ -1,9 +1,7 @@
 <header class="page-header row">
     <div class="logo-wrapper d-flex align-items-center col-auto"><a href="index.html"><img class="light-logo img-fluid"
-                src="{{asset('logo.png')}}" alt="logo" /><img class="dark-logo img-fluid"
-                src="{{asset('logo.png')}}" alt="logo" /></a><a class=""
-            href="">
-            </a></div>
+                src="{{ asset('logo.png') }}" alt="logo" /><img class="dark-logo img-fluid"
+                src="{{ asset('logo.png') }}" alt="logo" /></a></div>
     <div class="page-main-header col">
         <div class="header-left">
         </div>
@@ -31,59 +29,65 @@
                         </ul>
                     </div> --}}
                 </li>
-                
-                
-                
-                
-                
-                <li class="profile-nav custom-dropdown">
-                    <div class="user-wrap">
 
+                <li class="profile-nav custom-dropdown">
+                    <div class="user-wrap position-relative">
                         <div class="user-content">
                             @if (Auth::check())
                                 <div class="dropdown">
-                                    <button class="btn btn-primary d-flex align-items-center gap-2"
-                                        data-bs-toggle="dropdown">
-                                        <img src="{{Auth::user()->user_image}}" alt="Avatar"
-                                            class="rounded-circle" width="40" height="40">
-                                        <span>{{ Auth::user()->name }}</span>
+                                    <button
+                                        class="btn btn-profile d-flex align-items-center gap-2 rounded-pill shadow-sm"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <div class="avatar-container position-relative">
+                                            <img src="{{ Auth::user()->user_image }}" {{-- alt="{{ Auth::user()->name }}'s Avatar" --}}
+                                                class="rounded-circle object-fit-cover" width="45" height="45">
+                                            <span class="status-dot position-absolute bg-success rounded-circle"></span>
+                                        </div>
+                                        <div class="user-info">
+                                            <span class="fw-bold text-success">{{ Auth::user()->name }}</span>
+                                            {{-- <small class="d-block text-muted">@{{ strtolower(Auth::user() - > name) }}</small> --}}
+                                        </div>
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="#">Profile</a></li>
-                                        <li><a class="dropdown-item" href="#">Settings</a></li>
-                                        <li>
-                                            <hr class="dropdown-divider">
+
+                                    <ul
+                                        class="dropdown-menu dropdown-menu-end mt-2 shadow border-0 rounded-3 animate__animated animate__fadeIn">
+                                        <li class="dropdown-header px-3 py-2">
+                                            <span class="text-muted text-uppercase small">Account</span>
                                         </li>
-                                        <li><a class="dropdown-item text-danger"
-                                                href="{{ route('logout') }}">Logout</a></li>
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2 px-3 py-2"
+                                                href="#">
+                                                <i class="bi bi-person fs-5"></i>
+                                                <span>Profile</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2 px-3 py-2"
+                                                href="#">
+                                                <i class="bi bi-gear fs-5"></i>
+                                                <span>Settings</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider mx-2">
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2 px-3 py-2 text-danger"
+                                                href="{{ route('logout') }}">
+                                                <i class="bi bi-box-arrow-right fs-5"></i>
+                                                <span>Logout</span>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             @else
-                                <a href="{{ route('login') }}">
-                                    <h5>Login</h5>
+                                <a href="{{ route('login') }}"
+                                    class="btn btn-outline-primary rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                                    <i class="bi bi-box-arrow-in-right"></i>
+                                    <span>Login</span>
                                 </a>
                             @endif
                         </div>
-                    </div>
-                    <div class="custom-menu overflow-hidden">
-                        <ul class="profile-body">
-                            <li class="d-flex">
-                                <svg class="svg-color">
-                                    <use
-                                        href="https://admin.pixelstrap.net/admiro/assets/svg/iconly-sprite.svg#Profile">
-                                    </use>
-                                </svg><a class="ms-2" href="user-profile.html">Account</a>
-                            </li>
-
-
-                            <li class="d-flex">
-                                <svg class="svg-color">
-                                    <use href="https://admin.pixelstrap.net/admiro/assets/svg/iconly-sprite.svg#Login">
-                                    </use>
-                                </svg><a class="ms-2" href="{{ route('logout') }}">Log Out</a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
             </ul>
         </div>
