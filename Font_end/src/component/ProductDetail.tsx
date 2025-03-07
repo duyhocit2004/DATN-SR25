@@ -4,6 +4,7 @@ import { GetProductById } from '../service/products/productService';
 import { IProducts } from '../interface/Products';
 import { AddToCart } from '../service/cart/cartService';
 import { ICart } from '../interface/Cart';
+import '../component/css/productDetail.css'
 
 
 const ProductDetail: React.FC = () => {
@@ -27,7 +28,7 @@ const ProductDetail: React.FC = () => {
             }
             try {
                 const data = await GetProductById(Number(id));
-                setProduct(data?.data || null);
+                setProduct(data?.data ? data.data[0] : null);
             } catch (err) {
                 setError("Lỗi khi tải sản phẩm");
             } finally {
@@ -60,7 +61,7 @@ const ProductDetail: React.FC = () => {
             alert("Vui lòng chọn đầy đủ màu sắc và kích thước!");
             return;
         }
-    
+
         const cartItem: ICart = {
             id: product.id,
             name: product.name_product,
@@ -70,13 +71,13 @@ const ProductDetail: React.FC = () => {
             color: selectedColor,
             size: selectedSize,
         };
-    
+
         console.log("Dữ liệu trước khi thêm vào giỏ hàng:", cartItem);
         AddToCart(cartItem);
         alert("Sản phẩm đã được thêm vào giỏ hàng! 🛒");
         nav("/");
     };
-    
+
 
     if (loading) return <div className="loading">Đang tải...</div>;
     if (error) return <div className="error">{error}</div>;
@@ -85,14 +86,19 @@ const ProductDetail: React.FC = () => {
     return (
         <div className="product-detail-container">
             <div className="product-detail">
-                <img src={product.image} alt={product.image} className="product-image" />
+                {product.image ? (
+                    <img src={product.image} alt="Hình ảnh sản phẩm" className="product-image" />
+                ) : (
+                    <p>Không có hình ảnh</p>
+                )}
                 <div className="product-info">
                     <h1 className="product-title">{product.name_product}</h1>
                     <p className="product-description">{product.description}</p>
                     <p className="product-price">
-                        <span className="old-price">{product.price_regular} VND</span>
-                        <span className="new-price">{product.price_sale} VND</span>
+                        <span className="old-price">{product.price_regular ? product.price_regular + " VND" : "N/A"}</span>
+                        <span className="new-price">{product.price_sale ? product.price_sale + " VND" : "N/A"}</span>
                     </p>
+
 
                     {/* Chọn màu sắc */}
                     <div className="product-colors">

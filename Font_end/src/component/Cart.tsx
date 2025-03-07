@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ICart } from "../interface/Cart";
-import "../layout/cart.css";
+import "../component/css/cart.css";
+import axios from "axios";
 
 const CART_KEY = "cart";
 
@@ -67,8 +68,8 @@ export const RemoveFromCart = (id: number) => {
 
 export const GetCartLength = (): number => {
     const cart = GetCart();
-    if (!Array.isArray(cart)) return 0; // Kiểm tra xem cart có phải là mảng không
-    return cart.reduce((acc, item) => acc + (item?.quantity || 0), 0); // Tránh lỗi khi item bị null hoặc undefined
+    if (!Array.isArray(cart)) return 0;
+    return cart.reduce((acc, item) => acc + (item?.quantity || 0), 0); 
 };
 
 
@@ -93,19 +94,33 @@ const Cart = () => {
     const [total, setTotal] = useState<number>(0);
     const [colors, setColors] = useState<any[]>([]);
     const [sizes, setSizes] = useState<any[]>([]);
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const cartData = GetCart();
-        setCart(cartData);
-        setTotal(cartData.reduce((acc, item) => acc + ((item?.price || 0) * (item?.quantity || 0)), 0));
+        const fetchUser = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) return;
 
-        fetchColorsAndSizes().then((data) => {
-            setColors(data.colors || []);
-            setSizes(data.sizes || []);
-        });
+            try {
+                const response = await axios.get("http://127.0.0.1:8000/api/users", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.error("Lỗi khi lấy thông tin user:", error);
+            }
+        };
+
+        const fetchCart = () => {
+            const cartData = JSON.parse(localStorage.getItem("cart") || "[]");
+            setCart(cartData);
+            setTotal(cartData.reduce((acc: number, item: { price: number; quantity: number; }) => acc + (item.price * item.quantity), 0));
+        };
+
+        fetchUser();
+        fetchCart();
     }, []);
-
     const handleUpdate = (id: number, quantity: number, size: string, color: string) => {
         if (quantity < 1) return;  
         const startTime = performance.now();

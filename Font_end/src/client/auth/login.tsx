@@ -1,73 +1,86 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { data, NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const fetchUserRole = async (token: string) => {
   try {
-    const response = await axios.get("http://127.0.0.1:8000/api/user", {
+    if (!token) return null;
+    const response = await axios.get("http://127.0.0.1:8000/api/users", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Vai trò người dùng:", response.data.role);  // Log tại đây
-    
-    return response.data.role;
+    console.log("user data", response.data);
+    return response.data;
   } catch (error) {
     console.error("Không thể lấy thông tin người dùng:", error);
-    throw error;
+    return null;
   }
 };
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const login = async (email: string, password: string) => {
-    try {
-      const response = await axios.post("http://127.0.0.1:8000/api/login", { email, password });
-      //
-      console.log("dữ liệu trả về:", response.data); 
-
-      if (response.data.access_token) {
-        localStorage.setItem("token", response.data.access_token);
-        toast.success("Đăng Nhập Thành Công.");
-        // navigate(/)
-        return response.data;
-      } else {
-        toast.error("Đăng Nhập Không Thành Công.");
-      }
-    } catch (error) {
-      toast.error("Lỗi Đăng Nhập.");
-      console.error(error);
+  useEffect(() => {
+    const storedToken = sessionStorage.getItem("token");
+    if (storedToken) {
+      fetchUserRole(storedToken).then((user) => {
+        if (user?.role === "Quản lý") navigate("/admin/dashboard");
+        else if (user?.role === "Khách hàng") navigate("/");
+      });
     }
-  };
+  }, [navigate]);
+
+
+  // const handleLogin = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await axios.post("http://127.0.0.1:8000/api/login", { email, password });
+
+  //     if (response.data.status === "success") {
+  //       sessionStorage.setItem("token", response.data.token);
+  //       toast.success("Đăng nhập thành công!");
+  //       navigate("/");
+  //     } else {
+  //       toast.error(response.data.message);
+  //     }
+  //   } catch (error) {
+  //     toast.error("Lỗi kết nối đến server!");
+  //     console.error(error);
+  //   }
+  // };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
-      const response = await login(email, password);
-      if (!response) return;
+      const response = await axios.post("http://127.0.0.1:8000/api/login", { email, password });
+      if (response.data.status === "success") {
+        const token = response.data.access_token;
+        sessionStorage.setItem("token", token);
+        toast.success("Đăng nhập thành công!");
 
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("Token không tồn tại.");
-        return;
+        // Gửi sự kiện thông báo user đã đăng nhập
+        window.dispatchEvent(new Event("userLoggedIn"));
+
+        const user = response.data.user;
+        if (user?.role === "Quản lý") {
+          navigate("/admin/dashboard");
+        } else if (user?.role === "Khách hàng") {
+          navigate("/");
+        }
       }
-
-      const roleId = await fetchUserRole(token);
-
-      if (roleId === 'Quản lý') {
-        navigate("/admin/dashboard");
-      } else if (roleId === 'Khách hàng') {
-        navigate("/");
-      } else {
-        toast.error("Vai trò không hợp lệ.");
+      else {
+        toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error("Đăng nhập thất bại.");
+      toast.error("Lỗi kết nối đến server!");
+      console.error("Lỗi:", error);
     }
   };
+
 
   return (
     <div className="register-container">
@@ -87,13 +100,18 @@ const Login = () => {
 
           <div className="form-group">
             <label htmlFor="password">Mật Khẩu</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Nhập mật khẩu"
-              required
-            />
+            <div className="password-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Nhập mật khẩu"
+                required
+              />
+              <span className="eye-icon" onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
           </div>
 
           <button type="submit" className="btn btn-primary">
@@ -105,18 +123,6 @@ const Login = () => {
           <p>
             Bạn chưa có tài khoản? <NavLink to="/register">Đăng Ký</NavLink>
           </p>
-        </div>
-
-        <div className="social-buttons">
-          <a href="#" className="btn facebook">
-            <i className="fab fa-facebook"></i>
-          </a>
-          <a href="#" className="btn google">
-            <i className="fab fa-google"></i>
-          </a>
-          <a href="#" className="btn twitter">
-            <i className="fab fa-twitter"></i>
-          </a>
         </div>
       </div>
     </div>

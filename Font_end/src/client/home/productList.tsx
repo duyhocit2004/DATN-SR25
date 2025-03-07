@@ -38,7 +38,6 @@ const ProductList: React.FC = () => {
                             onClick={() => handleProductClick(Number(product.id))}
                             style={{ cursor: 'pointer' }}
                         />
-                        <div>{product.id}</div>
                         <div className="product-info">
                             <h2 className="product-title">{product.name_product}</h2>
                             <p className="product-description">{product.description}</p>

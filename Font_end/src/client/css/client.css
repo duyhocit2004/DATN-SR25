@@ -187,17 +187,14 @@
     transform: scale(1.1);
   }
   .password-container {
-    position: relative;
     display: flex;
     align-items: center;
-    width: 100%;
+    position: relative;
   }
   
   .password-container input {
-    width: 100%;
-    padding: 10px 40px 10px 10px; /* Chừa khoảng trống bên phải cho icon */
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    flex: 1;
+    padding-right: 40px;
   }
   
   .eye-icon {
@@ -205,10 +202,7 @@
     right: 10px;
     cursor: pointer;
     font-size: 18px;
-    color: #888;
+    color: #666;
   }
   
-  .eye-icon:hover {
-    color: #333;
-  }
   

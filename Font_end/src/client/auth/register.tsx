@@ -32,13 +32,14 @@ const Register = () => {
   const onSubmit = async (registerData: IUser) => {
     const formData = new FormData();
     formData.append("username", registerData.username);
+    formData.append("fullname", registerData.fullname);
     formData.append("email", registerData.email);
     formData.append("password", registerData.password);
     formData.append("phone", registerData.phone);
     formData.append("gender", registerData.gender);
   
     if (userImage) {
-      formData.append("user_image", userImage); // Gửi ảnh nếu có
+      formData.append("user_image", userImage); 
     }
   
     try {
@@ -47,8 +48,15 @@ const Register = () => {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      toast.success("Đăng ký thành công!");
-      navigate("/login");
+
+      if (data.token) {
+        sessionStorage.setItem("token", data.token); // Lưu token sau khi đăng ký
+        toast.success("Đăng ký thành công! Đang đăng nhập...");
+        setTimeout(() => navigate("/"), 1500); // Chuyển hướng sau khi đăng ký
+      } else {
+        toast.error("Không thể lấy token sau khi đăng ký!");
+      }
+
     } catch (error: any) {
       console.error("Lỗi đăng ký:", error);
       if (error.response) {
@@ -84,18 +92,6 @@ const Register = () => {
             />
             {errors.fullname && <p className="error-message">{errors.fullname.message}</p>}
           </div>
-          <div className="form-group">
-            <label htmlFor="user_image">Ảnh đại diện:</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  setUserImage(e.target.files[0]);
-                }
-              }}
-            />
-          </div>
 
           <div className="form-group">
             <label htmlFor="email">Email:</label>
@@ -113,18 +109,14 @@ const Register = () => {
             {errors.email && <p className="error-message">{errors.email.message}</p>}
           </div>
 
-          <div className="form-group ">
+          <div className="form-group">
             <label htmlFor="password">Mật Khẩu:</label>
             <div className="password-container">
               <input
                 type={showPassword ? "text" : "password"}
                 {...register("password", {
                   required: "Mật khẩu không được để trống!",
-                  minLength: { value: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" },
-                  pattern: {
-                    value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
-                    message: "Mật khẩu phải chứa ít nhất một chữ cái, một số và một ký tự đặc biệt!",
-                  },
+                  minLength: { value: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" }
                 })}
                 placeholder="Nhập mật khẩu..."
               />
@@ -133,33 +125,6 @@ const Register = () => {
               </span>
             </div>
             {errors.password && <p className="error-message">{errors.password.message}</p>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="gender">Giới Tính:</label>
-            <select {...register("gender", { required: "Vui lòng chọn giới tính!" })}>
-              <option value="">-- Chọn giới tính --</option>
-              <option value="male">Nam</option>
-              <option value="female">Nữ</option>
-              <option value="other">Khác</option>
-            </select>
-            {errors.gender && <p className="error-message">{errors.gender.message}</p>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="phone">Số Điện Thoại:</label>
-            <input
-              type="text"
-              {...register("phone", {
-                required: "Số điện thoại không được để trống!",
-                pattern: {
-                  value: /^0\d{9}$/,
-                  message: "Số điện thoại không hợp lệ!",
-                },
-              })}
-              placeholder="Nhập số điện thoại..."
-            />
-            {errors.phone && <p className="error-message">{errors.phone.message}</p>}
           </div>
 
           <button type="submit" className="btn btn-primary">

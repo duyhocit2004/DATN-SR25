@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Models\User;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 class VoucherController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Hiển thị danh sách voucher.
      */
     public function index()
     {
-        $voucher = Voucher::query()->get();
-        // dd($voucher);
-        return view('admin.voucher.listVoucher', compact('voucher'));
+        $vouchers = Voucher::all();
+        return view('admin.voucher.listVoucher', compact('vouchers'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Hiển thị form tạo mới voucher.
      */
     public function create()
     {
@@ -28,88 +28,82 @@ class VoucherController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Xử lý thêm mới voucher.
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'code' => 'required',
-            'discount_type' => 'required',
-            'discount_value' => 'required',
-            'min_order_value' => 'required',
-            'max_discount' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
+        $validated = $request->validate([
+            'code' => 'required|unique:vouchers,code',
+            'discount_type' => ['required', Rule::in(['percent', 'fixed'])],
+            'discount_value' => 'required|numeric|min:0',
+            'min_order_value' => 'nullable|numeric|min:0',
+            'max_discount' => 'nullable|numeric|min:0',
+            'quantity' => 'required|integer|min:1',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
-        Voucher::create([
-            'code' => $request->code,
-            'discount_type' => $request->discount_type,
-            'discount_value' => $request->discount_value,
-            'min_order_value' => $request->min_order_value,
-            'max_discount' => $request->max_discount,
-            'quantity' => $request->quantity,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-        ]);
+        $voucher = Voucher::create($validated);
+        $this->updateVoucherStatus($voucher);
 
-        return redirect()->route('vouchers.index')
-            ->with('success', 'Thêm thành công');
+        return redirect()->route('vouchers.index')->with('success', 'Thêm thành công');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Hiển thị form chỉnh sửa voucher.
      */
     public function edit(string $id)
     {
         $voucher = Voucher::findOrFail($id);
-
-        return view('admin.vouchers.edit', compact('voucher'));
+        return view('admin.voucher.edit', compact('voucher'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Cập nhật voucher.
      */
     public function update(Request $request, string $id)
     {
         $voucher = Voucher::findOrFail($id);
 
-        $request->validate([
-            'code' => 'required',
-            'discount_type' => 'required',
-            'discount_value' => 'required',
-            'min_order_value' => 'required',
-            'max_discount' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
+        $validated = $request->validate([
+            'code' => ['required', 'string', 'max:255', Rule::unique('vouchers')->ignore($id)],
+            'discount_type' => ['nullable', Rule::in(['percent', 'fixed'])],
+            'discount_value' => 'nullable|numeric|min:0',
+            'min_order_value' => 'nullable|numeric|min:0',
+            'max_discount' => 'nullable|numeric|min:0',
+            'quantity' => 'nullable|integer|min:1',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
 
-        $voucher->update([
-            'code' => $request->code,
-            'discount_type' => $request->discount_type,
-            'discount_value' => $request->discount_value,
-            'min_order_value' => $request->min_order_value,
-            'max_discount' => $request->max_discount,
-            'quantity' => $request->quantity,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-        ]);
+        $voucher->update($validated);
+        $this->updateVoucherStatus($voucher);
 
-        return redirect()->route('vouchers.index')
-            ->with('sucsess', 'Sửa thành công');
+        return redirect()->route('vouchers.index')->with('success', 'Sửa thành công');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Xóa voucher.
      */
     public function destroy(string $id)
     {
-        $voucher = Voucher::findorFail($id);
-
+        $voucher = Voucher::findOrFail($id);
         $voucher->delete();
+        return redirect()->route('vouchers.index')->with('success', 'Xóa thành công');
+    }
 
-        return redirect()->route('vouchers.index')
-
-            ->with('sucess', 'Xóa thành công');
+    /**
+     * Cập nhật trạng thái voucher.
+     */
+    private function updateVoucherStatus(Voucher $voucher)
+    {
+        $now = Carbon::now();
+        if ($now->gt($voucher->end_date)) {
+            $voucher->update(['status' => 'expired']);
+        } elseif ($voucher->used >= $voucher->quantity) {
+            $voucher->update(['status' => 'used_up']);
+        } else {
+            $voucher->update(['status' => 'active']);
+        }
     }
 }

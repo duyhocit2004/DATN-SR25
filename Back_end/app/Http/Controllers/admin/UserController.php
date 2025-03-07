@@ -7,11 +7,13 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Cloudinary\Cloudinary;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
     private $Cloudinary;
-    public function __construct(Cloudinary $Cloudinary){
+    public function __construct(Cloudinary $Cloudinary)
+    {
         $this->Cloudinary = $Cloudinary;
     }
     public function index()
@@ -52,8 +54,9 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'Tài khoản đã được thêm');
     }
 
-    public function show(){
-        $users = User::query()->where('role' ,'=','Khách hàng')->get();
+    public function show()
+    {
+        $users = User::query()->where('role', '=', 'Khách hàng')->get();
         return view('admin.users.show', compact('users'));
     }
     public function edit($id)
@@ -74,20 +77,20 @@ class UserController extends Controller
         ]);
         $data = $request->all();
         if ($request->hasFile('user_image')) {
-            
+
             $publicId = pathinfo($user->user_image, PATHINFO_FILENAME);
             $this->Cloudinary->adminApi()->deleteAssets([$publicId]);
-            
+
             $file = $this->Cloudinary->uploadApi()->upload($request->file('user_image')->getRealPath());
             $data['user_image'] = $file['secure_url'];
-            
 
-        }else{
+
+        } else {
             $data['user_image'] = $user->user_image;
         }
-     
 
-      
+
+
 
         $user->update($data);
         return redirect()->route('users.index')->with('success', 'Tài khoản đã được cập nhật');
@@ -99,4 +102,22 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('users.index')->with('success', 'Tài khoản đã được xóa');
     }
+
+    public function toggleStatus($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'Người dùng không tồn tại'], Response::HTTP_NOT_FOUND);
+        }
+
+        $user->is_active = !$user->is_active; 
+        $user->save();
+
+        return response()->json([
+            'message' => $user->is_active ? 'Tài khoản đã được mở khóa' : 'Tài khoản đã bị khóa',
+            'is_active' => $user->is_active
+        ], Response::HTTP_OK);
+    }
+
 }
