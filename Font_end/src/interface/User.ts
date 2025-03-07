@@ -1,4 +1,6 @@
 export interface IUser {
+    name: string;
+    is_active: any;
     id: number;
     username: string;
     fullname: string;

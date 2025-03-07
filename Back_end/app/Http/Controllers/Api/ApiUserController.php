@@ -13,7 +13,7 @@ use Cloudinary\Cloudinary;
 class ApiUserController extends Controller
 {
 
-    protected $cloudinary ;
+    protected $cloudinary;
 
     public function __construct(Cloudinary $cloudinary)
     {
@@ -45,11 +45,11 @@ class ApiUserController extends Controller
         if (!$request->hasFile('user_image')) {
             return response()->json(['error' => 'Image file is required'], 400);
         }
-       
-        $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('user_image')->getRealPath(), [ 'folder' => 'users', 'verify' => false ]);
+
+        $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('user_image')->getRealPath(), ['folder' => 'users', 'verify' => false]);
         $imagePath = $uploadedFile['secure_url'];
 
-    
+
 
         $user = User::create([
             'name' => $request->name,
@@ -74,7 +74,7 @@ class ApiUserController extends Controller
 
         return response()->json(['data' => $user], 200);
     }
-    
+
     public function update(Request $request, string $id)
     {
         $user = User::find($id);
@@ -145,4 +145,21 @@ class ApiUserController extends Controller
         $user->delete();
         return response()->json(['message' => 'Đã xóa thành công'], 204);
     }
+    public function toggleStatus($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'Người dùng không tồn tại'], 404);
+        }
+
+        $user->is_active = !$user->is_active;
+        $user->save();
+
+        return response()->json([
+            'message' => $user->is_active ? 'Tài khoản đã được mở khóa' : 'Tài khoản đã bị khóa',
+            'is_active' => $user->is_active
+        ], 200);
+    }
+
 }

@@ -25,35 +25,45 @@ export const UserById = async (id: string) => {
 };
 
 
-// Thêm User mới
-export const UserAdd = async (userData: IUser) => {
-  try {
-    const { data } = await api.post<{ user: IUser }>("users", userData);
-    return data.user;
-  } catch (error) {
-    console.error("Error adding user:", error);
-    throw error;
-  }
-};
+// // Thêm User mới
+// export const UserAdd = async (userData: IUser) => {
+//   try {
+//     const { data } = await api.post<{ user: IUser }>("users", userData);
+//     return data.user;
+//   } catch (error) {
+//     console.error("Error adding user:", error);
+//     throw error;
+//   }
+// };
 
-// Cập nhật thông tin User
-export const UserUpdate = async (id: number | string, userData: Partial<IUser>) => {
-  try {
-    const { data } = await api.put<{ user: IUser }>(`users/${id}`, userData);
-    return data.user;
-  } catch (error) {
-    console.error("Error updating user:", error);
-    throw error;
-  }
-};
+// // Cập nhật thông tin User
+// export const UserUpdate = async (id: number | string, userData: Partial<IUser>) => {
+//   try {
+//     const { data } = await api.put<{ user: IUser }>(`users/${id}`, userData);
+//     return data.user;
+//   } catch (error) {
+//     console.error("Error updating user:", error);
+//     throw error;
+//   }
+// };
 
-// Xóa User
-export const UserDelete = async (id: number | string) => {
+// // Xóa User
+// export const UserDelete = async (id: number | string) => {
+//   try {
+//     const { data } = await api.delete<{ message: string }>(`users/${id}`);
+//     return data.message;
+//   } catch (error) {
+//     console.error("Error deleting user:", error);
+//     throw error;
+//   }
+// };
+
+export const ToggleUserStatus = async (id: number, p0: boolean) => {
   try {
-    const { data } = await api.delete<{ message: string }>(`users/${id}`);
-    return data.message;
+    const { data } = await api.patch<{ message: string; is_active: boolean }>(`users/${id}/toggle-status`);
+    return data;
   } catch (error) {
-    console.error("Error deleting user:", error);
+    console.error("Error toggling user status:", error);
     throw error;
   }
 };

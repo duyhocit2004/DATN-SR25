@@ -43,6 +43,16 @@ const ProductList: React.FC = () => {
 
             {products.length > 0 ? (
                 products.map((product) => (
+<<<<<<< HEAD
+                    <div key={product.id} className="product-card">
+                        <img
+                            src={product.image}
+                            alt={product.name_product}
+                            className="product-image"
+                            onClick={() => handleProductClick(Number(product.id))}
+                            style={{ cursor: 'pointer' }}
+                        />
+=======
                     <div key={product.id} className="product-card" onClick={() => handleProductClick(Number(product.id))}>
                         <div className="product-image-container">
                             <img
@@ -61,6 +71,7 @@ const ProductList: React.FC = () => {
                                 <i className="fas fa-shopping-cart"></i> Thêm vào giỏ
                             </button>
                         </div>
+>>>>>>> efcf09ce8b15be1995251b396bfaab3e58511deb
                         <div className="product-info">
                             <h2 className="product-title">{product.name_product}</h2>
                             <div className="product-rating">

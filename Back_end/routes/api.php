@@ -94,6 +94,7 @@ Route::post('vouchers', [ApiVoucherController::class, 'store']);
 Route::get('vouchers/{id}', [ApiVoucherController::class, 'show']);
 Route::put('vouchers/{id}', [ApiVoucherController::class, 'update']);
 Route::delete('vouchers/{id}', [ApiVoucherController::class, 'destroy']);
+Route::patch('/vouchers/{id}/toggle-status', [ApiVoucherController::class, 'toggleStatus']);
 
 
 //Order
@@ -110,6 +111,8 @@ Route::post('users', [ApiUserController::class, 'store']);
 Route::get('users/{id}', [ApiUserController::class, 'show']);
 Route::put('users/{id}', [ApiUserController::class, 'update']);
 Route::delete('users/{id}', [ApiUserController::class, 'destroy']);
+Route::patch('/users/{id}/toggle-status', [ApiUserController::class, 'toggleStatus']);
+
 
 //cart
 
@@ -161,4 +164,4 @@ Route::post('totalsum', [ApiDashBoardController::class, 'totalsum']);
 Route::post('countOrder', [ApiDashBoardController::class, 'countOrder']);
 Route::get('productExpired', [ApiDashBoardController::class, 'productExpired']);
 Route::get('sumproduct', [ApiDashBoardController::class, 'sumproduct']);
-
+});

@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Image, Tag, message } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useNavigate } from 'react-router-dom';
-import { ListUsers, UserDelete } from '../../../service/auth/user';
+import { ListUsers, ToggleUserStatus } from '../../../service/auth/user';
 import { IUser } from '../../../interface/User';
 
-
 const ListUser: React.FC = () => {
-    const navigate = useNavigate();
     const [data, setData] = useState<IUser[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -27,17 +23,13 @@ const ListUser: React.FC = () => {
         setLoading(false);
     };
 
-    const handleEdit = (id: number) => {
-        navigate(`/admin/users/edit/${id}`);
-    };
-
-    const handleDelete = async (id: number) => {
+    const handleToggleStatus = async (id: number) => {
         try {
-            await UserDelete(id);
-            message.success('Xóa tài khoản thành công');
+            const response = await ToggleUserStatus(id);
+            message.success(response.is_active ? 'Tài khoản đã bị khóa' : 'Tài khoản đã được mở khóa');
             fetchData();
         } catch (error) {
-            message.error('Lỗi khi xóa tài khoản');
+            message.error('Lỗi khi cập nhật trạng thái tài khoản');
         }
     };
 
@@ -64,15 +56,22 @@ const ListUser: React.FC = () => {
             ),
         },
         {
+            title: 'Trạng thái',
+            dataIndex: 'is_active',
+            key: 'is_active',
+            render: (isActive: boolean) => (
+                <Tag color={isActive ? 'green' : 'volcano'}>
+                    {isActive ? 'Hoạt động' : 'Bị khóa'}
+                </Tag>
+            ),
+        },
+        {
             title: 'Thao tác',
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record.id)}>
-                        Chỉnh sửa
-                    </Button>
-                    <Button danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)}>
-                        Xóa
+                    <Button type={record.is_active ? 'danger' : 'primary'} onClick={() => handleToggleStatus(record.id, record.is_active)}>
+                        {record.is_active ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}
                     </Button>
                 </Space>
             ),
@@ -82,11 +81,6 @@ const ListUser: React.FC = () => {
     return (
         <>
             <h1>Danh sách người dùng</h1>
-            <div style={{ marginBottom: 16, textAlign: 'right' }}>
-                <Button type="primary" onClick={() => navigate('/admin/users/add')}>
-                    Thêm tài khoản
-                </Button>
-            </div>
             <Table columns={columns} dataSource={data} loading={loading} pagination={{ pageSize: 5 }} rowKey="id" />
         </>
     );

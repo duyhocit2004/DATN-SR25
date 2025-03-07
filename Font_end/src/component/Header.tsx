@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { ICart } from "../interface/Cart";
 import { GetCartLength } from "./Cart";
+import axios from "axios";
+import { IUser } from "../interface/User";
 
 
 const CART_KEY = "cart";
@@ -13,28 +15,53 @@ export const GetCart = (): ICart[] => {
 
 const Header: React.FC = () => {
   const [cartCount, setCartCount] = useState<number>(GetCartLength());
+  const [users, setUsers] = useState<IUser | null>(null);
+  const navigate = useNavigate();
 
-  // Hàm cập nhật số lượng giỏ hàng
-  const updateCartCount = () => {
-    const count = GetCartLength();
-    console.log("Cart updated, new count:", count);
-    setCartCount(GetCartLength());
+  // Hàm lấy thông tin users từ API
+  const fetchUsers = async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      setUsers(null);
+      return;
+    }
+
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/users", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log("Users data:", response.data);
+      setUsers(response.data);
+    } catch (error) {
+      console.error("Không thể lấy thông tin người dùng:", error);
+      setUsers(null);
+    }
   };
 
-  // Chạy lần đầu khi mount
+  // Gọi API khi component mount
   useEffect(() => {
-    updateCartCount();
+    fetchUsers();
+
+    // Lắng nghe sự kiện đăng nhập thành công
+    const handleUsersLogin = () => {
+      fetchUsers();
+    };
+
+    window.addEventListener("usersLoggedIn", handleUsersLogin);
+
+    return () => {
+      window.removeEventListener("usersLoggedIn", handleUsersLogin);
+    };
   }, []);
 
-  // Nghe sự kiện cartUpdated
-  useEffect(() => {
-    const handler = () => {
-      console.log("cartUpdated event received");
-      setCartCount(GetCartLength());
-    };
-    window.addEventListener("cartUpdated", handler);
-    return () => window.removeEventListener("cartUpdated", handler);
-  }, []);
+  // Đăng xuất
+  // const handleLogout = () => {
+  //   sessionStorage.removeItem("token");
+  //   setUsers(null);
+  //   navigate("/login");
+  // };
+
   return (
     <div className="page-wrapper">
       <header className="header">
@@ -50,14 +77,14 @@ const Header: React.FC = () => {
               <div className="header-dropdown dropdown-expanded d-none d-lg-block">
                 <a href="javascript:void(0);">Links</a>
                 <div className="header-menu">
-                  <ul>
+                  {/* <ul>
                     <li><NavLink to="/my_account">My Account</NavLink></li>
                     <li><NavLink to="/login">Log In</NavLink></li>
-                  </ul>
+                  </ul> */}
                 </div>
               </div>
               <span className="separator"></span>
-              <div className="header-dropdown">
+              {/* <div className="header-dropdown">
                 <a href="#"><i className="flag-us flag"></i>ENG</a>
                 <div className="header-menu">
                   <ul>
@@ -74,7 +101,7 @@ const Header: React.FC = () => {
                     <li><a href="#">USD</a></li>
                   </ul>
                 </div>
-              </div>
+              </div> */}
               <span className="separator"></span>
               <div className="social-icons">
                 <a href="#" className="social-icon social-facebook icon-facebook" target="_blank"></a>
@@ -110,9 +137,29 @@ const Header: React.FC = () => {
                 <img alt="phone" src="assets/images/phone.png" width="30" height="30" className="pb-1" />
                 <h6><span>Liên hệ</span><a href="tel:#" className="text-dark font1">+0962139512</a></h6>
               </div>
-              <NavLink to="/login" className="header-icon" title="Login">
-                <i className="icon-user-2"></i>
-              </NavLink>
+              {/* <NavLink to="/login" className="header-icon" title="Login">
+                <i className="icon-users-2"></i>
+              </NavLink> */}
+
+
+              {users ? (
+                <div className="users-info">
+                  <NavLink to={`/userss/${users.id}`}>
+                    <img
+                      src={users.user_image ? `http://127.0.0.1:8000${users.user_image}` : "/default-avatar.png"}
+                      className="users-avatar"
+                      alt="Users Avatar"
+                    />
+                  </NavLink>
+                  <span className="users-name">{users.name}</span>
+                </div>
+              ) : (
+                <NavLink to="/login" className="header-icon" title="Login">
+                  <i className="icon-users-2"></i>
+                </NavLink>
+              )}
+
+
               <NavLink to="/wishlist" className="header-icon" title="Wishlist">
                 <i className="icon-wishlist-2"></i>
               </NavLink>

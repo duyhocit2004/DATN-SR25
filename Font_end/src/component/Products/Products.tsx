@@ -8,10 +8,7 @@ interface Product {
   price: number;
 }
 
-const products: Product[] = [
-  { id: "1", name: "Áo Thun", price: 200000 },
-  { id: "2", name: "Quần Jean", price: 350000 },
-];
+const products: Product[] = [];
 
 const Products: React.FC = () => {
   const { addProductToCart } = useCart();
@@ -27,7 +24,7 @@ const Products: React.FC = () => {
       <ul>
         {products.map((product) => (
           <li key={product.id}>
-            {product.name} - {product.price.toLocaleString()}₫
+            {product.name} - {product.price.toLocaleString()}
             <button onClick={() => handleAddToCart(product.id)}>Thêm vào giỏ</button>
           </li>
         ))}

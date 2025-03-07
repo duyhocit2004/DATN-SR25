@@ -34,6 +34,8 @@ const items: MenuItem[] = [
     getItem('Quản lý màu sắc', '/admin/colors', <DesktopOutlined />),
     getItem('Quản lý kích thước ', '/admin/sizes', <DesktopOutlined />),
     getItem('Quản lý danh mục  ', '/admin/categories', <DesktopOutlined />),
+    getItem('Quản lý voucher  ', '/admin/vouchers', <DesktopOutlined />),
+    getItem('Quản lý giỏ hàng  ', '/admin/oders', <DesktopOutlined />),
     getItem('Quản lý tài khoản', '/admin/users', <UserOutlined />),
     getItem('Cài đặt', '/admin/settings', <FileOutlined />),
 ];

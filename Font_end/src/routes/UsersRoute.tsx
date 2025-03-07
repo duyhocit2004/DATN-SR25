@@ -11,6 +11,7 @@ import Orders from '../component/Orders/Orders';
 import OrderDetail from '../component/Orders/OrderDetail';
 import HomePage from '../component/HomePage';
 import Cart from '../component/Cart';
+import UserProfile from '../client/profile/user';
 
 
 
@@ -28,6 +29,9 @@ const UserRoutes = () => {
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/orders/:id" element={<OrderDetail />} />
+                <Route path="/profile" element={<UserProfile />} />
+                {/* <Route path="/user/:id" element={<UserDetail />} /> */}
+
             </Routes>
         </>
     );
