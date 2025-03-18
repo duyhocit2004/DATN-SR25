@@ -52,19 +52,26 @@ Route::middleware('jwt.auth')->group(function () {
 
     // các api màn admin
     Route::prefix('admin')->group(function () {
-
+        //duy
         Route::prefix('users')->group(function () {
             Route::post('/getUserInfoByEmail', [AuthController::class, 'getUser']);
             Route::post('/updateUserAdmin', [AuthController::class, 'updateUserAdmin']);
             Route::post('/getAllUser', [AdminController::class, 'getAllUser']);
             Route::post('/deleteUser', [AdminController::class, 'deleteUser']);
         });
-
+        //nam
         Route::prefix('vouchers')->group(function () {
             Route::post('/getAllVoucher', [AdminController::class, 'getAllVoucher']);
             Route::post('/addVoucher', [AdminController::class, 'addVoucher']);
             Route::post('/updateVoucher', [AdminController::class, 'updateVoucher']);
             Route::post('/deleteVoucher', [AdminController::class, 'deleteVoucher']);
+        });
+
+        //truong
+        Route::prefix('colors')->group(function () {
+            Route::post('/addColor', [AdminController::class, 'addColor']);
+            Route::post('/updateColor', [AdminController::class, 'updateColor']);
+            Route::post('/deleteColor', [AdminController::class, 'deleteColor']);
         });
 
     });
