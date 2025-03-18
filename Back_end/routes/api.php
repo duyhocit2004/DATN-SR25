@@ -92,6 +92,11 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/updateColor', [AdminController::class, 'updateColor']);
             Route::post('/deleteColor', [AdminController::class, 'deleteColor']);
         });
+        Route::prefix('sizes')->group(function () {
+            Route::post('/addSize', [AdminController::class, 'addSize']);
+            Route::post('/updateSize', [AdminController::class, 'updateSize']);
+            Route::post('/deleteSize', [AdminController::class, 'deleteSize']);
+        });
 
     });
 });

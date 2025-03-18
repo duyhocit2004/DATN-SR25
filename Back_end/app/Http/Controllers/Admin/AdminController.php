@@ -69,6 +69,22 @@ class AdminController extends Controller
         return BaseResponse::success($products);
     }
 
+    public function addSize(Request $request)
+    {
+        $products = $this->adminService->addSize($request);
+        return BaseResponse::success($products);
+    }
+    public function updateSize(Request $request)
+    {
+        $size = $this->adminService->updateSize($request);
+        return BaseResponse::success($size);
+    }
+    public function deleteSize(Request $request)
+    {
+        $size = $this->adminService->deleteSize($request);
+        return BaseResponse::success($size);
+    }
+
     public function getDataStats(Request $request)
     {
         $products = $this->adminService->getDataStats($request);

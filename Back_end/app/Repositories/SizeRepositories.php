@@ -32,4 +32,41 @@ class SizeRepositories
         return $sizes;
     }
 
+    public function addSize(Request $request)
+    {
+        $size = Size::create([
+            'size' => $request->input('size'),
+        ]);
+        return $size;
+    }
+
+    public function updateSize(Request $request)
+    {
+        $size= Size::find($request->input('id'));
+
+        if (!$size) {
+            BaseResponse::failure('400', 'size not found', 'size.not.found', []);
+        }
+
+        $size->update([
+            'size' => $request->input('size', $size->size),
+        ]);
+
+        return $size;
+    }
+
+    public function deleteSize(Request $request)
+    {
+        $size= Size::find($request->input('id'));
+
+        if (!$size) {
+            BaseResponse::failure('400', 'size not found', 'size.not.found', []);
+        }
+
+        //không cần check các bảng sử dụng size_id là khoá ngoại để xoá theo vì trong database đã set on delete cascade
+        $size->delete();
+
+        return $size;
+    }
+
 }
