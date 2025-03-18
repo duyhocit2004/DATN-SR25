@@ -80,6 +80,12 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/deleteVoucher', [AdminController::class, 'deleteVoucher']);
         });
 
+        Route::prefix('categories')->group(function () {
+            Route::post('/addCategory', [AdminController::class, 'addCategory']);
+            Route::post('/updateCategory', [AdminController::class, 'updateCategory']);
+            Route::post('/deleteCategory', [AdminController::class, 'deleteCategory']);
+        });
+
         //truong
         Route::prefix('colors')->group(function () {
             Route::post('/addColor', [AdminController::class, 'addColor']);

@@ -18,4 +18,7 @@ interface IAdminService
     public function getDataStats(Request $request);
     public function getDashboardChart(Request $request);
     public function getAllCategoriesNonTree(Request $request);
+    public function addCategory(Request $request);
+    public function updateCategory(Request $request);
+    public function deleteCategory(Request $request);
 }

@@ -56,4 +56,53 @@ class CategoriesRepositories
         $categories = $query->paginate($perPage, ['*'], 'page', $page);
         return $categories;
     }
+
+    public function addCategory(Request $request, $imageLink)
+    {
+        $size = Category::create([
+            'parent_id' => $request->input('parentId'),
+            'name' => $request->input('name'),
+            'image' => empty($imageLink) ? '' : $imageLink,
+            'gender' => $request->input('gender'),
+            'description' => $request->input('description'),
+        ]);
+        return $size;
+    }
+
+    public function updateCategory(Request $request, $imageLink)
+    {
+        $category = Category::find($request->input('id'));
+
+        if (!$category) {
+            BaseResponse::failure('400', 'categoty not found', 'categoty.not.found', []);
+        }
+
+        $category->update([
+            'image' => empty($imageLink) ? $category->image : $imageLink,
+            'name' => $request->input('status', $category->name),
+            'parent_id' => $request->input('parentId', $category->parent_id),
+            'gender' => $request->input('gender', $category->gender),
+        ]);
+
+        return $category;
+    }
+    public function deleteCategory(Request $request)
+    {
+        $category = Category::find($request->input('id'));
+
+        if (!$category) {
+            BaseResponse::failure('400', 'categoty not found', 'categoty.not.found', []);
+        }
+
+        //khi xoá category các bảng sau sẽ bị xoá theo
+        //products;
+        //product_variants;
+        //image_product;
+        //wishlist;
+        //carts;
+        //comment;
+        $category->delete();
+
+        return $category;
+    }
 }
