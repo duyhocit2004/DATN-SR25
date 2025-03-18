@@ -36,6 +36,7 @@ Route::prefix('home')->group(function () {
 
 Route::prefix('admin')->group(function () {
     Route::post('login', [AuthController::class, 'loginAdmin']);
+    Route::post('/getAllCategoriesNonTree', [AdminController::class, 'getAllCategoriesNonTree']);
 });
 
 Route::prefix('orders')->group(function () {

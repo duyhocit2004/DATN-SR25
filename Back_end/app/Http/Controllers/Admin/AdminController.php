@@ -80,4 +80,10 @@ class AdminController extends Controller
         return BaseResponse::success($products);
     }
 
+    public function getAllCategoriesNonTree(Request $request)
+    {
+        $products = $this->adminService->getAllCategoriesNonTree($request);
+        return BaseResponse::success($products);
+    }
+
 }

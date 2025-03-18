@@ -182,4 +182,23 @@ class AdminService implements IAdminService
         return $dashboardRevenue;
     }
 
+    public function getAllCategoriesNonTree(Request $request)
+    {
+        $categories= $this->categoriesRepositories->getAllCategoriesNonTree($request);
+        $categories->getCollection()->transform(function ($category) {
+            return [
+                'id' => $category->id,
+                'parentId' => $category->parent_id,
+                'name' => $category->name,
+                'image' => $category->image,
+                'gender' => $category->gender,
+                'createdAt' => $category->created_at,
+                'updatedAt' => $category->updated_at,
+                'description' => $category->description,
+                'parentName' => $category->parent ? $category->parent->name : '',
+            ];
+        });
+        return $categories;
+    }
+
 }

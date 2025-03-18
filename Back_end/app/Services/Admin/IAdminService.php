@@ -17,5 +17,5 @@ interface IAdminService
     public function deleteColor(Request $request);
     public function getDataStats(Request $request);
     public function getDashboardChart(Request $request);
-
+    public function getAllCategoriesNonTree(Request $request);
 }

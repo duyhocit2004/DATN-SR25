@@ -31,4 +31,29 @@ class CategoriesRepositories
             return $categories;
         }
     }
+
+    public function getAllCategoriesNonTree(Request $request)
+    {
+        $perPage = $request->input('pageSize', 10);
+        $page = $request->input('pageNum', 1);
+        $categoriesId = $request->input('categoriesId', null);
+        $name = $request->input('name', null);
+        $parentId = $request->input('parentId', null);
+
+        $query = Category::query()->with('parent:id,name');
+        if (!empty($categoriesId)) {
+            $query->where('id', '=', $categoriesId);
+        }
+
+        if (!empty($parentId)) {
+            $query->where('parent_id', '=', $parentId);
+        }
+
+        if (!empty($name)) {
+            $query->where('name', 'like', '%' . $name . '%');
+        }
+
+        $categories = $query->paginate($perPage, ['*'], 'page', $page);
+        return $categories;
+    }
 }
