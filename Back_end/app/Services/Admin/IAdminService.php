@@ -12,5 +12,8 @@ interface IAdminService
     public function addVoucher(Request $request);
     public function updateVoucher(Request $request);
     public function deleteVoucher(Request $request);
+    public function addColor(Request $request);
+    public function updateColor(Request $request);
+    public function deleteColor(Request $request);
 
 }
