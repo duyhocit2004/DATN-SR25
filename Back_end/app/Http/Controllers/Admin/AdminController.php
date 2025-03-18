@@ -69,4 +69,37 @@ class AdminController extends Controller
         return BaseResponse::success($products);
     }
 
+    public function getDataStats(Request $request)
+    {
+        $products = $this->adminService->getDataStats($request);
+        return BaseResponse::success($products);
+    }
+    public function getDashboardChart(Request $request)
+    {
+        $products = $this->adminService->getDashboardChart($request);
+        return BaseResponse::success($products);
+    }
+
+    public function getAllCategoriesNonTree(Request $request)
+    {
+        $products = $this->adminService->getAllCategoriesNonTree($request);
+        return BaseResponse::success($products);
+    }
+
+    public function addCategory(Request $request)
+    {
+        $products = $this->adminService->addCategory($request);
+        return BaseResponse::success($products);
+    }
+    public function updateCategory(Request $request)
+    {
+        $products = $this->adminService->updateCategory($request);
+        return BaseResponse::success($products);
+    }
+    public function deleteCategory(Request $request)
+    {
+        $products = $this->adminService->deleteCategory($request);
+        return BaseResponse::success($products);
+    }
+
 }
