@@ -28,8 +28,15 @@ Route::prefix('users')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
+Route::prefix('home')->group(function () {
+    Route::post('/getAllCategories', [HomeController::class, 'getAllCategories']);
+    Route::post('/getParentCategories', [HomeController::class, 'getParentCategories']);
+    Route::post('/getChildrenCategories', [HomeController::class, 'getChildrenCategories']);
+});
+
 Route::prefix('admin')->group(function () {
     Route::post('login', [AuthController::class, 'loginAdmin']);
+    Route::post('/getAllCategoriesNonTree', [AdminController::class, 'getAllCategoriesNonTree']);
 });
 
 Route::prefix('orders')->group(function () {
@@ -39,6 +46,9 @@ Route::prefix('orders')->group(function () {
 Route::prefix('products')->group(function () {
     Route::post('/getAllSizes', [ProductController::class, 'getAllSizes']);
     Route::post('/getAllColors', [ProductController::class, 'getAllColors']);
+    Route::post('/getAllFilter', [ProductController::class, 'getAllProductWithImages']);
+    Route::post('/getProduct', [ProductController::class, 'getProduct']);
+    Route::post('/getProductDetail', [ProductController::class, 'getProductDetail']);
 });
 
 //các api cần authen
@@ -73,11 +83,22 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/deleteVoucher', [AdminController::class, 'deleteVoucher']);
         });
 
+        Route::prefix('categories')->group(function () {
+            Route::post('/addCategory', [AdminController::class, 'addCategory']);
+            Route::post('/updateCategory', [AdminController::class, 'updateCategory']);
+            Route::post('/deleteCategory', [AdminController::class, 'deleteCategory']);
+        });
+
         //truong
         Route::prefix('colors')->group(function () {
             Route::post('/addColor', [AdminController::class, 'addColor']);
             Route::post('/updateColor', [AdminController::class, 'updateColor']);
             Route::post('/deleteColor', [AdminController::class, 'deleteColor']);
+        });
+        Route::prefix('sizes')->group(function () {
+            Route::post('/addSize', [AdminController::class, 'addSize']);
+            Route::post('/updateSize', [AdminController::class, 'updateSize']);
+            Route::post('/deleteSize', [AdminController::class, 'deleteSize']);
         });
 
     });

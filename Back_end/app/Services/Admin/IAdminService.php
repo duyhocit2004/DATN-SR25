@@ -15,7 +15,13 @@ interface IAdminService
     public function addColor(Request $request);
     public function updateColor(Request $request);
     public function deleteColor(Request $request);
+    public function addSize(Request $request);
+    public function updateSize(Request $request);
+    public function deleteSize(Request $request);
     public function getDataStats(Request $request);
     public function getDashboardChart(Request $request);
-
+    public function getAllCategoriesNonTree(Request $request);
+    public function addCategory(Request $request);
+    public function updateCategory(Request $request);
+    public function deleteCategory(Request $request);
 }
