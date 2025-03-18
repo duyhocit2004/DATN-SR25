@@ -16,6 +16,10 @@ class OrderController extends Controller
         $this->orderService = $orderService;
     }
 
-
+    public function getVoucher(Request $request)
+    {
+        $products = $this->orderService->getVoucher($request);
+        return BaseResponse::success($products);
+    }
 
 }
