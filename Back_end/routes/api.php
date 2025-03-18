@@ -46,6 +46,9 @@ Route::prefix('orders')->group(function () {
 Route::prefix('products')->group(function () {
     Route::post('/getAllSizes', [ProductController::class, 'getAllSizes']);
     Route::post('/getAllColors', [ProductController::class, 'getAllColors']);
+    Route::post('/getAllFilter', [ProductController::class, 'getAllProductWithImages']);
+    Route::post('/getProduct', [ProductController::class, 'getProduct']);
+    Route::post('/getProductDetail', [ProductController::class, 'getProductDetail']);
 });
 
 //các api cần authen

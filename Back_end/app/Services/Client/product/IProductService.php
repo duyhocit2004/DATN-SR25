@@ -11,4 +11,10 @@ interface IProductService
 
     public function getAllColors(Request $request);
 
+    public function getAllProductWithImages(Request $request);
+
+    public function getProduct(Request $request);
+
+    public function getProductDetail(Request $request);
+
 }
