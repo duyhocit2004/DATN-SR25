@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\products;
+use App\Models\Product;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('image_product', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(products::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Product::class)->constrained()->onDelete('cascade');
             $table->string('image_link');
             $table->timestamps();
         });

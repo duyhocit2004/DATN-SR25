@@ -1,21 +1,42 @@
 <?php
 
+/**
+ * Created by Reliese Model.
+ */
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class imageProduct extends Model
+/**
+ * Class ImageProduct
+ * 
+ * @property int $id
+ * @property int $products_id
+ * @property string $image_link
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * 
+ * @property Product $product
+ *
+ * @package App\Models
+ */
+class ImageProduct extends Model
 {
-    use HasFactory;
+	protected $table = 'image_product';
 
-    protected $table = 'image_product';
-    protected $fillable =[
-        'products_id',
-        'image_link',
-    ];
-    public function product (){
-        return $this->belongsTo(products::class,'products_id','id');
-    }
+	protected $casts = [
+		'products_id' => 'int'
+	];
+
+	protected $fillable = [
+		'products_id',
+		'image_link'
+	];
+
+	public function product()
+	{
+		return $this->belongsTo(Product::class, 'products_id');
+	}
 }

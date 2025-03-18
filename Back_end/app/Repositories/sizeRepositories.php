@@ -2,32 +2,14 @@
 
 namespace App\Repositories;
 
-use App\Models\size;
+use App\Helpers\BaseResponse;
+use App\Models\Color;
+use App\Models\ProductVariant;
+use App\Models\Size;
+use Illuminate\Http\Request;
 
-class SizeRepositories {
+class SizeRepositories
+{
 
-    public function getAll()
-    {
-        return Size::all();
-    }
 
-    public function getById($id)
-    {
-        return Size::find($id);
-    }
-
-    public function insert($name)
-    {
-        return Size::create(['name' => $name]);
-    }
-
-    public function updateById($id, $data)
-    {
-        return Size::where('id', $id)->update($data);
-    }
-
-    public function deleteById($id)
-    {
-        return Size::destroy($id);
-    }
 }

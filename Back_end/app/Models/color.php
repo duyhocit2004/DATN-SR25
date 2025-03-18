@@ -1,20 +1,37 @@
 <?php
 
+/**
+ * Created by Reliese Model.
+ */
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class color extends Model
+/**
+ * Class Color
+ * 
+ * @property int $id
+ * @property string $code
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * 
+ * @property Collection|ProductVariant[] $product_variants
+ *
+ * @package App\Models
+ */
+class Color extends Model
 {
-    use HasFactory;
-    protected $table = 'colors';
-    protected $fillable = [
-        'name',
-        'created_at',
-        'updated_at'
-    ];
-    public function codecolor(){
-        return $this->hasOne(codecolors::class);
-    }
+	protected $table = 'colors';
+
+	protected $fillable = [
+		'code'
+	];
+
+	public function product_variants()
+	{
+		return $this->hasMany(ProductVariant::class);
+	}
 }

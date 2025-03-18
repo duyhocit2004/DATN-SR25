@@ -1,44 +1,49 @@
 <?php
 
+/**
+ * Created by Reliese Model.
+ */
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Voucher
+ *
+ * @property int $id
+ * @property string $code
+ * @property int $quantity
+ * @property int $used
+ * @property float|null $voucher_price
+ * @property Carbon|null $start_date
+ * @property Carbon|null $end_date
+ * @property bool $status
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * @package App\Models
+ */
 class Voucher extends Model
 {
-    use HasFactory;
+	protected $table = 'vouchers';
 
-    protected $fillable = [
-        'code', 'discount_type', 'discount_value', 'min_order_value',
-        'max_discount', 'quantity', 'used', 'start_date', 'end_date', 'status'
-    ];
+	protected $casts = [
+		'quantity' => 'int',
+		'used' => 'int',
+		'voucher_price' => 'float',
+		'start_date' => 'datetime',
+		'end_date' => 'datetime'
+	];
 
-    protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-    ];
-
-    /**
-     * Kiểm tra và cập nhật trạng thái voucher
-     */
-    public function updateStatus()
-    {
-        $now = Carbon::now();
-
-        if ($this->status === 'disabled') {
-            return;
-        }
-
-        if ($this->end_date && $now->gt($this->end_date)) {
-            $this->status = 'expired';
-        } elseif ($this->used >= $this->quantity) {
-            $this->status = 'used_up';
-        } else {
-            $this->status = 'active';
-        }
-
-        $this->save();
-    }
+	protected $fillable = [
+		'code',
+		'quantity',
+		'used',
+		'voucher_price',
+		'start_date',
+		'end_date',
+		'status'
+	];
 }
