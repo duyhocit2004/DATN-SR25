@@ -36,6 +36,11 @@ Route::prefix('orders')->group(function () {
     Route::post('/getVoucher', [OrderController::class, 'getVoucher']);
 });
 
+Route::prefix('products')->group(function () {
+    Route::post('/getAllSizes', [ProductController::class, 'getAllSizes']);
+    Route::post('/getAllColors', [ProductController::class, 'getAllColors']);
+});
+
 //các api cần authen
 Route::middleware('jwt.auth')->group(function () {
 

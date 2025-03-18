@@ -40,5 +40,31 @@ class ProductService implements IProductService
         $this->commentRepositories = $commentRepositories;
     }
 
+    public function getAllSizes(Request $request)
+    {
+        $pageNum = $request->get('pageNum', null);
+        $pageSize = $request->get('pageSize', null);
+        if (empty($pageNum) || empty($pageSize)) {
+            $sizes = $this->sizeRepositories->getAllSizes();
+            return $sizes;
+        } else {
+            $sizes = $this->sizeRepositories->getSizesPaging($request);
+            return $sizes;
+        }
+
+    }
+
+    public function getAllColors(Request $request)
+    {
+        $pageNum = $request->get('pageNum', null);
+        $pageSize = $request->get('pageSize', null);
+        if (empty($pageNum) || empty($pageSize)) {
+            $colors = $this->colorRepositories->getAllColors();
+            return $colors;
+        } else {
+            $sizes = $this->colorRepositories->getColorsPaging($request);
+            return $sizes;
+        }
+    }
 
 }
