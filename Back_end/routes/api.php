@@ -28,6 +28,12 @@ Route::prefix('users')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
+Route::prefix('home')->group(function () {
+    Route::post('/getAllCategories', [HomeController::class, 'getAllCategories']);
+    Route::post('/getParentCategories', [HomeController::class, 'getParentCategories']);
+    Route::post('/getChildrenCategories', [HomeController::class, 'getChildrenCategories']);
+});
+
 Route::prefix('admin')->group(function () {
     Route::post('login', [AuthController::class, 'loginAdmin']);
 });

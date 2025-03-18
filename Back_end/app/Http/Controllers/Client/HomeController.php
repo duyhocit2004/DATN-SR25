@@ -17,4 +17,22 @@ class HomeController extends Controller
     {
         $this->homeService = $homeService;
     }
+
+    public function getAllCategories()
+    {
+        $sizes = $this->homeService->getAllCategories();
+        return BaseResponse::success($sizes);
+    }
+
+    public function getParentCategories()
+    {
+        $sizes = $this->homeService->getParentCategories();
+        return BaseResponse::success($sizes);
+    }
+
+    public function getChildrenCategories(Request $request)
+    {
+        $children = $this->homeService->getChildrenCategories($request);
+        return BaseResponse::success($children);
+    }
 }
