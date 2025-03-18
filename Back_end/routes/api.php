@@ -43,6 +43,7 @@ Route::prefix('products')->group(function () {
 
 //các api cần authen
 Route::middleware('jwt.auth')->group(function () {
+    Route::post('/uploadImage', [CommonController::class, 'uploadImage']);
 
     Route::prefix('users')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -53,6 +54,11 @@ Route::middleware('jwt.auth')->group(function () {
     // các api màn admin
     Route::prefix('admin')->group(function () {
         //duy
+        Route::prefix('dashboard')->group(function () {
+            Route::post('/getDataStats', [AdminController::class, 'getDataStats']);
+            Route::post('/getDashboardChart', [AdminController::class, 'getDashboardChart']);
+        });
+
         Route::prefix('users')->group(function () {
             Route::post('/getUserInfoByEmail', [AuthController::class, 'getUser']);
             Route::post('/updateUserAdmin', [AuthController::class, 'updateUserAdmin']);
