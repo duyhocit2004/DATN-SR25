@@ -52,4 +52,32 @@ class AdminController extends Controller
         return BaseResponse::success($products);
     }
 
+    public function addColor(Request $request)
+    {
+        $products = $this->adminService->addColor($request);
+        return BaseResponse::success($products);
+    }
+    public function updateColor(Request $request)
+    {
+        $products = $this->adminService->updateColor($request);
+        return BaseResponse::success($products);
+    }
+
+    public function deleteColor(Request $request)
+    {
+        $products = $this->adminService->deleteColor($request);
+        return BaseResponse::success($products);
+    }
+
+    public function getDataStats(Request $request)
+    {
+        $products = $this->adminService->getDataStats($request);
+        return BaseResponse::success($products);
+    }
+    public function getDashboardChart(Request $request)
+    {
+        $products = $this->adminService->getDashboardChart($request);
+        return BaseResponse::success($products);
+    }
+
 }
