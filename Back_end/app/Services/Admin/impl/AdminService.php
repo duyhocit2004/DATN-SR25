@@ -74,4 +74,52 @@ class AdminService implements IAdminService
         return $user;
     }
 
+    public function getAllVoucher(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $userId = $user->id;
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+        $vouchers= $this->voucherRepositories->getAllVoucher($request);
+        return $vouchers;
+    }
+
+    public function addVoucher(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $voucher = $this->voucherRepositories->addVoucher($request);
+        return $voucher;
+    }
+
+    public function updateVoucher(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $voucher = $this->voucherRepositories->updateVoucher($request);
+        return $voucher;
+    }
+
+    public function deleteVoucher(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $voucher = $this->voucherRepositories->deleteVoucher($request);
+        return $voucher;
+    }
+
 }

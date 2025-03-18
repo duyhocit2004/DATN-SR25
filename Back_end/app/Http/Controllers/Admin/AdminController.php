@@ -29,4 +29,27 @@ class AdminController extends Controller
         return BaseResponse::success($products);
     }
 
+    public function getAllVoucher(Request $request)
+    {
+        $products = $this->adminService->getAllVoucher($request);
+        return BaseResponse::success($products);
+    }
+
+    public function addVoucher(Request $request)
+    {
+        $products = $this->adminService->addVoucher($request);
+        return BaseResponse::success($products);
+    }
+    public function updateVoucher(Request $request)
+    {
+        $products = $this->adminService->updateVoucher($request);
+        return BaseResponse::success($products);
+    }
+
+    public function deleteVoucher(Request $request)
+    {
+        $products = $this->adminService->deleteVoucher($request);
+        return BaseResponse::success($products);
+    }
+
 }
