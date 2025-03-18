@@ -158,6 +158,41 @@ class AdminService implements IAdminService
         return $color;
     }
 
+    public function addSize(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $size = $this->sizeRepositories->addSize($request);
+        return $size;
+    }
+
+    public function updateSize(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $size = $this->sizeRepositories->updateSize($request);
+        return $size;
+    }
+    public function deleteSize(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $size = $this->sizeRepositories->deleteSize($request);
+        return $size;
+    }
+
     public function getDataStats(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
