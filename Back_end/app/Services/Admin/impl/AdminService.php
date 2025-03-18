@@ -158,4 +158,28 @@ class AdminService implements IAdminService
         return $color;
     }
 
+    public function getDataStats(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $dashboardSummary = $this->productRepositories->getDataStats($request);
+        return $dashboardSummary;
+    }
+
+    public function getDashboardChart(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $dashboardRevenue = $this->productRepositories->getDashboardChart($request);
+        return $dashboardRevenue;
+    }
+
 }
