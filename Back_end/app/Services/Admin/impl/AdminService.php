@@ -182,4 +182,69 @@ class AdminService implements IAdminService
         return $dashboardRevenue;
     }
 
+    public function getAllCategoriesNonTree(Request $request)
+    {
+        $categories= $this->categoriesRepositories->getAllCategoriesNonTree($request);
+        $categories->getCollection()->transform(function ($category) {
+            return [
+                'id' => $category->id,
+                'parentId' => $category->parent_id,
+                'name' => $category->name,
+                'image' => $category->image,
+                'gender' => $category->gender,
+                'createdAt' => $category->created_at,
+                'updatedAt' => $category->updated_at,
+                'description' => $category->description,
+                'parentName' => $category->parent ? $category->parent->name : '',
+            ];
+        });
+        return $categories;
+    }
+
+    public function addCategory(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $userId = $user->id;
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $uploadedFile = null;
+        if ($request->hasFile('image')) {
+            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
+        }
+
+        $category = $this->categoriesRepositories->addCategory($request, $uploadedFile['secure_url']);
+        return $category;
+    }
+
+    public function updateCategory(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $uploadedFile = null;
+        if ($request->hasFile('image')) {
+            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
+        }
+
+        $category = $this->categoriesRepositories->updateCategory($request, $uploadedFile['secure_url']);
+        return $category;
+    }
+    public function deleteCategory(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $category = $this->categoriesRepositories->deleteCategory($request);
+        return $category;
+    }
+
 }

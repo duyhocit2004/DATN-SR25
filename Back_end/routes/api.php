@@ -28,8 +28,15 @@ Route::prefix('users')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
+Route::prefix('home')->group(function () {
+    Route::post('/getAllCategories', [HomeController::class, 'getAllCategories']);
+    Route::post('/getParentCategories', [HomeController::class, 'getParentCategories']);
+    Route::post('/getChildrenCategories', [HomeController::class, 'getChildrenCategories']);
+});
+
 Route::prefix('admin')->group(function () {
     Route::post('login', [AuthController::class, 'loginAdmin']);
+    Route::post('/getAllCategoriesNonTree', [AdminController::class, 'getAllCategoriesNonTree']);
 });
 
 Route::prefix('orders')->group(function () {
@@ -71,6 +78,12 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/addVoucher', [AdminController::class, 'addVoucher']);
             Route::post('/updateVoucher', [AdminController::class, 'updateVoucher']);
             Route::post('/deleteVoucher', [AdminController::class, 'deleteVoucher']);
+        });
+
+        Route::prefix('categories')->group(function () {
+            Route::post('/addCategory', [AdminController::class, 'addCategory']);
+            Route::post('/updateCategory', [AdminController::class, 'updateCategory']);
+            Route::post('/deleteCategory', [AdminController::class, 'deleteCategory']);
         });
 
         //truong
