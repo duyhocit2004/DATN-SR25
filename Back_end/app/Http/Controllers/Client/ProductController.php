@@ -19,6 +19,15 @@ class ProductController extends Controller
         $this->productService = $IProductService;
     }
 
+    public function getAllSizes(Request $request)
+    {
+        $sizes = $this->productService->getAllSizes($request);
+        return BaseResponse::success($sizes);
+    }
 
-
+    public function getAllColors(Request $request)
+    {
+        $color = $this->productService->getAllColors($request);
+        return BaseResponse::success($color);
+    }
 }
