@@ -60,6 +60,13 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/deleteUser', [AdminController::class, 'deleteUser']);
         });
 
+        Route::prefix('vouchers')->group(function () {
+            Route::post('/getAllVoucher', [AdminController::class, 'getAllVoucher']);
+            Route::post('/addVoucher', [AdminController::class, 'addVoucher']);
+            Route::post('/updateVoucher', [AdminController::class, 'updateVoucher']);
+            Route::post('/deleteVoucher', [AdminController::class, 'deleteVoucher']);
+        });
+
     });
 });
 
