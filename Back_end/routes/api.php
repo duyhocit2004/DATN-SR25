@@ -32,6 +32,10 @@ Route::prefix('admin')->group(function () {
     Route::post('login', [AuthController::class, 'loginAdmin']);
 });
 
+Route::prefix('orders')->group(function () {
+    Route::post('/getVoucher', [OrderController::class, 'getVoucher']);
+});
+
 //các api cần authen
 Route::middleware('jwt.auth')->group(function () {
 

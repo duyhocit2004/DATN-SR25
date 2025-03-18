@@ -22,5 +22,14 @@ class OrderService implements IOrderService
         $this->voucherRepositories = $voucherRepositories;
     }
 
+    public function getVoucher(Request $request)
+    {
+        $list = $this->voucherRepositories->getVoucher($request);
+        if (!empty($list)) {
+            return $list;
+        } else {
+            BaseResponse::failure(400, '', 'voucher.not.found', []);
+        }
+    }
 
 }
