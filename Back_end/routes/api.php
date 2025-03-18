@@ -47,6 +47,8 @@ Route::middleware('jwt.auth')->group(function () {
         Route::prefix('users')->group(function () {
             Route::post('/getUserInfoByEmail', [AuthController::class, 'getUser']);
             Route::post('/updateUserAdmin', [AuthController::class, 'updateUserAdmin']);
+            Route::post('/getAllUser', [AdminController::class, 'getAllUser']);
+            Route::post('/deleteUser', [AdminController::class, 'deleteUser']);
         });
 
     });
