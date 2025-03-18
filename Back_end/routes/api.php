@@ -22,15 +22,33 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::prefix('users')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
 });
 
+Route::prefix('admin')->group(function () {
+    Route::post('login', [AuthController::class, 'loginAdmin']);
+});
+
 //các api cần authen
 Route::middleware('jwt.auth')->group(function () {
+
     Route::prefix('users')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/updateUser', [AuthController::class, 'updateUser']);
+    });
+
+
+    // các api màn admin
+    Route::prefix('admin')->group(function () {
+
+        Route::prefix('users')->group(function () {
+            Route::post('/getUserInfoByEmail', [AuthController::class, 'getUser']);
+            Route::post('/updateUserAdmin', [AuthController::class, 'updateUserAdmin']);
+        });
+
     });
 });
 
