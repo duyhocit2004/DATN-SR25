@@ -57,6 +57,10 @@ Route::prefix('products')->group(function () {
     Route::post('/getRelatedProducts', [ProductController::class, 'getRelatedProducts']);
 });
 
+Route::prefix('carts')->group(function () {
+    Route::post('/getProductsInCart', [CartController::class, 'getProductsInCart']);
+});
+
 //các api cần authen
 Route::middleware('jwt.auth')->group(function () {
     Route::post('/uploadImage', [CommonController::class, 'uploadImage']);
@@ -64,6 +68,12 @@ Route::middleware('jwt.auth')->group(function () {
     Route::prefix('users')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/updateUser', [AuthController::class, 'updateUser']);
+    });
+
+    Route::prefix('carts')->group(function () {
+        Route::post('/getProductsInCartByUserId', [CartController::class, 'getProductsInCartByUserId']);
+        Route::post('/addCart', [CartController::class, 'addCart']);
+        Route::post('/updateCart', [CartController::class, 'updateCart']);
     });
 
 
