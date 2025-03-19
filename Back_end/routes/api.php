@@ -1,22 +1,15 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ProductAdminController;
+use App\Http\Controllers\Client\AuthController;
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\OrderController;
+use App\Http\Controllers\Client\ProductController;
+use App\Http\Controllers\Common\CommonController;
+use App\Http\Controllers\VNPayController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ImageController;
-use App\Http\Controllers\Api\ApiAuthController;
-use App\Http\Controllers\api\ApiCartController;
-use App\Http\Controllers\api\ApiSizeController;
-use App\Http\Controllers\Api\ApiUserController;
-use App\Http\Controllers\Api\ApiColorController;
-use App\Http\Controllers\Api\ApiOrderController;
-use App\Http\Controllers\Api\ApiBannerController;
-use App\Http\Controllers\Api\ApiCommentController;
-use App\Http\Controllers\Api\ApiProductController;
-use App\Http\Controllers\Api\ApiVariantController;
-use App\Http\Controllers\api\ApiVoucherController;
-use App\Http\Controllers\Api\ApiCategoryController;
-use App\Http\Controllers\Api\ApiDashBoardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,139 +22,85 @@ use App\Http\Controllers\Api\ApiDashBoardController;
 |
 */
 
-Route::post('login', [ApiAuthController::class, 'login']);
-Route::post('register', [ApiAuthController::class, 'register']);
 
+Route::prefix('users')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+});
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [ApiAuthController::class, 'logout']);
-    Route::get('/user', [ApiAuthController::class, 'user']);
+Route::prefix('home')->group(function () {
+    Route::post('/getAllCategories', [HomeController::class, 'getAllCategories']);
+    Route::post('/getParentCategories', [HomeController::class, 'getParentCategories']);
+    Route::post('/getChildrenCategories', [HomeController::class, 'getChildrenCategories']);
+});
 
-    Route::prefix('carts')->group(function () {
-        Route::get('/', [ApiCartController::class, 'index']); // Lấy giỏ hàng hiện tại
-        Route::get('/list', [ApiCartController::class, 'getListCart']); // Lấy giỏ hàng hiện tại
-        Route::post('/add', [ApiCartController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
-        Route::put('/update/{cartItem}', [ApiCartController::class, 'update']); // Cập nhật số lượng sản phẩm
-        Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
+Route::prefix('admin')->group(function () {
+    Route::post('login', [AuthController::class, 'loginAdmin']);
+    Route::post('/getAllCategoriesNonTree', [AdminController::class, 'getAllCategoriesNonTree']);
+});
 
+Route::prefix('orders')->group(function () {
+    Route::post('/getVoucher', [OrderController::class, 'getVoucher']);
+});
+
+Route::prefix('products')->group(function () {
+    Route::post('/getAllSizes', [ProductController::class, 'getAllSizes']);
+    Route::post('/getAllColors', [ProductController::class, 'getAllColors']);
+    Route::post('/getAllFilter', [ProductController::class, 'getAllProductWithImages']);
+    Route::post('/getProduct', [ProductController::class, 'getProduct']);
+    Route::post('/getProductDetail', [ProductController::class, 'getProductDetail']);
+});
+
+//các api cần authen
+Route::middleware('jwt.auth')->group(function () {
+    Route::post('/uploadImage', [CommonController::class, 'uploadImage']);
+
+    Route::prefix('users')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/updateUser', [AuthController::class, 'updateUser']);
     });
 
 
-    //comment
+    // các api màn admin
+    Route::prefix('admin')->group(function () {
+        //duy
+        Route::prefix('dashboard')->group(function () {
+            Route::post('/getDataStats', [AdminController::class, 'getDataStats']);
+            Route::post('/getDashboardChart', [AdminController::class, 'getDashboardChart']);
+        });
 
-    Route::get('comments', [ApiCommentController::class, 'index']);
-    Route::post('comments', [ApiCommentController::class, 'store']);
-    Route::get('comments/{id}', [ApiCommentController::class, 'show']);
-    Route::put('comments/{id}', [ApiCommentController::class, 'update']);
-    Route::delete('comments/{id}', [ApiCommentController::class, 'destroy']);
-});
+        Route::prefix('users')->group(function () {
+            Route::post('/getUserInfoByEmail', [AuthController::class, 'getUser']);
+            Route::post('/updateUserAdmin', [AuthController::class, 'updateUserAdmin']);
+            Route::post('/getAllUser', [AdminController::class, 'getAllUser']);
+            Route::post('/deleteUser', [AdminController::class, 'deleteUser']);
+        });
+        //nam
+        Route::prefix('vouchers')->group(function () {
+            Route::post('/getAllVoucher', [AdminController::class, 'getAllVoucher']);
+            Route::post('/addVoucher', [AdminController::class, 'addVoucher']);
+            Route::post('/updateVoucher', [AdminController::class, 'updateVoucher']);
+            Route::post('/deleteVoucher', [AdminController::class, 'deleteVoucher']);
+        });
 
-// Route::get('products', [ApiProductController::class, 'index']);
+        Route::prefix('categories')->group(function () {
+            Route::post('/addCategory', [AdminController::class, 'addCategory']);
+            Route::post('/updateCategory', [AdminController::class, 'updateCategory']);
+            Route::post('/deleteCategory', [AdminController::class, 'deleteCategory']);
+        });
 
+        //truong
+        Route::prefix('colors')->group(function () {
+            Route::post('/addColor', [AdminController::class, 'addColor']);
+            Route::post('/updateColor', [AdminController::class, 'updateColor']);
+            Route::post('/deleteColor', [AdminController::class, 'deleteColor']);
+        });
+        Route::prefix('sizes')->group(function () {
+            Route::post('/addSize', [AdminController::class, 'addSize']);
+            Route::post('/updateSize', [AdminController::class, 'updateSize']);
+            Route::post('/deleteSize', [AdminController::class, 'deleteSize']);
+        });
 
-// Route sản phẩm
-Route::get('products', [ApiProductController::class, 'index']);
-Route::post('products', [ApiProductController::class, 'store']);
-Route::get('products/{id}', [ApiProductController::class, 'show']);
-Route::put('products/{id}', [ApiProductController::class, 'update']);
-Route::delete('products/{id}', [ApiProductController::class, 'destroy']);
-// Route::get('products/{id}/id', [ApiProductController::class,'getid']);
-
-
-// Route danh mục
-Route::get('categories', [ApiCategoryController::class, 'index']);
-Route::post('categories', [ApiCategoryController::class, 'store']);
-Route::get('categories/{id}', [ApiCategoryController::class, 'show']);
-Route::put('categories/{id}', [ApiCategoryController::class, 'update']);
-Route::delete('categories/{id}', [ApiCategoryController::class, 'destroy']);
-
-// Route màu
-Route::get('colors', [ApiColorController::class, 'index']);
-Route::post('colors', [ApiColorController::class, 'store']);
-Route::get('colors/{id}', [ApiColorController::class, 'show']);
-Route::put('colors/{id}', [ApiColorController::class, 'update']);
-Route::delete('colors/{id}', [ApiColorController::class, 'destroy']);
-
-// Route Api Size
-Route::get('sizes', [ApiSizeController::class, 'index']);
-Route::post('sizes', [ApiSizeController::class, 'store']);
-Route::get('sizes/{id}', [ApiSizeController::class, 'show']);
-Route::put('sizes/{id}', [ApiSizeController::class, 'update']);
-Route::delete('sizes/{id}', [ApiSizeController::class, 'destroy']);
-
-Route::get('vouchers', [ApiVoucherController::class, 'index']);
-Route::post('vouchers', [ApiVoucherController::class, 'store']);
-Route::get('vouchers/{id}', [ApiVoucherController::class, 'show']);
-Route::put('vouchers/{id}', [ApiVoucherController::class, 'update']);
-Route::delete('vouchers/{id}', [ApiVoucherController::class, 'destroy']);
-Route::patch('/vouchers/{id}/toggle-status', [ApiVoucherController::class, 'toggleStatus']);
-
-
-//Order
-Route::get('/orders', [ApiOrderController::class, 'index']);
-Route::post('/orders', [ApiOrderController::class, 'store']);
-Route::get('/orders/{id}', [ApiOrderController::class, 'show']);
-Route::put('/orders/{id}', [ApiOrderController::class, 'update']);
-Route::delete('/orders/{id}', [ApiOrderController::class, 'destroy']);
-
-
-//users
-Route::get('users', [ApiUserController::class, 'index']);
-Route::post('users', [ApiUserController::class, 'store']);
-Route::get('users/{id}', [ApiUserController::class, 'show']);
-Route::put('users/{id}', [ApiUserController::class, 'update']);
-Route::delete('users/{id}', [ApiUserController::class, 'destroy']);
-Route::patch('/users/{id}/toggle-status', [ApiUserController::class, 'toggleStatus']);
-
-
-//cart
-
-//banner
-Route::get('banners', [ApiBannerController::class, 'index']);
-Route::post('banners', [ApiBannerController::class, 'store']);
-Route::get('banners/{id}', [ApiBannerController::class, 'show']);
-Route::put('banners/{id}', [ApiBannerController::class, 'update']);
-Route::delete('banners/{id}', [ApiBannerController::class, 'destroy']);
-
-
-//Varants
-Route::get('Variant', [ApiBannerController::class, 'index']);
-Route::post('Variant', [ApiBannerController::class, 'store']);
-Route::get('Variant/{id}', [ApiBannerController::class, 'show']);
-Route::put('Variant/{id}', [ApiBannerController::class, 'update']);
-Route::delete('Variant/{id}', [ApiBannerController::class, 'destroy']);
-
-
-// Route Api Cart
-// Route::middleware('auth:sanctum')->group(function () {
-// Route::prefix('carts')->group(function () {
-//     Route::get('/', [ApiCartController::class, 'index']); // Lấy giỏ hàng hiện tại
-//     Route::get('/carts', [ApiCartController::class, 'show']); // Route xem giỏ hàng
-//     Route::post('/add', [ApiCartController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
-//     Route::put('/update/{cartItem}', [ApiCartController::class, 'update']); // Cập nhật số lượng sản phẩm
-//     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
-// });
-// });
-
-// Route Api Cart
-Route::middleware('auth:sanctum')->group(function () {
-    Route::prefix('carts')->group(function () {
-        Route::get('/', [ApiCartController::class, 'index']);
-        Route::get('{id}', [ApiCartController::class, 'show']);
-        Route::post('/', [ApiCartController::class, 'store']);
-        Route::put('{id}', [ApiCartController::class, 'update']);
-        Route::delete('{id}', [ApiCartController::class, 'destroy']);
-
-        Route::post('add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
-        Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
-        Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
     });
-//     Route::post('/add/{cartId}', [ApiCartController::class, 'addItem']); // Thêm sản phẩm vào giỏ hàng
-//     Route::put('{cartId}/items/{itemId}', [ApiCartController::class, 'updateItem']);
-//     Route::delete('/remove/{cartItem}', [ApiCartController::class, 'destroyItem']); // Xóa sản phẩm khỏi giỏ hàng
-Route::post('count-customer', [ApiDashBoardController::class, 'countCustomer']);
-Route::post('totalsum', [ApiDashBoardController::class, 'totalsum']);
-Route::post('countOrder', [ApiDashBoardController::class, 'countOrder']);
-Route::get('productExpired', [ApiDashBoardController::class, 'productExpired']);
-Route::get('sumproduct', [ApiDashBoardController::class, 'sumproduct']);
 });
+
