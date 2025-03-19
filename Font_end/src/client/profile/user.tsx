@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IUser } from "../../interface/User";
+import { IUser } from "../../api/User";
 import Header from "../../component/Header";
 import Footer from "../../component/Footer";
 

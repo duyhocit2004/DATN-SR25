@@ -249,8 +249,10 @@ class AdminService implements IAdminService
         if ($request->hasFile('image')) {
             $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
         }
-
-        $category = $this->categoriesRepositories->addCategory($request, $uploadedFile['secure_url']);
+        $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
+            ? $uploadedFile['secure_url']
+            : null;
+        $category = $this->categoriesRepositories->addCategory($request, $secureUrl);
         return $category;
     }
 
@@ -267,7 +269,10 @@ class AdminService implements IAdminService
             $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
         }
 
-        $category = $this->categoriesRepositories->updateCategory($request, $uploadedFile['secure_url']);
+        $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
+            ? $uploadedFile['secure_url']
+            : null;
+        $category = $this->categoriesRepositories->updateCategory($request, $secureUrl);
         return $category;
     }
     public function deleteCategory(Request $request)

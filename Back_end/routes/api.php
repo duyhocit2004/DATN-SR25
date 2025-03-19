@@ -36,8 +36,10 @@ Route::prefix('home')->group(function () {
 });
 
 Route::prefix('admin')->group(function () {
-    Route::post('login', [AuthController::class, 'loginAdmin']);
+    Route::post('/login', [AuthController::class, 'loginAdmin']);
     Route::post('/getAllCategoriesNonTree', [AdminController::class, 'getAllCategoriesNonTree']);
+    Route::post('/getParentCommentPaging', [ProductController::class, 'getParentCommentPaging']);
+    Route::post('/getCommentWithReply', [ProductController::class, 'getCommentWithReply']);
 });
 
 Route::prefix('orders')->group(function () {
@@ -47,6 +49,22 @@ Route::prefix('orders')->group(function () {
 Route::prefix('products')->group(function () {
     Route::post('/getAllSizes', [ProductController::class, 'getAllSizes']);
     Route::post('/getAllColors', [ProductController::class, 'getAllColors']);
+    Route::post('/getAllFilter', [ProductController::class, 'getAllProductWithImages']);
+    Route::post('/getProduct', [ProductController::class, 'getProduct']);
+    Route::post('/getProductDetail', [ProductController::class, 'getProductDetail']);
+    Route::post('/getSizeByProductIdAndColor', [ProductController::class, 'getSizeByProductIdAndColor']);
+    Route::post('/getColorByProductIdAndSize', [ProductController::class, 'getColorByProductIdAndSize']);
+    Route::post('/getTopDiscountedProducts', [ProductController::class, 'getTopDiscountedProducts']);
+    Route::post('/getTopNewestProducts', [ProductController::class, 'getTopNewestProducts']);
+    Route::post('/getTopBestSellingProducts', [ProductController::class, 'getTopBestSellingProducts']);
+    Route::post('/getRelatedProducts', [ProductController::class, 'getRelatedProducts']);
+    Route::post('/getComment', [ProductController::class, 'getComment']);
+    Route::post('/addComment', [ProductController::class, 'addComment']);
+    Route::post('/getWishListStorage', [ProductController::class, 'getWishListStorage']);
+});
+
+Route::prefix('carts')->group(function () {
+    Route::post('/getProductsInCart', [CartController::class, 'getProductsInCart']);
 });
 
 //các api cần authen
@@ -58,6 +76,17 @@ Route::middleware('jwt.auth')->group(function () {
         Route::post('/updateUser', [AuthController::class, 'updateUser']);
     });
 
+    Route::prefix('carts')->group(function () {
+        Route::post('/getProductsInCartByUserId', [CartController::class, 'getProductsInCartByUserId']);
+        Route::post('/addCart', [CartController::class, 'addCart']);
+        Route::post('/updateCart', [CartController::class, 'updateCart']);
+    });
+
+    Route::prefix('products')->group(function () {
+        Route::post('/getWishList', [ProductController::class, 'getWishList']);
+        Route::post('/addWishList', [ProductController::class, 'addWishList']);
+        Route::post('/deleteWishList', [ProductController::class, 'deleteWishList']);
+    });
 
     // các api màn admin
     Route::prefix('admin')->group(function () {
@@ -73,6 +102,13 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/getAllUser', [AdminController::class, 'getAllUser']);
             Route::post('/deleteUser', [AdminController::class, 'deleteUser']);
         });
+
+        Route::prefix('products')->group(function () {
+            Route::post('/addProductWithVariant', [ProductAdminController::class, 'addProductWithVariant']);
+            Route::post('/updateProductWithVariant', [ProductAdminController::class, 'updateProductWithVariant']);
+            Route::post('/deleteProduct', [ProductAdminController::class, 'deleteProduct']);
+        });
+
         //nam
         Route::prefix('vouchers')->group(function () {
             Route::post('/getAllVoucher', [AdminController::class, 'getAllVoucher']);

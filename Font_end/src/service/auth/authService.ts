@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AuthResponse, IUser } from "../../interface/User";
+import { AuthResponse, IUser } from "../../api/User";
 
 
 
