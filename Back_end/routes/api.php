@@ -32,6 +32,7 @@ Route::prefix('home')->group(function () {
     Route::post('/getAllCategories', [HomeController::class, 'getAllCategories']);
     Route::post('/getParentCategories', [HomeController::class, 'getParentCategories']);
     Route::post('/getChildrenCategories', [HomeController::class, 'getChildrenCategories']);
+    Route::post('/getAllBanners', [HomeController::class, 'getAllBanners']);
 });
 
 Route::prefix('admin')->group(function () {
@@ -96,6 +97,12 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/addSize', [AdminController::class, 'addSize']);
             Route::post('/updateSize', [AdminController::class, 'updateSize']);
             Route::post('/deleteSize', [AdminController::class, 'deleteSize']);
+        });
+
+        Route::prefix('banners')->group(function () {
+            Route::post('/addBanner', [AdminController::class, 'addBanner']);
+            Route::post('/updateBanner', [AdminController::class, 'updateBanner']);
+            Route::post('/deleteBanner', [AdminController::class, 'deleteBanner']);
         });
 
     });

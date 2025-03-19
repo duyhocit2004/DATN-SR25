@@ -118,4 +118,21 @@ class AdminController extends Controller
         return BaseResponse::success($products);
     }
 
+    public function addBanner(Request $request)
+    {
+        $products = $this->adminService->addBanner($request);
+        return BaseResponse::success($products);
+    }
+    public function updateBanner(Request $request)
+    {
+        $products = $this->adminService->updateBanner($request);
+        return BaseResponse::success($products);
+    }
+
+    public function deleteBanner(Request $request)
+    {
+        $products = $this->adminService->deleteBanner($request);
+        return BaseResponse::success($products);
+    }
+
 }
