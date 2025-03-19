@@ -85,4 +85,49 @@ class ProductController extends Controller
         return BaseResponse::success($sizes);
     }
 
+    public function getComment(Request $request): JsonResponse
+    {
+        $comment= $this->productService->getComment($request);
+        return BaseResponse::success($comment);
+    }
+    public function getParentCommentPaging(Request $request): JsonResponse
+    {
+        $comment= $this->productService->getParentCommentPaging($request);
+        return BaseResponse::success($comment);
+    }
+    public function getCommentWithReply(Request $request): JsonResponse
+    {
+        $comment= $this->productService->getCommentWithReply($request);
+        return BaseResponse::success($comment);
+    }
+
+    public function addComment(Request $request)
+    {
+        $withList = $this->productService->addComment($request);
+        return BaseResponse::success($withList);
+    }
+
+    public function getWishListStorage(Request $request): JsonResponse
+    {
+        $color = $this->productService->getWishListStorage($request);
+        return BaseResponse::success($color);
+    }
+
+    public function getWishList(Request $request): JsonResponse
+    {
+        $color = $this->productService->getWishList($request);
+        return BaseResponse::success($color);
+    }
+
+    public function addWishList(Request $request)
+    {
+        $withList = $this->productService->addWishList($request);
+        return BaseResponse::success($withList);
+    }
+    public function deleteWishList(Request $request)
+    {
+        $withList = $this->productService->deleteWishList($request);
+        return BaseResponse::success($withList);
+    }
+
 }

@@ -5,10 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1202e35c-a4ae-44af-bb9b-355cf922d453" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/CartController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/CartController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/CartRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/CartRepositories.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/cart/ICartService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/cart/ICartService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/cart/impl/CartService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/cart/impl/CartService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/ProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/ProductController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/CommentRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/CommentRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/ProductRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/ProductRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/WishListRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/WishListRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/product/IProductService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/product/IProductService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/product/impl/ProductService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/product/impl/ProductService.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Back_end/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/routes/api.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -178,20 +181,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "nam/develop",
-    "last_opened_file_path": "/Users/thachvh/Ncb/SourceCode/DATN-SR25",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;nam/develop&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/thachvh/Ncb/SourceCode/DATN-SR25&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Main" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
       <TestRunner configuration_file="$PROJECT_DIR$/Back_end/phpunit.xml" scope="XML" use_alternative_configuration_file="true" />
@@ -215,7 +218,7 @@
       <option name="presentableId" value="Default" />
       <updated>1742314780162</updated>
       <workItem from="1742314781253" duration="1179000" />
-      <workItem from="1742316348239" duration="20510000" />
+      <workItem from="1742316348239" duration="21444000" />
     </task>
     <servers />
   </component>
