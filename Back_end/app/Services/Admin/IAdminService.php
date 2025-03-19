@@ -24,4 +24,7 @@ interface IAdminService
     public function addCategory(Request $request);
     public function updateCategory(Request $request);
     public function deleteCategory(Request $request);
+    public function addBanner(Request $request);
+    public function updateBanner(Request $request);
+    public function deleteBanner(Request $request);
 }
