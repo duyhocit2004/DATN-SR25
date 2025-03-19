@@ -256,4 +256,68 @@ class ProductRepositories
         return $listResult;
     }
 
+    public function getTopDiscountedProducts($number)
+    {
+        $topDiscountedProducts = Product::orderBy('discount', 'desc')
+            ->distinct('products.id')
+            ->take($number)
+            ->with('image_products')
+            ->get();
+        return $topDiscountedProducts;
+    }
+
+    public function getTopNewestProducts($number)
+    {
+        $topNewestProducts = Product::orderBy('created_at', 'desc')
+            ->distinct('products.id')
+            ->take($number)
+            ->with('image_products')
+            ->get();
+        return $topNewestProducts;
+    }
+
+    public function getTopBestSellingProducts($number)
+    {
+        $topBestSellingProducts = Product::select('products.*', DB::raw('SUM(quantity_sold) as quantity_sold'))
+            ->groupBy('products.id')
+            ->orderByDesc('quantity_sold')
+            ->distinct('products.id')
+            ->take($number)
+            ->with('image_products')
+            ->get();
+
+        return $topBestSellingProducts;
+    }
+
+    public function getRelatedProducts($number, $categoryId)
+    {
+        $topReleatedProducts = Product::query()->where('categories_id', '=', $categoryId)
+            ->groupBy('products.id')
+            ->distinct('products.id')
+            ->take($number)
+            ->with('image_products')
+            ->get();
+
+        return $topReleatedProducts;
+    }
+
+    public function deleteProduct(Request $request)
+    {
+        $product= Product::find($request->input('id'));
+
+        if (!$product) {
+            BaseResponse::failure('400', 'product not found', 'product.not.found', []);
+        }
+
+        //khi xoá category các bảng sau sẽ bị xoá theo
+        //product_variants;
+        //image_product;
+        //wishlist;
+        //carts;
+        //comment;
+        $product->delete();
+
+        return $product;
+    }
+
 }

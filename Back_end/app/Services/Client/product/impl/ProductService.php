@@ -156,4 +156,183 @@ class ProductService implements IProductService
         return $list;
     }
 
+    public function getSizeByProductIdAndColor(Request $request)
+    {
+        $this->validateGetSizeByProductIdAndColor($request);
+        $variants = $this->variantRepositories->getSizeByProductIdAndColor($request);
+        if ($variants->isEmpty()) {
+            BaseResponse::failure(400, '', 'product.not.found', []);
+        }
+
+        return $variants;
+    }
+
+    private function validateGetSizeByProductIdAndColor(Request $request)
+    {
+
+        $validate = Validator::make($request->all(), [
+            'productId' => 'required|integer',
+            'color' => 'required|string'
+        ], [
+            'productId.required' => 'productId.is.required',
+            'productId.integer' => 'productId.is.integer',
+            'color.required' => 'color.is.required',
+            'color.string' => 'color.is.string',
+        ]);
+
+        if ($validate->fails()) {
+            BaseResponse::failure(400, '', $validate->errors()->first(), []);
+        }
+    }
+
+    public function getColorByProductIdAndSize(Request $request)
+    {
+        $this->validateGetColorByProductIdAndSize($request);
+        $variants = $this->variantRepositories->getColorByProductIdAndSize($request);
+        if ($variants->isEmpty()) {
+            BaseResponse::failure(400, '', 'color.not.found', []);
+        }
+
+        return $variants;
+
+    }
+
+    private function validateGetColorByProductIdAndSize(Request $request)
+    {
+
+        $validate = Validator::make($request->all(), [
+            'productId' => 'required|integer',
+            'size' => 'required|string'
+        ], [
+            'productId.required' => 'productId.is.required',
+            'productId.integer' => 'productId.is.integer',
+            'size.required' => 'size.is.required',
+            'size.string' => 'size.is.string',
+        ]);
+
+        if ($validate->fails()) {
+            BaseResponse::failure(400, '', $validate->errors()->first(), []);
+        }
+    }
+
+    public function getTopDiscountedProducts(Request $request)
+    {
+        $topNumber = $request->input('topNumber', 5);
+        $topDiscountedProducts = $this->productRepositories->getTopDiscountedProducts($topNumber);
+        $list = $topDiscountedProducts->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'categoriesId' => $product->categories_id,
+                'categoriesName' => $product->category ? $product->category->name : null,
+                'name' => $product->name,
+                'image' => $product->image,
+                'listImage' => $product->image_products->isEmpty() ? [] : $product->image_products->pluck('image_link'),
+                'priceRegular' => $product->price_regular,
+                'priceSale' => $product->price_sale,
+                'description' => $product->description,
+                'views' => $product->views,
+                'content' => $product->content,
+                'rate' => $product->rate,
+                'quantity' => $product->quantity,
+                'quantitySold' => $product->quantity_sold,
+                'discount' => $product->discount,
+                'createdAt' => $product->created_at,
+                'updatedAt' => $product->updated_at,
+                'deletedAt' => $product->deleted_at,
+            ];
+        });
+
+        return $list;
+    }
+
+    public function getTopNewestProducts(Request $request)
+    {
+        $topNumber = $request->input('topNumber', 5);
+        $topNewestProducts = $this->productRepositories->getTopNewestProducts($topNumber);
+        $list = $topNewestProducts->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'categoriesId' => $product->categories_id,
+                'categoriesName' => $product->category ? $product->category->name : null,
+                'name' => $product->name,
+                'image' => $product->image,
+                'listImage' => $product->image_products->isEmpty() ? [] : $product->image_products->pluck('image_link'),
+                'priceRegular' => $product->price_regular,
+                'priceSale' => $product->price_sale,
+                'description' => $product->description,
+                'views' => $product->views,
+                'content' => $product->content,
+                'rate' => $product->rate,
+                'quantity' => $product->quantity,
+                'quantitySold' => $product->quantity_sold,
+                'discount' => $product->discount,
+                'createdAt' => $product->created_at,
+                'updatedAt' => $product->updated_at,
+                'deletedAt' => $product->deleted_at,
+            ];
+        });
+
+        return $list;
+    }
+
+    public function getTopBestSellingProducts(Request $request)
+    {
+        $topNumber = $request->input('topNumber', 5);
+        $topNewestProducts = $this->productRepositories->getTopBestSellingProducts($topNumber);
+        $list = $topNewestProducts->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'categoriesId' => $product->categories_id,
+                'categoriesName' => $product->category ? $product->category->name : null,
+                'name' => $product->name,
+                'image' => $product->image,
+                'listImage' => $product->image_products->isEmpty() ? [] : $product->image_products->pluck('image_link'),
+                'priceRegular' => $product->price_regular,
+                'priceSale' => $product->price_sale,
+                'description' => $product->description,
+                'views' => $product->views,
+                'content' => $product->content,
+                'rate' => $product->rate,
+                'quantity' => $product->quantity,
+                'quantitySold' => $product->quantity_sold,
+                'discount' => $product->discount,
+                'createdAt' => $product->created_at,
+                'updatedAt' => $product->updated_at,
+                'deletedAt' => $product->deleted_at,
+            ];
+        });
+
+        return $list;
+    }
+
+    public function getRelatedProducts(Request $request)
+    {
+        $topNumber = $request->input('topNumber', 5);
+        $topReleatedProducts = $this->productRepositories->getRelatedProducts($topNumber, $request->input('categoryId'));
+        $list = $topReleatedProducts->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'categoriesId' => $product->categories_id,
+                'categoriesName' => $product->category ? $product->category->name : null,
+                'name' => $product->name,
+                'image' => $product->image,
+                'listImage' => $product->image_products->isEmpty() ? [] : $product->image_products->pluck('image_link'),
+                'priceRegular' => $product->price_regular,
+                'priceSale' => $product->price_sale,
+                'description' => $product->description,
+                'views' => $product->views,
+                'content' => $product->content,
+                'rate' => $product->rate,
+                'quantity' => $product->quantity,
+                'quantitySold' => $product->quantity_sold,
+                'discount' => $product->discount,
+                'createdAt' => $product->created_at,
+                'updatedAt' => $product->updated_at,
+                'deletedAt' => $product->deleted_at,
+            ];
+        });
+
+        return $list;
+    }
+
 }
