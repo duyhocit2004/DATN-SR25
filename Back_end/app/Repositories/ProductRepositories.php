@@ -320,4 +320,15 @@ class ProductRepositories
         return $product;
     }
 
+    public function getWishListStorage($productIds)
+    {
+        $listProduct = collect();
+
+        if (!empty($productIds)) {
+            $listProduct = Product::with(['category'])->whereIn('id', $productIds)->get();
+        }
+
+        return $listProduct;
+    }
+
 }
