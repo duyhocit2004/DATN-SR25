@@ -16,89 +16,123 @@ class ApiAuthController extends Controller
      */
     public function login(Request $request)
     {
-        $user = User::query()->where('email', '=', $request->email)->first();
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        $user = User::where('email', $request->email)->first();
+
+        // Kiểm tra tài khoản có tồn tại không
+        if (!$user) {
             return response()->json([
-                'message' => 'mật khẩu bạn nhập không đúng',
-            ]);
+                'status' => 'error',
+                'message' => 'Tài khoản không tồn tại!',
+            ], 404);
         }
+
+        // Kiểm tra tài khoản có bị vô hiệu hóa không
+        if ($user->is_active == 0) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tài khoản của bạn đã bị vô hiệu hóa!',
+            ], 403);
+        }
+
+        // Kiểm tra mật khẩu
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Mật khẩu bạn nhập không đúng!',
+            ], 401);
+        }
+
+        // Tạo token
         $token = $user->createToken('authToken')->plainTextToken;
+
         return response()->json([
-            'token' => $token,
-            'type_token' => 'Baerer',
-            'success' => 'đăng nhập thành công'
+            'status' => 'success',
+            'access_token' => $token,
+            'type_token' => 'Bearer',
+            'message' => 'Đăng nhập thành công!',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'user_image' => $user->user_image
+            ]
         ], 200);
     }
 
+
     public function register(Request $request)
     {
-        $validate = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'username' => 'required|max:30',
-            'email' => 'required',
-            'password' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
             'gender' => 'required',
-            'phone' => 'required'
+            'phone' => 'required|digits:10'
         ], [
-            'username.required' => 'bạn chưa nhập tên',
-            'username.max:30' => 'số lượng ký tự đối ta là 40',
-            'email.required' => 'bạn chưa nhập email',
-            'password.required' => 'bạn chưa nhập mật khẩu',
-            'gender.required' => 'bạn chưa chọn giới tính',
-            'phone.required' => 'bạn chưa nhập số điện thoại',
+            'username.required' => 'Bạn chưa nhập tên!',
+            'username.max' => 'Tên tối đa 30 ký tự!',
+            'email.required' => 'Bạn chưa nhập email!',
+            'email.email' => 'Email không hợp lệ!',
+            'email.unique' => 'Email đã tồn tại!',
+            'password.required' => 'Bạn chưa nhập mật khẩu!',
+            'password.min' => 'Mật khẩu ít nhất 6 ký tự!',
+            'gender.required' => 'Bạn chưa chọn giới tính!',
+            'phone.required' => 'Bạn chưa nhập số điện thoại!',
+            'phone.digits' => 'Số điện thoại phải có 10 chữ số!',
         ]);
-        if ($validate->fails()) {
+
+        if ($validator->fails()) {
             return response()->json([
-                'message' => $validate->errors()
-            ], 404);
-        };
-        User::create([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        // Tạo user mới
+        $user = User::create([
             'name' => $request->username,
             'email' => $request->email,
             'phone_number' => $request->phone,
             'gender' => $request->gender,
-            'password' => hash::make($request->password),
+            'password' => Hash::make($request->password),
             'role' => 'Khách hàng',
+            'is_active' => 1 // Mặc định tài khoản hoạt động
         ]);
 
-
-
-
         return response()->json([
-            'message' => 'đăng kí thành công',
+            'status' => 'success',
+            'message' => 'Đăng ký thành công!',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ]
         ], 201);
     }
 
+
     public function user(Request $request)
     {
-        return $request->user()->load('role');
-
-
+        return response()->json([
+            'status' => 'success',
+            'user' => [
+                'id' => $request->user()->id,
+                'name' => $request->user()->name,
+                'email' => $request->user()->email,
+                'role' => $request->user()->role,
+                'user_image' => $request->user()->user_image
+            ]
+        ], 200);
     }
     public function logout(Request $request)
     {
-        // Lấy người dùng đang xác thực
-        $user = Auth::user();
-        // user::tokens();
-
-        if ($user) {
-            // Lấy token từ request
-            $tokenId = $request->bearerToken();
-
-            // Tìm token trong cơ sở dữ liệu
-            $token = $user->tokens()->where('id', $tokenId)->first();
-
-            if ($token) {
-                // Hủy token
-                $token->delete();
-            }
-
-            return response()->json([
-                'message' => "Đăng xuất thành công"
-            ], 200);
-        }
-
+        $request->user()->currentAccessToken()->delete();
         return response()->json([
-            'message' => "Người dùng không hợp lệ"
-        ], 401);
+            'status' => 'success',
+            'message' => 'Đăng xuất thành công!'
+        ], 200);
     }
+
 }

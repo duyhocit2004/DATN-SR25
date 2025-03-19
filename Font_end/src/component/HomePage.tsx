@@ -2,14 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import ProductList from '../client/home/productList';
 import { NavLink } from "react-router-dom";
+import FeaturedProducts from '../client/product/RelatedProducts';
 
 
 
 const HomePage = () => {
-
-
-
-
 
     return (
         <div className="page-wrapper">
@@ -157,14 +154,8 @@ const HomePage = () => {
                 </div>
 
                 {/* Featured Products Section */}
-                <section className="featured-products-section">
-                    <div className="container">
-                        <h2 className="section-title heading-border ls-20 border-0">Sản Phẩm nổi bật</h2>
-                        
-                        < ProductList />
-
-                    </div>
-                </section>
+                <FeaturedProducts />
+                {/* <ProductList /> */}
 
                 {/* New Arrivals Section */}
                 <section className="new-products-section">
@@ -172,17 +163,17 @@ const HomePage = () => {
                         <h2 className="section-title heading-border ls-20 border-0">Sản phẩm mới</h2>
                         <div className="products-slider custom-products owl-carousel owl-theme nav-outer show-nav-hover nav-image-center mb-2"
                             data-owl-options="{
-                    'dots': false,
-                    'nav': true,
-                    'responsive': {
-                        '992': {
-                            'items': 4
-                        },
-                        '1200': {
-                            'items': 5
-                        }
-                    }
-                }">
+                                'dots': false,
+                                'nav': true,
+                                'responsive': {
+                                    '992': {
+                                        'items': 4
+                                    },
+                                    '1200': {
+                                        'items': 5
+                                    }
+                                }
+                            }">
                             <div className="product-default appear-animate" data-animation-name="fadeInRightShorter">
                                 <figure>
                                     <a href="product.html">

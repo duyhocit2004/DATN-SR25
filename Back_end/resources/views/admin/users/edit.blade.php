@@ -1,6 +1,7 @@
 @extends('admin.layout.app')
 
 @section('content')
+<div class="container-sm my-2">
     <h1>Chỉnh Sửa Người Dùng</h1>
 
     @if ($errors->any())
@@ -17,22 +18,22 @@
         @csrf
         @method('PUT')
 
-        <div class="form-group">
+        <div class="form-group mb-2">
             <label for="name">Họ và tên</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ $user->name }}" required>
+            <input type="text" class="form-control" id="name" name="name" value="{{ $user->name }}">
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-2">
             <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ $user->email }}" required>
+            <input type="email" class="form-control" id="email" name="email" value="{{ $user->email }}">
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-2">
             <label for="phone_number">Số điện thoại</label>
-            <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ $user->phone_number }}" required>
+            <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ $user->phone_number }}">
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-2">
             <label for="role">Vai trò</label>
             <select class="form-control" id="role" name="role">
                 <option value="Khách hàng" {{ $user->role == 'Khách hàng' ? 'selected' : '' }}>Khách hàng</option>
@@ -40,14 +41,16 @@
             </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-2">
             <label for="user_image">Ảnh đại diện</label>
             <input type="file" class="form-control" id="user_image" name="user_image">
             @if ($user->user_image)
-                <img src="{{ asset('storage/' . $user->user_image) }}" width="50" height="50">
+                <img src="{{ $user->user_image}}" width="50" height="50">
             @endif
         </div>
 
-        <button type="submit" class="btn btn-success">Cập Nhật</button>
+        <button type="submit" class="btn btn-success mt-2">Cập Nhật</button>
     </form>
+</div>
+
 @endsection

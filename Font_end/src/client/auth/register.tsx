@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/client.css";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { NavLink } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import icon
 
 interface IUser {
   username: string;
@@ -25,15 +26,44 @@ const Register = () => {
   } = useForm<IUser>();
 
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [userImage, setUserImage] = useState<File | null>(null);
 
   const onSubmit = async (registerData: IUser) => {
+    const formData = new FormData();
+    formData.append("username", registerData.username);
+    formData.append("fullname", registerData.fullname);
+    formData.append("email", registerData.email);
+    formData.append("password", registerData.password);
+    formData.append("phone", registerData.phone);
+    formData.append("gender", registerData.gender);
+  
+    if (userImage) {
+      formData.append("user_image", userImage); 
+    }
+  
     try {
-      const { data } = await axios.post(`http://127.0.0.1:8000/api/register`, registerData);
-      toast.success("Đăng ký thành công!");
-      navigate("/login");
-    } catch (error) {
-      console.error(error);
-      toast.error("Đăng ký không thành công!");
+      const { data } = await axios.post(
+        "http://127.0.0.1:8000/api/register",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      if (data.token) {
+        sessionStorage.setItem("token", data.token); // Lưu token sau khi đăng ký
+        toast.success("Đăng ký thành công! Đang đăng nhập...");
+        setTimeout(() => navigate("/"), 1500); // Chuyển hướng sau khi đăng ký
+      } else {
+        toast.error("Không thể lấy token sau khi đăng ký!");
+      }
+
+    } catch (error: any) {
+      console.error("Lỗi đăng ký:", error);
+      if (error.response) {
+        toast.error(error.response.data.message || "Đăng ký không thành công!");
+      } else {
+        toast.error("Lỗi máy chủ, vui lòng thử lại sau!");
+      }
     }
   };
 
@@ -81,42 +111,20 @@ const Register = () => {
 
           <div className="form-group">
             <label htmlFor="password">Mật Khẩu:</label>
-            <input
-              type="password"
-              {...register("password", {
-                required: "Mật khẩu không được để trống!",
-                minLength: { value: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" },
-              })}
-              placeholder="Nhập mật khẩu..."
-            />
+            <div className="password-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                {...register("password", {
+                  required: "Mật khẩu không được để trống!",
+                  minLength: { value: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" }
+                })}
+                placeholder="Nhập mật khẩu..."
+              />
+              <span className="eye-icon" onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
             {errors.password && <p className="error-message">{errors.password.message}</p>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="gender">Giới Tính:</label>
-            <select {...register("gender", { required: "Vui lòng chọn giới tính!" })}>
-              <option value="">-- Chọn giới tính --</option>
-              <option value="male">Nam</option>
-              <option value="female">Nữ</option>
-              <option value="other">Khác</option>
-            </select>
-            {errors.gender && <p className="error-message">{errors.gender.message}</p>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="phone">Số Điện Thoại:</label>
-            <input
-              type="text"
-              {...register("phone", {
-                required: "Số điện thoại không được để trống!",
-                pattern: {
-                  value: /^[0-9]{10,11}$/,
-                  message: "Số điện thoại không hợp lệ!",
-                },
-              })}
-              placeholder="Nhập số điện thoại..."
-            />
-            {errors.phone && <p className="error-message">{errors.phone.message}</p>}
           </div>
 
           <button type="submit" className="btn btn-primary">
@@ -128,18 +136,6 @@ const Register = () => {
           <p>
             Bạn đã có tài khoản? <NavLink to="/login">Đăng Nhập</NavLink>
           </p>
-        </div>
-
-        <div className="social-buttons">
-          <a href="#" className="btn facebook">
-            <i className="fab fa-facebook"></i>
-          </a>
-          <a href="#" className="btn google">
-            <i className="fab fa-google"></i>
-          </a>
-          <a href="#" className="btn twitter">
-            <i className="fab fa-twitter"></i>
-          </a>
         </div>
       </div>
     </div>

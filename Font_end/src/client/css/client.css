@@ -186,3 +186,23 @@
   .social-buttons a:hover {
     transform: scale(1.1);
   }
+  .password-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  .password-container input {
+    flex: 1;
+    padding-right: 40px;
+  }
+  
+  .eye-icon {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+  }
+  
+  

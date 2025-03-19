@@ -6,12 +6,16 @@ use App\Models\Banners;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-
+use Cloudinary\Cloudinary;
 class ApiBannerController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public $Cloudinary ;
+    public function __construct(Cloudinary $Cloudinary){
+        $this->Cloudinary = $Cloudinary;
+    }
     public function index()
     {
         $types = ['advertisement', 'intro', 'main'];
@@ -43,39 +47,39 @@ class ApiBannerController extends Controller
         if ($data->fails()) {
             return response()->json([
                 'error' => $data->errors(),
-            ],422);
+            ], 422);
         }
 
+        $dataBanner = $request->all();
         if ($request->has('image')) {
-            $fileimage = $request->file('image')->store('Banners', 'public');
+           $file = $this->Cloudinary->uploadApi()->upload($request->file(key: 'image')->getRealPath());
+           $dataBanner['image'] = $file['secure_url'];
         } else {
             $fileimage = null;
         }
 
         Banners::create([
-            'image' => $fileimage,
+            'image' => $dataBanner['image'],
             'status' => 1,
-            'type' => $request->type,
+            'type' => $dataBanner['type'],
 
         ]);
 
         return response()->json([
             'success' => 'thêm thành công'
-        ],201);
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request ,string $id)
+    public function show(string $id)
     {
-        if($request->route('type')){
-            $type = $request->route('type');
-            Banners::query()->where('type' ,'=','$type');
-            return response()->json([
-                'data' => $type
-            ]);
-        }ifel
+        $Banner = Banners::query()->findOrFail($id);
+        return response()->json([
+            'data' => $Banner,
+            'success'=>'lấy sản phẩm thành công',
+        ],200);
     }
 
     /**
@@ -83,7 +87,29 @@ class ApiBannerController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $Banner = Banners::query()->findOrFail($id);
+
+        $params = $request->all();
+
+        if($request->hasfile('image')){
+            if($Banner->image){
+                $publicId = pathinfo($Banner->image, PATHINFO_FILENAME);
+                $this->Cloudinary->adminApi()->deleteAssets([$publicId]);
+            }
+            $file = $this->Cloudinary->uploadApi()->upload($request->file(key: 'image')->getRealPath());
+            $params['image'] = $file['secure_url'];
+        }else{
+            $params['image'] = $Banner->image;
+        }
+
+        $Banner->update([
+            'image'=>$params['image'],
+            'type'=>$params['type']
+        ]);
+        return response()->json([
+                'data'=>$Banner,
+                'massage'=>'sửa thành công',
+            ],204);
     }
 
     /**
@@ -91,6 +117,11 @@ class ApiBannerController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $delete = Banners::findOrFail($id);
+        $delete->delete();
+        return response()->json([
+            'status' => true,
+            'message'=>' xóa thành công',
+        ]);
     }
 }

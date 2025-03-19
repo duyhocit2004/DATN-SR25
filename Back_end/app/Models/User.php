@@ -25,7 +25,7 @@ class User extends Authenticatable
         'role',
         'user_image',
         'gender',
-
+        'is_active'
     ];
 
     /**
@@ -45,5 +45,11 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_active' => 'boolean',
     ];
+
+    public function comment(){
+        return $this->hasMany(comments::class,'user_id');
+    }
+
 }

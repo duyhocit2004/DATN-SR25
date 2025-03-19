@@ -1,11 +1,11 @@
 export interface IProducts {
-    categories_id: number;
+    id: number;
     name_product: string;
-    SKU: string; 
-    base_stock: number;
     price_regular: number;
-    price_sale: number;
+    image: string;
     description: string;
-    views: number;
-    content: string;
+    rating?: number;
+    discount?: number;
+    category?: string;
+    images?: string[];
 }
