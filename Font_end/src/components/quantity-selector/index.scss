@@ -1,0 +1,29 @@
+.quantity-selector-container {
+  .quantity-btn {
+    font-size: 20px;
+    text-align: center;
+    padding: 0;
+    background-color: #f0f0f0;
+    &.prev-btn {
+      border-radius: 8px 0 0 8px;
+      -webkit-border-radius: 8px 0 0 8px;
+      -moz-border-radius: 8px 0 0 8px;
+      -ms-border-radius: 8px 0 0 8px;
+      -o-border-radius: 8px 0 0 8px;
+    }
+    &.next-btn {
+      border-radius: 0 8px 8px 0;
+      -webkit-border-radius: 0 8px 8px 0;
+      -moz-border-radius: 0 8px 8px 0;
+      -ms-border-radius: 0 8px 8px 0;
+      -o-border-radius: 0 8px 8px 0;
+    }
+  }
+  .quantity-display{
+    min-width: 50px;
+    height: 100%;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    border-color: #d9d9d9;
+  }
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { IProducts } from '../../interface/Products';
+import { IProducts } from '../../api/Products';
 
 interface ProductCardProps {
     product: IProducts;
