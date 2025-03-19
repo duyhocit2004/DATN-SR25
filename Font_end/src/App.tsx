@@ -1,33 +1,59 @@
-import React from "react";
-
-import UserRoutes from "./routes/UsersRoute";
-import AdminRoutes from "./routes/AdminRoute";
-import { Route, Routes } from "react-router-dom"
-import Header from "./component/Header";
-import Footer from "./component/Footer";
-
-
+import { Suspense } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { clientRoutes, adminRoutes } from "@/router/routes";
+import ClientLayout from "./client/layouts/layout";
+import AdminLayout from "./admin/layouts/layout";
+import { adminLoginRoutes } from "./router/routes";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
+import { setupToast } from "./components/toast";
+import { ConfigProvider } from "antd";
 
 function App() {
+  const contextHolder = setupToast();
   return (
     <>
-      <Routes>
-        {/* Route cho User: Có Header và Footer */}
-        <Route
-          path="/*"element={
-            <>
-              <Header />
-              <UserRoutes />
-              <Footer />
-            </>
-          }
-        />
+      <Provider store={store}>
+        <ConfigProvider>
+          {contextHolder}
+          <BrowserRouter>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Routes>
+                {/* Các route dành cho Client */}
+                <Route path="/" element={<ClientLayout />}>
+                  {clientRoutes.map((route) => (
+                    <Route
+                      key={route.path}
+                      path={route.path === "/" ? "" : route.path.slice(1)}
+                      element={<route.element />}
+                    />
+                  ))}
+                </Route>
+                {/* Các route dành cho Admin */}
+                <Route path="/admin" element={<AdminLayout />}>
+                  {adminRoutes.map((route) => (
+                    <Route
+                      key={route.path}
+                      path={route.path.replace("/admin/", "")}
+                      element={<route.element />}
+                    />
+                  ))}
+                </Route>
 
-        {/* Route cho Admin: Không có Header và Footer */}
-        <Route path="/admin/*" element={<AdminRoutes />} />
-      </Routes>   
+                {adminLoginRoutes.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={<route.element />}
+                  />
+                ))}
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </ConfigProvider>
+      </Provider>
     </>
   );
 }
 
-export default App; 
+export default App;
