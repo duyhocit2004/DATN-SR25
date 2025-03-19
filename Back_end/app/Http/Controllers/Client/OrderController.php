@@ -22,4 +22,26 @@ class OrderController extends Controller
         return BaseResponse::success($products);
     }
 
+    public function addOrder(Request $request)
+    {
+        $products = $this->orderService->addOrder($request);
+        return BaseResponse::success($products);
+    }
+    public function getOrders(Request $request)
+    {
+        $products = $this->orderService->getOrders($request);
+        return BaseResponse::success($products);
+    }
+    public function getOrderDetail(Request $request)
+    {
+        $products = $this->orderService->getOrderDetail($request);
+        return BaseResponse::success($products);
+    }
+
+    public function getOrdersPaging(Request $request)
+    {
+        $products = $this->orderService->getOrdersPaging($request);
+        return BaseResponse::success($products);
+    }
+
 }
