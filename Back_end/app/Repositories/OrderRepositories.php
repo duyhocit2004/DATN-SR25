@@ -29,13 +29,15 @@ class OrderRepositories
 
             }
 
-            $voucher = Voucher::where('code', $request->input('voucher'))->first();
-            if ($voucher) {
-                $totalAmount = $totalAmount - $request->input('voucherPrice');
-            } else {
-                BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
+            if($request->input('voucher')){
+                $voucher = Voucher::where('code', $request->input('voucher'))->first();
+                if ($voucher) {
+                    $totalAmount = $totalAmount - $request->input('voucherPrice');
+                } else {
+                    BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
+                }
             }
-
+            
             if ($totalAmount < 0) {
                 $totalAmount = 0;
             }
