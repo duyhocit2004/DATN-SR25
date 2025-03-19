@@ -1,4 +1,4 @@
-import { ICart } from "../../interface/Cart";
+import { ICart } from "../../api/Cart";
 
 const CART_KEY = "cart";
 

@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
-import api from "../../axios/config";
-import { IColor } from "../../interface/Color";
+import api from "../../configs/config";
+import { IColor } from "../../api/Color";
 
 export const ListColor = async () => {
     try {

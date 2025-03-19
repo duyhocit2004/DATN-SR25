@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
-import api from "../../axios/config";
-import { ICategorie } from "../../interface/Categories";
+import api from "../../configs/config";
+import { ICategorie } from "../../api/Categories";
 
 // Lấy danh sách categories
 export const ListCategory = async () => {
