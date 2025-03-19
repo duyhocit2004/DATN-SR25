@@ -1,0 +1,37 @@
+.carousel-custom-container {
+  &:not(.main-slide) {
+    .slick-track {
+      display: flex;
+      gap: 24px;
+      .slick-slide {
+        // flex-shrink: 0;
+      }
+    }
+  }
+  .slick-arrow {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    background: black;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    &::after {
+      position: relative;
+      top: unset;
+      inset-inline-start: unset;
+    }
+    &.slick-next {
+      inset-inline-end: -50px;
+      &::after {
+        inset-inline-start: -2px;
+      }
+    }
+    &.slick-prev {
+      inset-inline-start: -50px;
+      &::after {
+        inset-inline-start: 2px;
+      }
+    }
+  }
+}

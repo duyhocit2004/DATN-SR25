@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",     // Dùng CommonJS cho Node
+    "target": "ES2020",       // Mục tiêu ES2020
+    "outDir": "dist",         // Thư mục output (nếu cần)
+    "types": ["node"]         // Thêm định nghĩa kiểu cho Node.js
+  },
+  "include": ["server"]       // Bao gồm các file Node (ví dụ: server/ hoặc folder chứa code backend)
+}
