@@ -17,4 +17,16 @@ interface IProductService
 
     public function getProductDetail(Request $request);
 
+    public function getColorByProductIdAndSize(Request $request);
+
+    public function getSizeByProductIdAndColor(Request $request);
+
+    public function getTopDiscountedProducts(Request $request);
+
+    public function getTopNewestProducts(Request $request);
+
+    public function getTopBestSellingProducts(Request $request);
+
+    public function getRelatedProducts(Request $request);
+
 }

@@ -49,6 +49,12 @@ Route::prefix('products')->group(function () {
     Route::post('/getAllFilter', [ProductController::class, 'getAllProductWithImages']);
     Route::post('/getProduct', [ProductController::class, 'getProduct']);
     Route::post('/getProductDetail', [ProductController::class, 'getProductDetail']);
+    Route::post('/getSizeByProductIdAndColor', [ProductController::class, 'getSizeByProductIdAndColor']);
+    Route::post('/getColorByProductIdAndSize', [ProductController::class, 'getColorByProductIdAndSize']);
+    Route::post('/getTopDiscountedProducts', [ProductController::class, 'getTopDiscountedProducts']);
+    Route::post('/getTopNewestProducts', [ProductController::class, 'getTopNewestProducts']);
+    Route::post('/getTopBestSellingProducts', [ProductController::class, 'getTopBestSellingProducts']);
+    Route::post('/getRelatedProducts', [ProductController::class, 'getRelatedProducts']);
 });
 
 //các api cần authen
@@ -75,6 +81,13 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/getAllUser', [AdminController::class, 'getAllUser']);
             Route::post('/deleteUser', [AdminController::class, 'deleteUser']);
         });
+
+        Route::prefix('products')->group(function () {
+            Route::post('/addProductWithVariant', [ProductAdminController::class, 'addProductWithVariant']);
+            Route::post('/updateProductWithVariant', [ProductAdminController::class, 'updateProductWithVariant']);
+            Route::post('/deleteProduct', [ProductAdminController::class, 'deleteProduct']);
+        });
+
         //nam
         Route::prefix('vouchers')->group(function () {
             Route::post('/getAllVoucher', [AdminController::class, 'getAllVoucher']);

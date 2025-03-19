@@ -49,4 +49,40 @@ class ProductController extends Controller
         return BaseResponse::success($products);
     }
 
+    public function getColorByProductIdAndSize(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getColorByProductIdAndSize($request);
+        return BaseResponse::success($sizes);
+    }
+
+    public function getSizeByProductIdAndColor(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getSizeByProductIdAndColor($request);
+        return BaseResponse::success($sizes);
+    }
+
+    public function getTopDiscountedProducts(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getTopDiscountedProducts($request);
+        return BaseResponse::success($sizes);
+    }
+
+    public function getTopNewestProducts(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getTopNewestProducts($request);
+        return BaseResponse::success($sizes);
+    }
+
+    public function getTopBestSellingProducts(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getTopBestSellingProducts($request);
+        return BaseResponse::success($sizes);
+    }
+
+    public function getRelatedProducts(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getRelatedProducts($request);
+        return BaseResponse::success($sizes);
+    }
+
 }

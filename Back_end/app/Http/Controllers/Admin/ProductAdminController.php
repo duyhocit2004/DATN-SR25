@@ -16,4 +16,21 @@ class ProductAdminController extends Controller
         $this->adminProductService = $adminProductService;
     }
 
+    public function addProductWithVariant(Request $request)
+    {
+        $products = $this->adminProductService->addProductWithVariant($request);
+        return BaseResponse::success($products);
+    }
+
+    public function updateProductWithVariant(Request $request)
+    {
+        $products = $this->adminProductService->updateProductWithVariant($request);
+        return BaseResponse::success($products);
+    }
+    public function deleteProduct(Request $request)
+    {
+        $products = $this->adminProductService->deleteProduct($request);
+        return BaseResponse::success($products);
+    }
+
 }
