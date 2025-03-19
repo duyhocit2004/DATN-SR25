@@ -44,7 +44,13 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('orders')->group(function () {
     Route::post('/getVoucher', [OrderController::class, 'getVoucher']);
+    Route::post('/addOrder', [OrderController::class, 'addOrder']);
+    Route::post('/getOrders', [OrderController::class, 'getOrders']);
+    Route::post('/getOrderDetail', [OrderController::class, 'getOrderDetail']);
 });
+
+Route::post('/vnpay/create', [VNPayController::class, 'createPayment']);
+Route::get('/vnpay/return', [VNPayController::class, 'returnPayment']);
 
 Route::prefix('products')->group(function () {
     Route::post('/getAllSizes', [ProductController::class, 'getAllSizes']);
@@ -139,6 +145,10 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/addBanner', [AdminController::class, 'addBanner']);
             Route::post('/updateBanner', [AdminController::class, 'updateBanner']);
             Route::post('/deleteBanner', [AdminController::class, 'deleteBanner']);
+        });
+
+        Route::prefix('orders')->group(function () {
+            Route::post('/getOrdersPaging', [OrderController::class, 'getOrdersPaging']);
         });
 
     });
