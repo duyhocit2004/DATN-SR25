@@ -158,6 +158,41 @@ class AdminService implements IAdminService
         return $color;
     }
 
+    public function addSize(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $size = $this->sizeRepositories->addSize($request);
+        return $size;
+    }
+
+    public function updateSize(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $size = $this->sizeRepositories->updateSize($request);
+        return $size;
+    }
+    public function deleteSize(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $size = $this->sizeRepositories->deleteSize($request);
+        return $size;
+    }
+
     public function getDataStats(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
@@ -214,8 +249,10 @@ class AdminService implements IAdminService
         if ($request->hasFile('image')) {
             $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
         }
-
-        $category = $this->categoriesRepositories->addCategory($request, $uploadedFile['secure_url']);
+        $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
+            ? $uploadedFile['secure_url']
+            : null;
+        $category = $this->categoriesRepositories->addCategory($request, $secureUrl);
         return $category;
     }
 
@@ -232,7 +269,10 @@ class AdminService implements IAdminService
             $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
         }
 
-        $category = $this->categoriesRepositories->updateCategory($request, $uploadedFile['secure_url']);
+        $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
+            ? $uploadedFile['secure_url']
+            : null;
+        $category = $this->categoriesRepositories->updateCategory($request, $secureUrl);
         return $category;
     }
     public function deleteCategory(Request $request)

@@ -30,4 +30,59 @@ class ProductController extends Controller
         $color = $this->productService->getAllColors($request);
         return BaseResponse::success($color);
     }
+
+    public function getAllProductWithImages(Request $request): JsonResponse
+    {
+        $products = $this->productService->getAllProductWithImages($request);
+        return BaseResponse::success($products);
+    }
+
+    public function getProduct(Request $request): JsonResponse
+    {
+        $products = $this->productService->getProduct($request);
+        return BaseResponse::success($products);
+    }
+
+    public function getProductDetail(Request $request): JsonResponse
+    {
+        $products = $this->productService->getProductDetail($request);
+        return BaseResponse::success($products);
+    }
+
+    public function getColorByProductIdAndSize(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getColorByProductIdAndSize($request);
+        return BaseResponse::success($sizes);
+    }
+
+    public function getSizeByProductIdAndColor(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getSizeByProductIdAndColor($request);
+        return BaseResponse::success($sizes);
+    }
+
+    public function getTopDiscountedProducts(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getTopDiscountedProducts($request);
+        return BaseResponse::success($sizes);
+    }
+
+    public function getTopNewestProducts(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getTopNewestProducts($request);
+        return BaseResponse::success($sizes);
+    }
+
+    public function getTopBestSellingProducts(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getTopBestSellingProducts($request);
+        return BaseResponse::success($sizes);
+    }
+
+    public function getRelatedProducts(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getRelatedProducts($request);
+        return BaseResponse::success($sizes);
+    }
+
 }
