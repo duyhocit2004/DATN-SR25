@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
-import api from "../../axios/config";
-import { ISize } from "../../interface/Size";
+import api from "../../configs/config";
+import { ISize } from "../../api/Size";
 
 export const ListSize = async () => {
     try {

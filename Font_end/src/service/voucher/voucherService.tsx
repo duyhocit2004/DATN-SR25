@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
-import api from "../../axios/config";
-import { IVoucher } from "../../interface/Voucher";
+import api from "../../configs/config";
+import { IVoucher } from "../../api/Voucher";
 
 // Lấy danh sách voucher
 export const ListVouchers = async () => {

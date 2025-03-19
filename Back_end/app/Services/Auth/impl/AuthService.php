@@ -174,7 +174,10 @@ class AuthService implements IAuthService
             $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
         }
 
-        $user = $this->authRepositories->updateUserAdmin($request, $uploadedFile['secure_url']);
+        $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
+            ? $uploadedFile['secure_url']
+            : null;
+        $user = $this->authRepositories->updateUserAdmin($request, $secureUrl);
         return $user;
     }
 
@@ -191,8 +194,10 @@ class AuthService implements IAuthService
         if ($request->hasFile('image')) {
             $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
         }
-
-        $user = $this->authRepositories->updateUser($request, $uploadedFile['secure_url'], $userId);
+        $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
+            ? $uploadedFile['secure_url']
+            : null;
+        $user = $this->authRepositories->updateUser($request, $secureUrl, $userId);
         return $user;
     }
 }

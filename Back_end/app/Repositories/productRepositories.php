@@ -131,8 +131,6 @@ class ProductRepositories
 
     public function getDashboardChart(Request $request)
     {
-        $fromDate= $request->input('fromDate', Carbon::now()->startOfYear());
-        $toDate = $request->input('toDate', Carbon::now()->endOfYear());
         $filterType = $request->input('time', 'month');
 
 
@@ -147,16 +145,31 @@ class ProductRepositories
                 ->selectRaw('YEARWEEK(created_at, 1) as week, COUNT(*) as total_orders, SUM(total_price) as total_revenue')
                 ->groupBy('week')
                 ->orderBy('week', 'asc')
-                ->get();
+                ->get()
+                ->keyBy('week');
 
-            $stt = 1;
-            foreach ($result as $week) {
-                $listResult[] = [
-                    'stt' => $stt,
-                    'orders' => $week->total_orders,
-                    'revenue' => $week->total_revenue
-                ];
-                $stt++;
+            $allWeeks = [];
+            $current = $startDate->copy()->startOfWeek();
+            while ($current->lte($endDate)) {
+                $allWeeks[] = $current->format('oW'); // oW: YEARWEEK (ISO-8601)
+                $current->addWeek();
+            }
+
+            // Lặp qua tất cả các tuần để đảm bảo tuần nào không có dữ liệu cũng được thêm
+            foreach ($allWeeks as $index => $week) {
+                if ($result->has($week)) {
+                    $listResult[] = [
+                        'stt' => $index + 1,
+                        'order' => $result[$week]->total_orders,
+                        'revenue' => $result[$week]->total_revenue
+                    ];
+                } else {
+                    $listResult[] = [
+                        'stt' => $index + 1,
+                        'order' => 0,
+                        'revenue' => 0
+                    ];
+                }
             }
         }
 
@@ -169,38 +182,75 @@ class ProductRepositories
                 ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as total_orders, SUM(total_price) as total_revenue')
                 ->groupBy('month')
                 ->orderBy('month', 'asc')
-                ->get();
+                ->get()
+                ->keyBy('month');
 
-
-            foreach ($result as $month) {
-                $monthNumber = (int)substr($month->month, 5, 2);
-                $quarter = ceil($monthNumber / 3);
-                $listResult[] = [
-                    'stt' => $quarter,
-                    'orders' => $month->total_orders,
-                    'revenue' => $month->total_revenue
-                ];
+            // Danh sách các tháng trong quý
+            $allMonths = [];
+            $current = $startDate->copy();
+            while ($current->lte($endDate)) {
+                $allMonths[] = $current->format('Y-m');
+                $current->addMonth();
             }
+
+            // Kết quả đầu ra
+            $listResult = [];
+            foreach ($allMonths as $month) {
+                $monthNumber = (int)substr($month, 5, 2);
+                if ($result->has($monthNumber)) {
+                    $listResult[] = [
+                        'stt' => $monthNumber, // Thứ tự tháng trong quý
+                        'order' => $result[$month]->total_orders,
+                        'revenue' => $result[$month]->total_revenue
+                    ];
+                } else {
+                    $listResult[] = [
+                        'stt' => $monthNumber, // Thứ tự tháng trong quý
+                        'order' => 0, // Mặc định nếu không có dữ liệu
+                        'revenue' => 0
+                    ];
+                }
+            }
+
         }
 
         if('year'==$filterType){
-            $startDate = Carbon::now()->startOfYear();
-            $endDate = Carbon::now()->endOfYear();
+            $startDate = Carbon::now()->startOfYear(); // Ngày đầu năm
+            $endDate = Carbon::now()->endOfYear();     // Ngày cuối năm
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as total_orders, SUM(total_price) as total_revenue')
                 ->groupBy('month')
                 ->orderBy('month', 'asc')
-                ->get();
+                ->get()
+                ->keyBy('month'); // Chuyển thành Collection với key là "month"
 
-            foreach ($result as $month) {
-                $listResult[] = [
-                    'stt' => substr($month->month, 5, 2),
-                    'orders' => $month->total_orders,
-                    'revenue' => $month->total_revenue
-                ];
+            // Danh sách 12 tháng trong năm
+            $allMonths = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $allMonths[] = Carbon::createFromDate(null, $i, 1)->format('Y-m'); // Tạo danh sách tháng theo định dạng "YYYY-MM"
             }
+
+            // Kết quả đầu ra
+            $listResult = [];
+            foreach ($allMonths as $month) {
+                $monthNumber = (int)substr($month, 5, 2); // Lấy số tháng từ định dạng "YYYY-MM"
+                if ($result->has($month)) {
+                    $listResult[] = [
+                        'stt' => $monthNumber, // Số của tháng (1-12)
+                        'orders' => $result[$month]->total_orders,
+                        'revenue' => $result[$month]->total_revenue
+                    ];
+                } else {
+                    $listResult[] = [
+                        'stt' => $monthNumber, // Số của tháng (1-12)
+                        'orders' => 0, // Mặc định nếu không có dữ liệu
+                        'revenue' => 0
+                    ];
+                }
+            }
+
         }
 
         return $listResult;

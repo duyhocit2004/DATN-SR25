@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
-import api from "../../axios/config";
-import { IProducts } from "../../interface/Products";
+import api from "../../configs/config";
+import { IProducts } from "../../api/Products";
 
 // Lấy danh sách sản phẩm
 export const ListProduct = async () => {
