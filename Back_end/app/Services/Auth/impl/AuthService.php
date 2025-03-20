@@ -137,12 +137,6 @@ class AuthService implements IAuthService
     public function logout(Request $request)
     {
         try {
-            $user = JWTAuth::parseToken()->authenticate();
-            if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
-                JWTAuth::invalidate(JWTAuth::getToken());
-                BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
-            }
-
             JWTAuth::invalidate(JWTAuth::getToken());
             return [];
         } catch (JWTException $e) {

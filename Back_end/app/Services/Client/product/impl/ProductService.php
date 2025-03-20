@@ -365,12 +365,6 @@ class ProductService implements IProductService
     {
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
-
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
-        }
-
         $wishList = $this->wishListRepositories->getWishList($userId);
         $list = $wishList->map(function ($item) {
             $product = $item->product;
@@ -430,10 +424,6 @@ class ProductService implements IProductService
     {
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
-        }
         $productId = $request->input('productId');
 
         $wishList = $this->wishListRepositories->addWishList($userId, $productId);
@@ -445,10 +435,6 @@ class ProductService implements IProductService
     {
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
-        }
         $productIds = $request->input('productIds');
         if (!is_null($productIds)) {
             $this->wishListRepositories->deleteWishList($userId, $productIds);

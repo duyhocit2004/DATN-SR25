@@ -53,10 +53,6 @@ class CartService implements ICartService
     {
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
-        }
         $listProductInCart = $this->cartRepositories->getProductsInCartByUserId($userId);
         $list = $listProductInCart->map(function ($item) {
             return [
@@ -94,10 +90,6 @@ class CartService implements ICartService
     {
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
-        }
         $cart = $this->cartRepositories->addCart($request, $userId);
         return $cart;
     }
@@ -105,10 +97,6 @@ class CartService implements ICartService
     {
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
-        }
 
         if(!is_null($request->input('cartId')) && !is_null($request->input('quantity'))){
             $this->cartRepositories->updateCart($request, $userId);
