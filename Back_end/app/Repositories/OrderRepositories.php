@@ -37,7 +37,7 @@ class OrderRepositories
                     BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
                 }
             }
-            
+
             if ($totalAmount < 0) {
                 $totalAmount = 0;
             }
