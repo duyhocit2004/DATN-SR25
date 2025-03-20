@@ -149,6 +149,7 @@ Route::middleware('jwt.auth')->group(function () {
 
         Route::prefix('orders')->group(function () {
             Route::post('/getOrdersPaging', [OrderController::class, 'getOrdersPaging']);
+            Route::post('/updateOrder', [OrderController::class, 'updateOrder']);
         });
 
     });

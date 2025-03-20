@@ -7,6 +7,7 @@ use App\Repositories\OrderRepositories;
 use App\Repositories\VoucherRepositories;
 use App\Services\Client\order\IOrderService;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 class OrderService implements IOrderService
@@ -161,6 +162,17 @@ class OrderService implements IOrderService
             ];
         });
         return $orders->setCollection($list);
+    }
+
+    public function updateOrder(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+        $list = $this->orderRepositories->updateOrder($request);
+        return $list;
     }
 
 }
