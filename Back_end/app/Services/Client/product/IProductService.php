@@ -29,4 +29,13 @@ interface IProductService
 
     public function getRelatedProducts(Request $request);
 
+    public function getComment(Request $request);
+    public function getParentCommentPaging(Request $request);
+    public function getCommentWithReply(Request $request);
+    public function addComment(Request $request);
+    public function getWishList(Request $request);
+    public function getWishListStorage(Request $request);
+    public function addWishList(Request $request);
+    public function deleteWishList(Request $request);
+
 }

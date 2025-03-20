@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Helpers\BaseResponse;
+use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -24,7 +25,13 @@ class ProductRepositories
 
         $query = Product::with(['category']);
         if (!empty($categories_id)) {
-            $query->where('categories_id', '=', $categories_id);
+            $categoryIds = Category::where('id', $categories_id) // Tìm parent category
+            ->orWhere('parent_id', $categories_id) // Lấy tất cả child categories
+            ->pluck('id') // Chỉ lấy ID
+            ->toArray();
+
+            // Lọc sản phẩm theo danh sách categories ID
+            $query->whereIn('categories_id', $categoryIds);
         }
 
         if (!empty($name)) {
@@ -318,6 +325,17 @@ class ProductRepositories
         $product->delete();
 
         return $product;
+    }
+
+    public function getWishListStorage($productIds)
+    {
+        $listProduct = collect();
+
+        if (!empty($productIds)) {
+            $listProduct = Product::with(['category'])->whereIn('id', $productIds)->get();
+        }
+
+        return $listProduct;
     }
 
 }

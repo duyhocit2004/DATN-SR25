@@ -335,4 +335,129 @@ class ProductService implements IProductService
         return $list;
     }
 
+    public function getComment(Request $request)
+    {
+        $comment = $this->commentRepositories->getComment($request->input('productId'));
+        return $comment;
+    }
+
+    public function getParentCommentPaging(Request $request)
+    {
+        $comment = $this->commentRepositories->getParentCommentPaging($request);
+        return $comment;
+
+    }
+
+    public function getCommentWithReply(Request $request)
+    {
+        $comment = $this->commentRepositories->getCommentWithReply($request);
+        return $comment;
+
+    }
+
+    public function addComment(Request $request)
+    {
+        $wishList = $this->commentRepositories->addComment($request);
+        return $wishList;
+    }
+
+    public function getWishList(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $userId = $user->id;
+
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $wishList = $this->wishListRepositories->getWishList($userId);
+        $list = $wishList->map(function ($item) {
+            $product = $item->product;
+            return [
+                'id' => $product->id,
+                'categoriesId' => $product->categories_id,
+                'categoriesName' => $product->category ? $product->category->name : null,
+                'name' => $product->name,
+                'image' => $product->image,
+                'listImage' => $product->image_products->isEmpty() ? [] : $product->image_products->pluck('image_link'),
+                'priceRegular' => $product->price_regular,
+                'priceSale' => $product->price_sale,
+                'description' => $product->description,
+                'views' => $product->views,
+                'content' => $product->content,
+                'rate' => $product->rate,
+                'quantity' => $product->quantity,
+                'quantitySold' => $product->quantity_sold,
+                'discount' => $product->discount,
+                'createdAt' => $product->created_at,
+                'updatedAt' => $product->updated_at,
+                'deletedAt' => $product->deleted_at,
+            ];
+        });
+        return $list;
+    }
+
+    public function getWishListStorage(Request $request)
+    {
+        $listProduct = $this->productRepositories->getWishListStorage($request->input('productIds'));
+        $list = $listProduct->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'categoriesId' => $product->categories_id,
+                'categoriesName' => $product->category ? $product->category->name : null,
+                'name' => $product->name,
+                'image' => $product->image,
+                'listImage' => $product->image_products->isEmpty() ? [] : $product->image_products->pluck('image_link'),
+                'priceRegular' => $product->price_regular,
+                'priceSale' => $product->price_sale,
+                'description' => $product->description,
+                'views' => $product->views,
+                'content' => $product->content,
+                'rate' => $product->rate,
+                'quantity' => $product->quantity,
+                'quantitySold' => $product->quantity_sold,
+                'discount' => $product->discount,
+                'createdAt' => $product->created_at,
+                'updatedAt' => $product->updated_at,
+                'deletedAt' => $product->deleted_at,
+            ];
+        });
+        return $list;
+    }
+
+    public function addWishList(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $userId = $user->id;
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+        $productId = $request->input('productId');
+
+        $wishList = $this->wishListRepositories->addWishList($userId, $productId);
+        return $wishList;
+
+    }
+
+    public function deleteWishList(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $userId = $user->id;
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+        $productIds = $request->input('productIds');
+        if (!is_null($productIds)) {
+            $this->wishListRepositories->deleteWishList($userId, $productIds);
+        } else {
+            $this->wishListRepositories->truncate();
+        }
+
+        return [];
+
+    }
+
 }

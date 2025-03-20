@@ -32,16 +32,25 @@ Route::prefix('home')->group(function () {
     Route::post('/getAllCategories', [HomeController::class, 'getAllCategories']);
     Route::post('/getParentCategories', [HomeController::class, 'getParentCategories']);
     Route::post('/getChildrenCategories', [HomeController::class, 'getChildrenCategories']);
+    Route::post('/getAllBanners', [HomeController::class, 'getAllBanners']);
 });
 
 Route::prefix('admin')->group(function () {
-    Route::post('login', [AuthController::class, 'loginAdmin']);
+    Route::post('/login', [AuthController::class, 'loginAdmin']);
     Route::post('/getAllCategoriesNonTree', [AdminController::class, 'getAllCategoriesNonTree']);
+    Route::post('/getParentCommentPaging', [ProductController::class, 'getParentCommentPaging']);
+    Route::post('/getCommentWithReply', [ProductController::class, 'getCommentWithReply']);
 });
 
 Route::prefix('orders')->group(function () {
     Route::post('/getVoucher', [OrderController::class, 'getVoucher']);
+    Route::post('/addOrder', [OrderController::class, 'addOrder']);
+    Route::post('/getOrders', [OrderController::class, 'getOrders']);
+    Route::post('/getOrderDetail', [OrderController::class, 'getOrderDetail']);
 });
+
+Route::post('/vnpay/create', [VNPayController::class, 'createPayment']);
+Route::get('/vnpay/return', [VNPayController::class, 'returnPayment']);
 
 Route::prefix('products')->group(function () {
     Route::post('/getAllSizes', [ProductController::class, 'getAllSizes']);
@@ -55,6 +64,13 @@ Route::prefix('products')->group(function () {
     Route::post('/getTopNewestProducts', [ProductController::class, 'getTopNewestProducts']);
     Route::post('/getTopBestSellingProducts', [ProductController::class, 'getTopBestSellingProducts']);
     Route::post('/getRelatedProducts', [ProductController::class, 'getRelatedProducts']);
+    Route::post('/getComment', [ProductController::class, 'getComment']);
+    Route::post('/addComment', [ProductController::class, 'addComment']);
+    Route::post('/getWishListStorage', [ProductController::class, 'getWishListStorage']);
+});
+
+Route::prefix('carts')->group(function () {
+    Route::post('/getProductsInCart', [CartController::class, 'getProductsInCart']);
 });
 
 //các api cần authen
@@ -66,6 +82,17 @@ Route::middleware('jwt.auth')->group(function () {
         Route::post('/updateUser', [AuthController::class, 'updateUser']);
     });
 
+    Route::prefix('carts')->group(function () {
+        Route::post('/getProductsInCartByUserId', [CartController::class, 'getProductsInCartByUserId']);
+        Route::post('/addCart', [CartController::class, 'addCart']);
+        Route::post('/updateCart', [CartController::class, 'updateCart']);
+    });
+
+    Route::prefix('products')->group(function () {
+        Route::post('/getWishList', [ProductController::class, 'getWishList']);
+        Route::post('/addWishList', [ProductController::class, 'addWishList']);
+        Route::post('/deleteWishList', [ProductController::class, 'deleteWishList']);
+    });
 
     // các api màn admin
     Route::prefix('admin')->group(function () {
@@ -112,6 +139,17 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/addSize', [AdminController::class, 'addSize']);
             Route::post('/updateSize', [AdminController::class, 'updateSize']);
             Route::post('/deleteSize', [AdminController::class, 'deleteSize']);
+        });
+
+        Route::prefix('banners')->group(function () {
+            Route::post('/addBanner', [AdminController::class, 'addBanner']);
+            Route::post('/updateBanner', [AdminController::class, 'updateBanner']);
+            Route::post('/deleteBanner', [AdminController::class, 'deleteBanner']);
+        });
+
+        Route::prefix('orders')->group(function () {
+            Route::post('/getOrdersPaging', [OrderController::class, 'getOrdersPaging']);
+            Route::post('/updateOrder', [OrderController::class, 'updateOrder']);
         });
 
     });
