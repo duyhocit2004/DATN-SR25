@@ -57,4 +57,10 @@ class OrderController extends Controller
         return BaseResponse::success($products);
     }
 
+    public function updateOrder(Request $request)
+    {
+        $products = $this->orderService->updateOrder($request);
+        return BaseResponse::success($products);
+    }
+
 }

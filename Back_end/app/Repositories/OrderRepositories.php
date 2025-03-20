@@ -180,4 +180,20 @@ class OrderRepositories
         $order = Order::with('order_details')->where('code', '=', $code)->first();
         return $order;
     }
+
+    public function updateOrder(Request $request)
+    {
+        $order = Order::where('id', $request->input('orderId'))->first();
+
+        if (!empty($order)) {
+            $order->update([
+                'status' => $request->input('status', $order->status),
+                'payment_status' => $request->input('paymentStatus', $order->payment_status),
+                'payment_method' => $request->input('paymentMethod', $order->payment_method),
+            ]);
+            return $order;
+        } else {
+            BaseResponse::failure(400, '', 'order.item.not.found', []);
+        }
+    }
 }
