@@ -287,4 +287,57 @@ class AdminService implements IAdminService
         return $category;
     }
 
+    public function addBanner(Request $request)
+    {
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $uploadedFile = null;
+        if ($request->hasFile('image')) {
+            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
+        }
+        $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
+            ? $uploadedFile['secure_url']
+            : null;
+        $banner = $this->bannersRepositories->addBanner($request, $secureUrl);
+        return $banner;
+    }
+
+    public function updateBanner(Request $request)
+    {
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $uploadedFile = null;
+        if ($request->hasFile('image')) {
+            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
+        }
+
+        $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
+            ? $uploadedFile['secure_url']
+            : null;
+        $banner = $this->bannersRepositories->updateBanner($request, $secureUrl);
+        return $banner;
+    }
+    public function deleteBanner(Request $request)
+    {
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $banner = $this->bannersRepositories->deleteBanner($request);
+        return $banner;
+    }
+
 }

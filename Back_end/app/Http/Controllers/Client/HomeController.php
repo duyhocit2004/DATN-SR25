@@ -35,4 +35,10 @@ class HomeController extends Controller
         $children = $this->homeService->getChildrenCategories($request);
         return BaseResponse::success($children);
     }
+
+    public function getAllBanners(Request $request)
+    {
+        $banner = $this->homeService->getAllBanners($request);
+        return BaseResponse::success($banner);
+    }
 }

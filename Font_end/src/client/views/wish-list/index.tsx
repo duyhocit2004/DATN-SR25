@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Table, Button, Popconfirm, message, Card, Tooltip, Spin } from "antd";
+import { Table, Button, Popconfirm, Card, Tooltip, Spin } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import useWindowSize from "@/hooks/useWindowSize";
@@ -194,6 +194,7 @@ const WishList = () => {
       {
         title: "Hành động",
         key: "action",
+        fixed: 'right',
         render: (_: any, record: IWishlist) => (
           <Popconfirm
             title="Bạn có chắc muốn xóa sản phẩm này?"
@@ -247,7 +248,7 @@ const WishList = () => {
           />
 
           <div className="flex flex-col md:flex-row justify-between mt-6 gap-3">
-            <Link to="/" className="w-full md:w-auto">
+            <Link to="/shop" className="w-full md:w-auto">
               <Button type="default" block={isMobile}>
                 🛍 Tiếp tục Shopping
               </Button>

@@ -50,5 +50,18 @@ class HomeService implements IHomeService
         return $categories;
     }
 
+    public function getAllBanners(Request $request)
+    {
+        $pageNum = $request->get('pageNum', null);
+        $pageSize = $request->get('pageSize', null);
+        if (empty($pageNum) || empty($pageSize)) {
+            $listBanner = $this->bannersRepositories->getAllBanner();
+            return $listBanner;
+        } else {
+            $listBanner = $this->bannersRepositories->getBannerPaging($request);
+            return $listBanner;
+        }
+    }
+
 
 }
