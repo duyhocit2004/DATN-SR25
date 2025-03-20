@@ -59,28 +59,38 @@ class CommentRepositories
 
     public function addComment(Request $request)
     {
+        $productId = $request->input('productId');
+        $orderExists = Order::where('phone_number', $request->input('phoneNumber'))
+            ->whereHas('order_details', function ($query) use ($productId) {
+                $query->where('product_id', $productId);
+            })
+            ->exists();
 
-        $comment = Comment::create([
-            'parent_id' => $request->input('parentId'),
-            'product_id' => $request->input('productId'),
-            'content' => $request->input('content'),
-            'rate' => $request->input('rate'),
-            'phone_number' => $request->input('phoneNumber'),
-        ]);
+        if($orderExists){
+            $comment = Comment::create([
+                'parent_id' => $request->input('parentId'),
+                'product_id' => $request->input('productId'),
+                'content' => $request->input('content'),
+                'rate' => $request->input('rate'),
+                'phone_number' => $request->input('phoneNumber'),
+            ]);
 
-        $averageRate = DB::table('comment')
-            ->where('product_id', $request->input('productId'),)
-            ->avg('rate');
+            $averageRate = DB::table('comment')
+                ->where('product_id', $request->input('productId'),)
+                ->avg('rate');
 
-        if ($averageRate !== null) {
-            DB::table('products')
-                ->where('id', $request->input('productId'),)
-                ->update(['rate' => $averageRate]);
+            if ($averageRate !== null) {
+                DB::table('products')
+                    ->where('id', $request->input('productId'),)
+                    ->update(['rate' => $averageRate]);
 
-            return response()->json(['message' => 'Rate updated successfully', 'product_id' => $request->input('productId'), 'avg_rate' => $averageRate]);
+                return response()->json(['message' => 'Rate updated successfully', 'product_id' => $request->input('productId'), 'avg_rate' => $averageRate]);
+            }
+
+            return $comment;
+        }else{
+            BaseResponse::failure("400", "order.not.found", "order.not.found", []);
         }
-
-        return $comment;
     }
 
 }

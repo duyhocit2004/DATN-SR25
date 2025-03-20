@@ -67,27 +67,28 @@ const ProductTable = () => {
         return <Rate value={value} allowHalf disabled />;
       },
     },
-    // {
-    //   title: "Hành động",
-    //   dataIndex: "action",
-    //   minWidth: 120,
-    //   fixed: "right",
-    //   render: (_: any, record) => {
-    //     return (
-    //       <div className="actions">
-    //         <Tooltip title={"Xóa"}>
-    //           <Button
-    //             danger
-    //             icon={<DeleteOutlined />}
-    //             onClick={() => {
-    //               handleDeleteProduct(record.id);
-    //             }}
-    //           />
-    //         </Tooltip>
-    //       </div>
-    //     );
-    //   },
-    // },
+    {
+      title: "Hành động",
+      dataIndex: "action",
+      minWidth: 120,
+      fixed: "right",
+      render: (_, record) => {
+        return (
+          <div className="actions">
+            <Tooltip title={"Xóa"}>
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteProduct(record.id);
+                }}
+              />
+            </Tooltip>
+          </div>
+        );
+      },
+    },
   ];
 
   const handleDeleteProduct = async (productId: number) => {

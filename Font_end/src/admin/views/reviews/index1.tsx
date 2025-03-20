@@ -1,22 +1,26 @@
 import {
+  Avatar,
   Button,
   Cascader,
+  Collapse,
   GetProp,
+  Image,
   Input,
   Rate,
   Select,
   Table,
   TableProps,
+  Tag,
   Tooltip,
 } from "antd";
 import { useEffect, useState } from "react";
-import "./index.scss";
 import { IListCategory, IProduct } from "@/types/interface";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, SendOutlined } from "@ant-design/icons";
 import productApi from "@/api/productApi";
 import { HttpCodeString } from "@/utils/constants";
 import { useNavigate } from "react-router-dom";
 import homeApi from "@/api/homeApi";
+import TextArea from "antd/es/input/TextArea";
 
 type ColumnsType<T extends object = object> = TableProps<T>["columns"];
 type TablePaginationConfig = Exclude<
@@ -25,71 +29,78 @@ type TablePaginationConfig = Exclude<
 >;
 
 const { Option } = Select;
+const { Panel } = Collapse;
 
-const initData: IProduct[] = [
+export interface IReview {
+  id: string;
+  product: {
+    name: string;
+    image: string;
+    sku: string;
+  };
+  customer: {
+    name: string;
+    avatar: string;
+  };
+  rating: number;
+  content: string;
+  images?: string[];
+  createdAt: string;
+  status: "Chờ duyệt" | "Đã duyệt" | "Đã ẩn";
+  replies?: IReply[];
+}
+
+export interface IReply {
+  id: string;
+  user: {
+    name: string;
+    avatar: string;
+    isAdmin: boolean;
+  };
+  content: string;
+  createdAt: string;
+}
+
+export const reviews: IReview[] = [
   {
-    id: 1,
-    image: "abc",
-    name: "Amv",
-    quantity: 10,
-    priceRegular: 20000000,
-    priceSale: 18000000,
-    discount: 20,
-    listSizes: [],
-    listColors: [],
-    categoriesId: 1,
-    quantitySold: 10,
-    listImage: [],
-    rate: 4,
-    description: "fewrjigfiwgefi",
-  },
-  {
-    id: 2,
-    image: "abc",
-    name: "Amv",
-    quantity: 10,
-    priceRegular: 20000000,
-    priceSale: 18000000,
-    discount: 20,
-    listSizes: [],
-    listColors: [],
-    categoriesId: 1,
-    quantitySold: 10,
-    listImage: [],
-    rate: 3.5,
-    description: "fewrjigfiwgefi",
-  },
-  {
-    id: 3,
-    image: "abc",
-    name: "Amv",
-    quantity: 10,
-    priceRegular: 20000000,
-    priceSale: 18000000,
-    discount: 20,
-    listSizes: [],
-    listColors: [],
-    categoriesId: 1,
-    quantitySold: 10,
-    listImage: [],
-    rate: 0,
-    description: "fewrjigfiwgefi",
-  },
-  {
-    id: 4,
-    image: "abc",
-    name: "Amv",
-    quantity: 10,
-    priceRegular: 20000000,
-    priceSale: 18000000,
-    discount: 20,
-    listSizes: [],
-    listColors: [],
-    categoriesId: 1,
-    quantitySold: 10,
-    listImage: [],
-    rate: 0,
-    description: "fewrjigfiwgefi",
+    id: "1",
+    product: {
+      name: "Tai nghe Bluetooth XYZ",
+      image: "https://via.placeholder.com/80",
+      sku: "SKU12345",
+    },
+    customer: {
+      name: "Nguyễn Văn A",
+      avatar: "https://via.placeholder.com/40",
+    },
+    rating: 5,
+    content: "Sản phẩm rất tốt! Âm thanh trong trẻo, pin trâu.",
+    images: ["https://via.placeholder.com/100"],
+    createdAt: "2025-03-10",
+    status: "Đã duyệt",
+    replies: [
+      {
+        id: "r1",
+        user: {
+          name: "Trần B",
+          avatar: "https://via.placeholder.com/40",
+          isAdmin: false,
+        },
+        content: "Mình cũng mua rồi, dùng rất ưng!",
+        createdAt: "2025-03-11",
+      },
+      {
+        id: "r2",
+        user: {
+          name: "Admin",
+          avatar: "https://via.placeholder.com/40",
+          isAdmin: true,
+        },
+        content:
+          "Cảm ơn bạn đã ủng hộ! Hy vọng bạn tiếp tục đồng hành cùng shop.",
+        createdAt: "2025-03-12",
+      },
+    ],
   },
 ];
 interface IFilter {
@@ -108,7 +119,7 @@ const sizeDefault = 10;
 
 const ListProduct = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState<IProduct[]>();
+  const [data, setData] = useState<IReview[]>();
   const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<IListCategory[]>([]);
@@ -120,82 +131,77 @@ const ListProduct = () => {
     keyword: "",
     categoryId: null,
   });
-  const columns: ColumnsType<IProduct> = [
+  const columns = [
     {
-      title: "STT",
-      dataIndex: "stt",
-      render: (value: any, record: any, index: number) => {
-        return (
-          <span>
-            {((pagination?.current || pageDefault) - 1) *
-              (pagination?.pageSize || sizeDefault) +
-              index +
-              1}
-          </span>
-        );
-      },
-      minWidth: 70,
+      title: "Sản phẩm",
+      dataIndex: "product",
+      key: "product",
+      render: (product: IReview["product"]) => (
+        <div className="flex gap-2 items-center">
+          <Image width={50} src={product.image} />
+          <div>
+            <p className="font-medium">{product.name}</p>
+            <p className="text-gray-500 text-sm">SKU: {product.sku}</p>
+          </div>
+        </div>
+      ),
     },
     {
-      title: "Ảnh",
-      dataIndex: "image",
-      render: (value) => {
-        return <img src={value} alt="avatar" width={100} height={100} />;
-      },
-      minWidth: 150,
-    },
-    {
-      title: "Tên sản phẩm",
-      dataIndex: "name",
-      minWidth: 250,
-    },
-    {
-      title: "Danh mục",
-      dataIndex: "categoriesName",
-      minWidth: 200,
-    },
-    {
-      title: "Số lượng",
-      dataIndex: "quantity",
-      minWidth: 150,
-    },
-    {
-      title: "Mô tả",
-      dataIndex: "description",
-      minWidth: 350,
+      title: "Khách hàng",
+      dataIndex: "customer",
+      key: "customer",
+      render: (customer: IReview["customer"]) => (
+        <div className="flex gap-2 items-center">
+          <Avatar src={customer.avatar} />
+          <span>{customer.name}</span>
+        </div>
+      ),
     },
     {
       title: "Đánh giá",
-      dataIndex: "rate",
-      minWidth: 180,
-      render: (value, record, index) => {
-        return <Rate value={value} allowHalf disabled />;
+      dataIndex: "rating",
+      key: "rating",
+      render: (rating: number) => <Rate disabled defaultValue={rating} />,
+    },
+    {
+      title: "Nội dung",
+      dataIndex: "content",
+      key: "content",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (status: string) => {
+        const color =
+          status === "Đã duyệt"
+            ? "green"
+            : status === "Chờ duyệt"
+            ? "orange"
+            : "red";
+        return <Tag color={color}>{status}</Tag>;
       },
     },
     {
+      title: "Phản hồi",
+      dataIndex: "replies",
+      key: "replies",
+      render: (replies?: IReview["replies"]) => (
+        <span className="text-blue-600 font-medium">
+          {replies?.length || 0} phản hồi
+        </span>
+      ),
+    },
+    {
       title: "Hành động",
-      dataIndex: "action",
-      minWidth: 120,
-      fixed: "right",
-      render: (value, record, index) => {
-        return (
-          <div className="actions">
-            <Tooltip title={"Xóa"}>
-              <Button
-                danger
-                icon={<DeleteOutlined />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteProduct(record.id);
-                }}
-              />
-            </Tooltip>
-          </div>
-        );
-      },
+      key: "action",
+      render: (_, record: IReview) => (
+        <Button type="link" onClick={() => navigate(`/admin/reviews/${record.id}`)}>
+          Xem chi tiết
+        </Button>
+      ),
     },
   ];
-
   useEffect(() => {
     const payload: IPayloadSearch = {
       name: "",
@@ -213,7 +219,7 @@ const ListProduct = () => {
     try {
       const response = await productApi.getProductsByFilter(payload);
       if (response?.status === HttpCodeString.SUCCESS) {
-        setData(response.data.data || initData);
+        setData(response.data.data || reviews);
         setTotalElements(response.data.total);
       } else {
         setData([]);
@@ -356,10 +362,10 @@ const ListProduct = () => {
         </div>
       </div>
       <div className="table-area">
-        <Table<IProduct>
+        <Table<IReview>
           columns={columns}
           rowKey={(record) => record.id}
-          dataSource={data}
+          dataSource={reviews}
           pagination={{
             pageSize: pagination?.pageSize,
             current: pagination?.current,
