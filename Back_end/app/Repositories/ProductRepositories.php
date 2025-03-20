@@ -204,7 +204,7 @@ class ProductRepositories
             $listResult = [];
             foreach ($allMonths as $month) {
                 $monthNumber = (int)substr($month, 5, 2);
-                if ($result->has($monthNumber)) {
+                if ($result->has($month)) {
                     $listResult[] = [
                         'stt' => $monthNumber, // Thứ tự tháng trong quý
                         'order' => $result[$month]->total_orders,
