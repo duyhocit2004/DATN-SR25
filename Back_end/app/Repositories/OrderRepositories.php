@@ -26,7 +26,6 @@ class OrderRepositories
                 } else {
                     $totalAmount = $totalAmount + ($product['priceRegular'] * $product['quantity']);
                 }
-
             }
 
             if($request->input('voucher')){
