@@ -15,11 +15,25 @@
     "@tailwindcss/vite": "^4.0.9",
     "antd": "^5.24.2",
     "axios": "^1.8.1",
+<<<<<<< HEAD
+    "bootstrap": "^5.3.3",
+    "cloudinary": "^2.5.1",
+    "isotope-layout": "^3.0.6",
+    "joi": "^17.13.3",
+    "jquery": "^3.7.1",
+    "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
+    "next": "^15.1.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.54.2",
+=======
     "dayjs": "^1.11.13",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+>>>>>>> b94a582f10acbfc7167e178dd88ca88227b80ba8
     "react-icons": "^5.5.0",
     "react-image-gallery": "^1.4.0",
     "react-quill-new": "^3.3.3",
@@ -42,6 +56,17 @@
     "@types/tailwindcss": "^3.1.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+<<<<<<< HEAD
+    "eslint": "^9.17.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "postcss": "^8.5.2",
+    "tailwindcss": "^4.0.6",
+    "typescript": "^5.7.3",
+    "vite": "^6.2.2"
+=======
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
@@ -53,5 +78,6 @@
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.0"
+>>>>>>> b94a582f10acbfc7167e178dd88ca88227b80ba8
   }
 }
