@@ -1,5 +1,8 @@
 import { Suspense } from "react";
+<<<<<<< HEAD
 import "./App.scss";
+=======
+>>>>>>> b94a582f10acbfc7167e178dd88ca88227b80ba8
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { clientRoutes, adminRoutes } from "@/router/routes";
 import ClientLayout from "./client/layouts/layout";
