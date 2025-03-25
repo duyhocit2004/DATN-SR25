@@ -1,7 +1,7 @@
 <header class="page-header row">
     <div class="logo-wrapper d-flex align-items-center col-auto"><a href="index.html"><img class="light-logo img-fluid"
                 src="{{asset('logo.png')}}" alt="logo" /><img class="dark-logo img-fluid"
-                src="{{asset('admin/images/logo/logo-dark.png')}}" alt="logo" /></a><a class=""
+                src="{{asset('logo.png')}}" alt="logo" /></a><a class=""
             href="">
             </a></div>
     <div class="page-main-header col">

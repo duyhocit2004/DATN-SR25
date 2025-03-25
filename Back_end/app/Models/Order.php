@@ -1,43 +1,65 @@
 <?php
 
+/**
+ * Created by Reliese Model.
+ */
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Order
+ *
+ * @property int $id
+ * @property string|null $code
+ * @property string|null $customer_name
+ * @property string $email
+ * @property string $phone_number
+ * @property float $total_price
+ * @property string|null $voucher
+ * @property float|null $voucher_price
+ * @property string $shippingAddress
+ * @property string|null $note
+ * @property string|null $status
+ * @property Carbon|null $date
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * @property Collection|OrderDetail[] $order_details
+ *
+ * @package App\Models
+ */
 class Order extends Model
 {
-    use HasFactory;
+	protected $table = 'orders';
 
-    protected $fillable = [
-        'slug',
-        'user_id',
-        'order_code',
-        'shipping_fee',
-        'shipper_id',
-        'voucher_id',
-        'date',
-        'user_name',
-        'email',
-        'phone_number',
-        'total_price',
-        'address',
-        'note'
-    ];
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-    public function shipper()
-    {
-        return $this->belongsTo(Shipper::class);
-    }
-    public function voucher()
-    {
-        return $this->belongsTo(Voucher::class);
-    }
-    public function orderDetails()
-    {
-        return $this->hasMany(OrderDetail::class, 'order_id','id');
-    }
+	protected $casts = [
+		'total_price' => 'float',
+		'voucher_price' => 'float',
+		'date' => 'datetime'
+	];
+
+	protected $fillable = [
+		'code',
+		'customer_name',
+		'email',
+		'phone_number',
+		'total_price',
+		'voucher',
+		'voucher_price',
+		'shipping_address',
+		'note',
+		'status',
+		'date',
+        'payment_status',
+        'payment_method',
+	];
+
+	public function order_details()
+	{
+		return $this->hasMany(OrderDetail::class);
+	}
 }

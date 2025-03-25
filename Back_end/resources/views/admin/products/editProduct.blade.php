@@ -34,7 +34,7 @@
     .previewContainer {
     max-width: 250px;
     /* You can adjust this size */
-    max-height: 250x;
+    max-height: 250px;
     /* You can adjust this size */
     margin: 5px;
     /* Space between images */
@@ -82,8 +82,8 @@
         <div class="row">
           <div class="col">
           <div class="mb-3 mx-1">
-            <label class="form-label" for="quanlity">Số lượng</label>
-            <input class="form-control" id="quanlity" value="{{ $idproduct->base_stock }}" name="quanlity"
+            <label class="form-label" for="base_stock">Số lượng</label>
+            <input class="form-control" id="base_stock" value="{{ $idproduct->base_stock }}" name="base_stock"
             type="text" placeholder="200">
           </div>
           </div>
@@ -203,7 +203,7 @@
       <div class="col-3">
         <label class="form-label" for="quantity_{{$index + 1}}">Số lượng</label>
         <input class="form-control" id="quantity_{{$index + 1}}" name="variants[{{$index + 1}}][quantity]"
-        type="text" placeholder="30" value="{{$item->quanlity}}">
+        type="text" placeholder="30" value="{{$item->quantity}}">
       </div>
       <div class="col-3">
         <label class="form-label" for="price_{{$index + 1}}">Giá</label>
@@ -326,8 +326,8 @@
         </select>
       </div>
       <div class="col-3">
-        <label class="form-label" for="	quanlity">số lượng</label>
-        <input class="form-control" id="quanlity_${variantCount}" name="variants[${variantCount}][quanlity]" type="text" placeholder="30">
+        <label class="form-label" for="	quantity">số lượng</label>
+        <input class="form-control" id="quantity_${variantCount}" name="variants[${variantCount}][quantity]" type="text" placeholder="30">
       </div>
       <div class="col-3">
         <label class="form-label" for="price">giá</label>
