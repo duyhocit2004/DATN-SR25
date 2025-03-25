@@ -13,7 +13,7 @@
             <div class="page-title">
                 <div class="row">
                     <div class="col-sm-6 col-12">
-                        <h2>Danh Sách Người Dùng</h2>
+                        <h2>Danh Sách quản lýlý</h2>
                     </div>
                 </div>
             </div>
