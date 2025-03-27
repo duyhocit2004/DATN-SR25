@@ -11,7 +11,19 @@ import {
   ActiveStatusString,
 } from "./constants";
 
-export const OrderStatusData = [
+export const OrderStatusDataAdmin = [
+  {
+    value: OrderStatus.UNCONFIRMED,
+    label: "Chưa xác nhận",
+  },
+  {
+    value: OrderStatus.CONFIRMED,
+    label: "Đã xác nhận",
+  },
+  {
+    value: OrderStatus.CANCEL_CONFIRM,
+    label: "Hủy xác nhận đơn hàng",
+  },
   {
     value: OrderStatus.PROCESSING,
     label: "Đang chuẩn bị hàng",
@@ -29,6 +41,33 @@ export const OrderStatusData = [
     label: "Đã hủy",
   },
 ];
+export const OrderStatusDataClient = [
+  {
+    value: OrderStatus.UNCONFIRMED,
+    label: "Chưa xác nhận",
+  },
+  {
+    value: OrderStatus.CONFIRMED,
+    label: "Đã xác nhận",
+  },
+  {
+    value: OrderStatus.PROCESSING,
+    label: "Đang chuẩn bị hàng",
+  },
+  {
+    value: OrderStatus.SHIPPING,
+    label: "Đang vận chuyển",
+  },
+  {
+    value: OrderStatus.DELIVERED,
+    label: "Đã giao hàng",
+  },
+  {
+    value: OrderStatus.CANCEL,
+    label: "Đã hủy",
+  },
+];
+
 export const PaymentStatusData = [
   {
     value: PaymentStatus.UNPAID,

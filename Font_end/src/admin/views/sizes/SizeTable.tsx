@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Button, Table, Tooltip } from "antd";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   deleteSize,
@@ -8,7 +8,8 @@ import {
 } from "@/store/reducers/adminSizeSlice";
 import dayjs, { Dayjs } from "dayjs";
 import { ISize } from "@/types/interface";
-
+import { DeleteOutlined } from "@ant-design/icons";
+import { ColumnsType } from "antd/es/table";
 
 const SizeTable: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -16,7 +17,7 @@ const SizeTable: React.FC = () => {
     (state) => state.adminSize
   );
 
-  const columns = [
+  const columns: ColumnsType<ISize> = [
     {
       title: "STT",
       dataIndex: "stt",
@@ -36,12 +37,6 @@ const SizeTable: React.FC = () => {
       minWidth: 300,
     },
     {
-      title: "Mô tả",
-      dataIndex: "description",
-      key: "description",
-      minWidth: 300,
-    },
-    {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
@@ -52,18 +47,26 @@ const SizeTable: React.FC = () => {
         );
       },
     },
-    // {
-    //   title: "Hành động",
-    //   key: "action",
-    //   render: (_, record: IResponseSize) => (
-    //     <Button
-    //       type="link"
-    //       onClick={() => navigate(`/admin/categories/${record.id}`)}
-    //     >
-    //       Xem chi tiết
-    //     </Button>
-    //   ),
-    // },
+    {
+      title: "Hành động",
+      key: "action",
+      minWidth: 150,
+      fixed: "right",
+      render: (_, record) => (
+        <div className="actions">
+          <Tooltip title={"Xóa"}>
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteSize(record.id);
+              }}
+            />
+          </Tooltip>
+        </div>
+      ),
+    },
   ];
   const handleDeleteSize = async (sizeId: number) => {
     dispatch(deleteSize(sizeId));
@@ -94,7 +97,7 @@ const SizeTable: React.FC = () => {
         showSizeChanger: true,
         total: totalElements,
         pageSizeOptions: [5, 10, 15, 20],
-        showTotal(total, range) {
+        showTotal(total) {
           return "Tổng: " + total;
         },
         onChange: handlePagingChange,

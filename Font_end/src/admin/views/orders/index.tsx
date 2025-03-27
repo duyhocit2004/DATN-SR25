@@ -19,7 +19,6 @@ const OrdersPage = () => {
       <div className="header-top w-full flex items-center justify-between gap-2 mb-4">
         <OrderFilter />
       </div>
-
       <OrderTable />
     </div>
   );

@@ -69,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Ho_Chi_Minh',
 
     /*
     |--------------------------------------------------------------------------
@@ -183,7 +183,8 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         CloudinaryLabs\CloudinaryLaravel\CloudinaryServiceProvider::class,
-
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+        Reliese\Coders\CodersServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -211,6 +212,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 

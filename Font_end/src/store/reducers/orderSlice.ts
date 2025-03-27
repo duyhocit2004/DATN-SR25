@@ -55,7 +55,8 @@ const orderSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchOrders.fulfilled, (state, action) => {
-        state.orders = action.payload.data.data;
+        const data = action.payload.data as IOrder[]
+        state.orders = data;
         state.loading = false;
       })
       .addCase(fetchOrders.rejected, (state) => {

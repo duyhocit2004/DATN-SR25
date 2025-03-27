@@ -259,6 +259,11 @@ export interface IProductOrder {
   discount: number | null;
   orderId: number;
 }
+export interface IResponseOrder {
+  order: IOrder;
+  vnpayUrl: string;
+}
+
 export interface IProductDetail {
   id: number;
   categoriesId: number[];
@@ -296,6 +301,7 @@ export interface IDashboardStatistical {
   totalRevenue: number;
 }
 export interface IDashboardChart {
+  name: any;
   stt: number;
   order: number;
   revenue: number;

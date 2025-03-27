@@ -48,10 +48,10 @@ export const fetchBanners = createAsyncThunk(
 
 export const deleteBanner = createAsyncThunk(
   "banner/deleteBanner",
-  async (bannerId: number) => {
+  async (bannerId: number, { dispatch }) => {
     const response = await adminApi.deleteBanner({ id: bannerId });
     if (response.status === HttpCodeString.SUCCESS) {
-      fetchBanners();
+      dispatch(fetchBanners());
       showToast({
         content: "Xóa banner thành công!",
         duration: 5,

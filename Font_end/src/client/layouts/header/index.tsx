@@ -39,6 +39,7 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     //call api logout
     logout();
+    navigate("/");
   };
 
   const getCartInfo = async () => {
@@ -97,19 +98,19 @@ const Header: React.FC = () => {
 
           {/* </Menu.Item> */}
           <Menu.Item key="account" onClick={() => navigate("/my-account")}>
-            My Account
+            Tài Khoản
           </Menu.Item>
           <Menu.Item key="logout" onClick={() => handleLogout()}>
-            Logout
+            Đăng Xuất
           </Menu.Item>
         </>
       ) : (
         <>
           <Menu.Item key="login" onClick={() => navigate("/login")}>
-            Login
+            Đăng Nhập
           </Menu.Item>
           <Menu.Item key="register" onClick={() => navigate("/register")}>
-            Register
+            Đăng Kí 
           </Menu.Item>
         </>
       )}
@@ -149,7 +150,7 @@ const Header: React.FC = () => {
         {/* Middle: Navigation (Hidden on small screens) */}
         <nav className="hidden md:flex space-x-6">
           <Link to="/" className="hover:text-blue-500">
-            Home
+            Trang Chủ 
           </Link>
           {/* <Dropdown overlay={menuCategories} trigger={["hover"]}>
             <span className="hover:text-blue-500 cursor-pointer">Danh mục</span>
@@ -168,7 +169,7 @@ const Header: React.FC = () => {
             Sản phẩm
           </Link>
           <Link to="/contact" className="hover:text-blue-500">
-            Contact Us
+            Liên Hệ
           </Link>
         </nav>
 
@@ -246,7 +247,7 @@ const Header: React.FC = () => {
             className="text-lg"
             onClick={() => setOpenDrawer(false)}
           >
-            Contact Us
+            Thông Tin Liên Hệ 
           </Link>
         </nav>
       </Drawer>

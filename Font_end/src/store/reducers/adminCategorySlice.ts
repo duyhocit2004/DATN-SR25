@@ -1,7 +1,9 @@
 import { IResponseCategory } from "@/admin/views/categories/types";
 import adminApi from "@/api/adminApi";
 import homeApi from "@/api/homeApi";
+import { showToast } from "@/components/toast";
 import { IListCategory } from "@/types/interface";
+import { HttpCodeString } from "@/utils/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface AdminCategoryState {
@@ -11,7 +13,7 @@ interface AdminCategoryState {
   showAddModal: boolean;
   filter: {
     keyword: string;
-    parentCategoryId: number | null;
+    parentId: number | null;
   };
   pagination: { page: number; pageSize: number };
   totalElements: number;
@@ -23,7 +25,7 @@ const initialState: AdminCategoryState = {
   parentCategories: [],
   selectedCategory: null,
   showAddModal: false,
-  filter: { keyword: "", parentCategoryId: null },
+  filter: { keyword: "", parentId: null },
   pagination: { page: 1, pageSize: 10 },
   totalElements: 0,
   loading: false,
@@ -38,7 +40,7 @@ export const fetchCategories = createAsyncThunk(
 
     const payload = {
       name: filter.keyword,
-      parentCategoryId: filter.parentCategoryId,
+      parentId: filter.parentId,
       pageNum: pagination.page,
       pageSize: pagination.pageSize,
     };
@@ -59,10 +61,23 @@ export const fetchParentCategories = createAsyncThunk(
 
 export const deleteCategory = createAsyncThunk(
   "category/deleteCategory",
-  async (categoryId: number) => {
-    // const response = await categoryApi.delete();
-
-    return true;
+  async (categoryId: number, { dispatch }) => {
+    const response = await adminApi.deleteCategory({ id: categoryId });
+    if (response.status === HttpCodeString.SUCCESS) {
+      dispatch(fetchCategories());
+      showToast({
+        content: "Xóa danh mục thành công!",
+        duration: 5,
+        type: "success",
+      });
+    } else {
+      showToast({
+        content: "Xóa danh mục thất bại!",
+        duration: 5,
+        type: "error",
+      });
+    }
+    return response;
   }
 );
 
@@ -122,6 +137,10 @@ const adminCategorySlice = createSlice({
   },
 });
 
-export const { setFilter, setPagination, setSelectedCategory, setShowAddModal } =
-  adminCategorySlice.actions;
+export const {
+  setFilter,
+  setPagination,
+  setSelectedCategory,
+  setShowAddModal,
+} = adminCategorySlice.actions;
 export default adminCategorySlice;

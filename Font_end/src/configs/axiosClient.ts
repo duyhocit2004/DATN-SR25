@@ -4,11 +4,7 @@ import axios from "axios";
 // Tạo một instance của Axios
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_URL || "https://api.example.com", // Lấy URL từ env
-<<<<<<< HEAD
   timeout: 300000, // Timeout request sau 10s
-=======
-  timeout: 10000, // Timeout request sau 10s
->>>>>>> b94a582f10acbfc7167e178dd88ca88227b80ba8
   headers: {
     "Content-Type": "application/json",
   },
@@ -27,6 +23,8 @@ axiosClient.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+
 
 // Interceptor response: Xử lý lỗi chung
 axiosClient.interceptors.response.use(

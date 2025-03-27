@@ -40,7 +40,11 @@ export const OrderStatus = {
   SHIPPING: "Shipping",
   DELIVERED: "Delivered",
   CANCEL: "Cancel",
+  UNCONFIRMED: "Unconfirmed", 
+  CONFIRMED: "Confirmed",     
+  CANCEL_CONFIRM: "Cancel Confirm", 
 };
+
 export const PaymentStatus = {
   UNPAID: "UNPAID",
   PAID: "PAID",

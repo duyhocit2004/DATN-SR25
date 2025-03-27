@@ -8,7 +8,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
-  
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const handleLogin = async (values: any) => {
@@ -89,6 +88,11 @@ const Login = () => {
               Đăng nhập
             </Button>
           </Form.Item>
+          <div className="text-end mt-2">
+            <a href="/forgot-password" className="text-primary">
+              Quên mật khẩu?
+            </a>
+          </div>
         </Form>
 
         {/* Link đến trang đăng ký */}

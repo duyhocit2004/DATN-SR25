@@ -184,7 +184,8 @@ const ListProduct = () => {
               <Button
                 danger
                 icon={<DeleteOutlined />}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleDeleteProduct(record.id);
                 }}
               />

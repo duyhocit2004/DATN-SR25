@@ -1,6 +1,8 @@
+import adminApi from "@/api/adminApi";
 import productApi from "@/api/productApi";
-import sizeApi from "@/api/sizeApi";
+import { showToast } from "@/components/toast";
 import { IDataPaging, ISize } from "@/types/interface";
+import { HttpCodeString } from "@/utils/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface AdminSizeState {
@@ -46,10 +48,23 @@ export const fetchSizes = createAsyncThunk(
 
 export const deleteSize = createAsyncThunk(
   "size/deleteSize",
-  async (sizeId: number) => {
-    // const response = await sizeApi.delete();
-
-    return true;
+  async (sizeId: number, { dispatch }) => {
+    const response = await adminApi.deleteSize({ id: sizeId });
+    if (response.status === HttpCodeString.SUCCESS) {
+      dispatch(fetchSizes());
+      showToast({
+        content: "Xóa màu thành công!",
+        duration: 5,
+        type: "success",
+      });
+    } else {
+      showToast({
+        content: "Xóa màu thất bại!",
+        duration: 5,
+        type: "error",
+      });
+    }
+    return response;
   }
 );
 

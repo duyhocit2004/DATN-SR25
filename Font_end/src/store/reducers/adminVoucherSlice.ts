@@ -1,5 +1,7 @@
 import adminApi from "@/api/adminApi";
+import { showToast } from "@/components/toast";
 import { IVoucher } from "@/types/interface";
+import { HttpCodeString } from "@/utils/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface AdminVoucherState {
@@ -45,10 +47,23 @@ export const fetchVouchers = createAsyncThunk(
 
 export const deleteVoucher = createAsyncThunk(
   "voucher/deleteVoucher",
-  async (voucherId: number) => {
-    // const response = await voucherApi.delete();
-
-    return true;
+  async (voucherId: number, { dispatch }) => {
+    const response = await adminApi.deleteVoucher({ id: voucherId });
+    if (response.status === HttpCodeString.SUCCESS) {
+      dispatch(fetchVouchers());
+      showToast({
+        content: "Xóa voucher thành công!",
+        duration: 5,
+        type: "success",
+      });
+    } else {
+      showToast({
+        content: "Xóa voucher thất bại!",
+        duration: 5,
+        type: "error",
+      });
+    }
+    return response;
   }
 );
 

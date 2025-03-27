@@ -32,27 +32,11 @@ const AdminLayout: React.FC = () => {
                 overflow: "auto",
               }}
             >
-              {/* <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb> */}
+          
               <div className="content-page">
                 <Outlet />
               </div>
-              {/* <div
-            style={{
-              padding: 24,
-              minHeight: 360,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            Bill is a cat.
-          </div> */}
             </Content>
-            <Footer style={{ textAlign: "center" }}>
-              Admin ©{new Date().getFullYear()} Created by Thang Long
-            </Footer>
           </Layout>
         </Layout>
       </ProtectedRoute>
