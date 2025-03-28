@@ -40,7 +40,7 @@ interface Variant {
 }
 
 interface IFormData {
-  productId: number | null;
+  id: number | null;
   name: string;
   categoryId: number[] | null;
   discount: number | null;
@@ -280,6 +280,7 @@ const UpdateProduct: React.FC = () => {
 
     const payload = {
       ...formData,
+      productId:productId,
       categoryId:
         formData?.categoryId && formData?.categoryId?.length > 0
           ? formData.categoryId[formData.categoryId.length - 1]
