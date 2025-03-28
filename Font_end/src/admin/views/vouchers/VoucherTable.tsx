@@ -11,6 +11,7 @@ import { IVoucher } from "@/types/interface";
 import { getLabelByValue } from "@/utils/functions";
 import { ActiveStatusBooleanData } from "@/utils/constantData";
 import { DeleteOutlined } from "@ant-design/icons";
+import { ColumnsType } from "antd/es/table";
 
 const VoucherTable: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -18,7 +19,7 @@ const VoucherTable: React.FC = () => {
     (state) => state.adminVoucher
   );
 
-  const columns = [
+  const columns: ColumnsType<IVoucher> = [
     {
       title: "STT",
       dataIndex: "stt",
@@ -87,14 +88,16 @@ const VoucherTable: React.FC = () => {
     {
       title: "Hành động",
       key: "action",
-      render: (_: any, record: IVoucher) => (
+      minWidth: 150,
+      fixed: 'right',
+      render: (_, record) => (
         <div className="actions">
           <Tooltip title={"Xóa"}>
             <Button
               danger
               icon={<DeleteOutlined />}
               onClick={(e) => {
-                e.stopPropagation()
+                e.stopPropagation();
                 handleDeleteVoucher(record.id);
               }}
             />

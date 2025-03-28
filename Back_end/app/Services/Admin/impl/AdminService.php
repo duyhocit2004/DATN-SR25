@@ -15,6 +15,7 @@ use App\Services\Admin\IAdminService;
 use Cloudinary\Cloudinary;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use function PHPUnit\Framework\isEmpty;
 
 
 class AdminService implements IAdminService
@@ -51,27 +52,28 @@ class AdminService implements IAdminService
         $this->bannersRepositories = $bannersRepositories;
     }
 
-    public function getAllUser(Request $request)
+    public function getDataStats(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        $userId = $user->id;
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
-        $user = $this->authRepositories->getAllUser($request);
-        return $user;
+
+        $dashboardSummary = $this->productRepositories->getDataStats($request);
+        return $dashboardSummary;
     }
 
-    public function deleteUser(Request $request)
+    public function getDashboardChart(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
-        $user = $this->authRepositories->deleteUser($request);
-        return $user;
+
+        $dashboardRevenue = $this->productRepositories->getDashboardChart($request);
+        return $dashboardRevenue;
     }
 
     public function getAllVoucher(Request $request)
@@ -193,19 +195,28 @@ class AdminService implements IAdminService
         return $size;
     }
 
-    public function getDataStats(Request $request)
+    public function addCategory(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
+        $userId = $user->id;
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
-        $dashboardSummary = $this->productRepositories->getDataStats($request);
-        return $dashboardSummary;
+        $uploadedFile = null;
+        if ($request->hasFile('image')) {
+            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
+        }
+
+        $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
+            ? $uploadedFile['secure_url']
+            : null;
+        $category = $this->categoriesRepositories->addCategory($request, $secureUrl);
+        return $category;
     }
 
-    public function getDashboardChart(Request $request)
+    public function updateCategory(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
@@ -213,8 +224,50 @@ class AdminService implements IAdminService
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
-        $dashboardRevenue = $this->productRepositories->getDashboardChart($request);
-        return $dashboardRevenue;
+        $uploadedFile = null;
+        if ($request->hasFile('image')) {
+            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
+        }
+        $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
+            ? $uploadedFile['secure_url']
+            : null;
+
+        $category = $this->categoriesRepositories->updateCategory($request, $secureUrl);
+        return $category;
+    }
+    public function deleteCategory(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $category = $this->categoriesRepositories->deleteCategory($request);
+        return $category;
+    }
+
+    public function getAllUser(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $userId = $user->id;
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+        $user = $this->authRepositories->getAllUser($request);
+        return $user;
+    }
+
+    public function deleteUser(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+        $user = $this->authRepositories->deleteUser($request);
+        return $user;
     }
 
     public function getAllCategoriesNonTree(Request $request)
@@ -235,58 +288,6 @@ class AdminService implements IAdminService
         });
         return $categories;
     }
-
-    public function addCategory(Request $request)
-    {
-        $user = JWTAuth::parseToken()->authenticate();
-        $userId = $user->id;
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
-        }
-
-        $uploadedFile = null;
-        if ($request->hasFile('image')) {
-            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
-        }
-        $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
-            ? $uploadedFile['secure_url']
-            : null;
-        $category = $this->categoriesRepositories->addCategory($request, $secureUrl);
-        return $category;
-    }
-
-    public function updateCategory(Request $request)
-    {
-        $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
-        }
-
-        $uploadedFile = null;
-        if ($request->hasFile('image')) {
-            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
-        }
-
-        $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
-            ? $uploadedFile['secure_url']
-            : null;
-        $category = $this->categoriesRepositories->updateCategory($request, $secureUrl);
-        return $category;
-    }
-    public function deleteCategory(Request $request)
-    {
-        $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
-        }
-
-        $category = $this->categoriesRepositories->deleteCategory($request);
-        return $category;
-    }
-
     public function addBanner(Request $request)
     {
 

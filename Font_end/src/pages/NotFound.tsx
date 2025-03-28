@@ -11,7 +11,7 @@ const NotFound: React.FC = () => {
         title="404"
         subTitle="Xin lỗi, trang bạn tìm kiếm không tồn tại."
         extra={
-          <Button type="primary" onClick={() => navigate("/dashboard")}>
+          <Button type="primary" onClick={() => navigate("/")}>
             Quay về trang chủ
           </Button>
         }

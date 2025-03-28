@@ -34,7 +34,7 @@ const AccountFilter = () => {
         <Input
           className="!w-96"
           value={filterData.keyword}
-          placeholder={"Tìm kiếm theo Tên, username, email, số điện thoại"}
+          placeholder={"Tìm kiếm Họ và tên"}
           defaultValue={""}
           maxLength={200}
           onChange={(val) => {

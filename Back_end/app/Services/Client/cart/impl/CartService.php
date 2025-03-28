@@ -20,34 +20,34 @@ class CartService implements ICartService
     }
 
     public function getProductsInCart(Request $request)
-    {
-        $listRequest = $request->input('listCartInfo');
+{
+    $listRequest = $request->input('listCartInfo');
 
-        $listProductInCart = $this->cartRepositories->getProductsInCart($listRequest);
-        $list = $listProductInCart->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'categoriesId' => $item->categories_id,
-                'name' => $item->name,
-                'image' => $item->image,
-                'priceRegular' => $item->price_regular,
-                'priceSale' => $item->price_sale,
-                'description' => $item->description,
-                'views' => $item->views,
-                'content' => $item->content,
-                'quantitySold' => $item->quantity_sold,
-                'rate' => $item->rate,
-                'discount' => $item->discount,
-                'quantity' => $item->variantQuantity,
-                'size' => $item->size,
-                'color' => $item->color,
-                'createdAt' => $item->created_at,
-                'updatedAt' => $item->updated_at,
-                'deletedAt' => $item->deleted_at,
-            ];
-        });
-        return $list;
-    }
+    $listProductInCart = $this->cartRepositories->getProductsInCart($listRequest);
+    $list = $listProductInCart->map(function ($item) {
+        return [
+            'id' => $item->id,
+            'categoriesId' => $item->categories_id,
+            'name' => $item->name,
+            'image' => $item->image,
+            'priceRegular' => $item->price_regular,
+            'priceSale' => $item->price_sale,
+            'description' => $item->description,
+            'views' => $item->views,
+            'content' => $item->content,
+            'quantitySold' => $item->quantity_sold,
+            'rate' => $item->rate,
+            'discount' => $item->discount,
+            'quantity' => $item->variantQuantity,
+            'size' => $item->size,
+            'color' => $item->color,
+            'createdAt' => $item->created_at,
+            'updatedAt' => $item->updated_at,
+            'deletedAt' => $item->deleted_at,
+        ];
+    });
+    return $list;
+}
 
     public function getProductsInCartByUserId(Request $request)
     {
@@ -106,5 +106,4 @@ class CartService implements ICartService
 
         return [];
     }
-
 }

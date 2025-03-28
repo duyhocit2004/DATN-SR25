@@ -5,9 +5,12 @@ namespace App\Repositories;
 use App\Helpers\BaseResponse;
 use App\Models\Comment;
 use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\Size;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use function PHPUnit\Framework\isEmpty;
 
 class CommentRepositories
 {
@@ -66,6 +69,12 @@ class CommentRepositories
             })
             ->exists();
 
+        $comment = Comment::query()->where('phone_number', '=', $request->input('phoneNumber'))->where('product_id', '=', $productId)->get();
+
+        if(!isEmpty($comment)){
+            BaseResponse::failure("400", "You cannot rate a product twice", "cannot.rate.a.product.twice", []);
+        }
+
         if($orderExists){
             $comment = Comment::create([
                 'parent_id' => $request->input('parentId'),
@@ -92,5 +101,4 @@ class CommentRepositories
             BaseResponse::failure("400", "order.not.found", "order.not.found", []);
         }
     }
-
 }

@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(null);
     setUser(null);
     if (userData?.role === "admin") {
-      window.location.href = "/admin-login"; // Chuyển về trang login
+      window.location.href = "/"; // Chuyển về trang login
     } else {
       window.location.href = "/login"; // Chuyển về trang login
     }

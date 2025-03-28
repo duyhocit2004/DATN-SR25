@@ -9,6 +9,9 @@ class CategoryService{
     public function __construct( CategoryReposoties $category){
         $this->category = $category ;
     }
-
+    public function getAll(){
+        $list = $this->category->Getall();
+        return $list ;
+    }
 
  }

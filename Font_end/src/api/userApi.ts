@@ -12,11 +12,6 @@ class UserApi extends BaseApi<User> {
   constructor() {
     super("users"); // Gán URI 'users' cho API này
   }
-  getUserByEmail = (payload?: any): Promise<IResponseData<IAccount>> => {
-    return axiosClient
-      .post(`${this.uri}/getUserInfoByEmail`, payload)
-      .then((res) => res.data);
-  };
 }
 
 const userApi = new UserApi();

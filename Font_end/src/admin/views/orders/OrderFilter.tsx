@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchOrders, setFilter } from "@/store/reducers/adminOrderSlice";
 import {
-  OrderStatusData,
+  OrderStatusDataAdmin,
   PaymentMethodData,
   PaymentStatusData,
 } from "@/utils/constantData";
@@ -87,7 +87,7 @@ const OrderFilter = () => {
           value={filterData.status}
           onChange={(value) => onChangeFilter("status", value)}
           allowClear
-          options={OrderStatusData}
+          options={OrderStatusDataAdmin}
         ></Select>
         <Select
           placeholder="Trạng thái thanh toán"

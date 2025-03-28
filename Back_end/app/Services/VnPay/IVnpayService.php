@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 interface IVnpayService
 {
-    public function createPaymentUrl($orderId, $amount);
+    public function createPaymentUrl($orderCode, $amount);
 
     public function handleReturn(Request $request);
 }

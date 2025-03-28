@@ -10,7 +10,7 @@ const { Option } = Select;
 
 interface IFilterData {
   keyword: string;
-  parentCategoryId: number | null;
+  parentId: number | null;
   rate: number | null;
   content: string;
 }
@@ -22,7 +22,7 @@ const CategoryFilter: React.FC = () => {
   );
   const [filterData, setFilterData] = useState<IFilterData>({
     keyword: "",
-    parentCategoryId: null,
+    parentId: null,
     rate: null,
     content: "",
   });
@@ -51,11 +51,11 @@ const CategoryFilter: React.FC = () => {
 
         <Select
           className="!w-96"
-          value={filterData.rate}
+          value={filterData.parentId}
           placeholder={"Chọn danh mục cha"}
           allowClear
           onChange={(val) => {
-            onChangeFilter("rate", val);
+            onChangeFilter("parentId", val);
           }}
         >
           {parentCategories?.map((v) => {
