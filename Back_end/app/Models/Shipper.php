@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Shipper extends Model
 {
-	protected $table = 'shipper';
+	protected $table = 'shippers';
 
 	protected $fillable = [
 		'name_shipper',
