@@ -15,37 +15,6 @@ class VoucherRepositories
         return $voucher;
     }
 
-    public function getAllVoucher(Request $request)
-    {
-        $status = $request->input('status');
-        $code = $request->input('code');
-        $quantity = $request->input('quantity');
-        $used = $request->input('used');
-        $voucherPrice = $request->input('voucherPrice');
-        $perPage = $request->input('pageSize', 10);
-        $page = $request->input('pageNum', 1);
-
-        $query = Voucher::query();
-        if (!empty($status)) {
-            $query->where('status', '=', $status);
-        }
-        if (!empty($code)) {
-            $query->where('code', 'like', '%' . $code . '%');
-        }
-        if (!empty($quantity)) {
-            $query->where('quantity', '=', $quantity);
-        }
-        if (!empty($used)) {
-            $query->where('used', '=', $used);
-        }
-        if (!empty($voucherPrice)) {
-            $query->where('voucher_price', '=', $voucherPrice);
-        }
-
-        $users = $query->paginate($perPage, ['*'], 'page', $page);
-        return $users;
-    }
-
     public function addVoucher(Request $request)
     {
 
@@ -100,6 +69,37 @@ class VoucherRepositories
         $voucher->delete();
 
         return $voucher;
+    }
+
+    public function getAllVoucher(Request $request)
+    {
+        $status = $request->input('status');
+        $code = $request->input('code');
+        $quantity = $request->input('quantity');
+        $used = $request->input('used');
+        $voucherPrice = $request->input('voucherPrice');
+        $perPage = $request->input('pageSize', 10);
+        $page = $request->input('pageNum', 1);
+
+        $query = Voucher::query();
+        if (!empty($status)) {
+            $query->where('status', '=', $status);
+        }
+        if (!empty($code)) {
+            $query->where('code', 'like', '%' . $code . '%');
+        }
+        if (!empty($quantity)) {
+            $query->where('quantity', '=', $quantity);
+        }
+        if (!empty($used)) {
+            $query->where('used', '=', $used);
+        }
+        if (!empty($voucherPrice)) {
+            $query->where('voucher_price', '=', $voucherPrice);
+        }
+
+        $users = $query->paginate($perPage, ['*'], 'page', $page);
+        return $users;
     }
 
 }

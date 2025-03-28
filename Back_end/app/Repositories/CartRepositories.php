@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Helpers\BaseResponse;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -56,6 +57,14 @@ class CartRepositories
 
     public function addCart(Request $request, $userId)
     {
+        $productVariant = ProductVariant::where('product_id', $request->input('productId'))->first();
+        if (!empty($productVariant)) {
+            if ($productVariant['quantity'] < $request->input('quantity')) {
+                BaseResponse::failure('400', 'quantity is less than cart quantity', 'quantity.is.less.than.cart.quantity', []);
+            }
+        } else {
+            BaseResponse::failure('400', 'Product Variant not found', 'product.variant.not.found', []);
+        }
 
         $cart = Cart::where('product_id', $request->input('productId'))
             ->where('color', $request->input('color'))

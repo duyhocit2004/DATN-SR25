@@ -23,8 +23,9 @@ class OrderRepositories
             $totalAmount = 0;
             foreach ($products as $product) {
                 $productReal = Product::where('id', $product['productId'])->first();
-                if (!empty($productReal)) {
-                    if ($productReal['quantity'] < $product['quantity']) {
+                $productVariant = ProductVariant::where('product_id', $product['productId'])->first();
+                if (!empty($productReal) && !empty($productVariant)) {
+                    if ($productVariant['quantity'] < $product['quantity']) {
                         BaseResponse::failure('400', 'quantity is less than order quantity', 'quantity.is.less.than.order.quantity', []);
                     }
                     if (!empty($productReal['price_sale'])) {
@@ -58,10 +59,11 @@ class OrderRepositories
                 'total_price' => $totalAmount,
                 'voucher' => $request->input('voucher'),
                 'voucher_price' => $request->input('voucherPrice'),
-                'address' => $request->input('shippingAddress', ''),
+                'shipping_address' => $request->input('shippingAddress', ''),
+                'payment_method' => $request->input('paymentMethod', ''),
+                'payment_status' => 'Unpaid',
                 'note' => $request->input('note'),
                 'status' => 'Processing',
-                'product_id' => 'Processing',
                 'date' => $request->input('createAt') ? $request->input('createAt') : now()
             ]);
 
@@ -138,6 +140,7 @@ class OrderRepositories
         return $orders;
 
     }
+
     public function getOrdersPaging(Request $request)
     {
         $status = $request->input('status');
@@ -174,6 +177,7 @@ class OrderRepositories
         return $orders;
 
     }
+
     public function getOrderDetail(Request $request)
     {
         $code = $request->input('orderCode');
@@ -183,13 +187,27 @@ class OrderRepositories
 
     public function updateOrder(Request $request)
     {
-        $order = Order::where('id', $request->input('orderId'))->first();
+        $order = Order::where('id', $request->input('id'))->first();
 
         if (!empty($order)) {
             $order->update([
                 'status' => $request->input('status', $order->status),
                 'payment_status' => $request->input('paymentStatus', $order->payment_status),
                 'payment_method' => $request->input('paymentMethod', $order->payment_method),
+            ]);
+            return $order;
+        } else {
+            BaseResponse::failure(400, '', 'order.item.not.found', []);
+        }
+    }
+
+    public function updateOrderPayment($code, $payment_status)
+    {
+        $order = Order::where('code', $code)->first();
+
+        if (!empty($order)) {
+            $order->update([
+                'payment_status' => $payment_status,
             ]);
             return $order;
         } else {

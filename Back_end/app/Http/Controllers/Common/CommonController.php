@@ -17,4 +17,10 @@ class CommonController extends Controller
         $this->commonService = $commonService;
     }
 
+    public function uploadImage(Request $request): JsonResponse
+    {
+        $result = $this->commonService->uploadImage($request);
+        return BaseResponse::success($result);
+    }
+
 }

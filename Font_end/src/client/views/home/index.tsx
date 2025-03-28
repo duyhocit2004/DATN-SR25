@@ -19,18 +19,6 @@ import productApi from "@/api/productApi";
 import { HttpCodeString } from "@/utils/constants";
 import { useNavigate } from "react-router-dom";
 
-const blogs = [
-  {
-    title: "Cách chọn quần áo phù hợp với dáng người",
-    date: "Feb 20, 2025",
-    image: imgBlog,
-  },
-  {
-    title: "Xu hướng thời trang 2025",
-    date: "Jan 18, 2025",
-    image: imgBlog,
-  },
-];
 
 const brands = [imgBrand, imgBrand, imgBrand, imgBrand];
 
@@ -81,8 +69,13 @@ const Home = () => {
   };
   const getTopDiscountedProducts = async () => {
     try {
-      const response = await productApi.getTopDiscountedProducts();
+      const payload  = {topNumber : 8};   
+      const response = await productApi.getTopDiscountedProducts(payload);
       if (response?.status === HttpCodeString.SUCCESS) {
+        const sortedProducts = response.data
+        .sort((a, b) => Number(b.discount) - Number(a.discount))
+        .slice(0, 8);
+      console.log("Dữ liệu sau khi sắp xếp:", sortedProducts);
         setTopDiscountedProducts(response.data);
       } else {
         setTopDiscountedProducts([]);
@@ -124,10 +117,10 @@ const Home = () => {
     <div className="space-y-12">
       {/* Banner (Slider) */}
       <CarouselCustom
-        className="main-slide"
+        className="main-slide h-[500px]"
         autoplay
         autoplaySpeed={3000}
-        arrows
+        // arrows
       >
         {banners?.main?.map((e: IBanner, index: number) => {
           return (
@@ -159,8 +152,8 @@ const Home = () => {
               />
             </div>
             <div className="content">
-              <div className="title font-semibold text-xl">Free Shipping</div>
-              <div className="description">Free shipping on all order</div>
+              <div className="title font-semibold text-xl">Miễn Phí Vận Chuyển</div>
+              <div className="description">Miễn Phí Tất Cả Đơn Hàng </div>
             </div>
           </div>
           <div className="relative group flex justify-center gap-3">
@@ -172,8 +165,8 @@ const Home = () => {
               />
             </div>
             <div className="content">
-              <div className="title font-semibold text-xl">Support 24/7</div>
-              <div className="description">Free shipping on all order</div>
+              <div className="title font-semibold text-xl">Hỗ Trợ 24/7</div>
+              <div className="description">Hỗ Trợ Toàn Thời Gian </div>
             </div>
           </div>
           <div className="relative group flex justify-center gap-3">
@@ -185,8 +178,8 @@ const Home = () => {
               />
             </div>
             <div className="content">
-              <div className="title font-semibold text-xl">Money Return</div>
-              <div className="description">Free shipping on all order</div>
+              <div className="title font-semibold text-xl">Hoàn Tiền</div>
+              <div className="description">Hỗ Trợ Hoàn Tiền </div>
             </div>
           </div>
           <div className="relative group flex justify-center gap-3">
@@ -198,8 +191,8 @@ const Home = () => {
               />
             </div>
             <div className="content">
-              <div className="title font-semibold text-xl">Order Discount</div>
-              <div className="description">Free shipping on all order</div>
+              <div className="title font-semibold text-xl">Giảm Giá Đơn Hàng </div>
+              <div className="description">Ưu Đãi - Hấp Dẫn </div>
             </div>
           </div>
         </div>
@@ -427,25 +420,6 @@ const Home = () => {
           ))}
         </div>
       </section>
-
-      {/* Newsletter */}
-      {/* <section className="container mx-auto px-4 text-center py-10 bg-gray-100">
-        <h2 className="text-2xl font-bold">Đăng Ký Nhận Tin</h2>
-        <p className="text-gray-600">
-          Nhận thông tin khuyến mãi và sản phẩm mới nhất.
-        </p>
-        <div className="mt-4 flex justify-center">
-          <Input
-            placeholder="Nhập email của bạn..."
-            className="w-[300px] border-gray-300"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Button type="primary" className="ml-2">
-            Đăng Ký
-          </Button>
-        </div>
-      </section> */}
     </div>
   );
 };

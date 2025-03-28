@@ -35,6 +35,7 @@ class BannersRepositories
         return $listBanners;
     }
 
+
     public function addBanner(Request $request, $imageLink)
     {
 
@@ -76,5 +77,4 @@ class BannersRepositories
 
         return $banner;
     }
-
 }

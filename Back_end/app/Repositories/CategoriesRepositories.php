@@ -15,23 +15,6 @@ class CategoriesRepositories
         return $categories;
     }
 
-    public function getParentCategories()
-    {
-        $categories = Category::whereNull('parent_id')->get();
-        return $categories;
-    }
-
-    public function getChildrenCategories($parentId)
-    {
-        if (!is_null($parentId)) {
-            $categories = Category::query()->where('parent_id', '=', $parentId)->get();
-            return $categories;
-        } else {
-            $categories = Category::whereNotNull('parent_id')->get();
-            return $categories;
-        }
-    }
-
     public function getAllCategoriesNonTree(Request $request)
     {
         $perPage = $request->input('pageSize', 10);
@@ -55,6 +38,23 @@ class CategoriesRepositories
 
         $categories = $query->paginate($perPage, ['*'], 'page', $page);
         return $categories;
+    }
+
+    public function getParentCategories()
+    {
+        $categories = Category::whereNull('parent_id')->get();
+        return $categories;
+    }
+
+    public function getChildrenCategories($parentId)
+    {
+        if (!is_null($parentId)) {
+            $categories = Category::query()->where('parent_id', '=', $parentId)->get();
+            return $categories;
+        } else {
+            $categories = Category::whereNotNull('parent_id')->get();
+            return $categories;
+        }
     }
 
     public function addCategory(Request $request, $imageLink)

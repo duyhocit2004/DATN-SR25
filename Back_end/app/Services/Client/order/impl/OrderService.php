@@ -23,16 +23,6 @@ class OrderService implements IOrderService
         $this->voucherRepositories = $voucherRepositories;
     }
 
-    public function getVoucher(Request $request)
-    {
-        $list = $this->voucherRepositories->getVoucher($request);
-        if (!empty($list)) {
-            return $list;
-        } else {
-            BaseResponse::failure(400, '', 'voucher.not.found', []);
-        }
-    }
-
     public function addOrder(Request $request)
     {
         $order = $this->orderRepositories->addOrder($request);
@@ -82,46 +72,6 @@ class OrderService implements IOrderService
 
     }
 
-    public function getOrderDetail(Request $request)
-    {
-        $order = $this->orderRepositories->getOrderDetail($request);
-        $products = $order->order_details ? $order->order_details->map(function ($product) {
-            return [
-                'id' => $product->id,
-                'orderId' => $product->order_id,
-                'name' => $product->name,
-                'image' => $product->image,
-                'priceRegular' => $product->price_regular,
-                'priceSale' => $product->price_sale,
-                'discount' => $product->discount,
-                'color' => $product->color,
-                'size' => $product->size,
-                'quantity' => $product->quantity_order,
-            ];
-        }) : [];
-
-        $list = [
-            'id' => $order->id,
-            'code' => $order->code,
-            'customerName' => $order->customer_name,
-            'email' => $order->email,
-            "phoneNumber" => $order->phone_number,
-            'totalPrice' => $order->total_price,
-            'priceSale' => $order->price_sale,
-            'voucher' => $order->voucher,
-            'voucherPrice' => $order->voucher_price,
-            'shippingAddress' => $order->shipping_address,
-            'note' => $order->note,
-            'status' => $order->status,
-            'orderTime' => $order->date,
-            'products' => $products,
-            'createdAt' => $order->created_at,
-            'updatedAt' => $order->updated_at,
-            'deletedAt' => $order->deleted_at,
-        ];
-        return $list;
-    }
-
     public function getOrdersPaging(Request $request)
     {
         $orders = $this->orderRepositories->getOrdersPaging($request);
@@ -164,6 +114,58 @@ class OrderService implements IOrderService
         return $orders->setCollection($list);
     }
 
+    public function getOrderDetail(Request $request)
+    {
+        $order = $this->orderRepositories->getOrderDetail($request);
+        $products = $order->order_details ? $order->order_details->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'orderId' => $product->order_id,
+                'name' => $product->name,
+                'image' => $product->image,
+                'priceRegular' => $product->price_regular,
+                'priceSale' => $product->price_sale,
+                'discount' => $product->discount,
+                'color' => $product->color,
+                'size' => $product->size,
+                'quantity' => $product->quantity_order,
+            ];
+        }) : [];
+
+        $list = [
+            'id' => $order->id,
+            'code' => $order->code,
+            'customerName' => $order->customer_name,
+            'email' => $order->email,
+            "phoneNumber" => $order->phone_number,
+            'totalPrice' => $order->total_price,
+            'priceSale' => $order->price_sale,
+            'voucher' => $order->voucher,
+            'voucherPrice' => $order->voucher_price,
+            'shippingAddress' => $order->shipping_address,
+            'paymentStatus' => $order->payment_status,
+            'paymentMethod' => $order->payment_method,
+            'note' => $order->note,
+            'status' => $order->status,
+            'orderTime' => $order->date,
+            'products' => $products,
+            'createdAt' => $order->created_at,
+            'updatedAt' => $order->updated_at,
+            'deletedAt' => $order->deleted_at,
+        ];
+        return $list;
+    }
+
+    public function getVoucher(Request $request)
+    {
+        $list = $this->voucherRepositories->getVoucher($request);
+        if (!empty($list)) {
+            return $list;
+        } else {
+            BaseResponse::failure(400, '', 'voucher.not.found', []);
+        }
+    }
+
     public function updateOrder(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
@@ -174,5 +176,4 @@ class OrderService implements IOrderService
         $list = $this->orderRepositories->updateOrder($request);
         return $list;
     }
-
 }

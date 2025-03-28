@@ -40,33 +40,6 @@ class ProductService implements IProductService
         $this->commentRepositories = $commentRepositories;
     }
 
-    public function getAllSizes(Request $request)
-    {
-        $pageNum = $request->get('pageNum', null);
-        $pageSize = $request->get('pageSize', null);
-        if (empty($pageNum) || empty($pageSize)) {
-            $sizes = $this->sizeRepositories->getAllSizes();
-            return $sizes;
-        } else {
-            $sizes = $this->sizeRepositories->getSizesPaging($request);
-            return $sizes;
-        }
-
-    }
-
-    public function getAllColors(Request $request)
-    {
-        $pageNum = $request->get('pageNum', null);
-        $pageSize = $request->get('pageSize', null);
-        if (empty($pageNum) || empty($pageSize)) {
-            $colors = $this->colorRepositories->getAllColors();
-            return $colors;
-        } else {
-            $sizes = $this->colorRepositories->getColorsPaging($request);
-            return $sizes;
-        }
-    }
-
     public function getAllProductWithImages(Request $request)
     {
 
@@ -335,36 +308,38 @@ class ProductService implements IProductService
         return $list;
     }
 
-    public function getComment(Request $request)
+    public function getAllSizes(Request $request)
     {
-        $comment = $this->commentRepositories->getComment($request->input('productId'));
-        return $comment;
-    }
-
-    public function getParentCommentPaging(Request $request)
-    {
-        $comment = $this->commentRepositories->getParentCommentPaging($request);
-        return $comment;
-
-    }
-
-    public function getCommentWithReply(Request $request)
-    {
-        $comment = $this->commentRepositories->getCommentWithReply($request);
-        return $comment;
+        $pageNum = $request->get('pageNum', null);
+        $pageSize = $request->get('pageSize', null);
+        if (empty($pageNum) || empty($pageSize)) {
+            $sizes = $this->sizeRepositories->getAllSizes();
+            return $sizes;
+        } else {
+            $sizes = $this->sizeRepositories->getSizesPaging($request);
+            return $sizes;
+        }
 
     }
 
-    public function addComment(Request $request)
+    public function getAllColors(Request $request)
     {
-        $wishList = $this->commentRepositories->addComment($request);
-        return $wishList;
+        $pageNum = $request->get('pageNum', null);
+        $pageSize = $request->get('pageSize', null);
+        if (empty($pageNum) || empty($pageSize)) {
+            $colors = $this->colorRepositories->getAllColors();
+            return $colors;
+        } else {
+            $sizes = $this->colorRepositories->getColorsPaging($request);
+            return $sizes;
+        }
     }
 
     public function getWishList(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
+
         $wishList = $this->wishListRepositories->getWishList($userId);
         $list = $wishList->map(function ($item) {
             $product = $item->product;
@@ -420,6 +395,26 @@ class ProductService implements IProductService
         return $list;
     }
 
+    public function getComment(Request $request)
+    {
+        $comment = $this->commentRepositories->getComment($request->input('productId'));
+        return $comment;
+    }
+
+    public function getParentCommentPaging(Request $request)
+    {
+        $comment = $this->commentRepositories->getParentCommentPaging($request);
+        return $comment;
+
+    }
+
+    public function getCommentWithReply(Request $request)
+    {
+        $comment = $this->commentRepositories->getCommentWithReply($request);
+        return $comment;
+
+    }
+
     public function addWishList(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
@@ -444,6 +439,12 @@ class ProductService implements IProductService
 
         return [];
 
+    }
+
+    public function addComment(Request $request)
+    {
+        $wishList = $this->commentRepositories->addComment($request);
+        return $wishList;
     }
 
 }

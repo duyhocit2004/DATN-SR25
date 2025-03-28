@@ -50,7 +50,7 @@ function getItem(
 const items: MenuItem[] = [
   getItem(
     <Link to={"/admin"}>Trang chủ</Link>,
-    "/admin/dashboard",
+    "/admin/hi",
     <PieChartOutlined />
   ),
   getItem(

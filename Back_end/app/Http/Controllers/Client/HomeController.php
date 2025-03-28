@@ -41,4 +41,5 @@ class HomeController extends Controller
         $banner = $this->homeService->getAllBanners($request);
         return BaseResponse::success($banner);
     }
+
 }

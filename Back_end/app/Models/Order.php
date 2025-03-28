@@ -39,8 +39,7 @@ class Order extends Model
 	protected $casts = [
 		'total_price' => 'float',
 		'voucher_price' => 'float',
-		'date' => 'datetime',
-		'product_id' => 'int'
+		'date' => 'datetime'
 	];
 
 	protected $fillable = [
@@ -55,7 +54,8 @@ class Order extends Model
 		'note',
 		'status',
 		'date',
-        'product_id',
+        'payment_status',
+        'payment_method',
 	];
 
 	public function order_details()

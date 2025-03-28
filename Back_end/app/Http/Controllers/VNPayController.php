@@ -14,16 +14,17 @@ class VNPayController extends Controller
     {
         $this->vnpayService = $vnpayService;
     }
-
-    public function createPayment(Request $request)
+    public function createPayment($orderCode, $amount)
     {
-        $paymentUrl = $this->vnpayService->createPaymentUrl($request);
+        $paymentUrl = $this->vnpayService->createPaymentUrl($orderCode, $amount);
         return BaseResponse::success(['url' => $paymentUrl]);
     }
 
     public function returnPayment(Request $request)
     {
-        return $this->vnpayService->handleReturn($request);
+//        return $this->vnpayService->handleReturn($request);
+        $link = $this->vnpayService->handleReturn($request);
+        return redirect()->to($link);
     }
 
 

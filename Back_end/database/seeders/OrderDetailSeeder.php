@@ -6,7 +6,6 @@ use App\Models\Product;
 use App\Models\ProductVariants;
 use Illuminate\Database\Seeder;
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\OrderDetail;
 use App\Models\Color;
