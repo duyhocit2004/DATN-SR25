@@ -19,11 +19,9 @@ return [
 
     'allowed_methods' => ['*'],
 
-
 //    'allowed_origins' => ['http://localhost:5173'],
 
     'allowed_origins' => ['*'], // Cho phép tất cả các domain gọi API
-
 
     'allowed_origins_patterns' => [''],
 

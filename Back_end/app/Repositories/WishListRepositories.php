@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class WishListRepositories
 {
-
     public function getWishList($userId)
     {
         $wishLish = Wishlist::with('product')->where('user_id', '=', $userId)->get();

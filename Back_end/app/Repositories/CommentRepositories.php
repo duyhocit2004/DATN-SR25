@@ -5,9 +5,12 @@ namespace App\Repositories;
 use App\Helpers\BaseResponse;
 use App\Models\Comment;
 use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\Size;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use function PHPUnit\Framework\isEmpty;
 
 class CommentRepositories
 {
@@ -59,28 +62,43 @@ class CommentRepositories
 
     public function addComment(Request $request)
     {
+        $productId = $request->input('productId');
+        $orderExists = Order::where('phone_number', $request->input('phoneNumber'))
+            ->whereHas('order_details', function ($query) use ($productId) {
+                $query->where('product_id', $productId);
+            })
+            ->exists();
 
-        $comment = Comment::create([
-            'parent_id' => $request->input('parentId'),
-            'product_id' => $request->input('productId'),
-            'content' => $request->input('content'),
-            'rate' => $request->input('rate'),
-            'phone_number' => $request->input('phoneNumber'),
-        ]);
+        $comment = Comment::query()->where('phone_number', '=', $request->input('phoneNumber'))->where('product_id', '=', $productId)->get();
 
-        $averageRate = DB::table('comment')
-            ->where('product_id', $request->input('productId'),)
-            ->avg('rate');
-
-        if ($averageRate !== null) {
-            DB::table('products')
-                ->where('id', $request->input('productId'),)
-                ->update(['rate' => $averageRate]);
-
-            return response()->json(['message' => 'Rate updated successfully', 'product_id' => $request->input('productId'), 'avg_rate' => $averageRate]);
+        if(!isEmpty($comment)){
+            BaseResponse::failure("400", "You cannot rate a product twice", "cannot.rate.a.product.twice", []);
         }
 
-        return $comment;
-    }
+        if($orderExists){
+            $comment = Comment::create([
+                'parent_id' => $request->input('parentId'),
+                'product_id' => $request->input('productId'),
+                'content' => $request->input('content'),
+                'rate' => $request->input('rate'),
+                'phone_number' => $request->input('phoneNumber'),
+            ]);
 
+            $averageRate = DB::table('comment')
+                ->where('product_id', $request->input('productId'),)
+                ->avg('rate');
+
+            if ($averageRate !== null) {
+                DB::table('products')
+                    ->where('id', $request->input('productId'),)
+                    ->update(['rate' => $averageRate]);
+
+                return response()->json(['message' => 'Rate updated successfully', 'product_id' => $request->input('productId'), 'avg_rate' => $averageRate]);
+            }
+
+            return $comment;
+        }else{
+            BaseResponse::failure("400", "order.not.found", "order.not.found", []);
+        }
+    }
 }

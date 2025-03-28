@@ -17,24 +17,16 @@ class AdminController extends Controller
         $this->adminService = $adminService;
     }
 
-    public function getAllUser(Request $request)
+    public function getDataStats(Request $request)
     {
-        $products = $this->adminService->getAllUser($request);
+        $products = $this->adminService->getDataStats($request);
         return BaseResponse::success($products);
     }
-
-    public function deleteUser(Request $request)
+    public function getDashboardChart(Request $request)
     {
-        $products = $this->adminService->deleteUser($request);
+        $products = $this->adminService->getDashboardChart($request);
         return BaseResponse::success($products);
     }
-
-    public function getAllVoucher(Request $request)
-    {
-        $products = $this->adminService->getAllVoucher($request);
-        return BaseResponse::success($products);
-    }
-
     public function addVoucher(Request $request)
     {
         $products = $this->adminService->addVoucher($request);
@@ -85,23 +77,6 @@ class AdminController extends Controller
         return BaseResponse::success($size);
     }
 
-    public function getDataStats(Request $request)
-    {
-        $products = $this->adminService->getDataStats($request);
-        return BaseResponse::success($products);
-    }
-    public function getDashboardChart(Request $request)
-    {
-        $products = $this->adminService->getDashboardChart($request);
-        return BaseResponse::success($products);
-    }
-
-    public function getAllCategoriesNonTree(Request $request)
-    {
-        $products = $this->adminService->getAllCategoriesNonTree($request);
-        return BaseResponse::success($products);
-    }
-
     public function addCategory(Request $request)
     {
         $products = $this->adminService->addCategory($request);
@@ -118,6 +93,29 @@ class AdminController extends Controller
         return BaseResponse::success($products);
     }
 
+    public function getAllUser(Request $request)
+    {
+        $products = $this->adminService->getAllUser($request);
+        return BaseResponse::success($products);
+    }
+
+    public function deleteUser(Request $request)
+    {
+        $products = $this->adminService->deleteUser($request);
+        return BaseResponse::success($products);
+    }
+
+    public function getAllVoucher(Request $request)
+    {
+        $products = $this->adminService->getAllVoucher($request);
+        return BaseResponse::success($products);
+    }
+
+    public function getAllCategoriesNonTree(Request $request)
+    {
+        $products = $this->adminService->getAllCategoriesNonTree($request);
+        return BaseResponse::success($products);
+    }
     public function addBanner(Request $request)
     {
         $products = $this->adminService->addBanner($request);

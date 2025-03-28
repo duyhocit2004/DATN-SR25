@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\ImageProduct;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
@@ -21,19 +22,29 @@ class OrderRepositories
             $products = $request->input('products');
             $totalAmount = 0;
             foreach ($products as $product) {
-                if (!empty($product['priceSale'])) {
-                    $totalAmount = $totalAmount + ($product['priceSale'] * $product['quantity']);
+                $productReal = Product::where('id', $product['productId'])->first();
+                $productVariant = ProductVariant::where('product_id', $product['productId'])->first();
+                if (!empty($productReal) && !empty($productVariant)) {
+                    if ($productVariant['quantity'] < $product['quantity']) {
+                        BaseResponse::failure('400', 'quantity is less than order quantity', 'quantity.is.less.than.order.quantity', []);
+                    }
+                    if (!empty($productReal['price_sale'])) {
+                        $totalAmount = $totalAmount + ($productReal['price_sale'] * $product['quantity']);
+                    } else {
+                        $totalAmount = $totalAmount + ($productReal['price_regular'] * $product['quantity']);
+                    }
                 } else {
-                    $totalAmount = $totalAmount + ($product['priceRegular'] * $product['quantity']);
+                    BaseResponse::failure('400', 'Product not found', 'product.not.found', []);
                 }
-
             }
 
-            $voucher = Voucher::where('code', $request->input('voucher'))->first();
-            if ($voucher) {
-                $totalAmount = $totalAmount - $request->input('voucherPrice');
-            } else {
-                BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
+            if ($request->input('voucher')) {
+                $voucher = Voucher::where('code', $request->input('voucher'))->first();
+                if ($voucher) {
+                    $totalAmount = $totalAmount - $voucher['voucher_price'];
+                } else {
+                    BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
+                }
             }
 
             if ($totalAmount < 0) {
@@ -48,7 +59,9 @@ class OrderRepositories
                 'total_price' => $totalAmount,
                 'voucher' => $request->input('voucher'),
                 'voucher_price' => $request->input('voucherPrice'),
-                'address' => $request->input('shippingAddress', ''),
+                'shipping_address' => $request->input('shippingAddress', ''),
+                'payment_method' => $request->input('paymentMethod', ''),
+                'payment_status' => 'Unpaid',
                 'note' => $request->input('note'),
                 'status' => 'Processing',
                 'date' => $request->input('createAt') ? $request->input('createAt') : now()
@@ -57,16 +70,18 @@ class OrderRepositories
             $listProducts = [];
 
             foreach ($products as $product) {
+                $productReal = Product::where('id', $product['productId'])->first();
                 OrderDetail::create([
                     'order_id' => $order->id,
-                    'name' => $product['name'],
-                    'image' => $product['image'],
-                    'price_regular' => $product['priceRegular'],
-                    'price_sale' => $product['priceSale'],
-                    'discount' => $product['discount'],
+                    'name' => $productReal['name'],
+                    'image' => $productReal['image'],
+                    'price_regular' => $productReal['price_regular'],
+                    'price_sale' => $productReal['price_sale'],
+                    'discount' => $productReal['discount'],
                     'color' => $product['color'],
                     'size' => $product['size'],
                     'quantity_order' => $product['quantity'],
+                    'product_id' => $product['productId'],
                 ]);
                 DB::update('update products set quantity = quantity - ? where id = ?', [$product['quantity'], $product['productId']]);
                 DB::update('update vouchers set used = used + 1 where code = ?', [$request->input('voucher')]);
@@ -125,6 +140,7 @@ class OrderRepositories
         return $orders;
 
     }
+
     public function getOrdersPaging(Request $request)
     {
         $status = $request->input('status');
@@ -161,10 +177,41 @@ class OrderRepositories
         return $orders;
 
     }
+
     public function getOrderDetail(Request $request)
     {
         $code = $request->input('orderCode');
         $order = Order::with('order_details')->where('code', '=', $code)->first();
         return $order;
+    }
+
+    public function updateOrder(Request $request)
+    {
+        $order = Order::where('id', $request->input('id'))->first();
+
+        if (!empty($order)) {
+            $order->update([
+                'status' => $request->input('status', $order->status),
+                'payment_status' => $request->input('paymentStatus', $order->payment_status),
+                'payment_method' => $request->input('paymentMethod', $order->payment_method),
+            ]);
+            return $order;
+        } else {
+            BaseResponse::failure(400, '', 'order.item.not.found', []);
+        }
+    }
+
+    public function updateOrderPayment($code, $payment_status)
+    {
+        $order = Order::where('code', $code)->first();
+
+        if (!empty($order)) {
+            $order->update([
+                'payment_status' => $payment_status,
+            ]);
+            return $order;
+        } else {
+            BaseResponse::failure(400, '', 'order.item.not.found', []);
+        }
     }
 }

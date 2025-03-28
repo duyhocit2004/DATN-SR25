@@ -150,6 +150,7 @@ const ProductDetail = () => {
         };
         const response = await cartApi.addToCart(payload);
         if (response.status === HttpCodeString.SUCCESS) {
+          dispatch({ type: "cart/addToCart"});
           showToast({
             content: "Thêm giỏ hàng thành công!",
             duration: 5,

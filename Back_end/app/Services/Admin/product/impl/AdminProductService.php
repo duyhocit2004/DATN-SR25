@@ -368,5 +368,4 @@ class AdminProductService implements IAdminProductService
         return $category;
     }
 
-
 }

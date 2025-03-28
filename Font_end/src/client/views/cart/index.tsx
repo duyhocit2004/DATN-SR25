@@ -205,7 +205,7 @@ const Cart = () => {
       if (response.status === HttpCodeString.SUCCESS) {
         updateCartAfterRemoveItem(cartItem);
         showToast({
-          content: "Đã xóa tất cả sản phẩm khỏi giỏ hàng!",
+          content: "Đã xóa sản phẩm khỏi giỏ hàng!",
           duration: 5,
           type: "success",
         });
@@ -243,12 +243,16 @@ const Cart = () => {
   };
 
   const updateCartAfterRemoveItem = (cartItem: ICart) => {
+    // console.log(cartListRef.current);
+    // console.log(cartItem);
     const newCart = cartListRef.current?.filter(
-      (item) =>
-        item.product?.id !== cartItem?.product?.id &&
-        item.size !== cartItem?.size &&
+      (item) =>{
+        return item.product?.id !== cartItem?.product?.id ||
+        item.size !== cartItem?.size ||
         item.color !== cartItem?.color
+      }
     );
+    // console.log(newCart);
     setCartList(newCart);
   };
 
@@ -369,6 +373,7 @@ const Cart = () => {
       {
         title: "Hành động",
         key: "action",
+        fixed: 'right',
         render: (_: any, record: any) => (
           <Popconfirm
             title="Bạn có chắc muốn xóa sản phẩm này?"
@@ -428,7 +433,7 @@ const Cart = () => {
           </div>
 
           <div className="flex flex-col md:flex-row justify-between mt-6 gap-3">
-            <Link to="/" className="w-full md:w-auto">
+            <Link to="/shop" className="w-full md:w-auto">
               <Button
                 type="default"
                 block={isMobile}

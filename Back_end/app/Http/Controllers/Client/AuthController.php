@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Client;
 
 use App\Helpers\BaseResponse;
-use App\Helpers\CommonHelper;
 use App\Http\Controllers\Controller;
 use App\Services\Auth\IAuthService;
 use Illuminate\Http\JsonResponse;
@@ -58,5 +57,17 @@ class AuthController extends Controller
     {
         $dataResponse = $this->authService->loginAdmin($request);
         return BaseResponse::success($dataResponse);
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $newPassword = $this->authService->forgotPassword($request);
+        return BaseResponse::success($newPassword);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $this->authService->changePassword($request);
+        return BaseResponse::success(['message' => 'Password reset successfully.']);
     }
 }

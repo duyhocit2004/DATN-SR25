@@ -24,7 +24,7 @@ class CartController extends Controller
         $products = $this->cartService->getProductsInCart($request);
         return BaseResponse::success($products);
     }
-    
+
     public function getProductsInCartByUserId(Request $request): JsonResponse
     {
         $products = $this->cartService->getProductsInCartByUserId($request);

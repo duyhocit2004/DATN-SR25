@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class ColorRepositories
 {
-
     public function getAllColors()
     {
         $colors = Color::all();

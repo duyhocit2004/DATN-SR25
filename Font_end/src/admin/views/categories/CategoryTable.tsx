@@ -1,5 +1,4 @@
-import { Table } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Button, Table, Tooltip } from "antd";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   deleteCategory,
@@ -11,15 +10,16 @@ import { IResponseCategory } from "./types";
 import dayjs, { Dayjs } from "dayjs";
 import { getLabelByValue } from "@/utils/functions";
 import { PersonTypeData } from "@/utils/constantData";
+import { ColumnsType } from "antd/es/table";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const CategoryTable: React.FC = () => {
   const dispatch = useAppDispatch();
   const { categories, pagination, totalElements, loading } = useAppSelector(
     (state) => state.adminCategory
   );
-  const navigate = useNavigate();
 
-  const columns = [
+  const columns: ColumnsType<IResponseCategory> = [
     {
       title: "STT",
       dataIndex: "stt",
@@ -81,18 +81,26 @@ const CategoryTable: React.FC = () => {
         );
       },
     },
-    // {
-    //   title: "Hành động",
-    //   key: "action",
-    //   render: (_, record: IResponseCategory) => (
-    //     <Button
-    //       type="link"
-    //       onClick={() => navigate(`/admin/categories/${record.id}`)}
-    //     >
-    //       Xem chi tiết
-    //     </Button>
-    //   ),
-    // },
+    {
+      title: "Hành động",
+      key: "action",
+      minWidth: 150,
+      fixed: 'right',
+      render: (_, record) => (
+        <div className="actions">
+          <Tooltip title={"Xóa"}>
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteCategory(record.id);
+              }}
+            />
+          </Tooltip>
+        </div>
+      ),
+    },
   ];
   const handleDeleteCategory = async (categoryId: number) => {
     dispatch(deleteCategory(categoryId));
@@ -123,7 +131,7 @@ const CategoryTable: React.FC = () => {
         showSizeChanger: true,
         total: totalElements,
         pageSizeOptions: [5, 10, 15, 20],
-        showTotal(total, range) {
+        showTotal(total) {
           return "Tổng: " + total;
         },
         onChange: handlePagingChange,

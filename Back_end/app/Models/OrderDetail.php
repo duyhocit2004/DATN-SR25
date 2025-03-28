@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class OrderDetail
- * 
+ *
  * @property int $id
  * @property int $order_id
  * @property string|null $name
@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $quantity_order
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
+ *
  * @property Order $order
  *
  * @package App\Models
@@ -38,7 +38,8 @@ class OrderDetail extends Model
 		'price_regular' => 'float',
 		'price_sale' => 'float',
 		'discount' => 'int',
-		'quantity_order' => 'int'
+		'quantity_order' => 'int',
+        'product_id' => 'int'
 	];
 
 	protected $fillable = [
@@ -50,7 +51,8 @@ class OrderDetail extends Model
 		'discount',
 		'color',
 		'size',
-		'quantity_order'
+		'quantity_order',
+		'product_id'
 	];
 
 	public function order()

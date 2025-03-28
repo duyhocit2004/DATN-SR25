@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchOrders, setPagination } from "@/store/reducers/adminOrderSlice";
 import { IOrder } from "@/types/interface";
-import { OrderStatusData } from "@/utils/constantData";
+import { OrderStatusDataAdmin } from "@/utils/constantData";
 import { getColorOrderStatus, getLabelByValue } from "@/utils/functions";
 import { Table, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
@@ -69,7 +69,7 @@ const OrderTable = () => {
       minWidth: 150,
       render: (status) => (
         <Tag color={getColorOrderStatus(status)}>
-          {getLabelByValue(OrderStatusData, status)}
+          {getLabelByValue(OrderStatusDataAdmin, status)}
         </Tag>
       ),
     },
@@ -80,7 +80,7 @@ const OrderTable = () => {
       minWidth: 180,
       render: (paymentStatus) => (
         <Tag color={getColorOrderStatus(paymentStatus)}>
-          {getLabelByValue(OrderStatusData, paymentStatus)}
+          {getLabelByValue(OrderStatusDataAdmin, paymentStatus)}
         </Tag>
       ),
     },
@@ -91,7 +91,7 @@ const OrderTable = () => {
       minWidth: 180,
       render: (paymentStatus) => (
         <Tag color={getColorOrderStatus(paymentStatus)}>
-          {getLabelByValue(OrderStatusData, paymentStatus)}
+          {getLabelByValue(OrderStatusDataAdmin, paymentStatus)}
         </Tag>
       ),
     },
