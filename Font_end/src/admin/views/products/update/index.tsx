@@ -40,7 +40,7 @@ interface Variant {
 }
 
 interface IFormData {
-  id: number | null;
+  productId: number | null;
   name: string;
   categoryId: number[] | null;
   discount: number | null;
