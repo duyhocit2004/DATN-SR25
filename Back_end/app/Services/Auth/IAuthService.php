@@ -11,6 +11,10 @@ interface IAuthService {
     public function getUser(Request $request);
     public function updateUserAdmin(Request $request);
     public function updateUser(Request $request);
+
     public function forgotPassword(Request $request);
     public function changePassword(Request $request);
+
+ 
+
 }

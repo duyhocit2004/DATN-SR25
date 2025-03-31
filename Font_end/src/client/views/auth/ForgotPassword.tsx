@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Form, Input, Button, message, Spin } from "antd";
 import axiosClient from "@/configs/axiosClient";
@@ -67,3 +68,4 @@ const ForgotPassword: React.FC = () => {
 };
 
 export default ForgotPassword;
+

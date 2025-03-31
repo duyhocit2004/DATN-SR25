@@ -2,7 +2,8 @@
 
 namespace App\Services\VnPay\impl;
 
-use App\Repositories\OrderRepositories;
+
+
 use App\Services\VnPay\IVnpayService;
 use Illuminate\Http\Request;
 
@@ -13,6 +14,7 @@ class VnpayService implements IVnpayService{
     public function __construct(OrderRepositories   $orderRepositories)
     {
         $this->orderRepositories = $orderRepositories;
+
     }
 
     public function createPaymentUrl($orderCode, $amount)
@@ -73,6 +75,7 @@ class VnpayService implements IVnpayService{
 
     public function handleReturn(Request $request)
     {
+
         $vnp_HashSecret = env('VNP_HASH_SECRET');
         foreach ($_GET as $key => $value) {
             if (substr($key, 0, 4) == "vnp_") {
@@ -122,6 +125,7 @@ class VnpayService implements IVnpayService{
             return 'http://localhost:5173/vnpay-return?status=invalid';
 //                return'http://localhost:5173';
         }
+
     }
 
 }
