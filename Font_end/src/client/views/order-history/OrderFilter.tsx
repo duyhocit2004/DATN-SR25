@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchOrders } from "@/store/reducers/orderSlice";
-import { OrderStatusDataClient } from "@/utils/constantData";
+import { OrderStatusData } from "@/utils/constantData";
 import {
   EuropeanDateFormatDayjs,
   ISO8601DateFormatDayjs,
@@ -63,7 +63,7 @@ const OrderFilter = () => {
         value={filterData.status}
         onChange={(value) => onChangeFilter("status", value)}
         allowClear
-        options={OrderStatusDataClient}
+        options={OrderStatusData}
       ></Select>
       <RangePicker
         className="w-full h-8"
