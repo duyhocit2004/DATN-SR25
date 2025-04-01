@@ -1,0 +1,7 @@
+.order-detail-container{
+  width: 100%;
+  .body-area{
+    height: calc(100vh - 255px);
+    overflow: auto;
+  }
+}

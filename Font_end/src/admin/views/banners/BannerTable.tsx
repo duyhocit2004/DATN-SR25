@@ -10,14 +10,15 @@ import dayjs, { Dayjs } from "dayjs";
 import { IBanner } from "@/types/interface";
 import { DeleteOutlined } from "@ant-design/icons";
 import { getLabelByValue } from "@/utils/functions";
-import { ActiveStatusStringData, BannerTypeData } from "@/utils/constantData";
+import { ActiveStatusData, BannerTypeData } from "@/utils/constantData";
+import { ColumnsType } from "antd/es/table";
 
 const BannerTable: React.FC = () => {
   const dispatch = useAppDispatch();
   const { banners, pagination, totalElements, loading } = useAppSelector(
     (state) => state.adminBanner
   );
-  const columns = [
+  const columns: ColumnsType<IBanner> = [
     {
       title: "STT",
       dataIndex: "stt",
@@ -56,7 +57,7 @@ const BannerTable: React.FC = () => {
       key: "status",
       minWidth: 200,
       render: (status: string) => {
-        return <div>{getLabelByValue(ActiveStatusStringData, status)}</div>;
+        return <div>{getLabelByValue(ActiveStatusData, status)}</div>;
       },
     },
     {
@@ -73,14 +74,16 @@ const BannerTable: React.FC = () => {
     {
       title: "Hành động",
       key: "action",
-      render: (_: any, record: IBanner) => (
+      minWidth: 150,
+      fixed: 'right',
+      render: (_, record) => (
         <div className="actions">
           <Tooltip title={"Xóa"}>
             <Button
               danger
               icon={<DeleteOutlined />}
               onClick={(e) => {
-                e.stopPropagation()
+                e.stopPropagation();
                 handleDeleteBanner(record.id);
               }}
             />

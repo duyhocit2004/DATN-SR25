@@ -1,6 +1,6 @@
 import adminApi from "@/api/adminApi";
 import { IOrder } from "@/types/interface";
-import { OrderStatusData } from "@/utils/constantData";
+import {  OrderStatusDataAdmin } from "@/utils/constantData";
 import { HttpCodeString } from "@/utils/constants";
 import { getColorOrderStatus, getLabelByValue } from "@/utils/functions";
 import { Spin, Table, Tag } from "antd";
@@ -59,7 +59,7 @@ const DashboardTable = () => {
       minWidth: 150,
       render: (status) => (
         <Tag color={getColorOrderStatus(status)}>
-          {getLabelByValue(OrderStatusData, status)}
+          {getLabelByValue(OrderStatusDataAdmin, status)}
         </Tag>
       ),
     },

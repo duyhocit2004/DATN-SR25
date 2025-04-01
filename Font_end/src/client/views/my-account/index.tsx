@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Spin, UploadFile, Select } from "antd";
 import { useAuth } from "@/context/AuthContext";
-import userApi from "@/api/userApi";
 import { HttpCodeString } from "@/utils/constants";
 import { urlToFile } from "@/utils/functions";
 import { showToast } from "@/components/toast";
 import { PersonTypeData } from "@/utils/constantData";
 import { cloneDeep } from "lodash";
-
+import adminApi from "@/api/adminApi";
 
 interface IFormData {
   id: number | null;
@@ -44,19 +43,22 @@ const MyAccount: React.FC = () => {
   }, [user]);
 
   const fetchUser = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await userApi.getUserByEmail({ email: user?.email });
+      const response = await adminApi.getUserByEmail({ email: user?.email });
       if (response?.status === HttpCodeString.SUCCESS) {
         const account = response.data;
-        const thumbnailFile = await urlToFile(account.image, "thumbnail.jpg");
-        const thumbnailUploadFile: UploadFile = {
-          uid: "-1",
-          name: thumbnailFile.name,
-          status: "done",
-          url: account.image, // Giữ nguyên URL
-          originFileObj: thumbnailFile, // Gán file để khi submit có file gửi lên
-        };
+        let thumbnailUploadFile: UploadFile | null = null;
+        if (account.image) {
+          const thumbnailFile = await urlToFile(account.image, "thumbnail.jpg");
+          thumbnailUploadFile = {
+            uid: "-1",
+            name: thumbnailFile.name,
+            status: "done",
+            url: account.image, // Giữ nguyên URL
+            originFileObj: thumbnailFile, // Gán file để khi submit có file gửi lên
+          };
+        }
         const data: IFormData = {
           id: account.id,
           name: account.name,
@@ -78,7 +80,7 @@ const MyAccount: React.FC = () => {
         });
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
