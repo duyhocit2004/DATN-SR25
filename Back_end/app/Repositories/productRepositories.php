@@ -41,8 +41,51 @@ class ProductRepositories
     {
         $filterType = $request->input('time', 'month');
 
-
         $listResult = [];
+
+        if ('week' == $filterType) {
+            $startDate = Carbon::now()->startOfWeek();
+            $endDate = Carbon::now()->endOfWeek();
+
+            $result = DB::table('orders')
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->selectRaw('
+                    DATE_FORMAT(created_at, "%d/%m/%Y") as day,
+                    COUNT(*) as total_orders,
+                    SUM(CASE WHEN payment_status = "PAID" THEN total_price ELSE 0 END) as total_revenue
+                ')
+                ->groupBy('day')
+                ->orderBy('day', 'asc')
+                ->get()
+                ->keyBy('day');
+
+            // Danh sách các ngày trong tuần
+            $allDays = [];
+            $current = $startDate->copy();
+            while ($current->lte($endDate)) {
+                $allDays[] = $current->format('d/m/Y');
+                $current->addDay();
+            }
+
+            // Kết quả đầu ra
+            $listResult = [];
+            foreach ($allDays as $index => $day) {
+                if ($result->has($day)) {
+                    $listResult[] = [
+                        'stt' => $day,
+                        'order' => $result[$day]->total_orders,
+                        'revenue' => $result[$day]->total_revenue
+                    ];
+                } else {
+                    $listResult[] = [
+                        'stt' => $day,
+                        'order' => 0,
+                        'revenue' => 0
+                    ];
+                }
+            }
+        }
+
         if('month'==$filterType){
             $startDate = Carbon::now()->startOfMonth();
             $endDate = Carbon::now()->endOfMonth();
@@ -50,7 +93,11 @@ class ProductRepositories
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$startDate, $endDate])
-                ->selectRaw('YEARWEEK(created_at, 1) as week, COUNT(*) as total_orders, SUM(total_price) as total_revenue')
+                ->selectRaw('
+                    YEARWEEK(created_at, 1) as week,
+                    COUNT(*) as total_orders,
+                    SUM(CASE WHEN payment_status = "PAID" THEN total_price ELSE 0 END) as total_revenue
+                ')
                 ->groupBy('week')
                 ->orderBy('week', 'asc')
                 ->get()
@@ -87,7 +134,11 @@ class ProductRepositories
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$startDate, $endDate])
-                ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as total_orders, SUM(total_price) as total_revenue')
+                ->selectRaw('
+                    DATE_FORMAT(created_at, "%Y-%m") as month,
+                    COUNT(*) as total_orders,
+                    SUM(CASE WHEN payment_status = "PAID" THEN total_price ELSE 0 END) as total_revenue
+                ')
                 ->groupBy('month')
                 ->orderBy('month', 'asc')
                 ->get()
@@ -128,7 +179,11 @@ class ProductRepositories
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$startDate, $endDate])
-                ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as total_orders, SUM(total_price) as total_revenue')
+                ->selectRaw('
+                    DATE_FORMAT(created_at, "%Y-%m") as month,
+                    COUNT(*) as total_orders,
+                    SUM(CASE WHEN payment_status = "PAID" THEN total_price ELSE 0 END) as total_revenue
+                ')
                 ->groupBy('month')
                 ->orderBy('month', 'asc')
                 ->get()
@@ -160,45 +215,6 @@ class ProductRepositories
             }
 
         }
-        if ('week' == $filterType) {
-            $startDate = Carbon::now()->startOfWeek();
-            $endDate = Carbon::now()->endOfWeek();
-        
-            $result = DB::table('orders')
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->selectRaw('DATE_FORMAT(created_at, "%d/%m/%Y") as day, COUNT(*) as total_orders, SUM(total_price) as total_revenue')
-                ->groupBy('day')
-                ->orderBy('day', 'asc')
-                ->get()
-                ->keyBy('day');
-        
-            // Danh sách các ngày trong tuần
-            $allDays = [];
-            $current = $startDate->copy();
-            while ($current->lte($endDate)) {
-                $allDays[] = $current->format('d/m/Y');
-                $current->addDay();
-            }
-        
-            // Kết quả đầu ra
-            $listResult = [];
-            foreach ($allDays as $index => $day) {
-                if ($result->has($day)) {
-                    $listResult[] = [
-                        'stt' => $day,
-                        'order' => $result[$day]->total_orders,
-                        'revenue' => $result[$day]->total_revenue
-                    ];
-                } else {
-                    $listResult[] = [
-                        'stt' => $day,
-                        'order' => 0,
-                        'revenue' => 0
-                    ];
-                }
-            }
-        }
-        
 
         return $listResult;
     }

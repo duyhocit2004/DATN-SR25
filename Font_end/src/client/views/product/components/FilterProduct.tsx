@@ -1,8 +1,7 @@
-import { Button, Collapse, Popover, Slider, Tree, TreeProps } from "antd";
+import { Button, Checkbox, Collapse, Popover, Slider } from "antd";
 import { useState } from "react";
-import { IListCategory } from "@/types/interface";
+import { ICategory, IListCategory } from "@/types/interface";
 import { FilterOutlined } from "@ant-design/icons";
-import { title } from "process";
 
 export interface IFilterData {
   priceRange: [number, number];
@@ -10,16 +9,11 @@ export interface IFilterData {
 }
 interface FilterProductProps {
   categories: IListCategory[];
-  categoryId: number | null;
   onFilter: (filterData: IFilterData) => void;
 }
 
 const { Panel } = Collapse;
-const FilterProduct = ({
-  categories,
-  onFilter,
-  categoryId,
-}: FilterProductProps) => {
+const FilterProduct = ({ categories, onFilter }: FilterProductProps) => {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [popoverVisible, setPopoverVisible] = useState<boolean>(false);
@@ -34,16 +28,6 @@ const FilterProduct = ({
     };
     onFilter(filterData);
   };
-
-  const onSelect: TreeProps["onSelect"] = (selectedKeysValue) => {
-    const newSelectedKeys = selectedKeysValue.map((num) => num.toString());
-    if (categoryId) {
-      const newCat = [categoryId.toString()].concat(newSelectedKeys);
-      setSelectedCategories(newCat);
-    } else {
-      setSelectedCategories(newSelectedKeys);
-    }
-  };
   return (
     <div className="filter-product-container">
       {/* Filter theo danh mục */}
@@ -53,17 +37,24 @@ const FilterProduct = ({
             <Collapse defaultActiveKey={["2", "3"]} ghost>
               {/* Filter theo danh mục */}
               <Panel header="Danh mục" key="2">
-                <Tree
-                  // checkable
-                  fieldNames={{
-                    key: "id",
-                    title: "name",
-                    children: "children",
-                  }}
-                  treeData={categoryId ? categories[0]?.children : categories}
-                  onSelect={onSelect}
-                  // onCheck={onCheckCategory}
-                />
+                <Checkbox.Group
+                  rootClassName="w-full gap-2"
+                  onChange={(values) =>
+                    setSelectedCategories(values as string[])
+                  }
+                >
+                  {categories?.map((category) => {
+                    return (
+                      <Checkbox
+                        className="w-full"
+                        key={category.id}
+                        value={category.id}
+                      >
+                        {category.name}
+                      </Checkbox>
+                    );
+                  })}
+                </Checkbox.Group>
               </Panel>
 
               {/* Filter theo giá */}
