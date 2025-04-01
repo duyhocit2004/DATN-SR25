@@ -12,6 +12,9 @@ const BannerFilter: React.FC = () => {
   const dispatch = useAppDispatch();
   const [filterData, setFilterData] = useState<IFilterData>({
     type: null,
+
+
+    
   });
   const onChangeFilter = (key: string, value: any) => {
     setFilterData((prev) => {
@@ -25,9 +28,6 @@ const BannerFilter: React.FC = () => {
     dispatch(setFilter({ ...filterData }));
     dispatch(fetchBanners());
   };
-
-
-  
 
   return (
     <div className="filter-data flex items-center gap-2">
