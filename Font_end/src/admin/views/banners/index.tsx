@@ -8,13 +8,6 @@ import { fetchBanners } from "@/store/reducers/adminBannerSlice";
 import { setShowAddModal } from "@/store/reducers/adminBannerSlice";
 import AddBannerModal from "./create";
 import UpdateBannerModal from "./update";
-
-
-
-
-
-
-
 const BannersPage = () => {
   const { showAddModal, selectedBanner } = useAppSelector(
     (state) => state.adminBanner

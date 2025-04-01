@@ -18,6 +18,12 @@ interface IBannerForm {
   status: boolean | null;
 }
 
+
+
+
+
+
+
 interface IProps {
   refreshData: () => void;
 }
