@@ -62,6 +62,10 @@ const AddSizeModal: React.FC<IProps> = ({refreshData}) => {
           content: "Thêm kích thước thất bại",
           duration: 5,
           type: "error",
+          if (condition) {
+            // Handle error condition here
+            
+          }
         });
       }
     } finally {
@@ -79,6 +83,16 @@ const AddSizeModal: React.FC<IProps> = ({refreshData}) => {
       maskClosable={false}
       onCancel={onClose}
       footer={null}
+      width={400}
+      className="add-size-modal"
+      destroyOnClose={true}
+      centered
+      closable={false}
+      bodyStyle={{ padding: "20px 24px" }}
+      style={{ top: 20 }} 
+      destroyOnClose={true} // Destroy modal when closed
+      centered // Center the modal vertically
+      closable={false} // Disable close button
     >
       <Form form={form} layout="vertical">
         {/* Chọn màu */}
