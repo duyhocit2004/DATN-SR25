@@ -73,6 +73,19 @@ const DetailProduct = () => {
       variants={product.variants}
       thumbnail={product.thumbnail}
       album={product.album}
+      status={product.status}
+      id={product.id}     
+      createdAt={product.createdAt}
+      updatedAt={product.updatedAt}
+      createdBy={product.createdBy}
+      updatedBy={product.updatedBy} 
+      productId={productId}
+      setProduct={setProduct}
+      setLoading={setLoading}
+      setError={setError}
+      fetchProductDetails={fetchProductDetails}
+      setFormValue={setProduct} // Assuming you want to set the form value here 
+      setFormData={setProduct} // Assuming you want to set the form data here
     />
   );
 };
