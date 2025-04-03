@@ -5,13 +5,10 @@ import {
   setPagination,
 } from "@/store/reducers/adminAccountSlice";
 import { IAccount } from "@/types/interface";
-import {
-  ActiveStatusData,
-  GenderData,
-  RoleData,
-} from "@/utils/constantData";
+import { ActiveStatusData, GenderData, PersonTypeData, RoleData } from "@/utils/constantData";
 import { getLabelByValue } from "@/utils/functions";
-import { Table } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
+import { Button, Table, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useNavigate } from "react-router-dom";
 
@@ -34,16 +31,16 @@ const AccountTable = () => {
       },
       minWidth: 70,
     },
-    {
-      title: "Ảnh",
-      dataIndex: "userImage",
-      render: (value) => {
-        return value ? (
-          <img src={value} alt="avatar" width={100} height={100} />
-        ) : null;
-      },
-      minWidth: 150,
-    },
+    // {
+    //   title: "Ảnh",
+    //   dataIndex: "userImage",
+    //   render: (value) => {
+    //     return value ? (
+    //       <img src={value} alt="avatar" width={100} height={100} />
+    //     ) : null;
+    //   },
+    //   minWidth: 150,
+    // },
     {
       title: "Họ và tên",
       dataIndex: "name",
@@ -72,7 +69,7 @@ const AccountTable = () => {
       dataIndex: "gender",
       minWidth: 180,
       render: (gender) => {
-        return <div>{getLabelByValue(GenderData, gender)}</div>;
+        return <div>{getLabelByValue(PersonTypeData, gender)}</div>;
       },
     },
     {
@@ -83,27 +80,28 @@ const AccountTable = () => {
         return <div>{getLabelByValue(ActiveStatusData, status)}</div>;
       },
     },
-    // {
-    //   title: "Hành động",
-    //   dataIndex: "action",
-    //   minWidth: 120,
-    //   fixed: "right",
-    //   render: (value, record) => {
-    //     return (
-    //       <div className="actions">
-    //         <Tooltip title={"Xóa"}>
-    //           <Button
-    //             danger
-    //             icon={<DeleteOutlined />}
-    //             onClick={() => {
-    //               handleDeleteAccount(record.id);
-    //             }}
-    //           />
-    //         </Tooltip>
-    //       </div>
-    //     );
-    //   },
-    // },
+    {
+      title: "Hành động",
+      dataIndex: "action",
+      minWidth: 120,
+      fixed: "right",
+      render: (value, record) => {
+        return (
+          <div className="actions">
+            <Tooltip title={"Xóa"}>
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteAccount(record.id);
+                }}
+              />
+            </Tooltip>
+          </div>
+        );
+      },
+    },
   ];
 
   const handleDeleteAccount = async (accountId: number) => {

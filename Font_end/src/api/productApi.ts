@@ -56,9 +56,11 @@ class ProductApi extends BaseApi<IProduct> {
       .post(`${this.uri}/getProductDetail`, { productId: productId.toString() })
       .then((res) => res.data);
   };
-  getTopDiscountedProducts = (): Promise<IResponseData<IProduct[]>> => {
+  getTopDiscountedProducts = (
+    payload : any
+  ): Promise<IResponseData<IProduct[]>> => {
     return axiosClient
-      .post(`${this.uri}/getTopDiscountedProducts`)
+      .post(`${this.uri}/getTopDiscountedProducts`,payload)
       .then((res) => res.data);
   };
   getTopNewestProducts = (): Promise<IResponseData<IProduct[]>> => {
@@ -129,7 +131,7 @@ class ProductApi extends BaseApi<IProduct> {
   };
   removeWishList = (payload: any): Promise<IResponseData<IWishlist>> => {
     return axiosClient
-      .post(`${this.uri}/removeWishList`, payload)
+      .post(`${this.uri}/deleteWishList`, payload)
       .then((res) => res.data);
   };
 }

@@ -7,6 +7,7 @@ import {
   IDashboardStatistical,
   IDataPaging,
   IOrder,
+  IProduct,
   IResponseData,
   IResponseLogin,
   IReview,
@@ -18,6 +19,7 @@ import axiosClient from "@/configs/axiosClient";
 import { IResponseCategory } from "@/admin/views/categories/types";
 
 class AdminApi extends BaseApi<{ data: any }> {
+  [x: string]: any;
   constructor() {
     super("admin"); // Gán URI 'admins' cho API này
   }
@@ -138,6 +140,13 @@ class AdminApi extends BaseApi<{ data: any }> {
       .post(`${this.uri}/orders/getOrdersPaging`, payload)
       .then((res) => res.data);
   };
+  updateOrders = (
+    payload: any
+  ): Promise<IResponseData<IDataPaging<IOrder[]>>> => {
+    return axiosClient
+      .post(`${this.uri}/orders/updateOrder`, payload)
+      .then((res) => res.data);
+  };
   getReviewDetail = (payload: any): Promise<IResponseData<IReview[]>> => {
     return axiosClient
       .post(`${this.uri}/getCommentWithReply`, payload)
@@ -160,6 +169,36 @@ class AdminApi extends BaseApi<{ data: any }> {
       .post(`${this.uri}/banners/deleteBanner`, payload)
       .then((res) => res.data);
   };
+  deleteOrder = (payload: any): Promise<IResponseData<any>> => {
+    return axiosClient
+      .post(`${this.uri}/orders/deleteOrder`, payload)
+      .then((res) => res.data);
+  };
+  deleteCategory = (payload: any): Promise<IResponseData<ICategory>> => {
+    return axiosClient
+      .post(`${this.uri}/categories/deleteCategory`, payload)
+      .then((res) => res.data);
+  };
+  deleteSize = (payload: any): Promise<IResponseData<ISize>> => {
+    return axiosClient
+      .post(`${this.uri}/sizes/deleteSize`, payload)
+      .then((res) => res.data);
+  };
+  deleteColor = (payload: any): Promise<IResponseData<IColor>> => {
+    return axiosClient
+      .post(`${this.uri}/colors/deleteColor`, payload)
+      .then((res) => res.data);
+  };
+  deleteVoucher = (payload: any): Promise<IResponseData<IVoucher>> => {
+    return axiosClient
+      .post(`${this.uri}/vouchers/deleteVoucher`, payload)
+      .then((res) => res.data);
+  };
+  deleteProduct = (payload: any): Promise<IResponseData<IProduct>> => {
+    return axiosClient
+      .post(`${this.uri}/products/deleteProduct`, payload)
+      .then((res) => res.data);
+  };
   addUser = (payload: any): Promise<IResponseData<IAccount>> => {
     return axiosClient
       .post(`${this.uri}/users/addUser`, payload, {
@@ -171,11 +210,16 @@ class AdminApi extends BaseApi<{ data: any }> {
   };
   updateUser = (payload: any): Promise<IResponseData<IAccount>> => {
     return axiosClient
-      .post(`${this.uri}/users/updateUser`, payload, {
+      .post(`${this.uri}/users/updateUserAdmin`, payload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
+      .then((res) => res.data);
+  };
+  getUserByEmail = (payload?: any): Promise<IResponseData<IAccount>> => {
+    return axiosClient
+      .post(`${this.uri}/users/getUserInfoByEmail`, payload)
       .then((res) => res.data);
   };
 }

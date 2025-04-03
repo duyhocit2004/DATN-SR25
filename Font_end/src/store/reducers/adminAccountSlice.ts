@@ -41,10 +41,10 @@ export const fetchAccounts = createAsyncThunk(
 );
 export const deleteAccount = createAsyncThunk(
   "account/deleteAccount",
-  async (accountId: number) => {
+  async (accountId: number, { dispatch }) => {
     const response = await adminApi.deleteUser({ id: accountId });
     if (response.status === HttpCodeString.SUCCESS) {
-      fetchAccounts();
+      dispatch(fetchAccounts());
       showToast({
         content: "Xóa tài khoản thành công!",
         duration: 5,

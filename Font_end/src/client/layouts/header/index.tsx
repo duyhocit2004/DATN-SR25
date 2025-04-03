@@ -39,6 +39,7 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     //call api logout
     logout();
+    navigate("/");
   };
 
   const getCartInfo = async () => {
@@ -97,19 +98,19 @@ const Header: React.FC = () => {
 
           {/* </Menu.Item> */}
           <Menu.Item key="account" onClick={() => navigate("/my-account")}>
-            My Account
+            Tài Khoản
           </Menu.Item>
           <Menu.Item key="logout" onClick={() => handleLogout()}>
-            Logout
+            Đăng Xuất
           </Menu.Item>
         </>
       ) : (
         <>
           <Menu.Item key="login" onClick={() => navigate("/login")}>
-            Login
+            Đăng Nhập
           </Menu.Item>
           <Menu.Item key="register" onClick={() => navigate("/register")}>
-            Register
+            Đăng Kí
           </Menu.Item>
         </>
       )}
@@ -132,9 +133,9 @@ const Header: React.FC = () => {
   const handleNavigateToProducts = (values: IDataItem[]) => {
     navigate(
       "products" +
-        (values?.length > 0
-          ? "?categoryId=" + values[values?.length - 1]?.id
-          : "")
+      (values?.length > 0
+        ? "?categoryId=" + values[values?.length - 1]?.id
+        : "")
     );
   };
 
@@ -142,14 +143,14 @@ const Header: React.FC = () => {
     <header className="header-container bg-white shadow-md fixed top-0 left-0 w-full z-[1031]">
       <div className="container mx-auto flex items-center justify-between p-4">
         {/* Left: Logo */}
-        <Link to="/" className="text-2xl font-bold text-gray-900">
-          LOGO
+        <Link to="/">
+          <img src="public/images/logo/SKY.png" alt="Logo" className="h-25" />
         </Link>
 
         {/* Middle: Navigation (Hidden on small screens) */}
         <nav className="hidden md:flex space-x-6">
           <Link to="/" className="hover:text-blue-500">
-            Home
+            Trang Chủ
           </Link>
           {/* <Dropdown overlay={menuCategories} trigger={["hover"]}>
             <span className="hover:text-blue-500 cursor-pointer">Danh mục</span>
@@ -168,7 +169,7 @@ const Header: React.FC = () => {
             Sản phẩm
           </Link>
           <Link to="/contact" className="hover:text-blue-500">
-            Contact Us
+            Liên Hệ
           </Link>
         </nav>
 
@@ -246,7 +247,7 @@ const Header: React.FC = () => {
             className="text-lg"
             onClick={() => setOpenDrawer(false)}
           >
-            Contact Us
+            Thông Tin Liên Hệ
           </Link>
         </nav>
       </Drawer>

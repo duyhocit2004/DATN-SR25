@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa";
+import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube, FaTiktok, FaWikipediaW } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -9,26 +9,26 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* ABOUT US */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">ABOUT US</h3>
+            <h3 className="text-lg font-semibold mb-4">THÔNG TIN CỬA HÀNG </h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/about" className="text-gray-400 hover:text-white">
-                  About us
+                <Link to="/contact" className="text-gray-400 hover:text-white">
+                  Thông Tin
                 </Link>
               </li>
-              <li>
-                <Link to="/store-location" className="text-gray-400 hover:text-white">
-                  Store location
+              {/* <li>
+                <Link to="/contact" className="text-gray-400 hover:text-white">
+                  Địa Chỉ 
                 </Link>
               </li>
               <li>
                 <Link to="/contact" className="text-gray-400 hover:text-white">
-                  Contact
+                  Liên Hệ 
                 </Link>
-              </li>
+              </li> */}
               <li>
-                <Link to="/order-tracking" className="text-gray-400 hover:text-white">
-                  Orders tracking
+                <Link to="/order-history" className="text-gray-400 hover:text-white">
+                  Theo Dõi Đơn Hàng
                 </Link>
               </li>
             </ul>
@@ -36,26 +36,21 @@ const Footer = () => {
 
           {/* USEFUL LINKS */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">USEFUL LINKS</h3>
+            <h3 className="text-lg font-semibold mb-4">SẢN PHẨM </h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/returns" className="text-gray-400 hover:text-white">
-                  Returns
+                <Link to="/products" className="text-gray-400 hover:text-white">
+                Sản Phẩm Bán Chạy
                 </Link>
               </li>
               <li>
-                <Link to="/support-policy" className="text-gray-400 hover:text-white">
-                  Support Policy
+                <Link to="/products" className="text-gray-400 hover:text-white">
+                Sản Phẩm Mới
                 </Link>
               </li>
               <li>
                 <Link to="/size-guide" className="text-gray-400 hover:text-white">
-                  Size guide
-                </Link>
-              </li>
-              <li>
-                <Link to="/faqs" className="text-gray-400 hover:text-white">
-                  FAQs
+                Sản Phẩm Giảm Giá
                 </Link>
               </li>
             </ul>
@@ -63,22 +58,44 @@ const Footer = () => {
 
           {/* FOLLOW US */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">FOLLOW US</h3>
+            <h3 className="text-lg font-semibold mb-4">THEO DÕI CHÚNG TÔI </h3>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a
+                href="https://www.facebook.com/caodangfptpolytechnic"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <FaFacebookF size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white">
-                <FaTwitter size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white">
-                <FaInstagram size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a
+                href="https://www.youtube.com/@FPTPoly"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <FaYoutube size={20} />
+              </a>
+              <a
+                href="https://vi.wikipedia.org/wiki/Tr%C6%B0%E1%BB%9Dng_Cao_%C4%91%E1%BA%B3ng_Th%E1%BB%B1c_h%C3%A0nh_FPT"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
+                <FaWikipediaW size={20} />
+              </a>
+
+              <a
+                href="https://www.tiktok.com/@fpt.polytechnic.official"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
+                <FaTiktok size={20} />
               </a>
             </div>
           </div>
+
 
           {/* SUBSCRIBE */}
           <div>
@@ -104,7 +121,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="border-t border-gray-700 mt-10 pt-6 text-center text-gray-400">
-          © {new Date().getFullYear()} Flone. All Rights Reserved.
+          © {new Date().getFullYear()} FPT POLYTECHNIC 
         </div>
       </div>
     </footer>

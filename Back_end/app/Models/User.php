@@ -1,55 +1,121 @@
 <?php
 
+/**
+ * Created by Reliese Model.
+ */
+
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Foundation\Auth\User as Authenticatable; // Sử dụng Authenticatable
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+
+//use Laravel\Sanctum\HasApiTokens;
+
+/**
+ * Class User
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string|null $phone_number
+ * @property string $role
+ * @property Carbon|null $email_verified_at
+ * @property string|null $gender
+ * @property string|null $user_image
+ * @property string $password
+ * @property string|null $remember_token
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property string|null $deleted_at
+ *
+ * @property Collection|Cart[] $carts
+ * @property Collection|Location[] $locations
+ * @property Collection|Order[] $orders
+ * @property Collection|Voucher[] $vouchers
+ *
+ * @package App\Models
+ */
+class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    use HasFactory;
+    use Notifiable;
+    use SoftDeletes;
+    protected $table = 'users';
+
+    protected $casts = [
+        'email_verified_at' => 'datetime'
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token'
+    ];
+
     protected $fillable = [
         'name',
         'email',
-        'password',
         'phone_number',
         'role',
-        'user_image',
+        'email_verified_at',
         'gender',
-        'is_active'
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
+        'user_image',
         'password',
         'remember_token',
+        'status'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'is_active' => 'boolean',
-    ];
-
-    public function comment(){
-        return $this->hasMany(comments::class,'user_id');
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
     }
 
+    public function locations()
+    {
+        return $this->hasMany(Location::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function vouchers()
+    {
+        return $this->hasMany(Voucher::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+    public function getJWTIdentifier()
+    {
+        return $this->getKey(); // Trả về khóa chính của người dùng
+    }
+
+    // Phương thức để trả về các dữ liệu cần thiết cho payload của token
+    public function getJWTCustomClaims()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'phoneNumber' => $this->phone_number,
+            'role' => $this->role,
+            'gender' => $this->gender,
+            'userImage' => $this->user_image,
+            'emailVerifiedAt' => $this->email_verified_at,
+            'status' => $this->status,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
+            'deletedAt' => $this->deleted_at,
+        ];
+    }
 }

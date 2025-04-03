@@ -1,6 +1,9 @@
+import adminApi from "@/api/adminApi";
 import homeApi from "@/api/homeApi";
 import productApi from "@/api/productApi";
+import { showToast } from "@/components/toast";
 import { IListCategory, IProduct } from "@/types/interface";
+import { HttpCodeString } from "@/utils/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface AdminProductState {
@@ -51,10 +54,23 @@ export const fetchCategories = createAsyncThunk(
 );
 export const deleteProduct = createAsyncThunk(
   "product/deleteProduct",
-  async (productId: number) => {
-    // const response = await productApi.delete();
-
-    return true;
+  async (productId: number, { dispatch }) => {
+    const response = await adminApi.deleteProduct({ id: productId });
+    if (response.status === HttpCodeString.SUCCESS) {
+      dispatch(fetchProducts());
+      showToast({
+        content: "Xóa sản phẩm thành công!",
+        duration: 5,
+        type: "success",
+      });
+    } else {
+      showToast({
+        content: "Xóa sản phẩm thất bại!",
+        duration: 5,
+        type: "error",
+      });
+    }
+    return response;
   }
 );
 

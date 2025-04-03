@@ -139,6 +139,7 @@ export interface IResponseData<T> {
   timestamp: number;
 }
 export interface IDataPaging<T> {
+  [x: string]: any;
   data: T;
   total: number;
 }
@@ -226,6 +227,7 @@ export interface IReply {
 }
 
 export interface IOrder {
+  [x: string]: any;
   id: number;
   code: string;
   phoneNumber: string | null;
@@ -259,6 +261,11 @@ export interface IProductOrder {
   discount: number | null;
   orderId: number;
 }
+export interface IResponseOrder {
+  order: IOrder;
+  vnpayUrl: string;
+}
+
 export interface IProductDetail {
   id: number;
   categoriesId: number[];
@@ -296,6 +303,7 @@ export interface IDashboardStatistical {
   totalRevenue: number;
 }
 export interface IDashboardChart {
+  name: any;
   stt: number;
   order: number;
   revenue: number;

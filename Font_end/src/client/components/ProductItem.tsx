@@ -153,9 +153,8 @@ const ProductItem = ({ product }: ProductItemProps) => {
             title={isWishlisted ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
           >
             <button
-              className={`cursor-pointer w-[40px] h-[40px] border-none text-white ${
-                isWishlisted ? "bg-red-500" : "bg-blue-800"
-              } hover:bg-gray-900 transition-all`}
+              className={`cursor-pointer w-[40px] h-[40px] border-none text-white ${isWishlisted ? "bg-red-500" : "bg-blue-800"
+                } hover:bg-gray-900 transition-all`}
               onClick={(e) => {
                 handleWishlist(e, !isWishlisted);
               }}
@@ -189,19 +188,22 @@ const ProductItem = ({ product }: ProductItemProps) => {
           value={product?.rate}
         />
         <div className="mt-2">
-          <span
-            className={`${
-              !product?.priceSale
+          <div>
+            <span
+              className={`${!product?.priceSale
                 ? "text-red-600 text-lg font-bold ml-2"
                 : "text-gray-400 line-through text-sm"
-            }`}
-          >
-            {product?.priceRegular?.toLocaleString()} VND
-          </span>
-          {product?.priceSale && (
-            <span className="text-red-600 text-lg font-bold ml-2">
-              {product?.priceSale?.toLocaleString()} VND
+                }`}
+            >
+              {product?.priceRegular?.toLocaleString()} VND
             </span>
+          </div>
+          {product?.priceSale && (
+            <div>
+              <span className="text-red-600 text-lg font-bold ml-2">
+                {product?.priceSale?.toLocaleString()} VND
+              </span>
+            </div>
           )}
         </div>
       </div>

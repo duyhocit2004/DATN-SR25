@@ -1,5 +1,8 @@
+import adminApi from "@/api/adminApi";
 import productApi from "@/api/productApi";
+import { showToast } from "@/components/toast";
 import { IColor, IDataPaging } from "@/types/interface";
+import { HttpCodeString } from "@/utils/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface AdminColorState {
@@ -45,10 +48,23 @@ export const fetchColors = createAsyncThunk(
 
 export const deleteColor = createAsyncThunk(
   "color/deleteColor",
-  async (colorId: number) => {
-    // const response = await colorApi.delete();
-
-    return true;
+  async (colorId: number, { dispatch }) => {
+    const response = await adminApi.deleteColor({ id: colorId });
+    if (response.status === HttpCodeString.SUCCESS) {
+      dispatch(fetchColors());
+      showToast({
+        content: "Xóa màu thành công!",
+        duration: 5,
+        type: "success",
+      });
+    } else {
+      showToast({
+        content: "Xóa màu thất bại!",
+        duration: 5,
+        type: "error",
+      });
+    }
+    return response;
   }
 );
 

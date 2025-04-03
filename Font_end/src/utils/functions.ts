@@ -220,13 +220,20 @@ export const formatData = (value: any, format?: string) => {
 
 export const getColorOrderStatus = (status: string) => {
   switch (status) {
-    case OrderStatus.CANCEL:
-      return "error";
-    case OrderStatus.DELIVERED:
-      return "green";
+    case OrderStatus.UNCONFIRMED:
+      return "default"; // Chưa xác nhận (màu xám)
+    case OrderStatus.CONFIRMED:
+      return "blue"; // Đã xác nhận
+    case OrderStatus.CANCEL_CONFIRM:
+      return "red";
+    case OrderStatus.PROCESSING:
+      return "purple"; // Đang chuẩn bị hàng
     case OrderStatus.SHIPPING:
-      return "orange";
-
+      return "orange"; // Đang vận chuyển
+    case OrderStatus.DELIVERED:
+      return "green"; // Đã giao hàng
+    case OrderStatus.CANCEL:
+      return "red"; // Đã hủy
     default:
       return "default";
   }

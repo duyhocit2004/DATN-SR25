@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Button, Table, Tooltip } from "antd";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   deleteColor,
@@ -8,7 +8,8 @@ import {
 } from "@/store/reducers/adminColorSlice";
 import dayjs, { Dayjs } from "dayjs";
 import { IColor } from "@/types/interface";
-
+import { DeleteOutlined } from "@ant-design/icons";
+import { ColumnsType } from "antd/es/table";
 
 const ColorTable: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -16,7 +17,7 @@ const ColorTable: React.FC = () => {
     (state) => state.adminColor
   );
 
-  const columns = [
+  const columns: ColumnsType<IColor> = [
     {
       title: "STT",
       dataIndex: "stt",
@@ -44,40 +45,45 @@ const ColorTable: React.FC = () => {
         return (
           <div
             className={`color w-6 h-6 shrink-0 rounded-[50%]`}
-            style={{ backgroundColor: color }}
+            style={{
+              backgroundColor: color,
+              border: color.toLowerCase() === "#ffffff" || color.toLowerCase() === "white" ? "1px solid #ccc" : "none"
+            }}
           ></div>
         );
       },
     },
-    {
-      title: "Mô tả",
-      dataIndex: "description",
-      key: "description",
-      minWidth: 300,
-    },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      minWidth: 200,
-      render: (createdAt: Dayjs) => {
-        return (
-          <div>{createdAt ? dayjs(createdAt).format("DD/MM/YYYY") : ""}</div>
-        );
-      },
-    },
     // {
-    //   title: "Hành động",
-    //   key: "action",
-    //   render: (_, record: IResponseSize) => (
-    //     <Button
-    //       type="link"
-    //       onClick={() => navigate(`/admin/categories/${record.id}`)}
-    //     >
-    //       Xem chi tiết
-    //     </Button>
-    //   ),
+    //   title: "Ngày tạo",
+    //   dataIndex: "createdAt",
+    //   key: "createdAt",
+    //   minWidth: 200,
+    //   render: (createdAt: Dayjs) => {
+    //     return (
+    //       <div>{createdAt ? dayjs(createdAt).format("DD/MM/YYYY") : ""}</div>
+    //     );
+    //   },
     // },
+    {
+      title: "Hành động",
+      key: "action",
+      minWidth: 150,
+      fixed: 'right',
+      render: (_, record) => (
+        <div className="actions">
+          <Tooltip title={"Xóa"}>
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteColor(record.id);
+              }}
+            />
+          </Tooltip>
+        </div>
+      ),
+    },
   ];
   const handleDeleteColor = async (colorId: number) => {
     dispatch(deleteColor(colorId));

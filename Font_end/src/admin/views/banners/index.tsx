@@ -14,10 +14,6 @@ const BannersPage = () => {
     (state) => state.adminBanner
   );
 
-
-
-
-  
   const dispatch = useAppDispatch();
 
   useEffect(() => {

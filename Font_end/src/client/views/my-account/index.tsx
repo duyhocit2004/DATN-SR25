@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Spin, UploadFile, Select } from "antd";
 import { useAuth } from "@/context/AuthContext";
-import userApi from "@/api/userApi";
 import { HttpCodeString } from "@/utils/constants";
 import { urlToFile } from "@/utils/functions";
 import { showToast } from "@/components/toast";
 import { PersonTypeData } from "@/utils/constantData";
 import { cloneDeep } from "lodash";
-
+import adminApi from "@/api/adminApi";
 
 interface IFormData {
   id: number | null;
@@ -44,19 +43,22 @@ const MyAccount: React.FC = () => {
   }, [user]);
 
   const fetchUser = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await userApi.getUserByEmail({ email: user?.email });
+      const response = await adminApi.getUserByEmail({ email: user?.email });
       if (response?.status === HttpCodeString.SUCCESS) {
         const account = response.data;
-        const thumbnailFile = await urlToFile(account.image, "thumbnail.jpg");
-        const thumbnailUploadFile: UploadFile = {
-          uid: "-1",
-          name: thumbnailFile.name,
-          status: "done",
-          url: account.image, // Giữ nguyên URL
-          originFileObj: thumbnailFile, // Gán file để khi submit có file gửi lên
-        };
+        let thumbnailUploadFile: UploadFile | null = null;
+        if (account.image) {
+          const thumbnailFile = await urlToFile(account.image, "thumbnail.jpg");
+          thumbnailUploadFile = {
+            uid: "-1",
+            name: thumbnailFile.name,
+            status: "done",
+            url: account.image, // Giữ nguyên URL
+            originFileObj: thumbnailFile, // Gán file để khi submit có file gửi lên
+          };
+        }
         const data: IFormData = {
           id: account.id,
           name: account.name,
@@ -78,22 +80,54 @@ const MyAccount: React.FC = () => {
         });
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
-  const onUpdate = async (values: User) => {
-    // setUpdating(true);
-    // try {
-    //   await axios.put(`/api/user/${user?.id}`, values);
-    //   message.success("Cập nhật thông tin thành công!");
-    //   setUser(values);
-    // } catch (error) {
-    //   message.error("Cập nhật thất bại, vui lòng thử lại!");
-    // } finally {
-    //   setUpdating(false);
-    // }
+  const onUpdate = async (values: Partial<IFormData>) => {
+    setLoading(true);
+    try {
+      const updatedData: Partial<IFormData> = {
+        id: formData.id,
+        name: values.name,
+        password: values.password,
+        status: values.status,
+        phoneNumber: values.phoneNumber,
+        email: values.email,
+        gender: values.gender,
+        role: values.role,
+      };
+  
+      console.log("Dữ liệu gửi lên API:", updatedData); // Log request để kiểm tra
+  
+      const response = await adminApi.updateUser(updatedData);
+  
+      console.log("Phản hồi từ API:", response); // Log response để xem API có lỗi không
+  
+      if (response.status === HttpCodeString.SUCCESS) {
+        showToast({
+          content: "Cập nhật thông tin thành công!",
+          type: "success",
+        });
+  
+        setFormData(prev => ({ ...prev, ...updatedData }));
+      } else {
+        showToast({
+          content: "Cập nhật thất bại! Vui lòng thử lại.",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật:", error); // Log lỗi nếu có
+      showToast({
+        content: "Có lỗi xảy ra khi cập nhật!",
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+  
 
   if (loading)
     return <Spin size="large" className="flex justify-center mt-10" />;

@@ -50,7 +50,7 @@ function getItem(
 const items: MenuItem[] = [
   getItem(
     <Link to={"/admin"}>Trang chủ</Link>,
-    "/admin/dashboard",
+    "/admin/hi",
     <PieChartOutlined />
   ),
   getItem(
@@ -130,10 +130,12 @@ const Sidebar = () => {
       collapsed={collapsed}
       onCollapse={(value) => setCollapsed(value)}
     >
-      {/* <div className="demo-logo-vertical">Long</div> */}
-      <div className="logo h-16 bg-gray-800 flex justify-center items-center text-white font-semibold text-2xl">
-        LOGO
+      <div className="flex justify-center items-center h-20">
+        <Link to="/admin">
+          <img src="/images/logo/SKYLER.png" alt="Logo" className="h-23" />
+        </Link>
       </div>
+
       <Menu
         style={menuStyle}
         theme="dark"

@@ -3,11 +3,12 @@ import { showToast } from "@/components/toast"; // Import showToast
 import { PersonType, HttpCodeString } from "@/utils/constants";
 import { Form, Input, Button, Radio, Spin } from "antd";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 const Register = () => {
   
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const handleRegister = async (values: any) => {
     // Gửi request API đăng ký tại đây
     setLoading(true);
@@ -21,6 +22,7 @@ const Register = () => {
           duration: 5,
           type: "success",
         });
+        navigate("/login");
       } else {
         showToast({
           content: "Đăng ký thất bại!",
@@ -84,7 +86,7 @@ const Register = () => {
           {/* Số điện thoại */}
           <Form.Item
             label="Số điện thoại"
-            name="phone"
+            name="phoneNumber"
             rules={[
               { required: true, message: "Vui lòng nhập số điện thoại!" },
               {

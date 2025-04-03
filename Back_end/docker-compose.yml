@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+    app:
+        container_name: php_app
+        build: .
+        ports:
+            - "8001:80"
+        volumes:
+#            - ./:/var/www/html  # Map toàn bộ dự án vào container
+            - /var/www/html # Không mount thư mục từ host
+        environment:
+            - APACHE_DOCUMENT_ROOT=/var/www/html/public  # Trỏ đến thư mục public
+        env_file:
+            - .env.docker
+        networks:
+            - mynetwork
+        depends_on:
+            - db
+        restart: unless-stopped
+
+    db:
+        image: mysql:8.0
+        container_name: mysql_db
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: datn_spr2025
+            MYSQL_USER: root
+            MYSQL_PASSWORD: admin
+        ports:
+            - "3307:3306"  # Map port 3306 của container ra 3307 trên máy host
+        volumes:
+            - db_data:/var/lib/mysql  # Lưu trữ dữ liệu MySQL
+        networks:
+            - mynetwork
+
+volumes:
+    db_data:  # Volume cho MySQL
+
+networks:
+    mynetwork:
+        driver: bridge

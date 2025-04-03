@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Form, Input, Button, message, Card, Spin } from "antd";
+import { Form, Input, Button, Card, Spin, Radio } from "antd";
 import { useAuth } from "@/context/AuthContext";
 import {
   ICart,
@@ -9,30 +9,32 @@ import {
   IVoucher,
 } from "@/types/interface";
 import cartApi from "@/api/cartApi";
-import { HttpCodeString } from "@/utils/constants";
+import { HttpCodeString, PaymentMethod } from "@/utils/constants";
 import { cloneDeep } from "lodash";
 import orderApi from "@/api/orderApi";
 import { showToast } from "@/components/toast"; // Import showToast
+import vnpayApi from "@/api/vnPay";
+import { useNavigate } from "react-router-dom";
 
 const Payment = () => {
-  
   const { user, token } = useAuth(); // Giả sử có user { name, phone, address }
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [loadingApplyVoucher, setLoadingApplyVoucher] = useState(false);
   const [discountCode, setDiscountCode] = useState("");
   const [cartList, setCartList] = useState<ICart[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [finalAmount, setFinalAmount] = useState<number>(0);
-  const [voucher, setVoucher] = useState<IVoucher>({
-    code: "",
-    price: 0,
-  });
+  const [voucher, setVoucher] = useState<IVoucher | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
       form.setFieldsValue({
         customerName: user.name,
         phoneNumber: user.phoneNumber,
+        email: user.email,
         shippingAddress: "",
       });
     }
@@ -47,13 +49,13 @@ const Payment = () => {
       (total, item) =>
         total +
         (item?.product?.priceSale || item?.product?.priceSale || 0) *
-          item.quantity,
+        item.quantity,
       0
     );
     setTotalAmount(totalPrice);
   }, [cartList]);
   useEffect(() => {
-    setFinalAmount(totalAmount - (voucher?.price || 0));
+    setFinalAmount(totalAmount - (voucher?.voucherPrice || 0));
   }, [totalAmount, voucher]);
 
   const getCartInfo = async () => {
@@ -124,6 +126,7 @@ const Payment = () => {
 
   const applyDiscount = async () => {
     try {
+      setLoadingApplyVoucher(true);
       const payload = {
         voucherCode: discountCode,
       };
@@ -143,53 +146,55 @@ const Payment = () => {
           type: "error",
         });
       }
-    } catch {}
+    } finally {
+      setLoadingApplyVoucher(false);
+    }
   };
 
   const handlePayment = async () => {
     try {
       await form.validateFields();
-      const products = cartList.map((e) => {
-        return {
-          productId: e.product?.id,
-          name: e.product?.name,
-          image: e.product?.image,
-          priceRegular: e.product?.priceRegular,
-          priceSale: e.product?.priceSale,
-          discount: null,
-          color: e.color,
-          size: e.size,
-          quantity: e.quantity,
-        };
-      });
+      const products = cartList.map((e) => ({
+        productId: e.product?.id,
+        name: e.product?.name,
+        image: e.product?.image,
+        priceRegular: e.product?.priceRegular,
+        priceSale: e.product?.priceSale,
+        discount: null,
+        color: e.color,
+        size: e.size,
+        quantity: e.quantity,
+      }));
       const payload = {
         customerName: form.getFieldValue("customerName"),
         email: form.getFieldValue("email"),
         phoneNumber: form.getFieldValue("phoneNumber"),
+        receiverName: form.getFieldValue("receiverName"),
+        receiverPhoneNumber: form.getFieldValue("receiverPhoneNumber"),
+        receiverAddress: form.getFieldValue("receiverAddress"),
         totalAmount: totalAmount,
-        voucher: voucher.code,
-        voucherPrice: voucher.price,
+        voucher: voucher?.code,
+        voucherPrice: voucher?.voucherPrice,
         shippingAddress: form.getFieldValue("shippingAddress"),
         note: form.getFieldValue("note"),
         products: products,
+        paymentMethod: paymentMethod,
       };
 
       const response = await orderApi.addOrder(payload);
+
       if (response?.status === HttpCodeString.SUCCESS) {
-        showToast({
-          content: "Đặt hàng thành công!",
-          duration: 5,
-          type: "success",
-        });
-        clearCart()
+        if (paymentMethod === PaymentMethod.ONLINE && response.data.vnpayUrl) {
+          window.location.href = response.data.vnpayUrl;
+        } else if (paymentMethod === PaymentMethod.COD) {
+          showToast({ content: "Đặt hàng thành công!", duration: 5, type: "success" });
+          clearCart();
+          navigate("/");
+        }
       } else {
-        showToast({
-          content: "Đặt hàng thất bại!",
-          duration: 5,
-          type: "error",
-        });
+        showToast({ content: "Đặt hàng thất bại!", duration: 5, type: "error" });
       }
-    } catch {}
+    } catch { }
   };
 
   const clearCart = async () => {
@@ -206,7 +211,7 @@ const Payment = () => {
             type: "error",
           });
         }
-      } catch {}
+      } catch { }
     } else {
       localStorage.removeItem("cart");
       setCartList([]);
@@ -215,7 +220,6 @@ const Payment = () => {
 
   return (
     <div className="container mx-auto py-4 px-4 md:px-6 md:py-8">
-      
       <h2 className="text-xl md:text-2xl font-bold mb-4 text-center">
         🛒 Đơn hàng của bạn
       </h2>
@@ -243,15 +247,16 @@ const Payment = () => {
           {/* FORM BILL */}
           <Card title="Thông tin thanh toán" bordered={false}>
             <Form form={form} layout="vertical">
+              {/* Thông tin người đặt */}
               <Form.Item
-                label="Họ và Tên"
+                label="Họ và Tên (Người đặt)"
                 name="customerName"
                 rules={[{ required: true, message: "Vui lòng nhập họ tên!" }]}
               >
-                <Input placeholder="Nhập họ và tên" />
+                <Input placeholder="Nhập họ và tên người đặt" />
               </Form.Item>
               <Form.Item
-                label="Số điện thoại"
+                label="Số điện thoại (Người đặt)"
                 name="phoneNumber"
                 rules={[
                   { required: true, message: "Vui lòng nhập số điện thoại!" },
@@ -261,16 +266,16 @@ const Payment = () => {
                   },
                 ]}
               >
-                <Input placeholder="Nhập số điện thoại" />
+                <Input placeholder="Nhập số điện thoại người đặt" />
               </Form.Item>
               <Form.Item
-                label="Email"
+                label="Email (Người đặt)"
                 name="email"
                 rules={[
-                  { type: "email", message: "Email không hợp lệ!" }, // Kiểm tra định dạng email
+                  { required: true, type: "email", message: "Vui lòng nhập email" },
                 ]}
               >
-                <Input placeholder="Nhập email (không bắt buộc)" />
+                <Input placeholder="Nhập email người đặt" />
               </Form.Item>
               <Form.Item
                 label="Địa chỉ"
@@ -279,6 +284,38 @@ const Payment = () => {
               >
                 <Input placeholder="Nhập địa chỉ" />
               </Form.Item>
+
+              {/* Thông tin người nhận */}
+           
+              <Form.Item
+                label="Họ và Tên (Người nhận)"
+                name="receiverName"
+                rules={[{ required: false, message: "Vui lòng nhập họ tên người nhận!" }]} 
+              >
+                <Input placeholder="Nhập họ và tên người nhận" />
+              </Form.Item>
+              <Form.Item
+                label="Số điện thoại (Người nhận)"
+                name="receiverPhoneNumber"
+                rules={[
+                  { required: false, message: "Vui lòng nhập số điện thoại người nhận!" }, 
+                  {
+                    pattern: /^(0[3|5|7|8|9])([0-9]{8})$/,
+                    message: "Số điện thoại không hợp lệ!",
+                  },
+                ]}
+              >
+                <Input placeholder="Nhập số điện thoại người nhận" />
+              </Form.Item>
+              <Form.Item
+                label="Địa chỉ (Người nhận)"
+                name="receiverAddress"
+                rules={[{ required: false, message: "Vui lòng nhập địa chỉ người nhận!" }]} 
+              >
+                <Input placeholder="Nhập địa chỉ người nhận" />
+              </Form.Item>
+            </Form>
+            <Form>
               <Form.Item label="Ghi chú" name="note">
                 <Input.TextArea rows={3} placeholder="Nhập ghi chú (nếu có)" />
               </Form.Item>
@@ -291,7 +328,11 @@ const Payment = () => {
                 onChange={(e) => setDiscountCode(e.target.value)}
                 placeholder="Nhập mã giảm giá"
               />
-              <Button type="primary" onClick={applyDiscount}>
+              <Button
+                type="primary"
+                loading={loadingApplyVoucher}
+                onClick={applyDiscount}
+              >
                 Áp dụng
               </Button>
             </div>
@@ -337,7 +378,7 @@ const Payment = () => {
               <div className="flex justify-between">
                 <span>Giảm giá:</span>{" "}
                 <span className="text-red-500">
-                  -{voucher?.price?.toLocaleString()} đ
+                  - {(voucher?.voucherPrice || 0)?.toLocaleString()} đ
                 </span>
               </div>
               <div className="flex justify-between text-lg font-bold">
@@ -347,6 +388,21 @@ const Payment = () => {
                 </span>
               </div>
             </div>
+            <Form form={form} layout="vertical">
+              <Form.Item
+                label="Phương thức thanh toán"
+                name="paymentMethod"
+                rules={[{ required: true, message: "Vui lòng chọn phương thức thanh toán!" }]}
+              >
+                <Radio.Group
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  value={paymentMethod}
+                >
+                  <Radio value={PaymentMethod.COD}>Thanh toán COD</Radio>
+                  <Radio value={PaymentMethod.ONLINE}>Thanh toán Online</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Form>
 
             {/* NÚT THANH TOÁN */}
             <Button
