@@ -280,10 +280,6 @@ const UpdateProduct: React.FC = () => {
 
     const payload = {
       ...formData,
-<<<<<<< HEAD
-      productId:productId,
-=======
->>>>>>> a9bca3b99d94a1587f7c59610338b86ac9f82d21
       categoryId:
         formData?.categoryId && formData?.categoryId?.length > 0
           ? formData.categoryId[formData.categoryId.length - 1]
