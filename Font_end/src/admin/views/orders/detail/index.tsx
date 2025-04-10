@@ -8,6 +8,7 @@ import {
   OrderStatus,
   PaymentMethod,
   PaymentStatus,
+
 } from "@/utils/constants";
 import { IOrder, IProductOrder } from "@/types/interface";
 import { showToast } from "@/components/toast";
@@ -33,6 +34,7 @@ const OrderDetail: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [finalAmount, setFinalAmount] = useState<number>(0);
+
 
   useEffect(() => {
     if (orderCode) {
@@ -107,10 +109,12 @@ const OrderDetail: React.FC = () => {
         return (
           <div className="mt-2">
             <div
+
               className={`${!record?.priceSale
                 ? "text-red-600 text-xl font-bold ml-2"
                 : "text-gray-400 line-through text-sm"
                 }`}
+
             >
               {record?.priceRegular?.toLocaleString()} VND
             </div>
@@ -162,7 +166,6 @@ const OrderDetail: React.FC = () => {
 
   const onChangeData = <K extends keyof IOrder>(key: K, value: IOrder[K]) => {
     const data = cloneDeep(order) || ({} as IOrder);
-  
     // Nếu trạng thái là "CANCEL" hoặc "CANCEL CONFIRM", cố định trạng thái
     if (key === "status" && (value === OrderStatus.CANCEL || value === OrderStatus.CANCEL_CONFIRM)) {
       data[key] = value;
@@ -197,6 +200,7 @@ const OrderDetail: React.FC = () => {
     );
   };
 
+
   const handleUpdateOrder = async () => {
     try {
       setLoading(true);
@@ -210,6 +214,7 @@ const OrderDetail: React.FC = () => {
         setOriginOrder(cloneDeep(order)); // Lưu trạng thái hiện tại vào trạng thái đã lưu
         setIsEdit(false); // Đặt lại trạng thái chỉnh sửa
         navigate("/admin/orders");
+
       } else {
         showToast({
           content: "Lỗi khi cập nhật đơn hàng!",
@@ -240,7 +245,9 @@ const OrderDetail: React.FC = () => {
           <Button
             type="primary"
             disabled={!isEdit}
+
             onClick={() => { handleUpdateOrder() }} 
+
           >
             Lưu
           </Button>
@@ -314,6 +321,7 @@ const OrderDetail: React.FC = () => {
                 <Text strong>Trạng thái thanh toán:</Text>
                 <Select
                   placeholder="Trạng thái thanh toán"
+
                   className="!w-40"
                   value={order?.paymentStatus}
                   onChange={(value) => onChangeData("paymentStatus", value)}
@@ -340,6 +348,7 @@ const OrderDetail: React.FC = () => {
                     ),
                   }))}
                 />
+
               </div>
             </div>
             <div className="flex gap-4">
@@ -349,6 +358,7 @@ const OrderDetail: React.FC = () => {
                   ? dayjs(order?.orderTime).format(
                     EuropeanDatetimeMinuteFormatDayjs
                   )
+
                   : ""}
               </p>
             </div>

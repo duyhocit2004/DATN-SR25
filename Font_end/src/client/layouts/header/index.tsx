@@ -110,7 +110,9 @@ const Header: React.FC = () => {
             Đăng Nhập
           </Menu.Item>
           <Menu.Item key="register" onClick={() => navigate("/register")}>
-            Đăng Kí
+
+            Đăng Kí 
+
           </Menu.Item>
         </>
       )}
@@ -150,7 +152,9 @@ const Header: React.FC = () => {
         {/* Middle: Navigation (Hidden on small screens) */}
         <nav className="hidden md:flex space-x-6">
           <Link to="/" className="hover:text-blue-500">
-            Trang Chủ
+
+            Trang Chủ 
+
           </Link>
           {/* <Dropdown overlay={menuCategories} trigger={["hover"]}>
             <span className="hover:text-blue-500 cursor-pointer">Danh mục</span>
@@ -247,7 +251,8 @@ const Header: React.FC = () => {
             className="text-lg"
             onClick={() => setOpenDrawer(false)}
           >
-            Thông Tin Liên Hệ
+
+            Thông Tin Liên Hệ 
           </Link>
         </nav>
       </Drawer>

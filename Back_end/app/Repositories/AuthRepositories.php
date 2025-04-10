@@ -7,7 +7,9 @@ use App\Models\Color;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Support\Str;
+
 
 
 class AuthRepositories
@@ -135,5 +137,6 @@ class AuthRepositories
             'password' => Hash::make($newPassword),
         ]);
     }
+
 
 }

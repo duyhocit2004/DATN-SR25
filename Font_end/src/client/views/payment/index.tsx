@@ -144,7 +144,8 @@ const Payment = () => {
           duration: 5,
           type: "error",
         });
-      }      
+
+      }
     } finally {
       setLoadingApplyVoucher(false);
     }
@@ -182,20 +183,25 @@ const Payment = () => {
       
 
 
+
       const response = await orderApi.addOrder(payload);
+
       if (response?.status === HttpCodeString.SUCCESS) {
         if (paymentMethod === PaymentMethod.ONLINE && response.data.vnpayUrl) {
           window.location.href = response.data.vnpayUrl;
+
         } else if (paymentMethod === PaymentMethod.COD) {
           showToast({ content: "Đặt hàng thành công!", duration: 5, type: "success" });
           clearCart();
           navigate("/order-history");
+
         }
       } else {
         showToast({ content: "Đặt hàng thất bại!", duration: 5, type: "error" });
       }
     } catch { }
   };
+
 
   const clearCart = async () => {
     if (token) {

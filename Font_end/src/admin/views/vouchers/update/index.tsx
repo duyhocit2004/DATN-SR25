@@ -22,6 +22,7 @@ interface IVoucherForm {
 interface IProps {
   refreshData: () => void;
 }
+
 const UpdateVoucherModal: React.FC<IProps> = ({ refreshData }) => {
   const dispatch = useAppDispatch();
   const { selectedVoucher } = useAppSelector((state) => state.adminVoucher);
@@ -75,12 +76,15 @@ const UpdateVoucherModal: React.FC<IProps> = ({ refreshData }) => {
       code: currentVoucher.code,
       quantity: currentVoucher.quantity,
       used: currentVoucher.used,
+
       startDate: currentVoucher.startDate ? moment(currentVoucher.startDate) : null,
       endDate: currentVoucher.endDate ? moment(currentVoucher.endDate) : null,
+
       voucherPrice: currentVoucher.voucherPrice,
       description: currentVoucher.description || "",
     });
   };
+
   // Hàm cập nhật state & form
   const onChangeFormData = (key: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -98,11 +102,13 @@ const UpdateVoucherModal: React.FC<IProps> = ({ refreshData }) => {
   };
 
   const onSave = async () => {
+
     const payload = {
       ...formData,
       startDate: formData.startDate ? dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss") : null,
       endDate: formData.endDate ? dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss") : null,
     };
+
     setLoading(true);
     try {
       const response = await adminApi.updateVoucher(payload);
@@ -169,6 +175,7 @@ const UpdateVoucherModal: React.FC<IProps> = ({ refreshData }) => {
           />
         </Form.Item>
         <Form.Item
+
           label="Giá trị đơn tối thiểu"
           name="minOrderValue"
           rules={[{ required: true, message: "Vui lòng nhập giá trị tối thiểu" }]}
@@ -183,6 +190,7 @@ const UpdateVoucherModal: React.FC<IProps> = ({ refreshData }) => {
         </Form.Item>
 
         <Form.Item
+
           name="quantity"
           label="Số lượng"
           rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
@@ -197,7 +205,6 @@ const UpdateVoucherModal: React.FC<IProps> = ({ refreshData }) => {
             }}
           />
         </Form.Item>
-
         <Form.Item
           label="Ngày bắt đầu"
           name="startDate"
@@ -238,6 +245,7 @@ const UpdateVoucherModal: React.FC<IProps> = ({ refreshData }) => {
               return current && startDate && current < moment(startDate).startOf("day");
             }}
             onChange={(date) => onChangeFormData("endDate", date)}
+
           />
         </Form.Item>
 

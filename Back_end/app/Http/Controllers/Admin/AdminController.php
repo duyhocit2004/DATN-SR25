@@ -43,11 +43,15 @@ class AdminController extends Controller
         $products = $this->adminService->deleteVoucher($request);
         return BaseResponse::success($products);
     }
+<<<<<<< HEAD
     public function toggleStatus(Request $request)
     {
         $products = $this->adminService->toggleStatus($request);
         return BaseResponse::success($products);
     }
+=======
+
+>>>>>>> b62c8914cce30fcee537cbd2c8f16f8aab24b214
     public function addColor(Request $request)
     {
         $products = $this->adminService->addColor($request);

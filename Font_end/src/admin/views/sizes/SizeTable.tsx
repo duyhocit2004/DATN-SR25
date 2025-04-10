@@ -47,6 +47,7 @@ const SizeTable: React.FC = () => {
     //     );
     //   },
     // },
+
     {
       title: "Hành động",
       key: "action",

@@ -52,6 +52,7 @@ class OrderApi extends BaseApi<IOrder> {
       })
       .then((res) => res.data);
   };
+
   getVoucher = (payload: any): Promise<IResponseData<IVoucher>> => {
     return axiosClient
       .post(`${this.uri}/getVoucher`, payload)

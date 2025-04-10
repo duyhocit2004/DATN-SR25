@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Form, Input, Button, message, Spin } from "antd";
 import axiosClient from "@/configs/axiosClient";
@@ -10,7 +11,7 @@ const ForgotPassword: React.FC = () => {
         setLoading(true);
         try {
             // const response = await axiosClient.post("/api/password/email", values);
-            message.success("Liên kết đặt lại mật khẩu đã được gửi!");cd
+            message.success("Liên kết đặt lại mật khẩu đã được gửi!");
         } catch (error) {
             message.error("Đã xảy ra lỗi, vui lòng thử lại!");
         } finally {

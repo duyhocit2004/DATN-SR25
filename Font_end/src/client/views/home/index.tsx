@@ -77,6 +77,7 @@ const Home = () => {
           .sort((a, b) => Number(b.discount) - Number(a.discount))
           .slice(0, 8);
         console.log("Dữ liệu sau khi sắp xếp:", sortedProducts);
+
         setTopDiscountedProducts(response.data);
       } else {
         setTopDiscountedProducts([]);
@@ -121,7 +122,6 @@ const Home = () => {
         className="main-slide h-[500px]"
         autoplay
         autoplaySpeed={3000}
-      // arrows
       >
         {banners?.main?.map((e: IBanner, index: number) => {
           return (

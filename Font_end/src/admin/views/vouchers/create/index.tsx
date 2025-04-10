@@ -17,12 +17,15 @@ interface IVoucherForm {
   endDate: Date | null;
   description: string;
   minOrderValue: string| null;
+
 }
 
 interface IProps {
   refreshData: () => void;
 }
+
 const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
+
   const dispatch = useAppDispatch();
   const [form] = Form.useForm(); // Khởi tạo form
   const [formData, setFormData] = useState<IVoucherForm>({
@@ -37,6 +40,7 @@ const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+
   const resetForm = () => {
     setFormData({
       voucherCode: "",
@@ -50,12 +54,11 @@ const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
     form.resetFields(); // Reset form
   };
 
+
   const onChangeFormData = (key: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
     form.setFieldsValue({ [key]: value });
   };
-
-
 
   const onSave = async () => {
     const payload = {
@@ -76,6 +79,7 @@ const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
       return;
     }
 
+
     setLoading(true);
     try {
       const response = await adminApi.addVoucher(payload);
@@ -88,7 +92,9 @@ const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
           duration: 5,
           type: "success",
         });
+
         navigate("/admin/vouchers");
+
       } else {
         showToast({
           content: "Thêm voucher thất bại!",
@@ -100,8 +106,6 @@ const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
       setLoading(false);
     }
   };
-
-
   const onClose = () => {
     dispatch(setShowAddModal(false));
   };
@@ -157,6 +161,7 @@ const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
         </Form.Item>
 
         <Form.Item
+
           name="quantity"
           label="Số lượng"
           rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
@@ -217,6 +222,7 @@ const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
           />
         </Form.Item>
 
+
         {/* Nhập mô tả */}
         <Form.Item label="Mô tả" name="description">
           <Input.TextArea
@@ -230,7 +236,9 @@ const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
         {/* Nút hành động */}
         <div className="flex justify-end gap-2">
           <Button onClick={onClose}>Hủy</Button>
+
           <Button type="primary" loading={loading} onClick={onSave}>
+
             Lưu
           </Button>
         </div>

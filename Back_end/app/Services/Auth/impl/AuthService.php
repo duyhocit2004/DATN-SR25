@@ -3,6 +3,7 @@
 namespace App\Services\Auth\impl;
 
 use App\Helpers\BaseResponse;
+
 use App\Models\User;
 use App\Repositories\AuthRepositories;
 use App\Services\Auth\IAuthService;
@@ -24,7 +25,9 @@ class AuthService implements IAuthService
     protected $cloudinary;
 
     public function __construct(AuthRepositories $authRepositories,
+
                                 Cloudinary       $cloudinary)
+
     {
         $this->authRepositories = $authRepositories;
         $this->cloudinary = $cloudinary;
@@ -152,7 +155,9 @@ class AuthService implements IAuthService
     public function getUser(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
+
         if (empty($user) ) {
+
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
@@ -185,7 +190,10 @@ class AuthService implements IAuthService
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
 
+
         if ($userId != $request->input('id')) {
+
+
             BaseResponse::failure(401, 'unauthorized', 'unauthorized', []);
         }
 

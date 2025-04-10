@@ -22,14 +22,17 @@ class VoucherRepositories
         if ($voucher) {
             return BaseResponse::failure('400', 'voucher is exist', 'voucher.is.exist', []);
         }
+
         $voucher = Voucher::create([
             'quantity' => $request->input('quantity'),
             'code' => $request->input('voucherCode'),
             'voucher_price' => $request->input('voucherPrice'),
+
             'start_date' => $request->input('startDate'),
             'end_date' => $request->input('endDate'),
             'min_order_value' => $request->input('min_order_value', 0),
             'status' => 'INACTIVE',
+
             'used' => 0,
         ]);
 
@@ -38,6 +41,7 @@ class VoucherRepositories
 
     public function updateVoucher(Request $request)
     {
+
         $voucher = Voucher::find($request->input('id'));
 
         if (!$voucher) {
@@ -46,6 +50,7 @@ class VoucherRepositories
 
         $voucher->update([
             'code' => $request->input('code', $voucher->code),
+
             'quantity' => $request->input('quantity', $voucher->quantity),
             'used' => $request->input('used', $voucher->used),
             'voucher_price' => $request->input('voucherPrice', $voucher->voucher_price),
@@ -53,6 +58,7 @@ class VoucherRepositories
             'end_date' => $request->input('endDate', $voucher->end_date),
             'status' => $request->input('status', $voucher->status),
             'min_order_value' => $request->input('min_order_value', 0),
+
         ]);
 
         return $voucher;
@@ -99,6 +105,7 @@ class VoucherRepositories
         return count($expiredVouchers);
     }
 
+
     public function getAllVoucher(Request $request)
     {
         $status = $request->input('status');
@@ -108,6 +115,7 @@ class VoucherRepositories
         $voucherPrice = $request->input('voucherPrice');
         $startDate = $request->input(key: 'startDate');
         $endDate = $request->input('endDate');
+
         $perPage = $request->input('pageSize', 10);
         $page = $request->input('pageNum', 1);
 
@@ -127,6 +135,7 @@ class VoucherRepositories
         if (!empty($voucherPrice)) {
             $query->where('voucher_price', '=', $voucherPrice);
         }
+
         if (!empty($startDate)) {
             $query->whereDate('start_date', '>=', $startDate);
         }
@@ -134,13 +143,14 @@ class VoucherRepositories
             $query->whereDate('end_date', '<=', $endDate);
         }
 
+
         $users = $query->paginate($perPage, ['*'], 'page', $page);
         return $users;
     }
-
     public function findByCode(string $code)
     {
         return Voucher::where('code', $code)->first();
     }
+
 
 }

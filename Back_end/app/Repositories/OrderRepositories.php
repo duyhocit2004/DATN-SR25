@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 class OrderRepositories
 {
 
+
     public function addOrder(array $data)
     {
         try {
@@ -24,11 +25,13 @@ class OrderRepositories
             $totalAmount = 0;
             $voucherAmount = 0;
 
+
             foreach ($products as $product) {
                 $productReal = Product::where('id', $product['productId'])->first();
                 $productVariant = ProductVariant::where('product_id', $product['productId'])->first();
                 if (!empty($productReal) && !empty($productVariant)) {
                     if ($productVariant['quantity'] < $product['quantity']) {
+
                         return BaseResponse::failure('400', 'quantity is less than order quantity', 'quantity.is.less.than.order.quantity', []);
                     }
                     if (!empty($productReal['price_sale'])) {
@@ -40,6 +43,7 @@ class OrderRepositories
                     BaseResponse::failure('400', 'Product not found', 'product.not.found', []);
                 }
             }
+
 
             // if (!empty($data['voucher'])) {
             //     $voucher = Voucher::where('code', $data['voucher'])->first();
@@ -68,12 +72,15 @@ class OrderRepositories
                     $totalAmount -= $voucherAmount;
                 } else {
                     return BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
+
+
                 }
             }
 
             if ($totalAmount < 0) {
                 $totalAmount = 0;
             }
+
 
             DB::beginTransaction();
 
@@ -98,6 +105,7 @@ class OrderRepositories
 
             // Xử lý sản phẩm trong đơn hàng
             foreach ($data['products'] as $product) {
+
                 $productReal = Product::where('id', $product['productId'])->first();
                 OrderDetail::create([
                     'order_id' => $order->id,
@@ -111,13 +119,14 @@ class OrderRepositories
                     'quantity_order' => $product['quantity'],
                     'product_id' => $product['productId'],
                 ]);
-            }
+          }
 
             DB::commit();
             return $order;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
+
         }
     }
 
@@ -150,7 +159,6 @@ class OrderRepositories
         if (!empty($sortType)) {
             $query->orderByRaw('IFNULL(date, status) ' . $sortType);
         }
-
         if (!empty($paymentStatus)) {
             $query->where('payment_status', '=', $paymentStatus);
         }
@@ -158,6 +166,7 @@ class OrderRepositories
         if (!empty($paymentMethod)) {
             $query->where('payment_method', '=', $paymentMethod);
         }
+
         $orders = $query->get();
         return $orders;
 
@@ -178,8 +187,10 @@ class OrderRepositories
 
         $query = Order::with(['order_details']);
         if (!empty($status)) {
+
             $statuses = is_array($status) ? $status : explode(',', $status);
             $query->whereIn('status', $statuses);
+
         }
         if (!empty($phoneNumber)) {
             $query->where('phone_number', '=', $phoneNumber);
@@ -193,12 +204,14 @@ class OrderRepositories
         if (!empty($toDate)) {
             $query->where('date', '<=', $toDate);
         }
+
         if (!empty($paymentStatus)) {
             $query->where('payment_status', '=', $paymentStatus);
         }
         if (!empty($paymentMethod)) {
             $query->where('payment_method', '=', $paymentMethod);
         }
+
         if (!empty($sortType)) {
             $query->orderByRaw('IFNULL(date, status) ' . $sortType);
         }
@@ -280,4 +293,5 @@ class OrderRepositories
         \Log::info('Cập nhật trạng thái hoàn tiền thành công cho orderId:', ['orderId' => $orderId]);
         return $order;
     }
+
 }

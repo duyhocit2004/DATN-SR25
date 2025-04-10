@@ -13,10 +13,12 @@ class OrderController extends Controller
     public IOrderService $orderService;
     public IVnpayService $vnpayService;
 
+
     public function __construct(
         IOrderService $orderService,
         IVnpayService $vnpayService
     ) {
+
         $this->orderService = $orderService;
         $this->vnpayService = $vnpayService;
     }
@@ -25,8 +27,10 @@ class OrderController extends Controller
     {
         $order = $this->orderService->addOrder($request);
         $paymentUrl = null;
+
         if (!empty($order)) {
             $paymentUrl = $this->vnpayService->createPaymentUrl($order->code, $order->total_price);
+
         }
 
         return BaseResponse::success([
@@ -56,6 +60,7 @@ class OrderController extends Controller
         $products = $this->orderService->updateOrder($request);
         return BaseResponse::success($products);
     }
+
     public function deleteOrder(Request $request)
     {
         $products = $this->orderService->deleteOrder($request);
@@ -76,6 +81,7 @@ class OrderController extends Controller
             return BaseResponse::failure(400, $e->getMessage(), 'refund.failed', []);
         }
     }
+
 
     public function getVoucher(Request $request)
     {

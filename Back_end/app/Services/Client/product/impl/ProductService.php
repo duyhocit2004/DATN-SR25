@@ -25,6 +25,7 @@ class ProductService implements IProductService
     public WishListRepositories $wishListRepositories;
     public CommentRepositories $commentRepositories;
 
+
     public function __construct(
         ProductRepositories $productRepositories,
         VariantRepositories $variantRepositories,
@@ -33,6 +34,7 @@ class ProductService implements IProductService
         WishListRepositories $wishListRepositories,
         CommentRepositories $commentRepositories
     ) {
+
         $this->productRepositories = $productRepositories;
         $this->variantRepositories = $variantRepositories;
         $this->colorRepositories = $colorRepositories;
@@ -52,7 +54,7 @@ class ProductService implements IProductService
                 'categoriesName' => $product->category ? $product->category->name : null,
                 'name' => $product->name,
                 "image" => $product->image,
-                //                'listImage' => $product->image_products->isEmpty() ? [] : $product->image_products->pluck('image_link'),
+                //'listImage' => $product->image_products->isEmpty() ? [] : $product->image_products->pluck('image_link'),
                 'priceRegular' => $product->price_regular,
                 'priceSale' => $product->price_sale,
                 'description' => $product->description,

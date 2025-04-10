@@ -13,6 +13,5 @@ interface IOrderService
     public function updateOrder(Request $request);
     public function deleteOrder(Request $request);
     public function refundOrder(Request $request);
-    public function getVoucher(Request $request);
 
 }

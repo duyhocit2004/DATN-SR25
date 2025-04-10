@@ -1,0 +1,976 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1202e35c-a4ae-44af-bb9b-355cf922d453" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/.env" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/TymonJWTAuthMiddlewareAuthenticate::class," beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Admin/AdminController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Admin/AdminController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/AuthController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/AuthController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/CartController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/CartController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/HomeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/HomeController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/OrderController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/OrderController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/ProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Client/ProductController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Common/CommonController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Http/Controllers/Common/CommonController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Http/Controllers/VNPayController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Http/Controllers/VNPayController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Models/Order.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Models/Order.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Models/OrderDetail.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Models/OrderDetail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/AuthRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/AuthRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/BannersRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/BannersRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/CartRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/CartRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/CategoriesRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/CategoriesRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/ColorRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/ColorRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/CommentRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/CommentRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/OrderRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/OrderRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/ProductRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/ProductRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/SizeRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/SizeRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/VoucherRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/VoucherRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Repositories/WishListRepositories.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Repositories/WishListRepositories.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Admin/IAdminService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Admin/IAdminService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Admin/impl/AdminService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Admin/impl/AdminService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Admin/product/IAdminProductService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Admin/product/IAdminProductService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Admin/product/impl/AdminProductService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Admin/product/impl/AdminProductService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Auth/IAuthService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Auth/IAuthService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Auth/impl/AuthService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Auth/impl/AuthService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/cart/ICartService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/cart/ICartService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/cart/impl/CartService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/cart/impl/CartService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/categories/CategoryService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/categories/CategoryService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/order/IOrderService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/order/IOrderService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/order/impl/OrderService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/order/impl/OrderService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/product/IHomeService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/product/IHomeService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/product/IProductService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/product/IProductService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/product/impl/HomeService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/product/impl/HomeService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/product/impl/ProductService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/product/impl/ProductService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/Client/size/sizeService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/Client/size/sizeService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/VnPay/IVnpayService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/VnPay/IVnpayService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/app/Services/VnPay/impl/VnpayService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/app/Services/VnPay/impl/VnpayService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/config/cors.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/config/cors.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/database/seeders/OrderDetailSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/database/seeders/OrderDetailSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back_end/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/Back_end/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/about.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/css/bootstrap.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/css/demo1.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/css/demo3.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/css/demo4.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/css/style.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/css/style.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/fonts/porto6e1d.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/fonts/porto6e1d.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/fonts/porto6e1d.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/fonts/porto6e1d.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/fonts/porto6e1d.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/banners/banner-fashion-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/banners/banner-fashion-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/banners/banner-sidebar-bg.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/banners/banner-sidebar.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/banners/banner-top.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/blog/author.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/blog/home/post-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/blog/home/post-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/blog/home/post-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/blog/home/post-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/blog/post-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/blog/related/post-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/blog/related/post-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/blog/related/post-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/blog/widget/post-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/blog/widget/post-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/brands/brand1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/brands/brand2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/brands/brand3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/brands/brand4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/brands/brand5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/brands/brand6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/brands/small/brand1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/brands/small/brand2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/brands/small/brand3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/brands/small/brand4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/brands/small/brand5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/brands/small/brand6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/bulb.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/category-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/category-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/category-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/category-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/category-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/category-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/category-7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/category-8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/category-9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/category-electronics-cat.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/category-fashion-cat.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/category-sports-cat.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/head_phone.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/laptop.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/smart_phone.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/categories/smart_watch.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/clients/client-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/clients/client-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/clients/client-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/clients/client1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/clients/client2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/banners/banner-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/banners/banner-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/banners/banner-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/banners/banner-7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/banners/banner-8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/product-1-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/product-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/product-3-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/product-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/product-4-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/product-5-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-10-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-10.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-11-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-11.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-4-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-5-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-6-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-7-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-8-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-9-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/products/small/product-9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/slider/slide-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/slider/slide-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo1/slider/slide-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/banners/banner-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/banners/banner-sidebar.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/banners/home-banner1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/banners/home-banner2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/banners/home-banner3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/banners/home-banner4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/categories/category-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/categories/category-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/categories/category-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/categories/category-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/categories/category-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/categories/category-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-10.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-11.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-12-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-12.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-2-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-4-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-6-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-8-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-9-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/product-9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/small/product-15-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/small/product-15.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/small/product-16-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/small/product-16.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/small/product-17-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/small/product-17.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/small/product-18-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/small/product-18.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/small/product-4-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/small/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/products/small/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/slider/slide1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo3/slider/slide2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/banners/banner-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/banners/banner-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/banners/banner-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/banners/banner-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/banners/banner-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/products/categories/category-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/products/categories/category-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/products/categories/category-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/products/categories/category-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/products/categories/category-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/products/categories/category-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/slider/slide-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/demoes/demo4/slider/slide-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/effects/s1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/effects/s2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/effects/s3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/effects/sparkle1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/effects/sparkle2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/alert/alert.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/alert/close.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/alert/exclamation.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/alert/info.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/alert/tick.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/banners/banner-effect.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/banners/home_slide1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/banners/home_slide2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/banners/icon1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/banners/slide1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/banners/slide2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/banners/slide3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/device.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/info-box/history-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/info-box/history-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/info-box/history-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/page-header.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/post/type2/post-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/post/type2/post-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/post/type2/post-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/post/type3/post-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/post/type3/post-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/post/type3/post-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/post/type4/1-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/post/type4/1-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/post/type4/2-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/post/type4/2-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/testimonial/client-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/testimonial/client1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/elements/testimonial/parallax.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/flags.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/icons/favicon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/lazy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/logo-black.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/logo-footer.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/menu-banner-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/menu-banner.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/newsletter_popup_bg.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/page-header-bg.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/payments/payment-paypal.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/payments/payment-stripe.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/payments/payment-verisign.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/payments/payment-visa.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/phone.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/grid/product-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/grid/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/grid/product-3-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/grid/product-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/grid/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-1-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-10-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-10.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-11-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-11.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-12-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-12.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-13.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-14.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-15.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-16.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-17.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-18.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-19.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-2-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-20.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-21.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-22.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-23.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-24.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-25.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-3-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-4-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-5-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-6-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-7-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-8-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-9-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/product-9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/single/body-shape.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/single/product-img.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-1-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-10-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-10.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-11-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-11.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-12-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-12.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-2-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-3-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-4-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-5-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-6-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-7-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-8-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-9-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/small/product-9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/zoom/product-1-big.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/zoom/product-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/zoom/product-2-big.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/zoom/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/zoom/product-3-big.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/zoom/product-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/zoom/product-4-big.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/zoom/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/zoom/product-5-big.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/images/products/zoom/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/bootstrap.bundle.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/jquery.appear.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/jquery.countdown.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/jquery.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/jquery.plugin.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/main.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/map.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/nouislider.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/optional/isotope.pkgd.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/plugins.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/plugins/jquery-numerator.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/plugins/jquery.countTo.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/js/webfont.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/css/all.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-brands-400.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-brands-400.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-brands-400.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-brands-400.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-brands-400.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-brands-400d41d.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-regular-400.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-regular-400.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-regular-400.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-regular-400.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-regular-400.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-regular-400d41d.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-solid-900.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-solid-900.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-solid-900.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-solid-900.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-solid-900.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/fontawesome-free/webfonts/fa-solid-900d41d.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/simple-line-icons/css/simple-line-icons.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/simple-line-icons/fonts/Simple-Line-Iconsec97.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/simple-line-icons/fonts/Simple-Line-Iconsec97.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/simple-line-icons/fonts/Simple-Line-Iconsec97.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/assets/vendor/simple-line-icons/fonts/Simple-Line-Iconsec97.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/blog.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/cart.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/category.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/checkout.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/contact.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/dashboard.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/element-product-categories.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/element-products.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/forgot-password.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/login.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/product-variable.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/product.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/single.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/GiaoDien/wishlist.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/assets/css/bootstrap.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/assets/css/demo1.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/assets/css/demo3.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/assets/css/demo4.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/assets/css/style.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/assets/css/style.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/assets/images/logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/eslint.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/eslint.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/banners/banner-fashion-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/banners/banner-fashion-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/banners/banner-sidebar-bg.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/banners/banner-sidebar.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/banners/banner-top.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/blog/author.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/blog/home/post-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/blog/home/post-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/blog/home/post-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/blog/home/post-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/blog/post-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/blog/related/post-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/blog/related/post-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/blog/related/post-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/blog/widget/post-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/blog/widget/post-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/brands/brand1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/brands/brand2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/brands/brand3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/brands/brand4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/brands/brand5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/brands/brand6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/brands/small/brand1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/brands/small/brand2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/brands/small/brand3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/brands/small/brand4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/brands/small/brand5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/brands/small/brand6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/bulb.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/category-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/category-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/category-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/category-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/category-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/category-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/category-7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/category-8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/category-9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/category-electronics-cat.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/category-fashion-cat.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/category-sports-cat.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/head_phone.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/laptop.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/smart_phone.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/categories/smart_watch.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/clients/client-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/clients/client-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/clients/client-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/clients/client1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/clients/client2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/banners/banner-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/banners/banner-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/banners/banner-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/banners/banner-7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/banners/banner-8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/product-1-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/product-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/product-3-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/product-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/product-4-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/product-5-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-10-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-10.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-11-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-11.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-4-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-5-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-6-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-7-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-8-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-9-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/products/small/product-9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/slider/slide-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/slider/slide-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo1/slider/slide-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/banners/banner-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/banners/banner-sidebar.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/banners/home-banner1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/banners/home-banner2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/banners/home-banner3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/banners/home-banner4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/categories/category-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/categories/category-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/categories/category-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/categories/category-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/categories/category-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/categories/category-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-10.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-11.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-12-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-12.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-2-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-4-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-6-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-8-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-9-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/product-9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/small/product-15-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/small/product-15.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/small/product-16-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/small/product-16.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/small/product-17-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/small/product-17.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/small/product-18-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/small/product-18.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/small/product-4-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/small/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/products/small/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/slider/slide1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo3/slider/slide2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/banners/banner-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/banners/banner-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/banners/banner-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/banners/banner-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/banners/banner-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/products/categories/category-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/products/categories/category-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/products/categories/category-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/products/categories/category-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/products/categories/category-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/products/categories/category-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/slider/slide-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/demoes/demo4/slider/slide-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/effects/s1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/effects/s2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/effects/s3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/effects/sparkle1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/effects/sparkle2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/alert/alert.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/alert/close.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/alert/exclamation.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/alert/info.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/alert/tick.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/banners/banner-effect.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/banners/home_slide1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/banners/home_slide2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/banners/icon1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/banners/slide1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/banners/slide2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/banners/slide3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/device.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/info-box/history-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/info-box/history-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/info-box/history-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/page-header.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/post/type2/post-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/post/type2/post-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/post/type2/post-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/post/type3/post-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/post/type3/post-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/post/type3/post-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/post/type4/1-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/post/type4/1-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/post/type4/2-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/post/type4/2-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/testimonial/client-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/testimonial/client1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/elements/testimonial/parallax.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/flags.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/icons/favicon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/lazy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/logo-black.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/logo-footer.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/menu-banner-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/menu-banner.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/newsletter_popup_bg.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/page-header-bg.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/payments/payment-paypal.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/payments/payment-stripe.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/payments/payment-verisign.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/payments/payment-visa.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/phone.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/grid/product-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/grid/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/grid/product-3-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/grid/product-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/grid/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-1-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-10-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-10.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-11-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-11.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-12-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-12.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-13.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-14.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-15.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-16.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-17.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-18.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-19.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-2-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-20.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-21.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-22.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-23.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-24.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-25.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-3-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-4-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-5-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-6-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-7-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-8-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-9-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/product-9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/single/body-shape.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/single/product-img.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-1-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-10-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-10.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-11-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-11.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-12-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-12.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-2-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-3-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-4-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-5-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-6-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-7-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-8-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-9-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/small/product-9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/zoom/product-1-big.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/zoom/product-1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/zoom/product-2-big.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/zoom/product-2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/zoom/product-3-big.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/zoom/product-3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/zoom/product-4-big.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/zoom/product-4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/zoom/product-5-big.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/public/assets/images/products/zoom/product-5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/layouts/components/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/layouts/components/Sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/layouts/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/layouts/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/accounts/AccountFilter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/accounts/AccountFilter.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/accounts/AccountTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/accounts/AccountTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/accounts/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/accounts/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/auth/login.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/auth/register.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/banners/BannerTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/banners/BannerTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/categories/CategoryFilter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/categories/CategoryFilter.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/categories/CategoryTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/categories/CategoryTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/dashboard/DashboardChart copy.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/dashboard/DashboardChart.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/dashboard/DashboardChart.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/dashboard/DashboardTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/dashboard/DashboardTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/orders/OrderFilter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/orders/OrderFilter.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/orders/OrderTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/orders/OrderTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/orders/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/orders/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/sizes/SizeTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/sizes/SizeTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/admin/views/vouchers/VoucherTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/admin/views/vouchers/VoucherTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/api/adminApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/api/adminApi.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/api/baseApi copy.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/api/orderApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/api/orderApi.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/api/productApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/api/productApi.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/api/userApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/api/userApi.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/auth/UserAvatar.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/auth/login.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/auth/register.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/auth/useAuth.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/css/client.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/css/listproduct.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/home/listproduct.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/home/productList.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/product/ProductCard.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/product/RelatedProducts.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/profile/user.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/auth/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/auth/Login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/auth/Register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/auth/Register.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/cart/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/cart/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/contact/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/contact/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/home/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/home/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/my-account/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/my-account/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/order-history/CheckPhoneNumber.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/order-history/CheckPhoneNumber.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/order-history/ListOrder.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/order-history/ListOrder.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/order-history/OrderFilter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/order-history/OrderFilter.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/order-history/OrderTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/order-history/OrderTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/order-history/detail/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/order-history/detail/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/payment/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/payment/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/product/components/FilterProduct.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/product/components/FilterProduct.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/product/detail/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/product/detail/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/client/views/product/list/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/client/views/product/list/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/configs/axiosClient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/configs/axiosClient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/configs/icons/ic-heart-fill.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/configs/icons/ic-heart-outline.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/configs/icons/ic-notify-close.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/configs/icons/ic-notify-error.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/configs/icons/ic-notify-info.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/configs/icons/ic-notify-success.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/configs/icons/ic-notify-warning.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/configs/react.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/context/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/context/AuthContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/layout/header.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/main.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/pages/NotFound.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/src/pages/NotFound.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/router/routes.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/service/auth/authService.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/service/auth/user.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/service/auth/userservice.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/service/cart/cartService.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/service/category/categoriesService.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/service/color/colorService.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/service/orders/data.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/service/orders/orderService.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/service/orders/orderStatus.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/service/products/productService.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/service/size/sizeService.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/src/service/voucher/voucherService.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/Font_end/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Font_end/vite.config.js" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/Back_end/composer.json</pharConfigPath>
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PhpDebugGeneral" listening_started="true" />
+  <component name="PhpServers">
+    <servers>
+      <server host="localhost" id="6a332924-2530-4bf9-9dfb-75642ab37f74" name="localhost" port="8000" />
+    </servers>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="php">
+    <include_path>
+      <path value="$PROJECT_DIR$/Back_end/vendor/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/defuse/php-encryption" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/filp/whoops" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/dragonmantank/cron-expression" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/carbonphp/carbon-doctrine-types" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/graham-campbell/result-type" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/nette/utils" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/nette/schema" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/fakerphp/faker" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/tijsverkoyen/css-to-inline-styles" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/spatie/flare-client-php" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/phpunit/php-invoker" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/spatie/backtrace" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/spatie/error-solutions" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/spatie/ignition" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/spatie/laravel-ignition" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/complexity" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/uid" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/tymon/jwt-auth" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/mailer" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/lines-of-code" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/type" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/polyfill-uuid" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/cli-parser" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/css-selector" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/code-unit" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/polyfill-php83" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/fruitcake/php-cors" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/psr-http-message-bridge" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/mime" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/cloudinary/transformation-builder-sdk" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/cloudinary/cloudinary_php" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/error-handler" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/nunomaduro/termwind" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/nunomaduro/collision" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/psr/event-dispatcher" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/voku/portable-ascii" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/egulias/email-validator" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/psr/clock" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/lcobucci/jwt" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/lcobucci/clock" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/composer" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/krlove/eloquent-model-generator" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/krlove/code-generator" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/dflydev/dot-access-data" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/league/mime-type-detection" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/league/flysystem-local" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/league/config" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/nyholm/psr7" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/league/flysystem" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/league/oauth2-server" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/league/uri-interfaces" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/league/uri" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/league/event" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/league/commonmark" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/phpoption/phpoption" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/cloudinary-labs/cloudinary-laravel" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/reliese/laravel" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/nesbot/carbon" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/doctrine/event-manager" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/doctrine/deprecations" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/brick/math" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/guzzlehttp/uri-template" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/laravel/pint" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/laravel/tinker" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/psy/psysh" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/laravel/framework" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/laravel/passport" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/laravel/serializable-closure" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/laravel/sanctum" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/laravel/sail" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/laravel/prompts" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/ramsey/collection" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/ramsey/uuid" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/firebase/php-jwt" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/ratchet/rfc6455" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/cboden/ratchet" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/evenement/evenement" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/pusher/pusher-php-server" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/fig/http-message-util" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/facade/ignition-contracts" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/react/event-loop" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/react/stream" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/react/cache" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/react/promise" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/react/http" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/react/socket" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/react/dns" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/beyondcode/laravel-websockets" />
+      <path value="$PROJECT_DIR$/Back_end/vendor/paragonie/sodium_compat" />
+    </include_path>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2uUt3LQvGoZG9tzzrHf9CSyAV26" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "duy/develop",
+    "last_opened_file_path": "/Users/thachvh/Ncb/SourceCode/DATN-SR25",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="Main" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner configuration_file="$PROJECT_DIR$/Back_end/phpunit.xml" scope="XML" use_alternative_configuration_file="true" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PS-243.25659.45" />
+        <option value="bundled-php-predefined-a98d8de5180a-1ec7b7818973-com.jetbrains.php.sharedIndexes-PS-243.25659.45" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1202e35c-a4ae-44af-bb9b-355cf922d453" name="Changes" comment="" />
+      <created>1742314780162</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1742314780162</updated>
+      <workItem from="1742314781253" duration="1179000" />
+      <workItem from="1742316348239" duration="22642000" />
+      <workItem from="1743134442145" duration="5745000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
