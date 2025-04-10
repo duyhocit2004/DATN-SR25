@@ -39,6 +39,7 @@ class OrderService implements IOrderService
             'paymentMethod' => 'required|string',
             'products' => 'required|array',
             'voucher' => 'nullable|string',
+            'voucherPrice' => 'nullable|numeric',
         ]);
 
         // Gán giá trị mặc định nếu không có voucher

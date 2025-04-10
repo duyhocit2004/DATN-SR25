@@ -400,7 +400,7 @@ const AddProduct: React.FC = () => {
                     className="!w-36"
                     placeholder="Nhập giảm giá"
                     min={0}
-                    max={99}
+                    max={50}
                     onChange={(value) => {
                       onChangeProductInfo("discount", value);
                     }}

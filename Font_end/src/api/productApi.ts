@@ -49,6 +49,7 @@ class ProductApi extends BaseApi<IProduct> {
       .post(`${this.uri}/getProduct`, { productId: productId })
       .then((res) => res.data);
   };
+
   getProductVariant = (
     productId: number
   ): Promise<IResponseData<IProductDetail>> => {

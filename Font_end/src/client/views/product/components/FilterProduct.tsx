@@ -71,7 +71,7 @@ const FilterProduct = ({
                 <Slider
                   range
                   min={0}
-                  max={100000000}
+                  max={1000000}
                   step={10000}
                   defaultValue={priceRange}
                   onChange={(values) =>

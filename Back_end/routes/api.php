@@ -145,6 +145,7 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/addVoucher', [AdminController::class, 'addVoucher']);
             Route::post('/updateVoucher', [AdminController::class, 'updateVoucher']);
             Route::post('/deleteVoucher', [AdminController::class, 'deleteVoucher']);
+            Route::post('/toggleStatus', [AdminController::class, 'toggleStatus']);
         });
 
         Route::prefix('banners')->group(function () {

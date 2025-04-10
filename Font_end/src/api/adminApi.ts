@@ -133,6 +133,11 @@ class AdminApi extends BaseApi<{ data: any }> {
       .post(`${this.uri}/vouchers/updateVoucher `, payload)
       .then((res) => res.data);
   };
+  toggleStatus = (payload: any): Promise<IResponseData<IVoucher>> => {
+    return axiosClient
+      .post(`${this.uri}/vouchers/toggleStatus `, payload)
+      .then((res) => res.data);
+  };
   getOrdersPaging = (
     payload: any
   ): Promise<IResponseData<IDataPaging<IOrder[]>>> => {

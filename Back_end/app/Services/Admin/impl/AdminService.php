@@ -124,6 +124,17 @@ class AdminService implements IAdminService
         $voucher = $this->voucherRepositories->deleteVoucher($request);
         return $voucher;
     }
+    public function toggleStatus(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $voucher = $this->voucherRepositories->toggleStatus($request);
+        return $voucher;
+    }
 
     public function addColor(Request $request)
     {

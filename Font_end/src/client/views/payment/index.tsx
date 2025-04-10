@@ -130,9 +130,8 @@ const Payment = () => {
       const payload = {
         voucherCode: discountCode,
       };
-
       const response = await orderApi.getVoucher(payload);
-      if (response?.status === HttpCodeString.SUCCESS) {
+      if (response?.status === HttpCodeString.SUCCESS && response.data.status === "ACTIVE") {
         setVoucher(response.data);
         showToast({
           content: "Áp dụng voucher thành công!",
@@ -141,11 +140,11 @@ const Payment = () => {
         });
       } else {
         showToast({
-          content: "Áp dụng voucher thất bại!",
+          content: "Voucher không hợp lệ hoặc không đạt giá trị tối thiểu !",
           duration: 5,
           type: "error",
         });
-      }
+      }      
     } finally {
       setLoadingApplyVoucher(false);
     }
@@ -172,7 +171,7 @@ const Payment = () => {
         receiverName: form.getFieldValue("receiverName"),
         receiverPhoneNumber: form.getFieldValue("receiverPhoneNumber"),
         receiverAddress: form.getFieldValue("receiverAddress"),
-        totalAmount: totalAmount,
+        totalAmount: finalAmount,
         voucher: voucher?.code,
         voucherPrice: voucher?.voucherPrice,
         shippingAddress: form.getFieldValue("shippingAddress"),
@@ -180,16 +179,17 @@ const Payment = () => {
         products: products,
         paymentMethod: paymentMethod,
       };
+      
+
 
       const response = await orderApi.addOrder(payload);
-
       if (response?.status === HttpCodeString.SUCCESS) {
         if (paymentMethod === PaymentMethod.ONLINE && response.data.vnpayUrl) {
           window.location.href = response.data.vnpayUrl;
         } else if (paymentMethod === PaymentMethod.COD) {
           showToast({ content: "Đặt hàng thành công!", duration: 5, type: "success" });
           clearCart();
-          navigate("/");
+          navigate("/order-history");
         }
       } else {
         showToast({ content: "Đặt hàng thất bại!", duration: 5, type: "error" });
@@ -314,8 +314,6 @@ const Payment = () => {
               >
                 <Input placeholder="Nhập địa chỉ người nhận" />
               </Form.Item>
-            </Form>
-            <Form>
               <Form.Item label="Ghi chú" name="note">
                 <Input.TextArea rows={3} placeholder="Nhập ghi chú (nếu có)" />
               </Form.Item>

@@ -22,13 +22,14 @@ class OrderRepositories
         try {
             $products = $data['products'];
             $totalAmount = 0;
+            $voucherAmount = 0;
 
             foreach ($products as $product) {
                 $productReal = Product::where('id', $product['productId'])->first();
                 $productVariant = ProductVariant::where('product_id', $product['productId'])->first();
                 if (!empty($productReal) && !empty($productVariant)) {
                     if ($productVariant['quantity'] < $product['quantity']) {
-                        BaseResponse::failure('400', 'quantity is less than order quantity', 'quantity.is.less.than.order.quantity', []);
+                        return BaseResponse::failure('400', 'quantity is less than order quantity', 'quantity.is.less.than.order.quantity', []);
                     }
                     if (!empty($productReal['price_sale'])) {
                         $totalAmount += $productReal['price_sale'] * $product['quantity'];
@@ -40,12 +41,33 @@ class OrderRepositories
                 }
             }
 
+            // if (!empty($data['voucher'])) {
+            //     $voucher = Voucher::where('code', $data['voucher'])->first();
+            //     if ($voucher) {
+            //         $voucherAmount = $voucher['voucher_price'];
+            //         $totalAmount -= $voucher['voucher_price'];
+            //     } else {
+            //         BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
+            //     }
+            // }
             if (!empty($data['voucher'])) {
                 $voucher = Voucher::where('code', $data['voucher'])->first();
                 if ($voucher) {
+                    $voucherAmount = $voucher['voucher_price'];
                     $totalAmount -= $voucher['voucher_price'];
+                    if ($voucher->end_date && $voucher->end_date < now()) {
+                        return BaseResponse::failure('400', 'Voucher expired', 'voucher.expired', []);
+                    }
+
+                    // Kiểm tra đơn hàng có đủ điều kiện giá trị tối thiểu không
+                    if ($voucher->min_order_value && $totalAmount < $voucher->min_order_value) {
+                        return BaseResponse::failure('400', 'Order does not meet minimum value for voucher', 'order.not.meet.min.value', []);
+                    }
+
+                    $voucherAmount = $voucher->voucher_price;
+                    $totalAmount -= $voucherAmount;
                 } else {
-                    BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
+                    return BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
                 }
             }
 
@@ -60,13 +82,13 @@ class OrderRepositories
                 'customer_name' => $data['customerName'],
                 'email' => $data['email'] ?? 'default@email.com',
                 'phone_number' => $data['phoneNumber'],
-                'receiver_name' => $data['receiverName'] ?? null, // Lưu thông tin người nhận
-                'receiver_phone_number' => $data['receiverPhoneNumber'] ?? null, // Lưu thông tin người nhận
-                'receiver_address' => $data['receiverAddress'] ?? null, // Lưu thông tin người nhận
+                'receiver_name' => $data['receiverName'] ?? null,
+                'receiver_phone_number' => $data['receiverPhoneNumber'] ?? null,
+                'receiver_address' => $data['receiverAddress'] ?? null,
                 'shipping_address' => $data['shippingAddress'] ?? '',
                 'total_price' => $data['totalAmount'],
                 'voucher' => $data['voucher'] ?? null,
-                'voucher_price' => $data['voucherPrice'] ?? 0,
+                'voucher_price' => $data['voucherPrice'],
                 'payment_method' => $data['paymentMethod'] ?? '',
                 'payment_status' => 'UNPAID',
                 'note' => $data['note'] ?? null,
@@ -128,6 +150,14 @@ class OrderRepositories
         if (!empty($sortType)) {
             $query->orderByRaw('IFNULL(date, status) ' . $sortType);
         }
+
+        if (!empty($paymentStatus)) {
+            $query->where('payment_status', '=', $paymentStatus);
+        }
+
+        if (!empty($paymentMethod)) {
+            $query->where('payment_method', '=', $paymentMethod);
+        }
         $orders = $query->get();
         return $orders;
 
@@ -148,7 +178,8 @@ class OrderRepositories
 
         $query = Order::with(['order_details']);
         if (!empty($status)) {
-            $query->where('status', '=', $status);
+            $statuses = is_array($status) ? $status : explode(',', $status);
+            $query->whereIn('status', $statuses);
         }
         if (!empty($phoneNumber)) {
             $query->where('phone_number', '=', $phoneNumber);
@@ -161,6 +192,12 @@ class OrderRepositories
         }
         if (!empty($toDate)) {
             $query->where('date', '<=', $toDate);
+        }
+        if (!empty($paymentStatus)) {
+            $query->where('payment_status', '=', $paymentStatus);
+        }
+        if (!empty($paymentMethod)) {
+            $query->where('payment_method', '=', $paymentMethod);
         }
         if (!empty($sortType)) {
             $query->orderByRaw('IFNULL(date, status) ' . $sortType);

@@ -170,6 +170,8 @@ export interface IVoucher {
   voucherPrice: number;
   quantity: number;
   used: number;
+  startDate: Date | string;
+  endDate: Date | string;
   description?: string;
   status?: string;
   createdAt?: Dayjs;

@@ -35,7 +35,7 @@ interface IPayloadSeach {
 }
 const paginationDefault = {
   page: 0,
-  size: 15,
+  size: 9,
 };
 const sortDefault = "default";
 const ProductList: React.FC = () => {
@@ -72,6 +72,8 @@ const ProductList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [categoryId, setCategoryId] = useState<number | null>(null);
 
+
+  // Lấy danh mục sản phẩm , thiết lập trạng thái ban đầu 
   useEffect(() => {
     setCategoryId(
       searchParams.get("categoryId")
@@ -80,11 +82,15 @@ const ProductList: React.FC = () => {
     );
   }, [searchParams]);
 
+
+  // Nếu có categoryId trong URL, nó sẽ được sử dụng để lọc danh mục
   useEffect(() => {
     setSelectedCategories(categoryId ? [categoryId?.toString()] : []);
     const treeCategories = findCategoryDFS(cloneDeep(categories), categoryId);
     setCategoriesForFilter(treeCategories || []);
   }, [categoryId, categories]);
+
+
   useEffect(() => {
     getTreeCategories();
   }, []);
@@ -98,7 +104,7 @@ const ProductList: React.FC = () => {
 
     return () => clearTimeout(timeoutId);
   }, [selectedCategories]);
-  // sort
+  // Sắp xếp
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebounceSortOption(sortOption);
@@ -107,7 +113,7 @@ const ProductList: React.FC = () => {
 
     return () => clearTimeout(timeoutId);
   }, [sortOption]);
-
+  // Giá 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncePriceRange(priceRange);
@@ -275,8 +281,8 @@ const ProductList: React.FC = () => {
       categoriesId:
         filterData?.selectedCategories?.length > 0
           ? filterData?.selectedCategories[
-              filterData?.selectedCategories?.length - 1
-            ]
+          filterData?.selectedCategories?.length - 1
+          ]
           : "",
       fromPrice: filterData?.priceRange?.[0]
         ? filterData?.priceRange?.[0].toString()
@@ -324,26 +330,26 @@ const ProductList: React.FC = () => {
                   (categoriesForFilter?.length > 1 ||
                     (categoriesForFilter?.length === 1 &&
                       categoriesForFilter[0]?.hasChildren)))) && (
-                <Panel className="relative" header="Danh mục" key="2">
-                  {loadingTreeCategories && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        background: "rgba(255, 255, 255, 0.7)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        zIndex: 10,
-                      }}
-                    >
-                      <Spin size="large" />
-                    </div>
-                  )}
-                  {/* <Checkbox.Group
+                  <Panel className="relative" header="Danh mục" key="2">
+                    {loadingTreeCategories && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          background: "rgba(255, 255, 255, 0.7)",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          zIndex: 10,
+                        }}
+                      >
+                        <Spin size="large" />
+                      </div>
+                    )}
+                    {/* <Checkbox.Group
                   rootClassName="w-full gap-2"
                   onChange={(values) =>
                     setSelectedCategories(values as string[])
@@ -351,30 +357,30 @@ const ProductList: React.FC = () => {
                 >
                   {renderCategories(categoriesForFilter)}
                 </Checkbox.Group> */}
-                  <Tree
-                    // checkable
-                    fieldNames={{
-                      key: "id",
-                      title: "name",
-                      children: "children",
-                    }}
-                    treeData={
-                      categoryId
-                        ? categoriesForFilter[0]?.children
-                        : categoriesForFilter
-                    }
-                    onSelect={onSelect}
+                    <Tree
+                      // checkable
+                      fieldNames={{
+                        key: "id",
+                        title: "name",
+                        children: "children",
+                      }}
+                      treeData={
+                        categoryId
+                          ? categoriesForFilter[0]?.children
+                          : categoriesForFilter
+                      }
+                      onSelect={onSelect}
                     // onCheck={onCheckCategory}
-                  />
-                </Panel>
-              )}
+                    />
+                  </Panel>
+                )}
 
               {/* Filter theo giá */}
               <Panel header="Khoảng giá" key="3">
                 <Slider
                   range
                   min={0}
-                  max={10000000}
+                  max={1000000}
                   step={100000}
                   defaultValue={priceRange}
                   onChange={(values) =>

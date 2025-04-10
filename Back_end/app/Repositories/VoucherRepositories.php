@@ -18,17 +18,18 @@ class VoucherRepositories
     public function addVoucher(Request $request)
     {
 
-        $voucher = Voucher::query()->where('code', '=', $request->input('voucherCode'))->first();;
-
+        $voucher = Voucher::query()->where('code', '=', $request->input('voucherCode'))->first();
         if ($voucher) {
-            BaseResponse::failure('400', 'voucher is exist', 'voucher.is.exist', []);
+            return BaseResponse::failure('400', 'voucher is exist', 'voucher.is.exist', []);
         }
-
         $voucher = Voucher::create([
             'quantity' => $request->input('quantity'),
             'code' => $request->input('voucherCode'),
             'voucher_price' => $request->input('voucherPrice'),
-            'status' => 'ACTIVE',
+            'start_date' => $request->input('startDate'),
+            'end_date' => $request->input('endDate'),
+            'min_order_value' => $request->input('min_order_value', 0),
+            'status' => 'INACTIVE',
             'used' => 0,
         ]);
 
@@ -37,21 +38,21 @@ class VoucherRepositories
 
     public function updateVoucher(Request $request)
     {
-
         $voucher = Voucher::find($request->input('id'));
 
         if (!$voucher) {
-            BaseResponse::failure('400', 'voucher not found', 'voucher.not.found', []);
+            return BaseResponse::failure(404, 'Voucher not found', 'voucher.not.found', []);
         }
 
         $voucher->update([
-            'code' => $request->input('voucherCode', $voucher->code),
+            'code' => $request->input('code', $voucher->code),
             'quantity' => $request->input('quantity', $voucher->quantity),
             'used' => $request->input('used', $voucher->used),
             'voucher_price' => $request->input('voucherPrice', $voucher->voucher_price),
             'start_date' => $request->input('startDate', $voucher->start_date),
             'end_date' => $request->input('endDate', $voucher->end_date),
             'status' => $request->input('status', $voucher->status),
+            'min_order_value' => $request->input('min_order_value', 0),
         ]);
 
         return $voucher;
@@ -70,6 +71,33 @@ class VoucherRepositories
 
         return $voucher;
     }
+    public function toggleStatus(Request $request)
+    {
+        $voucher = Voucher::find($request->input('id'));
+
+        if (!$voucher) {
+            return BaseResponse::failure(404, 'Voucher not found', 'voucher.not.found', []);
+        }
+
+        $newStatus = $voucher->status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        $voucher->update(['status' => $newStatus]);
+
+        return BaseResponse::success($voucher);
+    }
+
+    public function autoLockExpiredVouchers()
+    {
+        $now = now();
+        $expiredVouchers = Voucher::where('end_date', '<', $now)
+            ->where('status', '=', 'ACTIVE') // Chỉ khóa các voucher đang hoạt động
+            ->get();
+
+        foreach ($expiredVouchers as $voucher) {
+            $voucher->update(['status' => 'LOCKED']);
+        }
+
+        return count($expiredVouchers);
+    }
 
     public function getAllVoucher(Request $request)
     {
@@ -78,6 +106,8 @@ class VoucherRepositories
         $quantity = $request->input('quantity');
         $used = $request->input('used');
         $voucherPrice = $request->input('voucherPrice');
+        $startDate = $request->input(key: 'startDate');
+        $endDate = $request->input('endDate');
         $perPage = $request->input('pageSize', 10);
         $page = $request->input('pageNum', 1);
 
@@ -97,9 +127,20 @@ class VoucherRepositories
         if (!empty($voucherPrice)) {
             $query->where('voucher_price', '=', $voucherPrice);
         }
+        if (!empty($startDate)) {
+            $query->whereDate('start_date', '>=', $startDate);
+        }
+        if (!empty($endDate)) {
+            $query->whereDate('end_date', '<=', $endDate);
+        }
 
         $users = $query->paginate($perPage, ['*'], 'page', $page);
         return $users;
+    }
+
+    public function findByCode(string $code)
+    {
+        return Voucher::where('code', $code)->first();
     }
 
 }

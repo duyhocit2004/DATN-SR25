@@ -32,6 +32,7 @@ const OrderDetail: React.FC = () => {
   const [originOrder, setOriginOrder] = useState<IOrder | null>(null);
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [finalAmount, setFinalAmount] = useState<number>(0);
 
   useEffect(() => {
     if (orderCode) {

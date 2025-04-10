@@ -140,7 +140,7 @@ const OrderTable = () => {
       render: (record: IOrder) => {
         return (
           <div className="flex gap-2">
-            {/* Nút Xóa */}
+            {/* Nút Xóa
             {(record.status === "Cancel" || record.status === "Cancel Confirm") && (
               <button
                 className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
@@ -148,7 +148,7 @@ const OrderTable = () => {
               >
                 Xóa
               </button>
-            )}
+            )} */}
 
             {/* Nút Hoàn Tiền */}
             {record.paymentMethod === "ONLINE" &&
