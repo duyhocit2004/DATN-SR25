@@ -18,6 +18,7 @@ import homeApi from "@/api/homeApi";
 import productApi from "@/api/productApi";
 import { HttpCodeString } from "@/utils/constants";
 import { useNavigate } from "react-router-dom";
+import "./index.scss";
 
 
 const brands = [imgBrand, imgBrand, imgBrand, imgBrand];
@@ -69,13 +70,14 @@ const Home = () => {
   };
   const getTopDiscountedProducts = async () => {
     try {
-      const payload  = {topNumber : 8};   
+      const payload = { topNumber: 8 };
       const response = await productApi.getTopDiscountedProducts(payload);
       if (response?.status === HttpCodeString.SUCCESS) {
         const sortedProducts = response.data
-        .sort((a, b) => Number(b.discount) - Number(a.discount))
-        .slice(0, 8);
-      console.log("Dữ liệu sau khi sắp xếp:", sortedProducts);
+          .sort((a, b) => Number(b.discount) - Number(a.discount))
+          .slice(0, 8);
+        console.log("Dữ liệu sau khi sắp xếp:", sortedProducts);
+
         setTopDiscountedProducts(response.data);
       } else {
         setTopDiscountedProducts([]);
@@ -120,16 +122,15 @@ const Home = () => {
         className="main-slide h-[500px]"
         autoplay
         autoplaySpeed={3000}
-        // arrows
       >
         {banners?.main?.map((e: IBanner, index: number) => {
           return (
             <div
               key={e.id}
               className="h-[500px] bg-cover bg-center !flex justify-center"
-              // style={{
-              //   backgroundImage: `url(../../../../public/images/anh-nt-thumb-2.jpeg)`,
-              // }}
+            // style={{
+            //   backgroundImage: `url(../../../../public/images/anh-nt-thumb-2.jpeg)`,
+            // }}
             >
               <img
                 className="h-full bg-cover bg-center"
@@ -199,16 +200,15 @@ const Home = () => {
       </section>
       <section className="container mx-auto px-4 mt-10">
         <div
-          className={`grid grid-cols-1 md:grid-cols-${
-            banners?.advertisement?.length || 2
-          } lg:grid-cols-${banners?.advertisement?.length || 4} gap-6`}
+          className={`grid grid-cols-1 md:grid-cols-${banners?.advertisement?.length || 2
+            } lg:grid-cols-${banners?.advertisement?.length || 4} gap-6`}
         >
           {banners?.advertisement?.map((adv: IBanner, index: number) => (
-            <div key={adv.id} className="relative group">
+            <div key={adv.id} className="relative group p-2">
               <img
                 src={adv.image}
                 alt={"advertisement " + (index + 1)}
-                className="w-full h-[200px] object-cover rounded-lg"
+                className=" h-[150px] object-cover rounded-lg mx-auto"
               />
             </div>
           ))}
@@ -220,30 +220,19 @@ const Home = () => {
         <h2 className="text-2xl font-bold text-center mb-6">
           Danh Mục Sản Phẩm
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
           {categories.map((cat) => (
             <div
               key={cat.id}
-              className="relative group w-full h-[150px] cursor-pointer"
-              onClick={() => {
-                handleViewProductByCategory(cat.id);
-              }}
+              className="flex flex-col items-center cursor-pointer"
+              onClick={() => handleViewProductByCategory(cat.id)}
             >
               <img
                 src={cat.image}
                 alt={cat.name}
-                className="w-full h-[150px] object-cover rounded-lg"
+                className="category-item"
               />
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition">
-                <span className="text-white font-semibold text-lg">
-                  {cat.name}
-                </span>
-              </div>
-              {/* <div className="flex items-center justify-center w-full h-full bg-gray-200 bg-opacity-50 group-hover:bg-black transition">
-                <span className="group-hover:text-white font-semibold text-lg">
-                  {cat.name}
-                </span>
-              </div> */}
+              <span className="mt-2 text-lg font-semibold">{cat.name}</span>
             </div>
           ))}
         </div>
@@ -311,11 +300,6 @@ const Home = () => {
       {/* Newest Products */}
       <section className="container mx-auto px-4">
         <h2 className="text-2xl font-bold text-center mb-6">Sản Phẩm Mới</h2>
-        {/* <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-          {featuredProducts.map((product) => (
-            <ProductItem product={product} />
-          ))}
-        </div> */}
         <CarouselCustom
           autoplay
           autoplaySpeed={3000}

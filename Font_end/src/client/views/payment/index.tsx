@@ -34,6 +34,7 @@ const Payment = () => {
       form.setFieldsValue({
         customerName: user.name,
         phoneNumber: user.phoneNumber,
+        email: user.email,
         shippingAddress: "",
       });
     }
@@ -129,9 +130,8 @@ const Payment = () => {
       const payload = {
         voucherCode: discountCode,
       };
-
       const response = await orderApi.getVoucher(payload);
-      if (response?.status === HttpCodeString.SUCCESS) {
+      if (response?.status === HttpCodeString.SUCCESS && response.data.status === "ACTIVE") {
         setVoucher(response.data);
         showToast({
           content: "Áp dụng voucher thành công!",
@@ -140,10 +140,11 @@ const Payment = () => {
         });
       } else {
         showToast({
-          content: "Áp dụng voucher thất bại!",
+          content: "Voucher không hợp lệ hoặc không đạt giá trị tối thiểu !",
           duration: 5,
           type: "error",
         });
+
       }
     } finally {
       setLoadingApplyVoucher(false);
@@ -168,14 +169,19 @@ const Payment = () => {
         customerName: form.getFieldValue("customerName"),
         email: form.getFieldValue("email"),
         phoneNumber: form.getFieldValue("phoneNumber"),
-        totalAmount: totalAmount,
+        receiverName: form.getFieldValue("receiverName"),
+        receiverPhoneNumber: form.getFieldValue("receiverPhoneNumber"),
+        receiverAddress: form.getFieldValue("receiverAddress"),
+        totalAmount: finalAmount,
         voucher: voucher?.code,
         voucherPrice: voucher?.voucherPrice,
         shippingAddress: form.getFieldValue("shippingAddress"),
         note: form.getFieldValue("note"),
         products: products,
-        paymentMethod: paymentMethod
+        paymentMethod: paymentMethod,
       };
+      
+
 
 
       const response = await orderApi.addOrder(payload);
@@ -183,12 +189,12 @@ const Payment = () => {
       if (response?.status === HttpCodeString.SUCCESS) {
         if (paymentMethod === PaymentMethod.ONLINE && response.data.vnpayUrl) {
           window.location.href = response.data.vnpayUrl;
-          // showToast({ content: "Đặt hàng thành công!", duration: 5, type: "success" });
-          // clearCart();
+
         } else if (paymentMethod === PaymentMethod.COD) {
           showToast({ content: "Đặt hàng thành công!", duration: 5, type: "success" });
           clearCart();
-          navigate("/");
+          navigate("/order-history");
+
         }
       } else {
         showToast({ content: "Đặt hàng thất bại!", duration: 5, type: "error" });
@@ -247,15 +253,16 @@ const Payment = () => {
           {/* FORM BILL */}
           <Card title="Thông tin thanh toán" bordered={false}>
             <Form form={form} layout="vertical">
+              {/* Thông tin người đặt */}
               <Form.Item
-                label="Họ và Tên"
+                label="Họ và Tên (Người đặt)"
                 name="customerName"
                 rules={[{ required: true, message: "Vui lòng nhập họ tên!" }]}
               >
-                <Input placeholder="Nhập họ và tên" />
+                <Input placeholder="Nhập họ và tên người đặt" />
               </Form.Item>
               <Form.Item
-                label="Số điện thoại"
+                label="Số điện thoại (Người đặt)"
                 name="phoneNumber"
                 rules={[
                   { required: true, message: "Vui lòng nhập số điện thoại!" },
@@ -265,16 +272,16 @@ const Payment = () => {
                   },
                 ]}
               >
-                <Input placeholder="Nhập số điện thoại" />
+                <Input placeholder="Nhập số điện thoại người đặt" />
               </Form.Item>
               <Form.Item
-                label="Email"
+                label="Email (Người đặt)"
                 name="email"
                 rules={[
-                  { type: "email", message: "Email không hợp lệ!" }, // Kiểm tra định dạng email
+                  { required: true, type: "email", message: "Vui lòng nhập email" },
                 ]}
               >
-                <Input placeholder="Nhập email (không bắt buộc)" />
+                <Input placeholder="Nhập email người đặt" />
               </Form.Item>
               <Form.Item
                 label="Địa chỉ"
@@ -282,6 +289,36 @@ const Payment = () => {
                 rules={[{ required: true, message: "Vui lòng nhập địa chỉ!" }]}
               >
                 <Input placeholder="Nhập địa chỉ" />
+              </Form.Item>
+
+              {/* Thông tin người nhận */}
+           
+              <Form.Item
+                label="Họ và Tên (Người nhận)"
+                name="receiverName"
+                rules={[{ required: false, message: "Vui lòng nhập họ tên người nhận!" }]} 
+              >
+                <Input placeholder="Nhập họ và tên người nhận" />
+              </Form.Item>
+              <Form.Item
+                label="Số điện thoại (Người nhận)"
+                name="receiverPhoneNumber"
+                rules={[
+                  { required: false, message: "Vui lòng nhập số điện thoại người nhận!" }, 
+                  {
+                    pattern: /^(0[3|5|7|8|9])([0-9]{8})$/,
+                    message: "Số điện thoại không hợp lệ!",
+                  },
+                ]}
+              >
+                <Input placeholder="Nhập số điện thoại người nhận" />
+              </Form.Item>
+              <Form.Item
+                label="Địa chỉ (Người nhận)"
+                name="receiverAddress"
+                rules={[{ required: false, message: "Vui lòng nhập địa chỉ người nhận!" }]} 
+              >
+                <Input placeholder="Nhập địa chỉ người nhận" />
               </Form.Item>
               <Form.Item label="Ghi chú" name="note">
                 <Input.TextArea rows={3} placeholder="Nhập ghi chú (nếu có)" />

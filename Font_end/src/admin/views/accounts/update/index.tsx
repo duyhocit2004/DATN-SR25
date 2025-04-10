@@ -77,10 +77,10 @@ const UpdateAccountForm: React.FC = () => {
 
   const onFinish = async (values: any) => {
     setLoading(true);
-
-    const payload = {
-      ...values
-    };
+  const payload = {
+    ...formData,  
+    ...values,    
+  };
 
     const payloadFormData = objectToFormData(payload);
 

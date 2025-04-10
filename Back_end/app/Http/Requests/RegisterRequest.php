@@ -26,6 +26,9 @@ class RegisterRequest extends FormRequest
             'phone_number' => 'required|regex:/^0[0-9]{9,10}$/',
             'role' => 'required',
             'password' => 'required|min:6',
+            'receiver_name' => 'nullable|string|max:255',
+            'receiver_phone_number' => 'nullable|regex:/^0[0-9]{9,10}$/', 
+            'receiver_address' => 'nullable|string|max:255', 
         ];
     }
 

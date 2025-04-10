@@ -9,31 +9,49 @@ import {
 import { Spin } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface IStats {
   title: string;
   key: string;
   value: number;
   icon: any;
+  path: string;
 }
 
-const defaultStats: IStats[] = [
-  {
-    title: "Đơn hàng",
-    key: "order",
-    value: 0,
-    icon: <ReconciliationOutlined />,
-  },
-  { title: "Sản phẩm", key: "product", value: 0, icon: <ProductOutlined /> },
-  {
-    title: "Doanh thu",
-    key: "revenue",
-    value: 0,
-    icon: <MoneyCollectOutlined />,
-  },
-  { title: "Người dùng", key: "user", value: 0, icon: <UserOutlined /> },
-];
 const DashboardStats = () => {
+  const navigate = useNavigate();
+  const defaultStats: IStats[] = [
+    {
+      title: "Đơn hàng",
+      key: "order",
+      value: 0,
+      icon: <ReconciliationOutlined />,
+      path: "/admin/orders",
+    },
+    {
+      title: "Sản phẩm",
+      key: "product",
+      value: 0,
+      icon: <ProductOutlined />,
+      path: "/admin/products",
+    },
+    {
+      title: "Doanh thu",
+      key: "revenue",
+      value: 0,
+      icon: <MoneyCollectOutlined />,
+      path: "/admin",
+    },
+    {
+      title: "Người dùng",
+      key: "user",
+      value: 0,
+      icon: <UserOutlined />,
+      path: "/admin/accounts",
+    },
+  ];
+
   const [statsData, setStatsData] = useState<IStats[]>(defaultStats);
   const [loading, setLoading] = useState(false);
 
@@ -81,13 +99,19 @@ const DashboardStats = () => {
         </div>
       )}
       {statsData?.map((stat, index) => (
-        <div key={index} className="p-6 border border-gray-300 rounded-2xl">
+        <div
+          key={index}
+          className="p-6 border border-gray-300 rounded-2xl cursor-pointer hover:shadow-md transition"
+          onClick={() => navigate(stat.path)}
+        >
           <div className="text-3xl p-6 bg-gray-100 rounded-lg w-16 h-16 flex justify-center items-center mb-6">
             {stat.icon}
           </div>
           <div>
             <h3 className="text-sm text-gray-500">{stat.title}</h3>
-            <p className="text-xl font-semibold">{stat.value}</p>
+            <p className="text-xl font-semibold ">
+              {stat.key === "revenue" ? `${stat.value.toLocaleString("vi-VN")} đ` : stat.value}
+            </p>
           </div>
         </div>
       ))}

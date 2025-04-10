@@ -3,6 +3,7 @@
 namespace App\Services\VnPay\impl;
 
 
+use App\Repositories\OrderRepositories;
 
 use App\Services\VnPay\IVnpayService;
 use Illuminate\Http\Request;
@@ -127,5 +128,5 @@ class VnpayService implements IVnpayService{
         }
 
     }
-
+    
 }

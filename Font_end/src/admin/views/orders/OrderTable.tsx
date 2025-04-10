@@ -1,11 +1,15 @@
+import adminApi from "@/api/adminApi";
+import axiosClient from "@/configs/axiosClient";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchOrders, setPagination } from "@/store/reducers/adminOrderSlice";
 import { IOrder } from "@/types/interface";
-import { OrderStatusDataAdmin } from "@/utils/constantData";
+import { OrderStatusDataAdmin, PaymentMethodData, PaymentStatusData } from "@/utils/constantData";
+import { HttpCodeString } from "@/utils/constants";
 import { getColorOrderStatus, getLabelByValue } from "@/utils/functions";
-import { Table, Tag } from "antd";
+import { Button, message, Table, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const OrderTable = () => {
@@ -14,6 +18,7 @@ const OrderTable = () => {
   const { orders, pagination, totalElements, loading } = useAppSelector(
     (state) => state.adminOrder
   );
+  const [loadingRefund, setLoadingRefund] = useState<number | null>(null); // Trạng thái loading cho nút hoàn tiền
   const columns: ColumnsType<IOrder> = [
     {
       title: "STT",
@@ -77,21 +82,21 @@ const OrderTable = () => {
       title: "Trạng thái thanh toán",
       dataIndex: "paymentStatus",
       key: "paymentStatus",
-      minWidth: 180,
+      minWidth: 190,
       render: (paymentStatus) => (
         <Tag color={getColorOrderStatus(paymentStatus)}>
-          {getLabelByValue(OrderStatusDataAdmin, paymentStatus)}
+          {getLabelByValue(PaymentStatusData, paymentStatus)}
         </Tag>
       ),
     },
     {
       title: "Phương thức thanh toán",
-      dataIndex: "paymentStatus",
-      key: "paymentStatus",
-      minWidth: 180,
-      render: (paymentStatus) => (
-        <Tag color={getColorOrderStatus(paymentStatus)}>
-          {getLabelByValue(OrderStatusDataAdmin, paymentStatus)}
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
+      minWidth: 190,
+      render: (paymentMethod) => (
+        <Tag color={getColorOrderStatus(paymentMethod)}>
+          {getLabelByValue(PaymentMethodData, paymentMethod)}
         </Tag>
       ),
     },
@@ -112,10 +117,85 @@ const OrderTable = () => {
       key: "note",
       minWidth: 250,
     },
+    // {
+    //   title: "Hành động",
+    //   key: "action",
+    //   minWidth: 150,
+    //   render: (record: IOrder) => {
+    //     console.log("Trạng thái đơn hàng:", record.status); // Kiểm tra trạng thái
+    //     return record.status === "Cancel" || record.status === "Cancel Confirm" ? (
+    //       <button
+    //         className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
+    //         onClick={() => handleDeleteOrder(record.id)}
+    //       >
+    //         Xóa
+    //       </button>
+    //     ) : null;Set fire. 
+    //   },
+    // }
+    {
+      title: "Hành động",
+      key: "action",
+      minWidth: 150,
+      render: (record: IOrder) => {
+        return (
+          <div className="flex gap-2">
+            {/* Nút Xóa
+            {(record.status === "Cancel" || record.status === "Cancel Confirm") && (
+              <button
+                className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
+                onClick={() => handleDeleteOrder(record.id)}
+              >
+                Xóa
+              </button>
+            )} */}
+
+            {/* Nút Hoàn Tiền */}
+            {record.paymentMethod === "ONLINE" &&
+              record.status === "Cancel" &&
+              record.paymentStatus === "PAID" && (
+                <Button
+                  type="primary"
+                  danger
+                  loading={loadingRefund === record.id} // Hiển thị trạng thái loading riêng cho từng đơn hàng
+                  onClick={() => handleRefund(record.id)}
+                >
+                  Hoàn Tiền
+                </Button>
+              )}
+          </div>
+        );
+      },
+    }
   ];
+
   const showOrderDetail = (order: IOrder) => {
     navigate("/admin/orders/" + order?.code);
   };
+
+  const handleDeleteOrder = async (orderId: number) => {
+    try {
+      const token = localStorage.getItem("access_token"); // Lấy token từ localStorage
+      if (!token) {
+        alert("Token không hợp lệ!");
+        return;
+      }
+
+      const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa đơn hàng này?");
+      if (!confirmDelete) return;
+      const response = await adminApi.deleteOrder({ id: orderId });
+      if (response?.status === HttpCodeString.SUCCESS) {
+        alert("Xóa đơn hàng thành công!");
+        dispatch(fetchOrders());
+      } else {
+        alert("Xóa đơn hàng thất bại!");
+      }
+    } catch (error) {
+      console.error("Lỗi khi xóa đơn hàng:", error);
+      alert("Xóa đơn hàng thất bại!");
+    }
+  };
+
 
   const handlePagingChange = (page: number, size: number) => {
     dispatch(
@@ -126,6 +206,28 @@ const OrderTable = () => {
     );
     dispatch(fetchOrders());
   };
+
+
+  const handleRefund = async (orderId: number) => {
+    console.log("Gọi hàm handleRefund với orderId:", orderId); // Kiểm tra
+    try {
+      setLoadingRefund(orderId);
+      const response = await adminApi.refundOrder({ orderId });
+      console.log("Phản hồi từ API refundOrder:", response); // Kiểm tra phản hồi
+      if (response?.success) {
+        message.success("Hoàn tiền thành công!");
+        dispatch(fetchOrders());
+      } else {
+        message.error(response?.message || "Hoàn tiền thất bại!");
+      }
+    } catch (error) {
+      console.error("Lỗi khi hoàn tiền:", error);
+      message.error("Đã xảy ra lỗi khi hoàn tiền!");
+    } finally {
+      setLoadingRefund(null);
+    }
+  };
+  
   return (
     <Table<IOrder>
       columns={columns}

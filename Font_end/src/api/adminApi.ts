@@ -19,6 +19,7 @@ import axiosClient from "@/configs/axiosClient";
 import { IResponseCategory } from "@/admin/views/categories/types";
 
 class AdminApi extends BaseApi<{ data: any }> {
+  [x: string]: any;
   constructor() {
     super("admin"); // Gán URI 'admins' cho API này
   }
@@ -132,6 +133,11 @@ class AdminApi extends BaseApi<{ data: any }> {
       .post(`${this.uri}/vouchers/updateVoucher `, payload)
       .then((res) => res.data);
   };
+  toggleStatus = (payload: any): Promise<IResponseData<IVoucher>> => {
+    return axiosClient
+      .post(`${this.uri}/vouchers/toggleStatus `, payload)
+      .then((res) => res.data);
+  };
   getOrdersPaging = (
     payload: any
   ): Promise<IResponseData<IDataPaging<IOrder[]>>> => {
@@ -166,6 +172,11 @@ class AdminApi extends BaseApi<{ data: any }> {
   deleteBanner = (payload: any): Promise<IResponseData<IBanner>> => {
     return axiosClient
       .post(`${this.uri}/banners/deleteBanner`, payload)
+      .then((res) => res.data);
+  };
+  deleteOrder = (payload: any): Promise<IResponseData<any>> => {
+    return axiosClient
+      .post(`${this.uri}/orders/deleteOrder`, payload)
       .then((res) => res.data);
   };
   deleteCategory = (payload: any): Promise<IResponseData<ICategory>> => {

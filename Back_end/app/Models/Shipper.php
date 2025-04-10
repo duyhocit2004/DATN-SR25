@@ -29,6 +29,7 @@ class Shipper extends Model
 
 	protected $table = 'shipper';
 
+
 	protected $fillable = [
 		'name_shipper',
 		'phone1',

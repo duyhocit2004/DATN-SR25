@@ -1,7 +1,6 @@
-
 import axiosClient from "@/configs/axiosClient";
 import BaseApi from "./baseApi";
-import { IResponseData, IVNPAYPayment } from "@/types/interface";
+import { IResponseData } from "@/types/interface";
 
 class VNPayApi extends BaseApi<IVNPAYPayment> {
   [x: string]: any;
