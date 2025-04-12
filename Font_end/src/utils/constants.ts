@@ -36,13 +36,13 @@ export const DeviceType = {
 };
 
 export const OrderStatus = {
-  PROCESSING: "Processing",
-  SHIPPING: "Shipping",
-  DELIVERED: "Delivered",
-  CANCEL: "Cancel",
   UNCONFIRMED: "Unconfirmed", 
-  CONFIRMED: "Confirmed",     
+  CONFIRMED: "Confirmed",    
   CANCEL_CONFIRM: "Cancel Confirm", 
+  PROCESSING: "Processing",   
+  SHIPPING: "Shipping",      
+  DELIVERED: "Delivered",     
+  CANCEL: "Cancel",         
 };
 
 export const PaymentStatus = {

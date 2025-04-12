@@ -23,13 +23,13 @@ const ContactUs: React.FC = () => {
       <div className="grid md:grid-cols-2 gap-6">
         {/* Thông tin liên hệ */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Thông tin liên hệ</h2>
-          <p><EnvironmentOutlined className="mr-2 text-blue-500" /> 2PQW+6JJ Tòa nhà FPT Polytechnic., Cổng số 2, 13 P. Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà Nội 100000</p>
+          <h2 className="text-xl font-semibold">Địa chỉ </h2>
+          <p><EnvironmentOutlined className="mr-2 text-blue-500" />Tòa nhà FPT Polytechnic - Cổng số 2, 13 P. Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà Nội </p>
           <p><PhoneOutlined className="mr-2 text-blue-500" /> 0981 725 836</p>
           <p><MailOutlined className="mr-2 text-blue-500" /> caodang@fpt.edu.vn</p>
-          <h3 className="text-lg font-medium mt-4">Giờ làm việc:</h3>
-          <p>Thứ 2 - Thứ 6: 8:00 - 18:00</p>
-          <p>Thứ 7 - Chủ nhật: 9:00 - 16:00</p>
+          <h3 className="text-lg font-medium mt-4">Giờ làm việc</h3>
+          <p>Thứ 2 - Thứ 6  : 8:00 - 18:00</p>
+          <p>Thứ 7 - Chủ nhật : 9:00 - 16:00</p>
         </div>
       </div>
         {/* Bản đồ Google Maps */}

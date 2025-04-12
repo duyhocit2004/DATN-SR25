@@ -64,20 +64,10 @@ const ClientLayout: React.FC = () => {
             minHeight: "calc(100vh - 413px)",
           }}
         >
-          {/* <Breadcrumb style={{ margin: "16px 0" }}>
+          <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item>User</Breadcrumb.Item>
           <Breadcrumb.Item>Bill</Breadcrumb.Item>
-        </Breadcrumb> */}
-          {/* <div
-          style={{
-            padding: 24,
-            minHeight: 360,
-            background: colorBgContainer,
-            borderRadius: borderRadiusLG,
-          }}
-        >
-          Bill is a cat.
-        </div> */}
+        </Breadcrumb>
           {/* <div className="content-page"> */}
           <Outlet />
           {/* </div> */}

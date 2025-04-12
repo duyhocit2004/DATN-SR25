@@ -75,7 +75,7 @@ axiosClient.interceptors.response.use(
             type: "error",
           });
           localStorage.removeItem("access_token");
-          window.location.href = "/admin-login";
+          // window.location.href = "/admin-login";
           break;
         case 403:
           showToast({

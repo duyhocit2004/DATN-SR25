@@ -49,6 +49,7 @@ class ProductApi extends BaseApi<IProduct> {
       .post(`${this.uri}/getProduct`, { productId: productId })
       .then((res) => res.data);
   };
+
   getProductVariant = (
     productId: number
   ): Promise<IResponseData<IProductDetail>> => {
@@ -131,7 +132,7 @@ class ProductApi extends BaseApi<IProduct> {
   };
   removeWishList = (payload: any): Promise<IResponseData<IWishlist>> => {
     return axiosClient
-      .post(`${this.uri}/removeWishList`, payload)
+      .post(`${this.uri}/deleteWishList`, payload)
       .then((res) => res.data);
   };
 }

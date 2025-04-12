@@ -3,7 +3,7 @@
 namespace App\Services\Auth\impl;
 
 use App\Helpers\BaseResponse;
-<<<<<<< HEAD
+
 use App\Models\User;
 use App\Repositories\AuthRepositories;
 use App\Services\Auth\IAuthService;
@@ -16,17 +16,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-=======
-use App\Repositories\AuthRepositories;
-use App\Services\Auth\IAuthService;
-use Cloudinary\Cloudinary;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use function PHPUnit\Framework\isEmpty;
->>>>>>> a9bca3b99d94a1587f7c59610338b86ac9f82d21
 
 
 class AuthService implements IAuthService
@@ -36,11 +25,9 @@ class AuthService implements IAuthService
     protected $cloudinary;
 
     public function __construct(AuthRepositories $authRepositories,
-<<<<<<< HEAD
+
                                 Cloudinary       $cloudinary)
-=======
-                                Cloudinary $cloudinary)
->>>>>>> a9bca3b99d94a1587f7c59610338b86ac9f82d21
+
     {
         $this->authRepositories = $authRepositories;
         $this->cloudinary = $cloudinary;
@@ -168,7 +155,9 @@ class AuthService implements IAuthService
     public function getUser(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+
+        if (empty($user) ) {
+
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
@@ -201,11 +190,10 @@ class AuthService implements IAuthService
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
 
-<<<<<<< HEAD
+
         if ($userId != $request->input('id')) {
-=======
-        if($userId == $request->input('id')){
->>>>>>> a9bca3b99d94a1587f7c59610338b86ac9f82d21
+
+
             BaseResponse::failure(401, 'unauthorized', 'unauthorized', []);
         }
 
@@ -220,7 +208,6 @@ class AuthService implements IAuthService
         return $user;
     }
 
-<<<<<<< HEAD
     public function forgotPassword($request)
     {
 
@@ -255,41 +242,5 @@ class AuthService implements IAuthService
 
         $this->authRepositories->changePassword($userId, $request->input('newPassword'));
         JWTAuth::invalidate(JWTAuth::getToken());
-=======
-    public function requestPasswordReset($email)
-    {
-        $user = User::where('email', $email)->first();
-        if ($user) {
-            // Xóa token cũ để tránh xung đột
-            PasswordReset::where('user_id', $user->id)->delete();
-            $token = Str::random(64);
-            $expiresAt = Carbon\Carbon::now()->addMinutes(30);
-            PasswordReset::create(['user_id' => $user->id, 'token' => $token, 'expires_at' => $expiresAt]);
-            try {
-                Mail::send('emails.reset_password', ['token' => $token], function ($message) use ($user) {
-                    $message->to($user->email)->subject('Reset your password');
-                });
-            } catch (\Exception $e) {
-                \Log::error('Failed to send password reset email: ' . $e->getMessage());
-            }
-        }
-        return true;
-    }
-    
-    public function resetPassword($token, $newPassword)
-    {
-        $resetToken = PasswordReset::where('token', $token)->first();
-        if (!$resetToken || $resetToken->expires_at < Carbon\Carbon::now()) {
-            throw new \Exception('Invalid or expired token.', 400);
-        }
-        $user = User::find($resetToken->user_id);
-        if (!$user) {
-            throw new \Exception('User not found.', 404);
-        }
-        $user->password = Hash::make($newPassword);
-        $user->save();
-        $resetToken->delete();
-        return true;
->>>>>>> a9bca3b99d94a1587f7c59610338b86ac9f82d21
     }
 }

@@ -15,26 +15,14 @@ class ProductRepositories
 {
     public function getDataStats(Request $request)
     {
-        $fromDate= $request->input('fromDate', Carbon::now()->startOfYear());
+
+        $fromDate = $request->input('fromDate', Carbon::now()->startOfYear());
         $toDate = $request->input('toDate', Carbon::now()->endOfYear());
+        $result = DB::table('orders')->whereBetween('created_at', [$fromDate, $toDate])->selectRaw('COUNT(*) as total_orders, SUM(CASE WHEN payment_status = "PAID" THEN total_price ELSE 0 END) as total_revenue')->first();
+        $totalProducts = DB::table('products')->whereBetween('created_at', [$fromDate, $toDate])->count();
+        $totalUsers = DB::table('users')->whereBetween('created_at', [$fromDate, $toDate])->count();
+        return ['order' => $result->total_orders, 'product' => $totalProducts, 'revenue' => $result->total_revenue, 'user' => $totalUsers,];
 
-        $result = DB::table('orders')
-            ->whereBetween('created_at', [$fromDate, $toDate])
-            ->selectRaw('COUNT(*) as total_orders, SUM(total_price) as total_revenue')
-            ->first();
-        $totalProducts = DB::table('products')
-            ->whereBetween('created_at', [$fromDate, $toDate])
-            ->count();
-        $totalUsers = DB::table('users')
-            ->whereBetween('created_at', [$fromDate, $toDate])
-            ->count();
-
-        return [
-            'order' => $result->total_orders,
-            'product' => $totalProducts,
-            'revenue' => $result->total_revenue,
-            'user' => $totalUsers,
-            ];
     }
 
     public function getDashboardChart(Request $request)
@@ -86,7 +74,8 @@ class ProductRepositories
             }
         }
 
-        if('month'==$filterType){
+        if ('month' == $filterType) {
+
             $startDate = Carbon::now()->startOfMonth();
             $endDate = Carbon::now()->endOfMonth();
 
@@ -128,7 +117,9 @@ class ProductRepositories
             }
         }
 
-        if('quarter'==$filterType){
+
+        if ('quarter' == $filterType) {
+
             $startDate = Carbon::now()->firstOfQuarter();
             $endDate = Carbon::now()->lastOfQuarter();
 
@@ -155,7 +146,9 @@ class ProductRepositories
             // Kết quả đầu ra
             $listResult = [];
             foreach ($allMonths as $month) {
-                $monthNumber = (int)substr($month, 5, 2);
+
+                $monthNumber = (int) substr($month, 5, 2);
+
                 if ($result->has($month)) {
                     $listResult[] = [
                         'stt' => $monthNumber, // Thứ tự tháng trong quý
@@ -173,7 +166,9 @@ class ProductRepositories
 
         }
 
-        if('year'==$filterType){
+
+        if ('year' == $filterType) {
+
             $startDate = Carbon::now()->startOfYear(); // Ngày đầu năm
             $endDate = Carbon::now()->endOfYear();     // Ngày cuối năm
 
@@ -198,7 +193,8 @@ class ProductRepositories
             // Kết quả đầu ra
             $listResult = [];
             foreach ($allMonths as $month) {
-                $monthNumber = (int)substr($month, 5, 2); // Lấy số tháng từ định dạng "YYYY-MM"
+                $monthNumber = (int) substr($month, 5, 2); // Lấy số tháng từ định dạng "YYYY-MM"
+
                 if ($result->has($month)) {
                     $listResult[] = [
                         'stt' => $monthNumber, // Số của tháng (1-12)
@@ -232,17 +228,24 @@ class ProductRepositories
         $query = Product::with(['category']);
         if (!empty($categories_id)) {
             $categoryIds = Category::where('id', $categories_id) // Tìm parent category
-            ->orWhere('parent_id', $categories_id) // Lấy tất cả child categories
-            ->pluck('id') // Chỉ lấy ID
-            ->toArray();
+
+                ->orWhere('parent_id', $categories_id) // Lấy tất cả child categories
+                ->pluck('id') // Chỉ lấy ID
+                ->toArray();
+
 
             // Lọc sản phẩm theo danh sách categories ID
             $query->whereIn('categories_id', $categoryIds);
         }
 
+
+        // if (!empty($name)) {
+        //     $query->where('name', 'like', '%' . $name . '%');
+        // }
         if (!empty($name)) {
-            $query->where('name', 'like', '%' . $name . '%');
+            $query->whereRaw("BINARY name LIKE ?", ['%' . $name . '%']);
         }
+        
 
         if (!empty($fromPrice)) {
             $query->where(function ($query) use ($fromPrice) {
@@ -285,7 +288,7 @@ class ProductRepositories
 
     public function getProduct($productId)
     {
-        $product = Product::with(['image_products','sizes', 'colors','category'])->find($productId);
+        $product = Product::with(['image_products', 'sizes', 'colors', 'category'])->find($productId);
         if ($product) {
             $product->sizes = $product->sizes->unique('size')->pluck('size');
             $product->colors = $product->colors->unique('code')->pluck('code');
@@ -312,13 +315,13 @@ class ProductRepositories
                 'listColors' => $product->colors
             ];
         } else {
-            BaseResponse::failure(400, '','product.not.found', []);
+            BaseResponse::failure(400, '', 'product.not.found', []);
         }
     }
 
     public function getProductDetail($productId)
     {
-        $products = ProductVariant::with(['product.image_products','product.category', 'product.product_variants'])
+        $products = ProductVariant::with(['product.image_products', 'product.category', 'product.product_variants'])
             ->join('colors', 'colors.id', '=', 'product_variants.color_id')
             ->join('sizes', 'sizes.id', '=', 'product_variants.size_id')
             ->join('products', 'product_variants.product_id', '=', 'products.id')
@@ -337,6 +340,7 @@ class ProductRepositories
             ->get();
         return $topDiscountedProducts;
     }
+
 
     public function getTopNewestProducts($number)
     {
@@ -375,7 +379,8 @@ class ProductRepositories
 
     public function deleteProduct(Request $request)
     {
-        $product= Product::find($request->input('id'));
+
+        $product = Product::find($request->input('id'));
 
         if (!$product) {
             BaseResponse::failure('400', 'product not found', 'product.not.found', []);

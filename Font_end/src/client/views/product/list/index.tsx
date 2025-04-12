@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Select,
   Pagination,
-  Checkbox,
   Slider,
   Row,
   Col,
@@ -12,14 +11,9 @@ import {
   Tree,
   TreeProps,
 } from "antd";
-import {
-  ICategory,
-  IListCategory,
-  IPagination,
-  IProduct,
-} from "@/types/interface";
+import { IListCategory, IPagination, IProduct } from "@/types/interface";
 import ProductItem from "@/client/components/ProductItem";
-import { HttpCode, HttpCodeString } from "@/utils/constants";
+import { HttpCodeString } from "@/utils/constants";
 import { cloneDeep } from "lodash";
 import FilterProduct, { IFilterData } from "../components/FilterProduct";
 import { useSearchParams } from "react-router-dom";
@@ -41,12 +35,20 @@ interface IPayloadSeach {
 }
 const paginationDefault = {
   page: 0,
-  size: 15,
+  size: 9,
 };
 const sortDefault = "default";
 const ProductList: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const isFirstRender = useRef(true);
+  const debounceCompleted = useRef({
+    price: false,
+    sort: false,
+    category: false,
+  });
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingTreeCategories, setLoadingTreeCategories] =
+    useState<boolean>(true);
   const [pagination, setPagination] = useState<IPagination>(
     cloneDeep(paginationDefault)
   );
@@ -57,6 +59,8 @@ const ProductList: React.FC = () => {
   const [totalProducts, setTotalProducts] = useState<number>(0);
   const [products, setProducts] = useState<IProduct[]>([]);
   const [sortOption, setSortOption] = useState<string>(sortDefault);
+  const [debounceSortOption, setDebounceSortOption] =
+    useState<string>(sortDefault);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [debounceSelectedCategories, setDebounceSelectedCategories] = useState<
     string[]
@@ -68,6 +72,8 @@ const ProductList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [categoryId, setCategoryId] = useState<number | null>(null);
 
+
+  // Lấy danh mục sản phẩm , thiết lập trạng thái ban đầu 
   useEffect(() => {
     setCategoryId(
       searchParams.get("categoryId")
@@ -76,10 +82,15 @@ const ProductList: React.FC = () => {
     );
   }, [searchParams]);
 
+
+  // Nếu có categoryId trong URL, nó sẽ được sử dụng để lọc danh mục
   useEffect(() => {
+    setSelectedCategories(categoryId ? [categoryId?.toString()] : []);
     const treeCategories = findCategoryDFS(cloneDeep(categories), categoryId);
     setCategoriesForFilter(treeCategories || []);
   }, [categoryId, categories]);
+
+
   useEffect(() => {
     getTreeCategories();
   }, []);
@@ -88,81 +99,69 @@ const ProductList: React.FC = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebounceSelectedCategories(selectedCategories);
+      debounceCompleted.current.category = true;
     }, 1000); // Delay 1 giây
 
     return () => clearTimeout(timeoutId);
   }, [selectedCategories]);
+  // Sắp xếp
   useEffect(() => {
-    setPagination(cloneDeep(paginationDefault));
-    const payload: IPayloadSeach = {
-      pageNum: paginationDefault?.page,
-      pageSize: paginationDefault?.size,
-      name: searchTerm,
-      categoriesId: debounceSelectedCategories?.length > 0
-      ? debounceSelectedCategories[
-        debounceSelectedCategories?.length - 1
-        ]
-      : "",
-      fromPrice: priceRange?.[0] ? priceRange?.[0].toString() : "",
-      toPrice: priceRange?.[1] ? priceRange?.[1].toString() : "",
-      sortType: sortOption === sortDefault ? null : sortOption,
-    };
-    fetchProducts(payload);
-  }, [debounceSelectedCategories]);
-  // Lọc sản phẩm theo danh mục, giá và tìm kiếm
+    const timeoutId = setTimeout(() => {
+      setDebounceSortOption(sortOption);
+      debounceCompleted.current.sort = true;
+    }, 1000); // Delay 1 giây
+
+    return () => clearTimeout(timeoutId);
+  }, [sortOption]);
+  // Giá 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncePriceRange(priceRange);
+      debounceCompleted.current.price = true;
     }, 1000); // Delay 1 giây
 
     return () => clearTimeout(timeoutId);
   }, [priceRange]);
   useEffect(() => {
-    setPagination(cloneDeep(paginationDefault));
-    const payload: IPayloadSeach = {
-      pageNum: paginationDefault?.page,
-      pageSize: paginationDefault?.size,
-      name: searchTerm,
-      categoriesId: debounceSelectedCategories?.length > 0
-      ? debounceSelectedCategories[
-        debounceSelectedCategories?.length - 1
-        ]
-      : "",
-      fromPrice: debouncePriceRange?.[0]
-        ? debouncePriceRange?.[0].toString()
-        : "",
-      toPrice: debouncePriceRange?.[1]
-        ? debouncePriceRange?.[1].toString()
-        : "",
-      sortType: sortOption === sortDefault ? null : sortOption,
-    };
-    fetchProducts(payload);
-  }, [debouncePriceRange]);
-
-  // Sắp xếp sản phẩm
-  useEffect(() => {
-    setPagination(cloneDeep(paginationDefault));
-    const payload: IPayloadSeach = {
-      pageNum: paginationDefault?.page,
-      pageSize: paginationDefault?.size,
-      name: searchTerm,
-      categoriesId: debounceSelectedCategories?.length > 0
-      ? debounceSelectedCategories[
-        debounceSelectedCategories?.length - 1
-        ]
-      : "",
-      fromPrice: debouncePriceRange?.[0]
-        ? debouncePriceRange?.[0].toString()
-        : "",
-      toPrice: debouncePriceRange?.[1]
-        ? debouncePriceRange?.[1].toString()
-        : "",
-      sortType: sortOption === sortDefault ? null : sortOption,
-    };
-    fetchProducts(payload);
-  }, [sortOption]);
+    if (isFirstRender.current) {
+      isFirstRender.current = false; // Đánh dấu lần đầu đã qua
+      return;
+    }
+    // Kiểm tra xem cả 3 state debounce đã hoàn thành chưa
+    if (
+      debounceCompleted.current.category &&
+      debounceCompleted.current.price &&
+      debounceCompleted.current.sort
+    ) {
+      setPagination(cloneDeep(paginationDefault));
+      const payload: IPayloadSeach = {
+        pageNum: paginationDefault?.page,
+        pageSize: paginationDefault?.size,
+        name: searchTerm,
+        categoriesId:
+          debounceSelectedCategories?.length > 0
+            ? debounceSelectedCategories[debounceSelectedCategories?.length - 1]
+            : "",
+        fromPrice: debouncePriceRange?.[0]
+          ? debouncePriceRange?.[0].toString()
+          : "",
+        toPrice: debouncePriceRange?.[1]
+          ? debouncePriceRange?.[1].toString()
+          : "",
+        sortType:
+          debounceSortOption === sortDefault ? null : debounceSortOption,
+      };
+      fetchProducts(payload);
+    }
+  }, [debouncePriceRange, debounceSelectedCategories, debounceSortOption]);
 
   const fetchProducts = async (filterData: IPayloadSeach) => {
+    //Tránh TH có category mà logic xử lý debounceSelectedCategories chưa hoàn tất sẽ không call api nữa
+    if (
+      searchParams.get("categoryId") &&
+      debounceSelectedCategories?.length === 0
+    )
+      return;
     try {
       setLoading(true);
       const result = await productApi.getProductsByFilter(filterData);
@@ -183,7 +182,7 @@ const ProductList: React.FC = () => {
 
   const getTreeCategories = async () => {
     try {
-      setLoading(true);
+      setLoadingTreeCategories(true);
       const result = await homeApi.getAllCategories();
       if (result?.status === HttpCodeString.SUCCESS) {
         setCategories(result?.data);
@@ -193,7 +192,7 @@ const ProductList: React.FC = () => {
     } catch {
       setCategories([]);
     } finally {
-      setLoading(false);
+      setLoadingTreeCategories(false);
     }
   };
 
@@ -222,17 +221,22 @@ const ProductList: React.FC = () => {
   };
 
   const onSearchKeyWord = (value: string) => {
+    //Tránh TH có category mà logic xử lý debounceSelectedCategories chưa hoàn tất sẽ không call api nữa
+    if (
+      searchParams.get("categoryId") &&
+      debounceSelectedCategories?.length === 0
+    )
+      return;
     setSearchTerm(value);
     setPagination(cloneDeep(paginationDefault));
     const payload: IPayloadSeach = {
       pageNum: paginationDefault?.page,
       pageSize: paginationDefault?.size,
       name: value,
-      categoriesId: debounceSelectedCategories?.length > 0
-      ? debounceSelectedCategories[
-        debounceSelectedCategories?.length - 1
-        ]
-      : "",
+      categoriesId:
+        debounceSelectedCategories?.length > 0
+          ? debounceSelectedCategories[debounceSelectedCategories?.length - 1]
+          : "",
       fromPrice: debouncePriceRange?.[0]
         ? debouncePriceRange?.[0].toString()
         : "",
@@ -277,8 +281,8 @@ const ProductList: React.FC = () => {
       categoriesId:
         filterData?.selectedCategories?.length > 0
           ? filterData?.selectedCategories[
-              filterData?.selectedCategories?.length - 1
-            ]
+          filterData?.selectedCategories?.length - 1
+          ]
           : "",
       fromPrice: filterData?.priceRange?.[0]
         ? filterData?.priceRange?.[0].toString()
@@ -326,8 +330,26 @@ const ProductList: React.FC = () => {
                   (categoriesForFilter?.length > 1 ||
                     (categoriesForFilter?.length === 1 &&
                       categoriesForFilter[0]?.hasChildren)))) && (
-                <Panel header="Danh mục" key="2">
-                  {/* <Checkbox.Group
+                  <Panel className="relative" header="Danh mục" key="2">
+                    {loadingTreeCategories && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          background: "rgba(255, 255, 255, 0.7)",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          zIndex: 10,
+                        }}
+                      >
+                        <Spin size="large" />
+                      </div>
+                    )}
+                    {/* <Checkbox.Group
                   rootClassName="w-full gap-2"
                   onChange={(values) =>
                     setSelectedCategories(values as string[])
@@ -335,30 +357,30 @@ const ProductList: React.FC = () => {
                 >
                   {renderCategories(categoriesForFilter)}
                 </Checkbox.Group> */}
-                  <Tree
-                    // checkable
-                    fieldNames={{
-                      key: "id",
-                      title: "name",
-                      children: "children",
-                    }}
-                    treeData={
-                      categoryId
-                        ? categoriesForFilter[0]?.children
-                        : categoriesForFilter
-                    }
-                    onSelect={onSelect}
+                    <Tree
+                      // checkable
+                      fieldNames={{
+                        key: "id",
+                        title: "name",
+                        children: "children",
+                      }}
+                      treeData={
+                        categoryId
+                          ? categoriesForFilter[0]?.children
+                          : categoriesForFilter
+                      }
+                      onSelect={onSelect}
                     // onCheck={onCheckCategory}
-                  />
-                </Panel>
-              )}
+                    />
+                  </Panel>
+                )}
 
               {/* Filter theo giá */}
               <Panel header="Khoảng giá" key="3">
                 <Slider
                   range
                   min={0}
-                  max={10000000}
+                  max={1000000}
                   step={100000}
                   defaultValue={priceRange}
                   onChange={(values) =>
@@ -388,6 +410,7 @@ const ProductList: React.FC = () => {
             {/* Icon Filter */}
             <FilterProduct
               categories={categoriesForFilter}
+              categoryId={categoryId}
               onFilter={handleFilterProduct}
             />
           </div>

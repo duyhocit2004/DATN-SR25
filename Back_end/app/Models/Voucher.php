@@ -44,6 +44,24 @@ class Voucher extends Model
 		'voucher_price',
 		'start_date',
 		'end_date',
-		'status'
+		'status',
+		'min_order_value',
 	];
+	 // Thêm hàm kiểm tra hết hạn
+	 public function isExpired()
+	 {
+		 $now = now();
+ 
+		 if ($this->end_date && $this->end_date->lt($now)) {
+			 return true;
+		 }
+ 
+		 if ($this->expired_at && $this->expired_at->lt($now)) {
+			 return true;
+		 }
+ 
+		 return false;
+	 }
+
+
 }

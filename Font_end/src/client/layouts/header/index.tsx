@@ -110,7 +110,9 @@ const Header: React.FC = () => {
             Đăng Nhập
           </Menu.Item>
           <Menu.Item key="register" onClick={() => navigate("/register")}>
+
             Đăng Kí 
+
           </Menu.Item>
         </>
       )}
@@ -133,9 +135,9 @@ const Header: React.FC = () => {
   const handleNavigateToProducts = (values: IDataItem[]) => {
     navigate(
       "products" +
-        (values?.length > 0
-          ? "?categoryId=" + values[values?.length - 1]?.id
-          : "")
+      (values?.length > 0
+        ? "?categoryId=" + values[values?.length - 1]?.id
+        : "")
     );
   };
 
@@ -143,14 +145,16 @@ const Header: React.FC = () => {
     <header className="header-container bg-white shadow-md fixed top-0 left-0 w-full z-[1031]">
       <div className="container mx-auto flex items-center justify-between p-4">
         {/* Left: Logo */}
-        <Link to="/" className="text-2xl font-bold text-gray-900">
-          LOGO
+        <Link to="/">
+          <img src="public/images/logo/SKY.png" alt="Logo" className="h-25" />
         </Link>
 
         {/* Middle: Navigation (Hidden on small screens) */}
         <nav className="hidden md:flex space-x-6">
           <Link to="/" className="hover:text-blue-500">
+
             Trang Chủ 
+
           </Link>
           {/* <Dropdown overlay={menuCategories} trigger={["hover"]}>
             <span className="hover:text-blue-500 cursor-pointer">Danh mục</span>
@@ -247,6 +251,7 @@ const Header: React.FC = () => {
             className="text-lg"
             onClick={() => setOpenDrawer(false)}
           >
+
             Thông Tin Liên Hệ 
           </Link>
         </nav>

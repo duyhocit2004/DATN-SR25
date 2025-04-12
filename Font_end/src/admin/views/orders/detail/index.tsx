@@ -5,6 +5,10 @@ import orderApi from "@/api/orderApi";
 import {
   EuropeanDatetimeMinuteFormatDayjs,
   HttpCodeString,
+  OrderStatus,
+  PaymentMethod,
+  PaymentStatus,
+
 } from "@/utils/constants";
 import { IOrder, IProductOrder } from "@/types/interface";
 import { showToast } from "@/components/toast";
@@ -29,6 +33,8 @@ const OrderDetail: React.FC = () => {
   const [originOrder, setOriginOrder] = useState<IOrder | null>(null);
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [finalAmount, setFinalAmount] = useState<number>(0);
+
 
   useEffect(() => {
     if (orderCode) {
@@ -103,11 +109,12 @@ const OrderDetail: React.FC = () => {
         return (
           <div className="mt-2">
             <div
-              className={`${
-                !record?.priceSale
-                  ? "text-red-600 text-xl font-bold ml-2"
-                  : "text-gray-400 line-through text-sm"
-              }`}
+
+              className={`${!record?.priceSale
+                ? "text-red-600 text-xl font-bold ml-2"
+                : "text-gray-400 line-through text-sm"
+                }`}
+
             >
               {record?.priceRegular?.toLocaleString()} VND
             </div>
@@ -159,9 +166,40 @@ const OrderDetail: React.FC = () => {
 
   const onChangeData = <K extends keyof IOrder>(key: K, value: IOrder[K]) => {
     const data = cloneDeep(order) || ({} as IOrder);
+    // Nếu trạng thái là "CANCEL" hoặc "CANCEL CONFIRM", cố định trạng thái
+    if (key === "status" && (value === OrderStatus.CANCEL || value === OrderStatus.CANCEL_CONFIRM)) {
+      data[key] = value;
+      setOrder(data);
+      return; // Không cho phép thay đổi trạng thái khác
+    }
+  
+    // Cập nhật trạng thái khác
     data[key] = value;
+  
+    // Nếu trạng thái là "DELIVERED" và phương thức thanh toán là COD, tự động cập nhật trạng thái thanh toán
+    if (data.paymentMethod === PaymentMethod.COD && key === "status" && value === OrderStatus.DELIVERED) {
+      data.paymentStatus = PaymentStatus.PAID;
+    }
+  
     setOrder(data);
   };
+
+  const isStatusDisabled = (originStatus: string, targetStatus: string) => {
+    // Nếu trạng thái đã lưu là "CANCEL" hoặc "CANCEL CONFIRM", không cho phép chọn trạng thái khác
+    if (
+      originStatus === OrderStatus.CANCEL ||
+      originStatus === OrderStatus.CANCEL_CONFIRM
+    ) {
+      return true; // Vô hiệu hóa tất cả các trạng thái khác
+    }
+
+    // Chỉ cho phép chọn trạng thái sau trạng thái đã lưu (originStatus)
+    const statusOrder = Object.values(OrderStatus);
+    return (
+      statusOrder.indexOf(targetStatus) < statusOrder.indexOf(originStatus)
+    );
+  };
+
 
   const handleUpdateOrder = async () => {
     try {
@@ -173,7 +211,10 @@ const OrderDetail: React.FC = () => {
           duration: 5,
           type: "success",
         });
-        fetchOrderDetail();
+        setOriginOrder(cloneDeep(order)); // Lưu trạng thái hiện tại vào trạng thái đã lưu
+        setIsEdit(false); // Đặt lại trạng thái chỉnh sửa
+        navigate("/admin/orders");
+
       } else {
         showToast({
           content: "Lỗi khi cập nhật đơn hàng!",
@@ -204,7 +245,9 @@ const OrderDetail: React.FC = () => {
           <Button
             type="primary"
             disabled={!isEdit}
-            onClick={() => {handleUpdateOrder()}}
+
+            onClick={() => { handleUpdateOrder() }} 
+
           >
             Lưu
           </Button>
@@ -278,21 +321,34 @@ const OrderDetail: React.FC = () => {
                 <Text strong>Trạng thái thanh toán:</Text>
                 <Select
                   placeholder="Trạng thái thanh toán"
-                  // className="!w-96"
+
+                  className="!w-40"
                   value={order?.paymentStatus}
                   onChange={(value) => onChangeData("paymentStatus", value)}
-                  options={PaymentStatusData}
-                ></Select>
+                  options={PaymentStatusData.map((status) => ({
+                    ...status,
+                    disabled:
+                      order?.status === OrderStatus.CANCEL ||
+                      order?.status === OrderStatus.CANCEL_CONFIRM, // Vô hiệu hóa nếu trạng thái đơn hàng là "CANCEL" hoặc "CANCEL CONFIRMED"
+                  }))}
+                />
               </div>
               <div className="flex gap-4">
-                <Text strong>Trạng thái đơn hàng:</Text>
                 <Select
-                  placeholder="Trạng thái thanh toán"
-                  // className="!w-96"
+                  placeholder="Trạng thái đơn hàng"
+                  className="!w-60"
                   value={order?.status}
                   onChange={(value) => onChangeData("status", value)}
-                  options={OrderStatusDataAdmin}
-                ></Select>
+                  options={OrderStatusDataAdmin.map((status) => ({
+                    ...status,
+                    disabled: isStatusDisabled(
+                      originOrder?.status || "", // Trạng thái đã lưu
+                      // order?.status || "",      // Trạng thái hiện tại
+                      status.value              // Trạng thái mục tiêu
+                    ),
+                  }))}
+                />
+
               </div>
             </div>
             <div className="flex gap-4">
@@ -300,8 +356,9 @@ const OrderDetail: React.FC = () => {
               <p>
                 {order?.orderTime
                   ? dayjs(order?.orderTime).format(
-                      EuropeanDatetimeMinuteFormatDayjs
-                    )
+                    EuropeanDatetimeMinuteFormatDayjs
+                  )
+
                   : ""}
               </p>
             </div>

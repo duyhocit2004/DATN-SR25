@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CartState {
+  [x: string]: number;
   count: number;
 }
 

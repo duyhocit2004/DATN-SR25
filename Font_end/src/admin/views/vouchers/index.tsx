@@ -11,6 +11,7 @@ import {
 } from "@/store/reducers/adminVoucherSlice";
 import AddVoucherModal from "./create";
 import UpdateVoucherModal from "./update";
+import ErrorBoundary from "antd/es/alert/ErrorBoundary";
 
 const VouchersPage = () => {
   const navigate = useNavigate();
@@ -49,7 +50,9 @@ const VouchersPage = () => {
         </div>
       </div>
 
-      <VoucherTable />
+      <ErrorBoundary>
+        <VoucherTable />
+      </ErrorBoundary>
 
       {showAddModal && <AddVoucherModal refreshData={refreshData} />}
       {selectedVoucher && <UpdateVoucherModal refreshData={refreshData} />}

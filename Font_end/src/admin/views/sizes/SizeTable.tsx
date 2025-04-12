@@ -36,17 +36,18 @@ const SizeTable: React.FC = () => {
       key: "size",
       minWidth: 300,
     },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      minWidth: 200,
-      render: (createdAt: Dayjs) => {
-        return (
-          <div>{createdAt ? dayjs(createdAt).format("DD/MM/YYYY") : ""}</div>
-        );
-      },
-    },
+    // {
+    //   title: "Ngày tạo",
+    //   dataIndex: "createdAt",
+    //   key: "createdAt",
+    //   minWidth: 200,
+    //   render: (createdAt: Dayjs) => {
+    //     return (
+    //       <div>{createdAt ? dayjs(createdAt).format("DD/MM/YYYY") : ""}</div>
+    //     );
+    //   },
+    // },
+
     {
       title: "Hành động",
       key: "action",

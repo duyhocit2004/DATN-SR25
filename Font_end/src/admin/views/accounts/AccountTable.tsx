@@ -80,33 +80,34 @@ const AccountTable = () => {
         return <div>{getLabelByValue(ActiveStatusData, status)}</div>;
       },
     },
-    {
-      title: "Hành động",
-      dataIndex: "action",
-      minWidth: 120,
-      fixed: "right",
-      render: (value, record) => {
-        return (
-          <div className="actions">
-            <Tooltip title={"Xóa"}>
-              <Button
-                danger
-                icon={<DeleteOutlined />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteAccount(record.id);
-                }}
-              />
-            </Tooltip>
-          </div>
-        );
-      },
-    },
+    // {
+    //   title: "Hành động",
+    //   dataIndex: "action",
+    //   minWidth: 120,
+    //   fixed: "right",
+    //   render: (value, record) => {
+    //     return (
+    //       <div className="actions">
+    //         <Tooltip title={"Xóa"}>
+    //           <Button
+    //             danger
+    //             icon={<DeleteOutlined />}
+    //             onClick={(e) => {
+    //               e.stopPropagation();
+    //               handleDeleteAccount(record.id);
+    //             }}
+    //           />
+    //         </Tooltip>
+    //       </div>
+    //     );
+    //   },
+    // },
+
   ];
 
-  const handleDeleteAccount = async (accountId: number) => {
-    dispatch(deleteAccount(accountId));
-  };
+  // const handleDeleteAccount = async (accountId: number) => {
+  //   dispatch(deleteAccount(accountId));
+  // };
 
   const handlePagingChange = (page: number, size: number) => {
     dispatch(
