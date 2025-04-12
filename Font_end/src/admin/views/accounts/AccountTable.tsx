@@ -5,7 +5,7 @@ import {
   setPagination,
 } from "@/store/reducers/adminAccountSlice";
 import { IAccount } from "@/types/interface";
-import { ActiveStatusData, GenderData, RoleData } from "@/utils/constantData";
+import { ActiveStatusData, GenderData, PersonTypeData, RoleData } from "@/utils/constantData";
 import { getLabelByValue } from "@/utils/functions";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Table, Tooltip } from "antd";
@@ -31,16 +31,16 @@ const AccountTable = () => {
       },
       minWidth: 70,
     },
-    {
-      title: "Ảnh",
-      dataIndex: "userImage",
-      render: (value) => {
-        return value ? (
-          <img src={value} alt="avatar" width={100} height={100} />
-        ) : null;
-      },
-      minWidth: 150,
-    },
+    // {
+    //   title: "Ảnh",
+    //   dataIndex: "userImage",
+    //   render: (value) => {
+    //     return value ? (
+    //       <img src={value} alt="avatar" width={100} height={100} />
+    //     ) : null;
+    //   },
+    //   minWidth: 150,
+    // },
     {
       title: "Họ và tên",
       dataIndex: "name",
@@ -69,7 +69,7 @@ const AccountTable = () => {
       dataIndex: "gender",
       minWidth: 180,
       render: (gender) => {
-        return <div>{getLabelByValue(GenderData, gender)}</div>;
+        return <div>{getLabelByValue(PersonTypeData, gender)}</div>;
       },
     },
     {
