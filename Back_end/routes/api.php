@@ -90,8 +90,6 @@ Route::middleware('jwt.auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/updateUser', [AuthController::class, 'updateUser']);
 
-        Route::post('/changePassword', [AuthController::class, 'changePassword']);
-
     });
     Route::post('/uploadImage', [CommonController::class, 'uploadImage']);
 
