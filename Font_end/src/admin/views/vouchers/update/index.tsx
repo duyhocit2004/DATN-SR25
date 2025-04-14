@@ -4,13 +4,17 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setSelectedVoucher } from "@/store/reducers/adminVoucherSlice";
 import { IVoucher } from "@/types/interface";
 import { HttpCodeString } from "@/utils/constants";
-import { Modal, Input, Button, Form, InputNumber } from "antd";
+import { Modal, Input, Button, Form, InputNumber, DatePicker } from "antd";
+import dayjs from "dayjs";
+import moment from "moment";
 import { useEffect, useState } from "react";
 interface IVoucherForm {
   id: number | null;
   code: string;
   quantity: number | null;
   voucherPrice: number | null;
+  startDate: Date | null;
+  endDate: Date | null;
   used: number | null;
   description: string;
 }
@@ -18,7 +22,7 @@ interface IVoucherForm {
 interface IProps {
   refreshData: () => void;
 }
-const UpdateVoucherModal: React.FC<IProps> = ({refreshData}) => {
+const UpdateVoucherModal: React.FC<IProps> = ({ refreshData }) => {
   const dispatch = useAppDispatch();
   const { selectedVoucher } = useAppSelector((state) => state.adminVoucher);
   const [form] = Form.useForm(); // Khởi tạo form
@@ -27,6 +31,8 @@ const UpdateVoucherModal: React.FC<IProps> = ({refreshData}) => {
     code: "",
     quantity: null,
     used: null,
+    startDate: null,
+    endDate: null,
     voucherPrice: null,
     description: "",
   });
@@ -45,6 +51,8 @@ const UpdateVoucherModal: React.FC<IProps> = ({refreshData}) => {
       id: null,
       code: "",
       quantity: null,
+      startDate: null,
+      endDate: null,
       used: null,
       voucherPrice: null,
       description: "",
@@ -58,6 +66,8 @@ const UpdateVoucherModal: React.FC<IProps> = ({refreshData}) => {
       code: currentVoucher.code,
       quantity: currentVoucher.quantity,
       used: currentVoucher.used,
+      startDate: currentVoucher.startDate ? moment(currentVoucher.startDate).toDate() : null,
+      endDate: currentVoucher.endDate ? moment(currentVoucher.endDate).toDate() : null,
       voucherPrice: currentVoucher.voucherPrice,
       description: currentVoucher.description || "",
     });
@@ -65,11 +75,12 @@ const UpdateVoucherModal: React.FC<IProps> = ({refreshData}) => {
       code: currentVoucher.code,
       quantity: currentVoucher.quantity,
       used: currentVoucher.used,
+      startDate: currentVoucher.startDate ? moment(currentVoucher.startDate) : null,
+      endDate: currentVoucher.endDate ? moment(currentVoucher.endDate) : null,
       voucherPrice: currentVoucher.voucherPrice,
       description: currentVoucher.description || "",
     });
   };
-
   // Hàm cập nhật state & form
   const onChangeFormData = (key: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -87,7 +98,11 @@ const UpdateVoucherModal: React.FC<IProps> = ({refreshData}) => {
   };
 
   const onSave = async () => {
-    const payload = { ...formData };
+    const payload = {
+      ...formData,
+      startDate: formData.startDate ? dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss") : null,
+      endDate: formData.endDate ? dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss") : null,
+    };
     setLoading(true);
     try {
       const response = await adminApi.updateVoucher(payload);
@@ -111,6 +126,7 @@ const UpdateVoucherModal: React.FC<IProps> = ({refreshData}) => {
       setLoading(false);
     }
   };
+
   const onClose = () => {
     dispatch(setSelectedVoucher(null));
   };
@@ -153,6 +169,20 @@ const UpdateVoucherModal: React.FC<IProps> = ({refreshData}) => {
           />
         </Form.Item>
         <Form.Item
+          label="Giá trị đơn tối thiểu"
+          name="minOrderValue"
+          rules={[{ required: true, message: "Vui lòng nhập giá trị tối thiểu" }]}
+        >
+          <InputNumber
+            min={0}
+            className="!w-full"
+            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+            addonAfter="VND"
+          />
+        </Form.Item>
+
+        <Form.Item
           name="quantity"
           label="Số lượng"
           rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
@@ -167,19 +197,47 @@ const UpdateVoucherModal: React.FC<IProps> = ({refreshData}) => {
             }}
           />
         </Form.Item>
+
         <Form.Item
-          name="used"
-          label="Số lượng đã dùng"
+          label="Ngày bắt đầu"
+          name="startDate"
+          rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu!" }]}
         >
-          <InputNumber
-            className="!w-full"
-            controls={false}
-            placeholder="Nhập số lượng"
-            min={0}
-            disabled={true}
-            onChange={(value) => {
-              onChangeFormData("used", value);
+          <DatePicker
+            showTime
+            format="YYYY-MM-DD HH:mm:ss"
+            disabledDate={(current) => current && current < moment().startOf("day")}
+            onChange={(date) => onChangeFormData("startDate", date)}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Ngày kết thúc"
+          name="endDate"
+          rules={[
+            { required: true, message: "Vui lòng chọn ngày kết thúc!" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                const startDate = getFieldValue("startDate");
+                if (!value || !startDate) {
+                  return Promise.resolve();
+                }
+                if (moment(value).isAfter(startDate)) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("Ngày kết thúc phải lớn hơn ngày bắt đầu!"));
+              },
+            }),
+          ]}
+        >
+          <DatePicker
+            showTime
+            format="YYYY-MM-DD HH:mm:ss"
+            disabledDate={(current) => {
+              const startDate = form.getFieldValue("startDate");
+              return current && startDate && current < moment(startDate).startOf("day");
             }}
+            onChange={(date) => onChangeFormData("endDate", date)}
           />
         </Form.Item>
 

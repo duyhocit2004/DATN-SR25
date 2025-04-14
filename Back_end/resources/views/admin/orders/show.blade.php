@@ -1,5 +1,12 @@
 @extends('admin.layout.app')
 
+@if ($order->receiver_name)
+    <h3 class="mt-4">Thông tin người nhận</h3>
+    <p><strong>Họ và tên:</strong> {{ $order->receiver_name }}</p>
+    <p><strong>Số điện thoại:</strong> {{ $order->receiver_phone_number }}</p>
+    <p><strong>Địa chỉ:</strong> {{ $order->receiver_address }}</p>
+@endif
+
 @section('content')
     <div class="container">
         <h1 class="my-4">Chi tiết đơn hàng #{{ $order->id }}</h1>

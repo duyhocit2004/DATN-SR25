@@ -16,16 +16,37 @@ class OrderService implements IOrderService
     public OrderRepositories $orderRepositories;
     public VoucherRepositories $voucherRepositories;
 
-    public function __construct(OrderRepositories   $orderRepositories,
-                                VoucherRepositories $voucherRepositories)
-    {
+    public function __construct(
+        OrderRepositories $orderRepositories,
+        VoucherRepositories $voucherRepositories
+    ) {
         $this->orderRepositories = $orderRepositories;
         $this->voucherRepositories = $voucherRepositories;
     }
 
+
     public function addOrder(Request $request)
     {
-        $order = $this->orderRepositories->addOrder($request);
+        $validatedData = $request->validate([
+            'customerName' => 'required|string',
+            'email' => 'required|email',
+            'phoneNumber' => 'required|string',
+            'receiverName' => 'nullable|string',
+            'receiverPhoneNumber' => 'nullable|string',
+            'receiverAddress' => 'nullable|string',
+            'shippingAddress' => 'required|string',
+            'totalAmount' => 'required|numeric',
+            'paymentMethod' => 'required|string',
+            'products' => 'required|array',
+            'voucher' => 'nullable|string',
+            'voucherPrice' => 'nullable|numeric',
+        ]);
+
+        // Gán giá trị mặc định nếu không có voucher
+        $validatedData['voucher'] = $validatedData['voucher'] ?? null;
+
+        // Gửi dữ liệu đến repository
+        $order = $this->orderRepositories->addOrder($validatedData);
         return $order;
     }
 
@@ -40,11 +61,14 @@ class OrderService implements IOrderService
                 'customerName' => $order->customer_name,
                 'email' => $order->email,
                 "phoneNumber" => $order->phone_number,
+                'receiverName' => $order->receiver_name ?? null,
+                'receiverPhoneNumber' => $order->receiver_phone_number ?? null,
+                'receiverAddress' => $order->receiver_address ?? null,
                 'totalPrice' => $order->total_price,
                 'priceSale' => $order->price_sale,
                 'voucher' => $order->voucher,
                 'voucherPrice' => $order->voucher_price,
-                'shippingAddress' => $order->address,
+                'shippingAddress' => $order->shipping_address,
                 'note' => $order->note,
                 'status' => $order->status,
                 'orderTime' => $order->date,
@@ -88,6 +112,8 @@ class OrderService implements IOrderService
                 'voucher' => $order->voucher,
                 'voucherPrice' => $order->voucher_price,
                 'shippingAddress' => $order->address,
+                'paymentStatus' => $order->payment_status,
+                'paymentMethod' => $order->payment_method,
                 'note' => $order->note,
                 'status' => $order->status,
                 'orderTime' => $order->date,
@@ -138,6 +164,9 @@ class OrderService implements IOrderService
             'customerName' => $order->customer_name,
             'email' => $order->email,
             "phoneNumber" => $order->phone_number,
+            'receiverName' => $order->receiver_name, // Trả về thông tin người nhận
+            'receiverPhoneNumber' => $order->receiver_phone_number, // Trả về thông tin người nhận
+            'receiverAddress' => $order->receiver_address, // Trả về thông tin người nhận
             'totalPrice' => $order->total_price,
             'priceSale' => $order->price_sale,
             'voucher' => $order->voucher,
@@ -176,4 +205,57 @@ class OrderService implements IOrderService
         $list = $this->orderRepositories->updateOrder($request);
         return $list;
     }
+
+
+    public function deleteOrder(Request $request)
+    {
+        // Xác thực người dùng
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        // Xóa đơn hàng
+        $orderId = $request->input('id');
+        $result = $this->orderRepositories->deleteOrder($orderId);
+
+        if ($result) {
+            return BaseResponse::success(['message' => 'Đơn hàng đã được xóa thành công']);
+        } else {
+            return BaseResponse::failure(400, 'Không thể xóa đơn hàng', 'order.delete.failed', []);
+        }
+    }
+
+
+
+    public function refundOrder(Request $request)
+    {
+        $orderId = $request->input('orderId');
+        \Log::info('Bắt đầu xử lý hoàn tiền cho orderId:', ['orderId' => $orderId]); // Log orderId
+
+        $order = Order::find($orderId);
+
+        if (!$order || $order->payment_method !== 'ONLINE' || $order->payment_status !== 'PAID') {
+            \Log::warning('Đơn hàng không hợp lệ để hoàn tiền:', ['order' => $order]);
+            throw new \Exception('Đơn hàng không hợp lệ để hoàn tiền.');
+        }
+
+        // Gọi API VNPay để hoàn tiền
+        $refundResponse = VNPayService::refund($order->transaction_id, $order->total_price);
+        \Log::info('Phản hồi từ VNPay:', ['response' => $refundResponse]); // Log phản hồi từ VNPay
+
+        if ($refundResponse['success']) {
+            $order->update([
+                'payment_status' => 'REFUNDED',
+                'status' => 'CANCELLED',
+            ]);
+            \Log::info('Hoàn tiền thành công cho orderId:', ['orderId' => $orderId]);
+            return $order;
+        } else {
+            \Log::error('Hoàn tiền thất bại:', ['response' => $refundResponse]);
+            throw new \Exception('Hoàn tiền thất bại.');
+        }
+    }
+
 }

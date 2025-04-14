@@ -8,6 +8,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+use Illuminate\Support\Str;
+
+
 
 class AuthRepositories
 {
@@ -108,5 +111,32 @@ class AuthRepositories
 
         return $user;
     }
+
+    public function forgotPassword(Request $request)
+    {
+        $user = User::query()->where('email', '=', $request->input('email'))->where('phone_number', '=', $request->input('phoneNumber'))->first();
+
+        if (!$user) {
+            BaseResponse::failure('400', 'size not found', 'size.not.found', []);
+        }
+
+        $newPassword = Str::random(8);
+
+        $user->update([
+            'password' => Hash::make($newPassword),
+        ]);
+
+        return $newPassword;
+    }
+
+    public function changePassword($userId, $newPassword)
+    {
+        $user = User::find($userId);
+
+        $user->update([
+            'password' => Hash::make($newPassword),
+        ]);
+    }
+
 
 }

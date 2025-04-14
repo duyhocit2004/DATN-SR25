@@ -57,6 +57,24 @@ const OrderDetail = () => {
             </p>
           </div>
 
+          {/*Thông tin người nhận hàng */}
+          {selectedOrder?.receiverName && (
+            <>
+              <h3 className="font-bold mt-10 mb-4">Thông tin người nhận hàng</h3>
+              <div className="receiver-info grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <p>
+                  <strong>Họ và tên:</strong> {selectedOrder?.receiverName || "-"}
+                </p>
+                <p>
+                  <strong>Số điện thoại:</strong> {selectedOrder?.receiverPhoneNumber || "-"}
+                </p>
+                <p>
+                  <strong>Địa chỉ:</strong> {selectedOrder?.receiverAddress || "-"}
+                </p>
+              </div>
+            </>
+          )}
+
           <h3 className="font-bold mt-10 mb-4">Danh sách sản phẩm:</h3>
 
           <div className="product-list overflow-auto">
@@ -81,10 +99,10 @@ const OrderDetail = () => {
                 </div>
                 <div className="min-w-24">
                   <p className="text-black-500 font-semibold">
-                  Giá :  {product.priceRegular?.toLocaleString()} đ
+                    Giá :  {product.priceRegular?.toLocaleString()} đ
                   </p>
                   <p className="text-red-500 font-semibold">
-                  Giá Sale :  {product.priceSale?.toLocaleString()} đ
+                    Giá Sale :  {product.priceSale?.toLocaleString()} đ
                   </p>
                 </div>
               </div>

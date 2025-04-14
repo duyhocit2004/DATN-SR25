@@ -45,22 +45,25 @@ const ColorTable: React.FC = () => {
         return (
           <div
             className={`color w-6 h-6 shrink-0 rounded-[50%]`}
-            style={{ backgroundColor: color }}
+            style={{
+              backgroundColor: color,
+              border: color.toLowerCase() === "#ffffff" || color.toLowerCase() === "white" ? "1px solid #ccc" : "none"
+            }}
           ></div>
         );
       },
     },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      minWidth: 200,
-      render: (createdAt: Dayjs) => {
-        return (
-          <div>{createdAt ? dayjs(createdAt).format("DD/MM/YYYY") : ""}</div>
-        );
-      },
-    },
+    // {
+    //   title: "Ngày tạo",
+    //   dataIndex: "createdAt",
+    //   key: "createdAt",
+    //   minWidth: 200,
+    //   render: (createdAt: Dayjs) => {
+    //     return (
+    //       <div>{createdAt ? dayjs(createdAt).format("DD/MM/YYYY") : ""}</div>
+    //     );
+    //   },
+    // },
     {
       title: "Hành động",
       key: "action",

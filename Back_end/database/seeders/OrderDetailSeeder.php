@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Product;
+
+use App\Models\ProductVariants;
+
 use Illuminate\Database\Seeder;
 use App\Models\Order;
 use App\Models\ProductVariant;
@@ -16,7 +19,9 @@ class OrderDetailSeeder extends Seeder
     {
         $orders = Order::pluck('id')->toArray();
         $products = Product::pluck('id')->toArray();
-        $variants = ProductVariant::pluck('id')->toArray();
+
+        $variants = ProductVariants::pluck('id')->toArray();
+
         $colors = Color::pluck('id')->toArray(); // Lấy danh sách ID của bảng colors
         $sizes = Size::pluck('id')->toArray(); // Lấy danh sách ID của bảng sizes
 

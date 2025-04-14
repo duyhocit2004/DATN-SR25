@@ -84,18 +84,50 @@ const MyAccount: React.FC = () => {
     }
   };
 
-  const onUpdate = async (values: User) => {
-    // setUpdating(true);
-    // try {
-    //   await axios.put(`/api/user/${user?.id}`, values);
-    //   message.success("Cập nhật thông tin thành công!");
-    //   setUser(values);
-    // } catch (error) {
-    //   message.error("Cập nhật thất bại, vui lòng thử lại!");
-    // } finally {
-    //   setUpdating(false);
-    // }
+  const onUpdate = async (values: Partial<IFormData>) => {
+    setLoading(true);
+    try {
+      const updatedData: Partial<IFormData> = {
+        id: formData.id,
+        name: values.name,
+        password: values.password,
+        status: values.status,
+        phoneNumber: values.phoneNumber,
+        email: values.email,
+        gender: values.gender,
+        role: values.role,
+      };
+  
+      console.log("Dữ liệu gửi lên API:", updatedData); // Log request để kiểm tra
+  
+      const response = await adminApi.updateUser(updatedData);
+  
+      console.log("Phản hồi từ API:", response); // Log response để xem API có lỗi không
+  
+      if (response.status === HttpCodeString.SUCCESS) {
+        showToast({
+          content: "Cập nhật thông tin thành công!",
+          type: "success",
+        });
+  
+        setFormData(prev => ({ ...prev, ...updatedData }));
+      } else {
+        showToast({
+          content: "Cập nhật thất bại! Vui lòng thử lại.",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật:", error); // Log lỗi nếu có
+      showToast({
+        content: "Có lỗi xảy ra khi cập nhật!",
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+  
 
   if (loading)
     return <Spin size="large" className="flex justify-center mt-10" />;

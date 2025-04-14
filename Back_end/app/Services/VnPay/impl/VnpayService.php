@@ -2,15 +2,17 @@
 
 namespace App\Services\VnPay\impl;
 
+use App\Repositories\OrderRepositories;
 use App\Services\VnPay\IVnpayService;
 use Illuminate\Http\Request;
 
 
 class VnpayService implements IVnpayService{
 
-    public function __construct()
+    public OrderRepositories $orderRepositories;
+    public function __construct(OrderRepositories   $orderRepositories)
     {
-
+        $this->orderRepositories = $orderRepositories;
     }
 
     public function createPaymentUrl($orderCode, $amount)
@@ -71,52 +73,56 @@ class VnpayService implements IVnpayService{
 
     public function handleReturn(Request $request)
     {
-        return 'http://localhost:5173';
-//        $vnp_HashSecret = env('VNP_HASH_SECRET');
-//        $inputData = [];
-//        foreach ($request->all() as $key => $value) {
-//            if (substr($key, 0, 4) == "vnp_") {
-//                $inputData[$key] = $value;
-//            }
-//        }
-//
-//        ksort($inputData);
-//        $hashData = "";
-//        foreach ($inputData as $key => $value) {
-//            if ($key != "vnp_SecureHash") {
-//                $hashData .= $key . '=' . $value . '&';
-//            }
-//        }
-//        $hashData = rtrim($hashData, '&');
-//
-//        $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
-//
-////        if ($secureHash === $inputData['vnp_SecureHash']) {
-////            // Giao dịch hợp lệ
-////            if ($inputData['vnp_ResponseCode'] == '00') {
-////                return response()->json(['message' => 'Giao dịch thành công']);
-////            } else {
-////                return response()->json(['message' => 'Giao dịch không thành công', 'errorCode' => $inputData['vnp_ResponseCode']]);
-////            }
-////        } else {
-////            // Giao dịch không hợp lệ
-////            return response()->json(['message' => 'Chữ ký không hợp lệ']);
-////        }
-//            if ($secureHash === $_GET['vnp_SecureHash']) {
-//                if ($_GET['vnp_ResponseCode'] == "00") {
-//                    // Giao dịch thành công
-////                    return redirect('http://localhost:5173/payment-result?status=success&amount='.$_GET['vnp_Amount']);
-//                    return 'http://localhost:5173';
-//                } else {
-//                    // Giao dịch thất bại
-////                    return redirect('http://localhost:5173/payment-result?status=failure');
-//                    return 'http://localhost:5173';
-//                }
+        $vnp_HashSecret = env('VNP_HASH_SECRET');
+        foreach ($_GET as $key => $value) {
+            if (substr($key, 0, 4) == "vnp_") {
+                $inputData[$key] = $value;
+            }
+        }
+
+        unset($inputData['vnp_SecureHash']);
+        ksort($inputData);
+        $i = 0;
+        $hashData = "";
+        foreach ($inputData as $key => $value) {
+            if ($i == 1) {
+                $hashData = $hashData . '&' . urlencode($key) . "=" . urlencode($value);
+            } else {
+                $hashData = $hashData . urlencode($key) . "=" . urlencode($value);
+                $i = 1;
+            }
+        }
+
+        $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
+
+//        if ($secureHash === $inputData['vnp_SecureHash']) {
+//            // Giao dịch hợp lệ
+//            if ($inputData['vnp_ResponseCode'] == '00') {
+//                return response()->json(['message' => 'Giao dịch thành công']);
 //            } else {
-//                // Dữ liệu không hợp lệ
-////                return redirect('http://localhost:5173/payment-result?status=invalid');
-//                return'http://localhost:5173';
+//                return response()->json(['message' => 'Giao dịch không thành công', 'errorCode' => $inputData['vnp_ResponseCode']]);
 //            }
+//        } else {
+//            // Giao dịch không hợp lệ
+//            return response()->json(['message' => 'Chữ ký không hợp lệ']);
+//        }
+        if ($secureHash === $_GET['vnp_SecureHash']) {
+            if ($_GET['vnp_ResponseCode'] == "00") {
+                // Giao dịch thành công
+                $this->orderRepositories->updateOrderPayment($_GET['vnp_TxnRef'], 'PAID' );
+                return 'http://localhost:5173/vnpay-return?vnp_ResponseCode='.$_GET['vnp_ResponseCode'].'&vnp_TransactionNo='.$_GET['vnp_BankTranNo'];
+//                    return 'http://localhost:5173';
+            } else {
+                // Giao dịch thất bại
+                return 'http://localhost:5173/vnpay-return?vnp_ResponseCode='.$_GET['vnp_ResponseCode'].'&vnp_TransactionNo='.$_GET['vnp_BankTranNo'];
+//                    return 'http://localhost:5173';
+            }
+        } else {
+            // Dữ liệu không hợp lệ
+            return 'http://localhost:5173/vnpay-return?status=invalid';
+//                return'http://localhost:5173';
+        }
     }
+    
 
 }

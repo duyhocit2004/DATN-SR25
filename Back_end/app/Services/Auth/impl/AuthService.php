@@ -3,15 +3,19 @@
 namespace App\Services\Auth\impl;
 
 use App\Helpers\BaseResponse;
+
+use App\Models\User;
 use App\Repositories\AuthRepositories;
 use App\Services\Auth\IAuthService;
 use Cloudinary\Cloudinary;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use function PHPUnit\Framework\isEmpty;
 
 
 class AuthService implements IAuthService
@@ -21,7 +25,9 @@ class AuthService implements IAuthService
     protected $cloudinary;
 
     public function __construct(AuthRepositories $authRepositories,
-                                Cloudinary $cloudinary)
+
+                                Cloudinary       $cloudinary)
+
     {
         $this->authRepositories = $authRepositories;
         $this->cloudinary = $cloudinary;
@@ -149,7 +155,9 @@ class AuthService implements IAuthService
     public function getUser(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+
+        if (empty($user) ) {
+
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
@@ -182,7 +190,10 @@ class AuthService implements IAuthService
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
 
-        if($userId == $request->input('id')){
+
+        if ($userId != $request->input('id')) {
+
+
             BaseResponse::failure(401, 'unauthorized', 'unauthorized', []);
         }
 
@@ -197,39 +208,39 @@ class AuthService implements IAuthService
         return $user;
     }
 
-    public function requestPasswordReset($email)
+    public function forgotPassword($request)
     {
-        $user = User::where('email', $email)->first();
-        if ($user) {
-            // Xóa token cũ để tránh xung đột
-            PasswordReset::where('user_id', $user->id)->delete();
-            $token = Str::random(64);
-            $expiresAt = Carbon\Carbon::now()->addMinutes(30);
-            PasswordReset::create(['user_id' => $user->id, 'token' => $token, 'expires_at' => $expiresAt]);
-            try {
-                Mail::send('emails.reset_password', ['token' => $token], function ($message) use ($user) {
-                    $message->to($user->email)->subject('Reset your password');
-                });
-            } catch (\Exception $e) {
-                \Log::error('Failed to send password reset email: ' . $e->getMessage());
-            }
-        }
-        return true;
+
+        $validate = Validator::make($request->all(), [
+            'email' => 'required',
+            'phoneNumber' => 'required'
+        ], [
+            'email.required' => 'name là bắt buộc',
+            'phoneNumber.required' => 'phoneNumber là bắt buộc',
+        ]);
+        if ($validate->fails()) {
+            BaseResponse::failure(400, '', $validate->errors()->first(), []);
+        };
+
+        $newPassword = $this->authRepositories->forgotPassword($request);
+        return $newPassword;
     }
-    
-    public function resetPassword($token, $newPassword)
+
+    public function changePassword($request)
     {
-        $resetToken = PasswordReset::where('token', $token)->first();
-        if (!$resetToken || $resetToken->expires_at < Carbon\Carbon::now()) {
-            throw new \Exception('Invalid or expired token.', 400);
+        $user = JWTAuth::parseToken()->authenticate();
+        $userId = $user->id;
+
+        if (empty($user)) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
-        $user = User::find($resetToken->user_id);
-        if (!$user) {
-            throw new \Exception('User not found.', 404);
+
+        if ($userId != $request->input('id')) {
+            BaseResponse::failure(401, 'unauthorized', 'unauthorized', []);
         }
-        $user->password = Hash::make($newPassword);
-        $user->save();
-        $resetToken->delete();
-        return true;
+
+        $this->authRepositories->changePassword($userId, $request->input('newPassword'));
+        JWTAuth::invalidate(JWTAuth::getToken());
     }
 }

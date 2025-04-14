@@ -35,7 +35,7 @@ interface IPayloadSeach {
 }
 const paginationDefault = {
   page: 0,
-  size: 15,
+  size: 9,
 };
 const sortDefault = "default";
 const ProductList: React.FC = () => {
@@ -72,6 +72,8 @@ const ProductList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [categoryId, setCategoryId] = useState<number | null>(null);
 
+
+  // Lấy danh mục sản phẩm , thiết lập trạng thái ban đầu 
   useEffect(() => {
     setCategoryId(
       searchParams.get("categoryId")
@@ -80,11 +82,15 @@ const ProductList: React.FC = () => {
     );
   }, [searchParams]);
 
+
+  // Nếu có categoryId trong URL, nó sẽ được sử dụng để lọc danh mục
   useEffect(() => {
     setSelectedCategories(categoryId ? [categoryId?.toString()] : []);
     const treeCategories = findCategoryDFS(cloneDeep(categories), categoryId);
     setCategoriesForFilter(treeCategories || []);
   }, [categoryId, categories]);
+
+  // Gọi API để lấy danh sách danh mục 
   useEffect(() => {
     getTreeCategories();
   }, []);
@@ -98,7 +104,7 @@ const ProductList: React.FC = () => {
 
     return () => clearTimeout(timeoutId);
   }, [selectedCategories]);
-  // sort
+  // Sắp xếp
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebounceSortOption(sortOption);
@@ -107,7 +113,7 @@ const ProductList: React.FC = () => {
 
     return () => clearTimeout(timeoutId);
   }, [sortOption]);
-
+  // Giá 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncePriceRange(priceRange);
@@ -116,6 +122,8 @@ const ProductList: React.FC = () => {
 
     return () => clearTimeout(timeoutId);
   }, [priceRange]);
+
+  // Gọi fetchProducts khi tất cả debounce hoàn tất
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false; // Đánh dấu lần đầu đã qua
@@ -149,6 +157,8 @@ const ProductList: React.FC = () => {
     }
   }, [debouncePriceRange, debounceSelectedCategories, debounceSortOption]);
 
+
+  // Hàm gọi API DS sản phẩm 
   const fetchProducts = async (filterData: IPayloadSeach) => {
     //Tránh TH có category mà logic xử lý debounceSelectedCategories chưa hoàn tất sẽ không call api nữa
     if (
@@ -174,6 +184,8 @@ const ProductList: React.FC = () => {
     }
   };
 
+
+  // Lấy danh mục theo dạng cây 
   const getTreeCategories = async () => {
     try {
       setLoadingTreeCategories(true);
@@ -190,6 +202,8 @@ const ProductList: React.FC = () => {
     }
   };
 
+
+  // Đệ quy DFS
   const findCategoryDFS = (
     treeArray: IListCategory[],
     catId: number | null
@@ -214,6 +228,8 @@ const ProductList: React.FC = () => {
     return null; // Không tìm thấy
   };
 
+
+  // Tìm theo tên 
   const onSearchKeyWord = (value: string) => {
     //Tránh TH có category mà logic xử lý debounceSelectedCategories chưa hoàn tất sẽ không call api nữa
     if (
@@ -242,6 +258,8 @@ const ProductList: React.FC = () => {
     fetchProducts(payload);
   };
 
+
+  // chuyển trang 
   const onChangePagination = (pageNumber: number, pageSize: number) => {
     setPagination({
       page: pageNumber,
@@ -266,6 +284,8 @@ const ProductList: React.FC = () => {
     fetchProducts(payload);
   };
 
+
+  // lọc trên đt
   const handleFilterProduct = (filterData: IFilterData) => {
     setPagination(cloneDeep(paginationDefault));
     const payload: IPayloadSeach = {
@@ -275,8 +295,8 @@ const ProductList: React.FC = () => {
       categoriesId:
         filterData?.selectedCategories?.length > 0
           ? filterData?.selectedCategories[
-              filterData?.selectedCategories?.length - 1
-            ]
+          filterData?.selectedCategories?.length - 1
+          ]
           : "",
       fromPrice: filterData?.priceRange?.[0]
         ? filterData?.priceRange?.[0].toString()
@@ -289,6 +309,8 @@ const ProductList: React.FC = () => {
     fetchProducts(payload);
   };
 
+
+  // chọn danh mục trong cây 
   const onSelect: TreeProps["onSelect"] = (selectedKeysValue) => {
     const newSelectedKeys = selectedKeysValue.map((num) => num.toString());
     if (categoryId) {
@@ -324,57 +346,48 @@ const ProductList: React.FC = () => {
                   (categoriesForFilter?.length > 1 ||
                     (categoriesForFilter?.length === 1 &&
                       categoriesForFilter[0]?.hasChildren)))) && (
-                <Panel className="relative" header="Danh mục" key="2">
-                  {loadingTreeCategories && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        background: "rgba(255, 255, 255, 0.7)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        zIndex: 10,
+                  <Panel className="relative" header="Danh mục" key="2">
+                    {loadingTreeCategories && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          background: "rgba(255, 255, 255, 0.7)",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          zIndex: 10,
+                        }}
+                      >
+                        <Spin size="large" />
+                      </div>
+                    )}
+                    <Tree
+                      // checkable
+                      fieldNames={{
+                        key: "id",
+                        title: "name",
+                        children: "children",
                       }}
-                    >
-                      <Spin size="large" />
-                    </div>
-                  )}
-                  {/* <Checkbox.Group
-                  rootClassName="w-full gap-2"
-                  onChange={(values) =>
-                    setSelectedCategories(values as string[])
-                  }
-                >
-                  {renderCategories(categoriesForFilter)}
-                </Checkbox.Group> */}
-                  <Tree
-                    // checkable
-                    fieldNames={{
-                      key: "id",
-                      title: "name",
-                      children: "children",
-                    }}
-                    treeData={
-                      categoryId
-                        ? categoriesForFilter[0]?.children
-                        : categoriesForFilter
-                    }
-                    onSelect={onSelect}
-                    // onCheck={onCheckCategory}
-                  />
-                </Panel>
-              )}
+                      treeData={
+                        categoryId
+                          ? categoriesForFilter[0]?.children
+                          : categoriesForFilter
+                      }
+                      onSelect={onSelect}
+                    />
+                  </Panel>
+                )}
 
               {/* Filter theo giá */}
               <Panel header="Khoảng giá" key="3">
                 <Slider
                   range
                   min={0}
-                  max={10000000}
+                  max={1000000}
                   step={100000}
                   defaultValue={priceRange}
                   onChange={(values) =>
