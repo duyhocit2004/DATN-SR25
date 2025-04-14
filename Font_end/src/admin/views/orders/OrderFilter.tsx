@@ -76,6 +76,22 @@ const OrderFilter = () => {
           maxLength={200}
           onChange={(val) => {
             onChangeFilter("orderCode", val.target.value);
+           onChangeFilter
+("dateTime", [dayjs(), dayjs()]);
+          }
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }
+        clearInterval={() => {
+            onChangeFilter("orderCode", "");
+          }   
+          LockManager 
+          <canvas> </canvas>
+          <caption> 
+          </caption>
+          <legend></legend>
           }}
         />
         <Input
