@@ -90,7 +90,7 @@ const ProductList: React.FC = () => {
     setCategoriesForFilter(treeCategories || []);
   }, [categoryId, categories]);
 
-
+  // Gọi API để lấy danh sách danh mục 
   useEffect(() => {
     getTreeCategories();
   }, []);
@@ -122,6 +122,8 @@ const ProductList: React.FC = () => {
 
     return () => clearTimeout(timeoutId);
   }, [priceRange]);
+
+  // Gọi fetchProducts khi tất cả debounce hoàn tất
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false; // Đánh dấu lần đầu đã qua
@@ -155,6 +157,8 @@ const ProductList: React.FC = () => {
     }
   }, [debouncePriceRange, debounceSelectedCategories, debounceSortOption]);
 
+
+  // Hàm gọi API DS sản phẩm 
   const fetchProducts = async (filterData: IPayloadSeach) => {
     //Tránh TH có category mà logic xử lý debounceSelectedCategories chưa hoàn tất sẽ không call api nữa
     if (
@@ -180,6 +184,8 @@ const ProductList: React.FC = () => {
     }
   };
 
+
+  // Lấy danh mục theo dạng cây 
   const getTreeCategories = async () => {
     try {
       setLoadingTreeCategories(true);
@@ -196,6 +202,8 @@ const ProductList: React.FC = () => {
     }
   };
 
+
+  // Đệ quy DFS
   const findCategoryDFS = (
     treeArray: IListCategory[],
     catId: number | null
@@ -220,6 +228,8 @@ const ProductList: React.FC = () => {
     return null; // Không tìm thấy
   };
 
+
+  // Tìm theo tên 
   const onSearchKeyWord = (value: string) => {
     //Tránh TH có category mà logic xử lý debounceSelectedCategories chưa hoàn tất sẽ không call api nữa
     if (
@@ -248,6 +258,8 @@ const ProductList: React.FC = () => {
     fetchProducts(payload);
   };
 
+
+  // chuyển trang 
   const onChangePagination = (pageNumber: number, pageSize: number) => {
     setPagination({
       page: pageNumber,
@@ -272,6 +284,8 @@ const ProductList: React.FC = () => {
     fetchProducts(payload);
   };
 
+
+  // lọc trên đt
   const handleFilterProduct = (filterData: IFilterData) => {
     setPagination(cloneDeep(paginationDefault));
     const payload: IPayloadSeach = {
@@ -295,6 +309,8 @@ const ProductList: React.FC = () => {
     fetchProducts(payload);
   };
 
+
+  // chọn danh mục trong cây 
   const onSelect: TreeProps["onSelect"] = (selectedKeysValue) => {
     const newSelectedKeys = selectedKeysValue.map((num) => num.toString());
     if (categoryId) {
@@ -349,14 +365,6 @@ const ProductList: React.FC = () => {
                         <Spin size="large" />
                       </div>
                     )}
-                    {/* <Checkbox.Group
-                  rootClassName="w-full gap-2"
-                  onChange={(values) =>
-                    setSelectedCategories(values as string[])
-                  }
-                >
-                  {renderCategories(categoriesForFilter)}
-                </Checkbox.Group> */}
                     <Tree
                       // checkable
                       fieldNames={{
@@ -370,7 +378,6 @@ const ProductList: React.FC = () => {
                           : categoriesForFilter
                       }
                       onSelect={onSelect}
-                    // onCheck={onCheckCategory}
                     />
                   </Panel>
                 )}
