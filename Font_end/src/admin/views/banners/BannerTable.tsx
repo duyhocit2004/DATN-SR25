@@ -41,16 +41,20 @@ const BannerTable: React.FC = () => {
       },
     },
     {
-      title: "Ảnh",
+      title: "Hình ảnh",
       dataIndex: "image",
       key: "image",
-      minWidth: 150,
-      render: (image: string) => {
-        return image ? (
-          <img src={image} alt="banner" width={100} height={100} />
-        ) : null;
+      render: (image: string, record: any) => {
+        const productId = record.product_id;
+        const link = productId ? `/products/${productId}` : "#";
+        return (
+          <a href={link}>
+            <img src={image} alt="Banner" style={{ height: 80 }} />
+          </a>
+        );
       },
     },
+    
     {
       title: "Trạng thái",
       dataIndex: "status",
@@ -60,14 +64,30 @@ const BannerTable: React.FC = () => {
         return <div>{getLabelByValue(ActiveStatusData, status)}</div>;
       },
     },
+    
+    // {
+    //   title: "Ngày tạo",
+    //   dataIndex: "createdAt",
+    //   key: "createdAt",
+    //   minWidth: 200,
+    //   render: (createdAt: Dayjs) => {
+    //     return (
+    //       <div>{createdAt ? dayjs(createdAt).format("DD/MM/YYYY") : ""}</div>
+    //     );
+    //   },
+    // },
     {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      title: "Liên kết",
+      dataIndex: "productId", 
+      key: "productId",     
       minWidth: 200,
-      render: (createdAt: Dayjs) => {
+      render: (productId: number | null) => {
+        if (!productId) return <span>Không có</span>;
+        const productLink = `/products/${productId}`;
         return (
-          <div>{createdAt ? dayjs(createdAt).format("DD/MM/YYYY") : ""}</div>
+          <a href={productLink} target="_blank" rel="noopener noreferrer">
+            Đi đến sản phẩm
+          </a>
         );
       },
     },

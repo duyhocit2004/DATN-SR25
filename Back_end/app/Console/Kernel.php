@@ -12,7 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('vouchers:auto-lock')->daily(); // Chạy mỗi ngày
+        $schedule->command('vouchers:auto-lock')->daily();
     }
     /**
      * Register the commands for the application.
@@ -23,4 +23,8 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+    protected $commands = [
+        AutoLockVouchers::class,
+    ];
+    
 }

@@ -6,7 +6,7 @@ import { BannerTypeData } from "@/utils/constantData";
 import { HttpCodeString } from "@/utils/constants";
 import { objectToFormData } from "@/utils/functions";
 import { UploadOutlined } from "@ant-design/icons";
-import { Modal, Button, Form, UploadFile, Upload, Select } from "antd";
+import { Modal, Button, Form, UploadFile, Upload, Select, Input } from "antd";
 import { RcFile } from "antd/es/upload";
 import { useState } from "react";
 
@@ -14,6 +14,8 @@ interface IBannerForm {
   image: UploadFile | null;
   type: string;
   status: boolean | null;
+  link: string;
+  product_id: string;
 }
 
 interface IProps {
@@ -27,6 +29,8 @@ const AddBannerModal: React.FC<IProps> = ({ refreshData }) => {
     image: null,
     type: "",
     status: null,
+    link: "",
+    product_id: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -155,6 +159,29 @@ const AddBannerModal: React.FC<IProps> = ({ refreshData }) => {
             onChange={(value) => {
               onChangeFormData("type", value);
             }}
+          />
+        </Form.Item>
+        {/* <Form.Item
+          label="ID sản phẩm"
+          name="product_id"
+          rules={[{ required: true, message: "Vui lòng nhập ID sản phẩm!" }]}
+        >
+          <Input
+            placeholder="VD: 123"
+            value={formData.product_id}
+            onChange={(e) => onChangeFormData("product_id", e.target.value)}
+          />
+        </Form.Item> */}
+
+        <Form.Item
+          label="Link sản phẩm sale"
+          name="link"
+          rules={[{ required: true, message: "Vui lòng nhập link!" }]}
+        >
+          <Input
+            placeholder="https://example.com/products/123"
+            value={formData.link}
+            onChange={(e) => onChangeFormData("link", e.target.value)}
           />
         </Form.Item>
 

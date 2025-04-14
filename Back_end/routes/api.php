@@ -89,6 +89,7 @@ Route::middleware('jwt.auth')->group(function () {
     Route::prefix('users')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/updateUser', [AuthController::class, 'updateUser']);
+        Route::post('/changePassword', [AuthController::class, 'changePassword']);
 
     });
     Route::post('/uploadImage', [CommonController::class, 'uploadImage']);
@@ -113,7 +114,6 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/updateOrder', [OrderController::class, 'updateOrder']);
             Route::post('/deleteOrder', [OrderController::class, 'deleteOrder']);
             Route::post('/refundOrder', [OrderController::class, 'refundOrder']);
-            
 
         });
 
@@ -147,7 +147,6 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/updateVoucher', [AdminController::class, 'updateVoucher']);
             Route::post('/deleteVoucher', [AdminController::class, 'deleteVoucher']);
             Route::post('/toggleStatus', [AdminController::class, 'toggleStatus']);
-
         });
 
         Route::prefix('banners')->group(function () {
@@ -157,3 +156,5 @@ Route::middleware('jwt.auth')->group(function () {
         });
     });
 });
+
+

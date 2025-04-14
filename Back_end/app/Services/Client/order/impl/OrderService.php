@@ -16,16 +16,13 @@ class OrderService implements IOrderService
     public OrderRepositories $orderRepositories;
     public VoucherRepositories $voucherRepositories;
 
-
     public function __construct(
         OrderRepositories $orderRepositories,
         VoucherRepositories $voucherRepositories
     ) {
-
         $this->orderRepositories = $orderRepositories;
         $this->voucherRepositories = $voucherRepositories;
     }
-
 
 
     public function addOrder(Request $request)
@@ -50,7 +47,6 @@ class OrderService implements IOrderService
 
         // Gửi dữ liệu đến repository
         $order = $this->orderRepositories->addOrder($validatedData);
-
         return $order;
     }
 
@@ -65,17 +61,14 @@ class OrderService implements IOrderService
                 'customerName' => $order->customer_name,
                 'email' => $order->email,
                 "phoneNumber" => $order->phone_number,
-
                 'receiverName' => $order->receiver_name ?? null,
                 'receiverPhoneNumber' => $order->receiver_phone_number ?? null,
                 'receiverAddress' => $order->receiver_address ?? null,
-
                 'totalPrice' => $order->total_price,
                 'priceSale' => $order->price_sale,
                 'voucher' => $order->voucher,
                 'voucherPrice' => $order->voucher_price,
                 'shippingAddress' => $order->shipping_address,
-
                 'note' => $order->note,
                 'status' => $order->status,
                 'orderTime' => $order->date,
@@ -121,7 +114,6 @@ class OrderService implements IOrderService
                 'shippingAddress' => $order->address,
                 'paymentStatus' => $order->payment_status,
                 'paymentMethod' => $order->payment_method,
-
                 'note' => $order->note,
                 'status' => $order->status,
                 'orderTime' => $order->date,
@@ -175,7 +167,6 @@ class OrderService implements IOrderService
             'receiverName' => $order->receiver_name, // Trả về thông tin người nhận
             'receiverPhoneNumber' => $order->receiver_phone_number, // Trả về thông tin người nhận
             'receiverAddress' => $order->receiver_address, // Trả về thông tin người nhận
-
             'totalPrice' => $order->total_price,
             'priceSale' => $order->price_sale,
             'voucher' => $order->voucher,
@@ -214,6 +205,7 @@ class OrderService implements IOrderService
         $list = $this->orderRepositories->updateOrder($request);
         return $list;
     }
+
 
     public function deleteOrder(Request $request)
     {
@@ -265,6 +257,5 @@ class OrderService implements IOrderService
             throw new \Exception('Hoàn tiền thất bại.');
         }
     }
-
 
 }

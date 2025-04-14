@@ -33,7 +33,7 @@ const Cart = () => {
       (total, item) =>
         total +
         (item?.product?.priceSale || item?.product?.priceRegular || 0) *
-          item.quantity,
+        item.quantity,
       0
     );
     setTotalAmount(totalPrice);
@@ -134,7 +134,7 @@ const Cart = () => {
           type: "error",
         });
       }
-    } catch {}
+    } catch { }
   };
 
   const updateCartStorage = (record: ICart, quantity: number) => {
@@ -216,7 +216,7 @@ const Cart = () => {
           type: "error",
         });
       }
-    } catch {}
+    } catch { }
   };
 
   const removeCartStorage = (cartItem: ICart) => {
@@ -246,10 +246,10 @@ const Cart = () => {
     // console.log(cartListRef.current);
     // console.log(cartItem);
     const newCart = cartListRef.current?.filter(
-      (item) =>{
+      (item) => {
         return item.product?.id !== cartItem?.product?.id ||
-        item.size !== cartItem?.size ||
-        item.color !== cartItem?.color
+          item.size !== cartItem?.size ||
+          item.color !== cartItem?.color
       }
     );
     // console.log(newCart);
@@ -275,7 +275,7 @@ const Cart = () => {
             type: "error",
           });
         }
-      } catch {}
+      } catch { }
     } else {
       localStorage.removeItem("cart");
       setCartList([]);
@@ -422,7 +422,7 @@ const Cart = () => {
             rowKey={"id"}
             dataSource={cartList}
             pagination={false}
-            // scroll={isMobile ? { x: 600 } : undefined}
+          // scroll={isMobile ? { x: 600 } : undefined}
           />
 
           <div className="text-right mt-4 text-lg font-semibold">

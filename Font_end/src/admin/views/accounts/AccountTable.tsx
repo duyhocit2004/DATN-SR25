@@ -102,7 +102,6 @@ const AccountTable = () => {
     //     );
     //   },
     // },
-
   ];
 
   // const handleDeleteAccount = async (accountId: number) => {

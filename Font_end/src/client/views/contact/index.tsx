@@ -1,5 +1,4 @@
-import React, { useRef, useState } from "react";
-// import { Form, Input, Button, Alert } from "antd";
+import React, { useState, useRef } from "react";
 import { MailOutlined, PhoneOutlined, EnvironmentOutlined } from "@ant-design/icons";
 import emailjs from "@emailjs/browser";
 
@@ -40,14 +39,22 @@ const ContactUs: React.FC = () => {
       <div className="grid md:grid-cols-2 gap-6">
         {/* Thông tin liên hệ */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Địa chỉ </h2>
-          <p><EnvironmentOutlined className="mr-2 text-blue-500" />Tòa nhà FPT Polytechnic - Cổng số 2, 13 P. Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà Nội </p>
-          <p><PhoneOutlined className="mr-2 text-blue-500" /> 0981 725 836</p>
-          <p><MailOutlined className="mr-2 text-blue-500" /> caodang@fpt.edu.vn</p>
+          <h2 className="text-xl font-semibold">Địa chỉ</h2>
+          <p>
+            <EnvironmentOutlined className="mr-2 text-blue-500" />
+            Tòa nhà FPT Polytechnic - Cổng số 2, 13 P. Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà Nội
+          </p>
+          <p>
+            <PhoneOutlined className="mr-2 text-blue-500" /> 0981 725 836
+          </p>
+          <p>
+            <MailOutlined className="mr-2 text-blue-500" /> caodang@fpt.edu.vn
+          </p>
           <h3 className="text-lg font-medium mt-4">Giờ làm việc</h3>
-          <p>Thứ 2 - Thứ 6  : 8:00 - 18:00</p>
-          <p>Thứ 7 - Chủ nhật : 9:00 - 16:00</p>
+          <p>Thứ 2 - Thứ 6: 8:00 - 18:00</p>
+          <p>Thứ 7 - Chủ nhật: 9:00 - 16:00</p>
         </div>
+
         {/* Form liên hệ */}
         <div>
           <h2 className="text-xl font-semibold mb-4">Gửi tin nhắn cho chúng tôi</h2>
@@ -109,8 +116,9 @@ const ContactUs: React.FC = () => {
           </form>
         </div>
       </div>
-        {/* Bản đồ Google Maps */}
-        <div className="mt-8">
+
+      {/* Bản đồ Google Maps */}
+      <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Bản đồ</h2>
         <iframe
           title="Google Maps"
@@ -121,7 +129,6 @@ const ContactUs: React.FC = () => {
           referrerPolicy="no-referrer-when-downgrade"
         ></iframe>
       </div>
-
     </div>
   );
 };

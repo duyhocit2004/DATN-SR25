@@ -64,7 +64,6 @@ const ColorTable: React.FC = () => {
     //     );
     //   },
     // },
-
     {
       title: "Hành động",
       key: "action",

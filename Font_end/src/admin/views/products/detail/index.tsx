@@ -1,232 +1,128 @@
-import React, { useEffect, useState } from "react";
-import { Button, Image, Space, Typography, Spin } from "antd";
-import { useNavigate, useParams } from "react-router-dom";
-import productApi from "@/api/productApi";
-import { HttpCodeString } from "@/utils/constants";
-import { IColor, IProductDetail, ISize } from "@/types/interface";
-import { showToast } from "@/components/toast";
-import { getNameOfItemListByValue } from "@/utils/functions";
-import "./index.scss";
 
-const { Title, Text } = Typography;
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setSelectedOrder } from "@/store/reducers/orderSlice";
+import { OrderStatusDataClient } from "@/utils/constantData";
+import { getColorOrderStatus, getLabelByValue } from "@/utils/functions";
+import { Modal, Tag } from "antd";
+import dayjs from "dayjs";
 
-const ProductDetail: React.FC = () => {
-  const { productId } = useParams<{ productId: string }>(); // Lấy ID từ URL
-  const navigate = useNavigate();
-  const [product, setProduct] = useState<IProductDetail | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [colors, setColors] = useState<IColor[]>([]);
-  const [sizes, setSizes] = useState<ISize[]>([]);
-
-  useEffect(() => {
-    getColors();
-    getSizes();
-    fetchProductDetail();
-  }, []);
-
-  const getColors = async () => {
-    try {
-      const response = await productApi.getAllColors();
-      if (response?.status === HttpCodeString.SUCCESS) {
-        setColors(response.data as IColor[]);
-      } else {
-        setColors([]);
-      }
-    } catch {
-      setColors([]);
-    }
+const OrderDetail = () => {
+  const dispatch = useAppDispatch();
+  const { selectedOrder } = useAppSelector((state) => state.order);
+  const handleClose = () => {
+    dispatch(setSelectedOrder(null));
   };
-  const getSizes = async () => {
-    try {
-      const response = await productApi.getAllSizes();
-      if (response?.status === HttpCodeString.SUCCESS) {
-        setSizes(response.data as ISize[]);
-      } else {
-        setSizes([]);
-      }
-    } catch {
-      setSizes([]);
-    }
-  };
-  const fetchProductDetail = async () => {
-    try {
-      setLoading(true);
-      const response = await productApi.getProductVariant(Number(productId));
-      if (response?.status === HttpCodeString.SUCCESS) {
-        setProduct(response.data);
-      } else {
-        showToast({
-          content: "Lỗi khi lấy chi tiết sản phẩm!",
-          duration: 5,
-          type: "error",
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="product-detail-container bg-white">
-      {/* Header */}
-      <div className="header-area flex justify-between items-center border-b pb-4">
-        <h2 className="text-2xl font-semibold">Chi tiết sản phẩm</h2>
-        <div className="action flex justify-end items-center gap-2">
-          <Button onClick={() => navigate("/admin/products")}>Quay lại</Button>
-          <Button
-            type="primary"
-            onClick={() => navigate("/admin/products/update/" + productId)}
-          >
-            Sửa
-          </Button>
-        </div>
-      </div>
-
-      {/* Body */}
-      <div className="body-area pt-6 relative">
-        {loading && (
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              background: "rgba(255, 255, 255, 0.7)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 10,
-            }}
-          >
-            <Spin size="large" />
+    <Modal
+      className="order-history-detail !w-4/5 lg:!w-[900px]"
+      title={`Chi tiết đơn hàng`}
+      open={!!selectedOrder}
+      onCancel={handleClose}
+      footer={false}
+    >
+      {selectedOrder && (
+        <div>
+          <div className="order-info mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <p>
+              <strong>Mã đơn hàng:</strong> {selectedOrder?.code}
+            </p>
+            <p>
+              <strong>Ngày đặt hàng:</strong>{" "}
+              {selectedOrder.createdAt
+                ? dayjs(selectedOrder.createdAt).format("DD/MM/YYYY")
+                : ""}
+            </p>
+            <p>
+              <strong>Trạng thái:</strong>{" "}
+              <Tag color={getColorOrderStatus(selectedOrder?.status)}>
+                {getLabelByValue(OrderStatusDataClient, selectedOrder?.status)}
+              </Tag>
+            </p>
           </div>
-        )}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Cột trái: Thông tin sản phẩm */}
-          <div className="product-info">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Text strong>Tên sản phẩm:</Text>
-                <p>{product?.name}</p>
-              </div>
-              <div>
-                <Text strong>Danh mục:</Text>
-                <p>{product?.categoriesName}</p>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div>
-                <Text strong>Giá gốc:</Text>
-                <p>{product?.priceRegular?.toLocaleString()} VND</p>
-              </div>
-              <div>
-                <Text strong>Giá khuyến mãi:</Text>
-                <p>{product?.priceSale?.toLocaleString()} VND</p>
-              </div>
-            </div>
+          {/* Thông tin người đặt hàng */}
+          <h3 className="font-bold mt-10 mb-4">Thông tin người đặt hàng</h3>
+          <div className="customer-info grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <p>
+              <strong>Họ và tên:</strong> {selectedOrder?.customerName || "-"}
+            </p>
+            <p>
+              <strong>Số điện thoại:</strong> {selectedOrder?.phoneNumber || "-"}
+            </p>
+            <p>
+              <strong>Địa chỉ:</strong> {selectedOrder?.shippingAddress || "-"}
+            </p>
+            <p>
+              <strong>Email:</strong> {selectedOrder?.email || "-"}
+            </p>
+          </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div>
-                <Text strong>Giảm giá:</Text>
+          {/*Thông tin người nhận hàng */}
+          {selectedOrder?.receiverName && (
+            <>
+              <h3 className="font-bold mt-10 mb-4">Thông tin người nhận hàng</h3>
+              <div className="receiver-info grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <p>
-                  {product?.discount ? `${product?.discount}%` : "Không có"}
+                  <strong>Họ và tên:</strong> {selectedOrder?.receiverName || "-"}
+                </p>
+                <p>
+                  <strong>Số điện thoại:</strong> {selectedOrder?.receiverPhoneNumber || "-"}
+                </p>
+                <p>
+                  <strong>Địa chỉ:</strong> {selectedOrder?.receiverAddress || "-"}
                 </p>
               </div>
-              <div>
-                <Text strong>Số lượng:</Text>
-                <p>{product?.quantity}</p>
-              </div>
-            </div>
+            </>
+          )}
 
-            <div className="mt-4">
-              <Text strong>Mô tả:</Text>
-              <p>{product?.description}</p>
-            </div>
+          <h3 className="font-bold mt-10 mb-4">Danh sách sản phẩm:</h3>
 
-            <div className="mt-4">
-              <Text strong>Nội dung chi tiết:</Text>
+          <div className="product-list overflow-auto">
+            {selectedOrder.products.map((product, index) => (
               <div
-                dangerouslySetInnerHTML={{ __html: product?.content || "" }}
-              ></div>
-            </div>
-
-            {/* Biến thể sản phẩm */}
-            <div className="mt-6">
-              <Title level={4}>Biến thể sản phẩm</Title>
-              <table className="border border-solid border-collapse w-full">
-                <thead>
-                  <tr className="border border-solid">
-                    <th className="border border-solid p-2">Màu</th>
-                    <th className="border border-solid p-2">Kích thước</th>
-                    <th className="border border-solid p-2">Số lượng</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {product?.variants.map((variant) => {
-                    return (
-                      <tr key={variant.id} className="border border-solid">
-                        <td className="border border-solid p-2 font-semibold">
-                          <div className="flex gap-3">
-                            <div className="code">
-                              {getNameOfItemListByValue(
-                                colors,
-                                variant.colorId,
-                                "id",
-                                "code"
-                              )}
-                            </div>
-                            <div
-                              className={`color w-6 h-6 shrink-0 rounded-[50%]`}
-                              style={{
-                                backgroundColor: getNameOfItemListByValue(
-                                  colors,
-                                  variant.colorId,
-                                  "id",
-                                  "code"
-                                ),
-                              }}
-                            ></div>
-                          </div>
-                        </td>
-                        <td className="border border-solid p-2 font-semibold text-center">
-                          {getNameOfItemListByValue(
-                            sizes,
-                            variant.sizeId,
-                            "id",
-                            "size"
-                          )}
-                        </td>
-                        <td className="border border-solid p-2 font-semibold text-center">
-                          {variant.quantity}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                key={index}
+                className="flex items-center justify-between gap-4 border-b pb-2"
+              >
+                <div className="product-info flex items-center gap-4">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-16 h-16 rounded-md shrink-0"
+                  />
+                  <div className="min-w-40">
+                    <p className="font-semibold">{product.name}</p>
+                    <p>
+                      Size: {product.size} | Màu: {product.color}
+                    </p>
+                    <p>Số lượng: {product.quantity}</p>
+                  </div>
+                </div>
+                <div className="min-w-24">
+                  <p className="text-black-500 font-semibold">
+                    Giá :  {product.priceRegular?.toLocaleString()} đ
+                  </p>
+                  <p className="text-red-500 font-semibold">
+                    Giá Sale :  {product.priceSale?.toLocaleString()} đ
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
-
-          {/* Cột phải: Hình ảnh */}
-          <div className="images">
-            <Title level={4}>Ảnh đại diện</Title>
-            <Image width={150} src={product?.image} alt="Thumbnail" />
-
-            <Title level={4} className="mt-4">
-              Album ảnh
-            </Title>
-            <Space>
-              {product?.listImage.map((img, index) => (
-                <Image key={index} width={100} src={img} alt={`Ảnh ${index}`} />
-              ))}
-            </Space>
+          <div className="discount text-end mt-10">
+            <span>Giảm: </span>
+            <span className="text-red-500 font-semibold">
+              {selectedOrder?.voucherPrice?.toLocaleString()} đ
+            </span>
+          </div>
+          <div className="amount-total text-end mt-2">
+            <span>Tổng tiền: </span>
+            <span className="text-red-500 font-semibold">
+              {selectedOrder?.totalPrice?.toLocaleString()} đ
+            </span>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 };
-
-export default ProductDetail;
+export default OrderDetail;

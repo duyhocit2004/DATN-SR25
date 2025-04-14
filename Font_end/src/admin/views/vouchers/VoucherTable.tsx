@@ -16,7 +16,6 @@ import adminApi from "@/api/adminApi";
 import { HttpCodeString } from "@/utils/constants";
 import { showToast } from "@/components/toast";
 
-
 const VoucherTable: React.FC = () => {
   const dispatch = useAppDispatch();
   const { vouchers, pagination, totalElements, loading } = useAppSelector(
@@ -47,10 +46,10 @@ const VoucherTable: React.FC = () => {
       });
       return;
     }
+
     setSelectedVoucher(voucher);
     setIsModalVisible(true);
   };
-
   const columns: ColumnsType<IVoucher> = [
     {
       title: "STT",

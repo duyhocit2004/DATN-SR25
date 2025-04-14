@@ -63,5 +63,4 @@ class Voucher extends Model
 		 return false;
 	 }
 
-
 }

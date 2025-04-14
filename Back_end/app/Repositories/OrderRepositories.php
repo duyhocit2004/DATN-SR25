@@ -17,7 +17,6 @@ use Illuminate\Support\Str;
 class OrderRepositories
 {
 
-
     public function addOrder(array $data)
     {
         try {
@@ -25,13 +24,12 @@ class OrderRepositories
             $totalAmount = 0;
             $voucherAmount = 0;
 
-
+            // Validate products
             foreach ($products as $product) {
                 $productReal = Product::where('id', $product['productId'])->first();
                 $productVariant = ProductVariant::where('product_id', $product['productId'])->first();
                 if (!empty($productReal) && !empty($productVariant)) {
                     if ($productVariant['quantity'] < $product['quantity']) {
-
                         return BaseResponse::failure('400', 'quantity is less than order quantity', 'quantity.is.less.than.order.quantity', []);
                     }
                     if (!empty($productReal['price_sale'])) {
@@ -40,40 +38,24 @@ class OrderRepositories
                         $totalAmount += $productReal['price_regular'] * $product['quantity'];
                     }
                 } else {
-                    BaseResponse::failure('400', 'Product not found', 'product.not.found', []);
+                    return BaseResponse::failure('400', 'Product not found', 'product.not.found', []);
                 }
             }
 
-
-            // if (!empty($data['voucher'])) {
-            //     $voucher = Voucher::where('code', $data['voucher'])->first();
-            //     if ($voucher) {
-            //         $voucherAmount = $voucher['voucher_price'];
-            //         $totalAmount -= $voucher['voucher_price'];
-            //     } else {
-            //         BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
-            //     }
-            // }
+            // Validate voucher
             if (!empty($data['voucher'])) {
                 $voucher = Voucher::where('code', $data['voucher'])->first();
                 if ($voucher) {
-                    $voucherAmount = $voucher['voucher_price'];
-                    $totalAmount -= $voucher['voucher_price'];
                     if ($voucher->end_date && $voucher->end_date < now()) {
                         return BaseResponse::failure('400', 'Voucher expired', 'voucher.expired', []);
                     }
-
-                    // Kiểm tra đơn hàng có đủ điều kiện giá trị tối thiểu không
                     if ($voucher->min_order_value && $totalAmount < $voucher->min_order_value) {
                         return BaseResponse::failure('400', 'Order does not meet minimum value for voucher', 'order.not.meet.min.value', []);
                     }
-
                     $voucherAmount = $voucher->voucher_price;
                     $totalAmount -= $voucherAmount;
                 } else {
                     return BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
-
-
                 }
             }
 
@@ -81,6 +63,19 @@ class OrderRepositories
                 $totalAmount = 0;
             }
 
+            // Validate addresses
+            if (empty($data['shippingAddress'])) {
+                return BaseResponse::failure('400', 'Shipping address is required', 'shipping.address.required', []);
+            }
+
+            // Optional: Validate address format (e.g., contains at least street, ward, district, city)
+            if (!preg_match('/.*,.*,.*,.*$/', $data['shippingAddress'])) {
+                return BaseResponse::failure('400', 'Invalid shipping address format', 'invalid.shipping.address.format', []);
+            }
+
+            if (!empty($data['receiverAddress']) && !preg_match('/.*,.*,.*,.*$/', $data['receiverAddress'])) {
+                return BaseResponse::failure('400', 'Invalid receiver address format', 'invalid.receiver.address.format', []);
+            }
 
             DB::beginTransaction();
 
@@ -92,10 +87,10 @@ class OrderRepositories
                 'receiver_name' => $data['receiverName'] ?? null,
                 'receiver_phone_number' => $data['receiverPhoneNumber'] ?? null,
                 'receiver_address' => $data['receiverAddress'] ?? null,
-                'shipping_address' => $data['shippingAddress'] ?? '',
-                'total_price' => $data['totalAmount'],
+                'shipping_address' => $data['shippingAddress'],
+                'total_price' => $totalAmount, // Use calculated totalAmount
                 'voucher' => $data['voucher'] ?? null,
-                'voucher_price' => $data['voucherPrice'],
+                'voucher_price' => $voucherAmount,
                 'payment_method' => $data['paymentMethod'] ?? '',
                 'payment_status' => 'UNPAID',
                 'note' => $data['note'] ?? null,
@@ -103,9 +98,8 @@ class OrderRepositories
                 'date' => now(),
             ]);
 
-            // Xử lý sản phẩm trong đơn hàng
+            // Process order details
             foreach ($data['products'] as $product) {
-
                 $productReal = Product::where('id', $product['productId'])->first();
                 OrderDetail::create([
                     'order_id' => $order->id,
@@ -119,14 +113,13 @@ class OrderRepositories
                     'quantity_order' => $product['quantity'],
                     'product_id' => $product['productId'],
                 ]);
-          }
+            }
 
             DB::commit();
             return $order;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
-
         }
     }
 
@@ -139,8 +132,30 @@ class OrderRepositories
         $toDate = $request->input('toDate');
         $paymentStatus = $request->input('paymentStatus');
         $paymentMethod = $request->input('paymentMethod');
+        $voucherCode = $request->input('voucherCode');
+        $totalAmount = $request->input('totalAmount');
 
         $query = Order::with(['order_details']);
+
+        // Only validate voucher if voucherCode is provided
+        if (!empty($voucherCode)) {
+            $voucher = Voucher::where('code', $voucherCode)->first();
+            if (!$voucher) {
+                return BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
+            }
+            if ($voucher->status !== 'ACTIVE') {
+                return BaseResponse::failure('400', 'Voucher is not active', 'voucher.not.active', []);
+            }
+            if ($voucher->end_date && $voucher->end_date < now()) {
+                return BaseResponse::failure('400', 'Voucher expired', 'voucher.expired', []);
+            }
+            if ($voucher->min_order_value && $totalAmount < $voucher->min_order_value) {
+                return BaseResponse::failure('400', 'Order does not meet minimum value for voucher', 'order.not.meet.min.value', []);
+            }
+            // Optionally filter orders by voucher
+            $query->where('voucher', $voucherCode);
+        }
+
         if (!empty($status)) {
             $query->where('status', '=', $status);
         }
@@ -156,20 +171,15 @@ class OrderRepositories
         if (!empty($toDate)) {
             $query->where('date', '<=', $toDate);
         }
-        if (!empty($sortType)) {
-            $query->orderByRaw('IFNULL(date, status) ' . $sortType);
-        }
         if (!empty($paymentStatus)) {
             $query->where('payment_status', '=', $paymentStatus);
         }
-
         if (!empty($paymentMethod)) {
             $query->where('payment_method', '=', $paymentMethod);
         }
 
         $orders = $query->get();
         return $orders;
-
     }
 
     public function getOrdersPaging(Request $request)
@@ -187,10 +197,8 @@ class OrderRepositories
 
         $query = Order::with(['order_details']);
         if (!empty($status)) {
-
             $statuses = is_array($status) ? $status : explode(',', $status);
             $query->whereIn('status', $statuses);
-
         }
         if (!empty($phoneNumber)) {
             $query->where('phone_number', '=', $phoneNumber);
@@ -204,14 +212,12 @@ class OrderRepositories
         if (!empty($toDate)) {
             $query->where('date', '<=', $toDate);
         }
-
         if (!empty($paymentStatus)) {
             $query->where('payment_status', '=', $paymentStatus);
         }
         if (!empty($paymentMethod)) {
             $query->where('payment_method', '=', $paymentMethod);
         }
-
         if (!empty($sortType)) {
             $query->orderByRaw('IFNULL(date, status) ' . $sortType);
         }
@@ -293,5 +299,4 @@ class OrderRepositories
         \Log::info('Cập nhật trạng thái hoàn tiền thành công cho orderId:', ['orderId' => $orderId]);
         return $order;
     }
-
 }

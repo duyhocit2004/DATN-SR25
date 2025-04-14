@@ -42,7 +42,9 @@ class BannersRepositories
         $banner = Banner::Create([
             'image' => empty($imageLink) ? null : $imageLink,
             'status' => 'ACTIVE',
-            'type' => $request->input('type' , 'advertisement'),
+            'link' => $request->input('link', null),
+            'product_id' => $request->input('product_id', null),
+            'type' => $request->input('type', 'advertisement'),
         ]);
 
         return $banner;
@@ -60,6 +62,8 @@ class BannersRepositories
             'image' => empty($imageLink) ? $banner->image : $imageLink,
             'status' => $request->input('status', $banner->status),
             'type' => $request->input('type', $banner->type),
+            'link' => $request->input('link', $banner->link),
+            'product_id' => $request->input('product_id', $banner->product_id),
         ]);
 
         return $banner;
