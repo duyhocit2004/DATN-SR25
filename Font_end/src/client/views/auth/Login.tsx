@@ -38,7 +38,7 @@ const Login = () => {
 
   return (
     <div className="container mx-auto px-4 pt-10 md:pt-20 flex items-center justify-center">
-      
+
       <div className="max-w-md w-full bg-white p-6 shadow-md rounded-md">
         {loading && (
           <div

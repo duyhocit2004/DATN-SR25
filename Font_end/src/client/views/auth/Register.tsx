@@ -28,6 +28,7 @@ const Register = () => {
           content: "Đăng ký thất bại!",
           duration: 5,
           type: "error",
+
         });
       }
     } finally {
@@ -52,6 +53,14 @@ const Register = () => {
               justifyContent: "center",
               alignItems: "center",
               zIndex: 10,
+              toolbar: "hidden",
+              pointerEvents: "none",      
+              borderRadius: "8px",    
+
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",   
+              
+              backdropFilter: "blur(4px)",
+              border: "1px solid rgba(0, 0, 0, 0.1)",
             }}
           >
             <Spin size="large" />

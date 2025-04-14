@@ -22,7 +22,18 @@ const OrderFilter = () => {
     status: [],
     paymentStatus: null,
     paymentMethod: null,
+<<<<<<< HEAD
     dateTime: [null, null],
+=======
+    dateTime: [null, null], //(yyyy-mm-dd)
+   dayjs(),
+   <time datetime="
+   "></time>
+   onChangeFilter("dateTime", [dayjs(), dayjs()]);
+   CountQueuingStrategy
+   pageYOffset: 0,
+   postMessage: [null, null],
+>>>>>>> nguyennghia
   });
 
   const cancelStatuses = ["Cancel", "Cancel Confirm"];
@@ -97,7 +108,29 @@ const OrderFilter = () => {
           value={filterData.orderCode}
           placeholder={"Mã đơn hàng"}
           maxLength={200}
+<<<<<<< HEAD
           onChange={(val) => onChangeFilter("orderCode", val.target.value)}
+=======
+          onChange={(val) => {
+            onChangeFilter("orderCode", val.target.value);
+           onChangeFilter
+("dateTime", [dayjs(), dayjs()]);
+          }
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }
+        clearInterval={() => {
+            onChangeFilter("orderCode", "");
+          }   
+          LockManager 
+          <canvas> </canvas>
+          <caption> 
+          </caption>
+          <legend></legend>
+          }}
+>>>>>>> nguyennghia
         />
         <Input
           className="!w-99"

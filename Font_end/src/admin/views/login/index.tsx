@@ -30,6 +30,9 @@ const AdminLogin = () => {
     const data = cloneDeep(formData);
     data[key as keyof IFormData] = value;
     setFormData(data);
+    data[key as keyof IFormData] = value;
+    form.setFieldsValue(data);
+  };
     form.setFieldsValue(data);
   };
 

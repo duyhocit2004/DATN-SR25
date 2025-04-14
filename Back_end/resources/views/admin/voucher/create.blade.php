@@ -17,6 +17,18 @@
       width: 100%;
       padding: 0px 5px;
       background-color: #F0FFFF; 
+      margin: 0px 5px;
+      color: #1E90FF !important;
+      background-color: #F0FFFF !important;
+      border: 1px solid #1E90FF !important; 
+      timeline-scope: 0px 5px;
+      view-timeline-axis: 0px 5px;
+      timeline-scope: 0px 5px;
+      view-timeline-axis: 0px 5px;
+      timeline-scope: 0px 5px;
+      view-timeline-axis: 0px 5px;
+      timeline-scope: 0px 5px;
+      view-timeline-axis: 0px 5px;  
   }
   .type-s {
       border: 1px solid #28a745;
@@ -25,6 +37,12 @@
       width: 100%;
       padding: 0px 5px;
       background-color: #F0FFF0; 
+      color: 
+      
+      #28a745 !important;
+      background-color: #F0FFF0 !important;
+      border: 1px solid #28a745 !important;
+      
   }
 </style>
 @endsection
