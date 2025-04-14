@@ -194,7 +194,7 @@ const ListProduct = () => {
     },
     {
       title: "Hành động",
-<<<<<<<< HEAD:Font_end/src/admin/views/reviews/index1.tsx
+
       key: "action",
       render: (_, record: IReview) => (
         <Button type="link" onClick={() => navigate(`/admin/reviews/${record.id}`)}>
@@ -221,7 +221,7 @@ const ListProduct = () => {
           </div>
         );
       },
->>>>>>>> b62c8914cce30fcee537cbd2c8f16f8aab24b214:Font_end/src/admin/views/products/index copy.tsx
+
     },
   ];
   useEffect(() => {

@@ -1,7 +1,7 @@
 import adminApi from "@/api/adminApi";
 import { IDashboardChart } from "@/types/interface";
 import { HttpCodeString } from "@/utils/constants";
-import { Radio, RadioChangeEvent, Spin } from "antd";
+import { Radio, RadioChangeEvent, Spin, DatePicker } from "antd";
 import { useEffect, useState } from "react";
 import {
   XAxis,
@@ -13,44 +13,54 @@ import {
   Legend,
   Area,
 } from "recharts";
+const { YearPicker } = DatePicker;
+
 interface IOrderAndRevenue {
   name: string;
   order: number;
   revenue: number;
 }
 
-enum FilterType {
-  Week = "week",
-  Month = "month",
-  Quarter = "quarter",
-  Year = "year",
+interface DashboardChartProps {
+  filterType: string;
+  setFilterType: (filterType: string) => void;
+  selectedDate: string | null;
+  setSelectedDate: (date: string | null) => void;
 }
+
 const getChartData = (
-  filterType: FilterType,
-  data: IDashboardChart[]
+  filterType: string,
+  data: IDashboardChart[],
+  selectedYear?: string
 ): IOrderAndRevenue[] => {
   switch (filterType) {
-    case FilterType.Week:
+    case "day":
+      return data.map((item) => ({
+        name: item.stt,
+        order: item.order,
+        revenue: item.revenue,
+      }));
+    case "week":
       return data.map((item) => ({
         name: `Ngày ${item.stt}`,
         order: item.order,
         revenue: item.revenue,
       }));
-    case FilterType.Month:
+    case "month":
       return data.map((item) => ({
         name: `Tuần ${item.stt}`,
         order: item.order,
         revenue: item.revenue,
       }));
-    case FilterType.Quarter:
+    case "quarter":
       return data.map((item) => ({
         name: `Tháng ${item.stt}`,
         order: item.order,
         revenue: item.revenue,
       }));
-    case FilterType.Year:
+    case "year":
       return data.map((item) => ({
-        name: `Quý ${item.stt}`,
+        name: `Tháng ${item.stt}`,
         order: item.order,
         revenue: item.revenue,
       }));
@@ -59,8 +69,12 @@ const getChartData = (
   }
 };
 
-const DashboardChart = () => {
-  const [filterType, setFilterType] = useState<FilterType>(FilterType.Week);
+const DashboardChart = ({
+  filterType,
+  setFilterType,
+  selectedDate,
+  setSelectedDate,
+}: DashboardChartProps) => {
   const [loading, setLoading] = useState(false);
   const [orderAndRevenueData, setOrderAndRevenueData] = useState<
     IOrderAndRevenue[]
@@ -68,32 +82,43 @@ const DashboardChart = () => {
 
   useEffect(() => {
     getData();
-    
-  }, [filterType]);
+  }, [filterType, selectedDate]);
 
   const getData = async () => {
     setLoading(true);
     try {
-      const payload = {
+      const payload: { time: string; date?: string } = {
         time: filterType,
       };
+      if ((filterType === "day" || filterType === "year") && selectedDate) {
+        // For year filter, ensure date is in YYYY-01-01 format
+        payload.date =
+          filterType === "year" ? `${selectedDate}-01-01` : selectedDate;
+      }
       const response = await adminApi.getDashboardChart(payload);
       if (response?.status === HttpCodeString.SUCCESS) {
-        const data = getChartData(filterType, response.data);
+        const data = getChartData(filterType, response.data, selectedDate);
         setOrderAndRevenueData(data);
       } else {
         setOrderAndRevenueData([]);
       }
+    } catch (error) {
+      console.error("Error fetching chart data:", error);
+      setOrderAndRevenueData([]);
     } finally {
-      // const fakeArr = defaultData(filterType);
-      // const data = getChartData(filterType, fakeArr);
-      // setOrderAndRevenueData(data);
       setLoading(false);
     }
   };
 
   const handleFilterChange = (e: RadioChangeEvent) => {
     setFilterType(e.target.value);
+    if (e.target.value !== "day" && e.target.value !== "year") {
+      setSelectedDate(null);
+    }
+  };
+
+  const handleDateChange = (date: any, dateString: string) => {
+    setSelectedDate(dateString || null);
   };
 
   return (
@@ -118,36 +143,39 @@ const DashboardChart = () => {
       )}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-bold">Biểu đồ đơn hàng & doanh thu</h2>
-        <Radio.Group value={filterType} onChange={handleFilterChange}>
-          <Radio.Button value="week">Tuần</Radio.Button>
-          <Radio.Button value="month">Tháng</Radio.Button>
-          <Radio.Button value="quarter">Quý</Radio.Button>
-          <Radio.Button value="year">Năm</Radio.Button>
-        </Radio.Group>
+        <div className="flex items-center gap-4">
+          <Radio.Group value={filterType} onChange={handleFilterChange}>
+            <Radio.Button value="day">Ngày</Radio.Button>
+            <Radio.Button value="week">Tuần</Radio.Button>
+            <Radio.Button value="month">Tháng</Radio.Button>
+            <Radio.Button value="quarter">Quý</Radio.Button>
+            <Radio.Button value="year">Năm</Radio.Button>
+          </Radio.Group>
+          {filterType === "day" && (
+            <DatePicker
+              onChange={handleDateChange}
+              format="DD-MM-YYYY"
+              placeholder="Chọn ngày"
+            />
+          )}
+          {filterType === "year" && (
+            <YearPicker
+              onChange={handleDateChange}
+              format="YYYY"
+              placeholder="Chọn năm"
+            />
+          )}
+        </div>
       </div>
 
       <ResponsiveContainer width="100%" height={300}>
         <AreaChart data={orderAndRevenueData}>
           <defs>
-            {/* Gradient cho số đơn hàng */}
-            <linearGradient
-              id="orderGradient"
-              x1="0%"
-              y1="0%"
-              x2="0%"
-              y2="100%"
-            >
+            <linearGradient id="orderGradient" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#f02f22" stopOpacity={0.6} />
               <stop offset="100%" stopColor="#f02f22" stopOpacity={0} />
             </linearGradient>
-            {/* Gradient cho doanh thu */}
-            <linearGradient
-              id="revenueGradient"
-              x1="0%"
-              y1="0%"
-              x2="0%"
-              y2="100%"
-            >
+            <linearGradient id="revenueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#6278f5" stopOpacity={0.6} />
               <stop offset="100%" stopColor="#6278f5" stopOpacity={0} />
             </linearGradient>
@@ -155,12 +183,9 @@ const DashboardChart = () => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis yAxisId="left" />
-          {/* Trục y phải cho doanh thu */}
           <YAxis yAxisId="right" orientation="right" />
           <Tooltip />
           <Legend />
-
-          {/* Số đơn hàng - Trục y trái */}
           <Area
             type="monotone"
             dataKey="order"
@@ -169,8 +194,6 @@ const DashboardChart = () => {
             name="Số đơn hàng"
             yAxisId="left"
           />
-
-          {/* Doanh thu - Trục y phải */}
           <Area
             type="monotone"
             dataKey="revenue"

@@ -36,6 +36,8 @@ const Home = () => {
     IProduct[]
   >([]);
 
+
+
   useEffect(() => {
     getAllCategories();
     getAllBanners();
@@ -77,7 +79,6 @@ const Home = () => {
           .sort((a, b) => Number(b.discount) - Number(a.discount))
           .slice(0, 8);
         console.log("Dữ liệu sau khi sắp xếp:", sortedProducts);
-
         setTopDiscountedProducts(response.data);
       } else {
         setTopDiscountedProducts([]);
@@ -124,23 +125,26 @@ const Home = () => {
         autoplaySpeed={3000}
       >
         {banners?.main?.map((e: IBanner, index: number) => {
+          const productLink = e.productId ? `/products/${e.productId}` : "#";
+
           return (
             <div
               key={e.id}
               className="h-[500px] bg-cover bg-center !flex justify-center"
-            // style={{
-            //   backgroundImage: `url(../../../../public/images/anh-nt-thumb-2.jpeg)`,
-            // }}
             >
-              <img
-                className="h-full bg-cover bg-center"
-                src={e.image}
-                alt={"banner " + (index + 1)}
-              />
+              <a href={productLink}>
+                <img
+                  className="h-full bg-cover bg-center cursor-pointer"
+                  src={e.image}
+                  alt={"banner " + (index + 1)}
+                />
+              </a>
             </div>
           );
         })}
       </CarouselCustom>
+ 
+
 
       <section className="container mx-auto px-4 mt-10">
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6`}>

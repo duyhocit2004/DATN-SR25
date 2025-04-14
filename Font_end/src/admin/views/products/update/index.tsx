@@ -267,7 +267,6 @@ const UpdateProduct: React.FC = () => {
       });
       return;
     }
-<<<<<<< HEAD
     if (variants.length === 0) {
       showToast({
         content: "Mỗi sản phẩm cần có ít nhất 1 biến thể!",
@@ -276,8 +275,6 @@ const UpdateProduct: React.FC = () => {
       });
       return;
     }
-=======
->>>>>>> b62c8914cce30fcee537cbd2c8f16f8aab24b214
     if (variants.some((v) => !v.color || !v.size)) {
       showToast({
         content: "Mỗi biến thể cần có cả màu sắc và kích thước!",
@@ -291,10 +288,7 @@ const UpdateProduct: React.FC = () => {
 
     const payload = {
       ...formData,
-<<<<<<< HEAD
       productId: productId,
-=======
->>>>>>> b62c8914cce30fcee537cbd2c8f16f8aab24b214
       categoryId:
         formData?.categoryId && formData?.categoryId?.length > 0
           ? formData.categoryId[formData.categoryId.length - 1]

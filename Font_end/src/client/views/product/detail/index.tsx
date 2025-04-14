@@ -222,33 +222,7 @@ const ProductDetail = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {/* Gallery Images */}
                 <div className="product-gallery">
-                  {/* <div className="gallery-preview">
-            
-            <img
-              src={selectedImage}
-              alt="product-gallery"
-              className="w-full object-cover h-[400px] mb-4"
-            />
-          </div> */}
-
-                  {/* Hình ảnh thumbnail nhỏ để chọn */}
-                  {/* <Carousel
-            {...settings}
-            className="product-gallery-thumbnails"
-            focusOnSelect
-            slidesToShow={4}
-            slidesToScroll={1}
-          >
-            {productDetail?.images.map((image, index) => (
-              <div key={index} onClick={() => setSelectedImage(image)}>
-                <img
-                  src={image}
-                  alt={`product-thumbnail-${index}`}
-                  className="w-full h-[100px] object-cover cursor-pointer"
-                />
-              </div>
-            ))}
-          </Carousel> */}
+        
                   <Gallery
                     items={
                       productDetail?.listImage?.map((e) => {
@@ -267,20 +241,33 @@ const ProductDetail = () => {
                     <h1 className="text-3xl mb-2 font-semibold">
                       {productDetail?.name}
                     </h1>
-                    {(productDetail?.priceSale ||
-                      productDetail?.priceRegular) && (
-                        <p className="text-lg text-gray-500 mb-4">
-                          Giá:{" "}
-                          <span className="text-red-500 font-semibold">
-                            {(
-                              productDetail?.priceSale ||
-                              productDetail?.priceRegular ||
-                              0
-                            ).toLocaleString()}{" "}
-                            VND
-                          </span>
-                        </p>
+                    <div className="text-lg text-gray-500 mb-4">
+                      {productDetail?.priceRegular ? (
+                        <>
+                          {productDetail?.priceSale ? (
+                            <>
+                              <div className="text-gray-500 line-through ml-2">
+                                Giá Gốc :  {productDetail.priceRegular.toLocaleString()} VND
+                              </div>
+                              <span className="text-red-500 font-semibold ml-2">
+                                Giảm :  {productDetail.priceSale.toLocaleString()} VND
+                              </span>
+                              {productDetail?.discount && (
+                                <span className="text-green-500 font-semibold">
+                                  (- {productDetail.discount}%)
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-red-500 font-semibold">
+                              {productDetail.priceRegular.toLocaleString()} VND
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <span className="text-gray-500">Giá không khả dụng</span>
                       )}
+                    </div>
                     <Rate
                       value={productDetail?.rate}
                       allowHalf
@@ -293,28 +280,6 @@ const ProductDetail = () => {
                   </div>
 
                   {/* Color Selection */}
-                  {/* <div className="mb-6">
-                    <h3 className="text-lg font-medium mb-3">Màu</h3>
-                    <div className="color-area flex items-center gap-2">
-                      {colors?.map((color) => {
-                        return (
-                          <div
-                            className={`color w-6 h-6 shrink-0 cursor-pointer hover:opacity-75 rounded-[50%] ${
-                              color === selectedColor
-                                ? "outline-2 outline-solid outline-neutral-400 border-[1px] border-solid border-white"
-                                : ""
-                            }`}
-                            style={{ backgroundColor: color }}
-                            onClick={() => {
-                              handleChangeColor(color);
-                            }}
-                          ></div>
-                        );
-                      })}
-                    </div>
-                  </div> */}
-                  
-                  {/* Color Selection */}
                   <div className="mb-6">
                     <h3 className="text-lg font-medium mb-3">Màu</h3>
                     <div className="color-area flex items-center gap-2">
@@ -323,8 +288,8 @@ const ProductDetail = () => {
                         return (
                           <div
                             className={`color w-6 h-6 shrink-0 cursor-pointer hover:opacity-75 rounded-[50%] ${color === selectedColor
-                                ? "outline-2 outline-solid outline-neutral-400 border-[1px] border-solid border-white"
-                                : ""
+                              ? "outline-2 outline-solid outline-neutral-400 border-[1px] border-solid border-white"
+                              : ""
                               }`}
                             style={{
                               backgroundColor: color,
@@ -368,8 +333,8 @@ const ProductDetail = () => {
                   <div className="flex items-center gap-2 mt-6 mb-6">
                     <button
                       className={`bg-red-500 border-none text-white px-3 py-2 rounded-[20px] font-semibold ${maxQuantity > 0 && quantity > 0
-                          ? "hover:bg-amber-400 hover:text-black cursor-pointer"
-                          : "cursor-not-allowed !bg-gray-300"
+                        ? "hover:bg-amber-400 hover:text-black cursor-pointer"
+                        : "cursor-not-allowed !bg-gray-300"
                         }`}
                       disabled={maxQuantity === 0 || quantity === 0}
                       onClick={handleAddToCart}
@@ -406,16 +371,6 @@ const ProductDetail = () => {
                       )}
                     </div>
                   </div>
-
-                  {/* Product Details Accordion */}
-                  {/* <Collapse defaultActiveKey={["1"]} className="mb-8">
-            <Panel header="Thông tin chi tiết" key="1">
-              <p>{productDetail?.details}</p>
-            </Panel>
-            <Panel header="Thông tin bổ sung" key="2">
-              <p>{productDetail?.additionalInfo}</p>
-            </Panel>
-          </Collapse> */}
                 </div>
               </div>
 
