@@ -12,6 +12,9 @@ const BannerFilter: React.FC = () => {
   const dispatch = useAppDispatch();
   const [filterData, setFilterData] = useState<IFilterData>({
     type: null,
+
+
+    
   });
   const onChangeFilter = (key: string, value: any) => {
     setFilterData((prev) => {
@@ -35,6 +38,16 @@ const BannerFilter: React.FC = () => {
           placeholder={"Chọn loại banner"}
           options={BannerTypeData}
           allowClear
+          onChangeFilter
+          onClear={() => {
+            onChangeFilter("type", null);
+          }}
+          onSearch={(val) => {      
+
+
+            onChangeFilter("type", val);
+          }
+          onSelect={(val) => {
           onChange={(val) => {
             onChangeFilter("type", val);
           }}

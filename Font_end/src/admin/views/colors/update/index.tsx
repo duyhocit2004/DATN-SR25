@@ -37,6 +37,8 @@ const UpdateColorModal: React.FC<IProps> = ({ refreshData }) => {
   const resetForm = () => {
     setFormData({ id: null, color: ""}); // Reset state
     form.resetFields(); // Reset form
+    selectedColor && dispatch(setSelectedColor(null)); // Reset selected color in store
+    form.setFieldsValue({ color: "" }); // Reset form value
   };
   const setFormValue = (currentColor: IColor) => {
     setFormData({
