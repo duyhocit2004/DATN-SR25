@@ -57,7 +57,7 @@ const ContactUs: React.FC = () => {
 
         {/* Form liên hệ */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">Gửi tin nhắn cho chúng tôi</h2>
+          <h2 className="text-xl font-semibold mb-4">Liên hệ  cho chúng tôi</h2>
           {formStatus && (
             <div
               className={`p-4 mb-4 rounded ${
