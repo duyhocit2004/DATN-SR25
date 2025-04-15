@@ -1,4 +1,5 @@
 {
+  
   "compilerOptions": {
     "target": "ES2020",                        // Mục tiêu ES2020
     "module": "ESNext",                        // Sử dụng module ESNext (để hỗ trợ các tính năng như dynamic import)
