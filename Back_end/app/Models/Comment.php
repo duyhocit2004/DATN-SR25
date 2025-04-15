@@ -46,10 +46,10 @@ class Comment extends Model
 		// 'created_at' => 'datetime:Y-m-d H:i:s',
 
 		// 'updated_at' => 'datetime:Y-m-d H:i:s'
-		ob_clean()
-		// 'created_at' => 'datetime:Y-m-d H:i:s',	
-		key_exists('created_at', $this->attributes) ? $this->attributes['created_at'] : null,
-		key_exists('updated_at', $this->attributes) ? $this->attributes['updated_at'] : null
+		// ob_clean()
+		// // 'created_at' => 'datetime:Y-m-d H:i:s',	
+		// key_exists('created_at', $this->attributes) ? $this->attributes['created_at'] : null,
+		// key_exists('updated_at', $this->attributes) ? $this->attributes['updated_at'] : null
 		// 'created_at' => Carbon::now(),
 		// 'updated_at' => Carbon::now()
 		
