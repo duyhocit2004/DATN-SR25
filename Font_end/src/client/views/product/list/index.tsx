@@ -10,6 +10,7 @@ import {
   Spin,
   Tree,
   TreeProps,
+  Button,
 } from "antd";
 import { IListCategory, IPagination, IProduct } from "@/types/interface";
 import ProductItem from "@/client/components/ProductItem";
@@ -37,6 +38,17 @@ const paginationDefault = {
   page: 0,
   size: 9,
 };
+// Thêm CSS inline hoặc trong file CSS riêng
+const filterPanelStyle: React.CSSProperties = {
+  position: "sticky",
+  top: "10px", 
+  maxHeight: "calc(100vh - 40px)", 
+  overflowY: "auto", 
+  background: "white",
+  borderRadius: "50px",
+  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+  paddingBottom: "16px",
+};
 const sortDefault = "default";
 const ProductList: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -47,30 +59,25 @@ const ProductList: React.FC = () => {
     category: false,
   });
   const [loading, setLoading] = useState<boolean>(true);
-  const [loadingTreeCategories, setLoadingTreeCategories] =
-    useState<boolean>(true);
-  const [pagination, setPagination] = useState<IPagination>(
-    cloneDeep(paginationDefault)
-  );
-  const [categoriesForFilter, setCategoriesForFilter] = useState<
-    IListCategory[]
-  >([]);
+  const [loadingTreeCategories, setLoadingTreeCategories] = useState<boolean>(true);
+  const [pagination, setPagination] = useState<IPagination>(cloneDeep(paginationDefault));
+
+  const [categoriesForFilter, setCategoriesForFilter] = useState<IListCategory[]>([]);
   const [categories, setCategories] = useState<IListCategory[]>([]);
+  const [categoryId, setCategoryId] = useState<number | null>(null);
+
   const [totalProducts, setTotalProducts] = useState<number>(0);
   const [products, setProducts] = useState<IProduct[]>([]);
+
   const [sortOption, setSortOption] = useState<string>(sortDefault);
-  const [debounceSortOption, setDebounceSortOption] =
-    useState<string>(sortDefault);
+  const [debounceSortOption, setDebounceSortOption] = useState<string>(sortDefault);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [debounceSelectedCategories, setDebounceSelectedCategories] = useState<
-    string[]
-  >([]);
+  const [debounceSelectedCategories, setDebounceSelectedCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000]);
-  const [debouncePriceRange, setDebouncePriceRange] = useState<
-    [number, number]
-  >([0, 1000000]);
+  const [debouncePriceRange, setDebouncePriceRange] = useState<[number, number]>([0, 1000000]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [categoryId, setCategoryId] = useState<number | null>(null);
+
+
 
 
   // Lấy danh mục sản phẩm , thiết lập trạng thái ban đầu 
@@ -123,6 +130,8 @@ const ProductList: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [priceRange]);
 
+
+
   // Gọi fetchProducts khi tất cả debounce hoàn tất
   useEffect(() => {
     if (isFirstRender.current) {
@@ -156,6 +165,8 @@ const ProductList: React.FC = () => {
       fetchProducts(payload);
     }
   }, [debouncePriceRange, debounceSelectedCategories, debounceSortOption]);
+
+
 
 
   // Hàm gọi API DS sản phẩm 
@@ -203,12 +214,35 @@ const ProductList: React.FC = () => {
   };
 
 
+  // Hàm reset bộ lọc
+  const resetFilters = () => {
+    setSearchTerm("");
+    setSelectedCategories([]);
+    setDebounceSelectedCategories([]);
+    setPriceRange([0, 1000000]);
+    setDebouncePriceRange([0, 1000000]);
+    setSortOption(sortDefault);
+    setDebounceSortOption(sortDefault);
+    setPagination(cloneDeep(paginationDefault));
+    setCategoryId(null); // Reset categoryId nếu cần
+
+    // Gọi API để lấy tất cả sản phẩm
+    const payload: IPayloadSeach = {
+      pageNum: paginationDefault.page,
+      pageSize: paginationDefault.size,
+      name: "",
+      categoriesId: "",
+      fromPrice: "",
+      toPrice: "",
+      sortType: null,
+    };
+    fetchProducts(payload);
+  };
+
   // Đệ quy DFS
-  const findCategoryDFS = (
-    treeArray: IListCategory[],
-    catId: number | null
-  ): IListCategory[] | null => {
-    if (!catId && catId !== 0) return treeArray;
+  const findCategoryDFS = (treeArray: IListCategory[], catId: number | null): IListCategory[] | null => {
+    if (!catId && catId !== 0)
+      return treeArray;
 
     for (const node of treeArray) {
       // Thêm thuộc tính hasChildren nếu node có con
@@ -216,7 +250,8 @@ const ProductList: React.FC = () => {
         node.hasChildren = true;
       }
 
-      if (node.id === catId) return [{ ...node }]; // Trả về node đã cập nhật
+      if (node.id === catId)
+        return [{ ...node }]; // Trả về node đã cập nhật
 
       if (node.children) {
         const found = findCategoryDFS(node.children, catId);
@@ -227,6 +262,8 @@ const ProductList: React.FC = () => {
     }
     return null; // Không tìm thấy
   };
+
+
 
 
   // Tìm theo tên 
@@ -285,7 +322,7 @@ const ProductList: React.FC = () => {
   };
 
 
-  // lọc trên đt
+  // Lọc sản phẩm (trên mobile hoặc qua component FilterProduct)
   const handleFilterProduct = (filterData: IFilterData) => {
     setPagination(cloneDeep(paginationDefault));
     const payload: IPayloadSeach = {
@@ -321,14 +358,19 @@ const ProductList: React.FC = () => {
     }
   };
 
+
+
   return (
     <div className="container mx-auto px-4 pt-10 md:pt-20">
       <Row gutter={[32, 16]}>
         {/* Cột Filter cho màn hình lớn */}
         <Col span={0} md={8} lg={6}>
+        <div style={filterPanelStyle}>
           <div className=" bg-white shadow rounded-md">
             <h3 className="text-lg font-semibold mb-4 p-4">Bộ lọc</h3>
-
+            <Button type="text" onClick={resetFilters}>
+              Tất cả sản phẩm
+            </Button>
             <Collapse defaultActiveKey={["1", "2", "3"]} ghost>
               {/* Thanh tìm kiếm */}
               <Panel header="Tìm kiếm" key="1">
@@ -401,6 +443,7 @@ const ProductList: React.FC = () => {
               </Panel>
             </Collapse>
           </div>
+        </div>
         </Col>
         {/* Cột Filter cho màn hình nhỏ */}
         <Col span={24} md={0}>
