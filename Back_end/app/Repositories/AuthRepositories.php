@@ -2,13 +2,14 @@
 
 namespace App\Repositories;
 
-use App\Helpers\BaseResponse;
-use App\Models\Color;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-
+use App\Models\Color;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Helpers\BaseResponse;
+
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 
 
@@ -114,7 +115,8 @@ class AuthRepositories
 
     public function forgotPassword(Request $request)
     {
-        $user = User::query()->where('email', '=', $request->input('email'))->where('phone_number', '=', $request->input('phoneNumber'))->first();
+        $user = User::query()->where('email', '=', $request->input('email'))
+        ->first();
 
         if (!$user) {
             BaseResponse::failure('400', 'size not found', 'size.not.found', []);
@@ -125,7 +127,11 @@ class AuthRepositories
         $user->update([
             'password' => Hash::make($newPassword),
         ]);
-
+        
+        Mail::send('forgotpassword', ['newPassword' => $newPassword], function ($message) use ($user) {
+            $message->to($user->email);
+            $message->subject('Mật khẩu mới của bạn');
+        });
         return $newPassword;
     }
 

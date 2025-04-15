@@ -10,7 +10,7 @@ use App\Http\Controllers\Client\ProductController;
 use App\Http\Controllers\Common\CommonController;
 use App\Http\Controllers\VNPayController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Client\PasswordResetController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -60,7 +60,7 @@ Route::prefix('admin')->group(function () {
 Route::prefix('users')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/forgotPassword', [AuthController::class, 'forgotPassword']);
+    Route::post('/forgotPassword', [PasswordResetController::class, 'forgotPassword']);
 });
 
 Route::prefix('orders')->group(function () {

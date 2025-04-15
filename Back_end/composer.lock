@@ -1142,7 +1142,6 @@
             "time": "2025-04-09T20:32:01+00:00"
         },
         {
-
             "name": "fruitcake/php-cors",
             "version": "v1.3.0",
             "source": {
@@ -2271,7 +2270,6 @@
             "support": {
                 "issues": "https://github.com/lcobucci/clock/issues",
                 "source": "https://github.com/lcobucci/clock/tree/3.3.1"
-
             },
             "funding": [
                 {
@@ -2283,9 +2281,7 @@
                     "type": "patreon"
                 }
             ],
-
             "time": "2024-09-24T20:45:14+00:00"
-
         },
         {
             "name": "lcobucci/jwt",
@@ -4697,7 +4693,6 @@
                 "source": "https://github.com/ramsey/collection/tree/2.1.1"
             },
             "time": "2025-03-22T05:38:12+00:00"
-
         },
         {
             "name": "ramsey/uuid",
@@ -8606,9 +8601,7 @@
         },
         {
             "name": "laravel/pint",
-
             "version": "v1.22.0",
-
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/pint.git",
@@ -9624,9 +9617,7 @@
                 "issues": "https://github.com/reliese/laravel/issues",
                 "source": "https://github.com/reliese/laravel"
             },
-
             "time": "2025-03-20T16:16:48+00:00"
-
         },
         {
             "name": "sebastian/cli-parser",

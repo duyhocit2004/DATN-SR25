@@ -26,7 +26,7 @@ class AuthService implements IAuthService
 
     public function __construct(AuthRepositories $authRepositories,
 
-                                Cloudinary       $cloudinary)
+ Cloudinary $cloudinary)
 
     {
         $this->authRepositories = $authRepositories;
@@ -208,22 +208,23 @@ class AuthService implements IAuthService
         return $user;
     }
 
-    public function forgotPassword($request)
+    public function forgotPassword(Request $request)
     {
 
-        $validate = Validator::make($request->all(), [
-            'email' => 'required',
-            'phoneNumber' => 'required'
-        ], [
-            'email.required' => 'name là bắt buộc',
-            'phoneNumber.required' => 'phoneNumber là bắt buộc',
-        ]);
-        if ($validate->fails()) {
-            BaseResponse::failure(400, '', $validate->errors()->first(), []);
-        };
+        // $validate = Validator::make($request->all(), [
+        //     'email' => 'required',
+        //     'phoneNumber' => 'required'
+        // ], [
+        //     'email.required' => 'name là bắt buộc',
+        //     'phoneNumber.required' => 'phoneNumber là bắt buộc',
+        // ]);
+        // if ($validate->fails()) {
+        //     BaseResponse::failure(400, '', $validate->errors()->first(), []);
+        // };
 
-        $newPassword = $this->authRepositories->forgotPassword($request);
+        $newPassword = $this->authRepositories->forgotPassword(  $request);
         return $newPassword;
+
     }
 
     public function changePassword($request)

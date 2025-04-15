@@ -63,25 +63,6 @@ class AuthController extends Controller
     }
 
     
-    public function forgotPassword(Request $request)
-{
-    $validatedData = $request->validate(['email' => 'required|email']);
-    $email = $validatedData['email'];
-    $this->authService->requestPasswordReset($email);
-    return BaseResponse::success(['message' => 'Password reset email sent.']);
-}
-
-public function resetPassword(Request $request)
-{
-    $validatedData = $request->validate(['token' => 'required', 'new_password' => 'required']);
-    $token = $validatedData['token'];
-    $newPassword = $validatedData['newPassword'];
-    try {
-        $this->authService->resetPassword($token, $newPassword);
-        return BaseResponse::success(['message' => 'Password reset successfully.']);
-    } catch (\Exception $e) {
-        return BaseResponse::error($e->getMessage(), $e->getCode());
-    }
-}
+   
 }
 
