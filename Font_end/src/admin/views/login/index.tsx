@@ -33,8 +33,7 @@ const AdminLogin = () => {
     data[key as keyof IFormData] = value;
     form.setFieldsValue(data);
   };
-    form.setFieldsValue(data);
-  };
+   
 
   const handleLogin = async (values: any) => {
     setLoading(true);

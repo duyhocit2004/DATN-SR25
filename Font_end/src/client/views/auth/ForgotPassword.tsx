@@ -10,7 +10,7 @@ const ForgotPassword: React.FC = () => {
     const onFinish = async (values: { email: string }) => {
         setLoading(true);
         try {
-            // const response = await axiosClient.post("/api/password/email", values);
+            const response = await axiosClient.post("/users/forgotPassword", values);
             message.success("Liên kết đặt lại mật khẩu đã được gửi!");
         } catch (error) {
             message.error("Đã xảy ra lỗi, vui lòng thử lại!");
