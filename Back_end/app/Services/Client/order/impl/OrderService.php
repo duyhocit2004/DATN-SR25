@@ -28,6 +28,7 @@ class OrderService implements IOrderService
     public function addOrder(Request $request)
     {
         $validatedData = $request->validate([
+            'user_id'=> 'nullable| integer|exists:users,id',
             'customerName' => 'required|string',
             'email' => 'required|email',
             'phoneNumber' => 'required|string',
@@ -58,6 +59,7 @@ class OrderService implements IOrderService
             return [
                 'id' => $order->id,
                 'code' => $order->code,
+                'user_id' => $order->user_id,
                 'customerName' => $order->customer_name,
                 'email' => $order->email,
                 "phoneNumber" => $order->phone_number,
@@ -104,6 +106,7 @@ class OrderService implements IOrderService
             return [
                 'id' => $order->id,
                 'code' => $order->code,
+                'user_id' => $order->user_id,
                 'customerName' => $order->customer_name,
                 'email' => $order->email,
                 "phoneNumber" => $order->phone_number,
@@ -161,6 +164,7 @@ class OrderService implements IOrderService
         $list = [
             'id' => $order->id,
             'code' => $order->code,
+            'user_id' => $order->user_id,
             'customerName' => $order->customer_name,
             'email' => $order->email,
             "phoneNumber" => $order->phone_number,

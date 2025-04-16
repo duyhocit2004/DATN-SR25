@@ -42,5 +42,9 @@ class CartController extends Controller
         $card = $this->cartService->updateCart($request);
         return BaseResponse::success($card);
     }
-
+    public function clearCart(Request $request)
+    {
+        $card = $this->cartService->clearCart($request);
+        return BaseResponse::success($card);
+    }
 }

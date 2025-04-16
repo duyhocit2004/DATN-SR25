@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Table, Button, Popconfirm, Card, Tooltip, Spin } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
@@ -11,7 +12,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { useAuth } from "@/context/AuthContext";
 import cartApi from "@/api/cartApi";
 import { HttpCodeString } from "@/utils/constants";
-import { showToast } from "@/components/toast"; // Import showToast
+import { showToast } from "@/components/toast";
 
 const Cart = () => {
   const dispatch = useAppDispatch();
@@ -19,7 +20,7 @@ const Cart = () => {
   const [cartList, setCartList] = useState<ICart[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
-  const { isMobile } = useWindowSize(); // Kiểm tra nếu là màn hình nhỏ
+  const { isMobile } = useWindowSize();
   const { token } = useAuth();
   const cartListRef = useRef<ICart[]>([]);
 
@@ -43,7 +44,6 @@ const Cart = () => {
     setLoading(true);
     try {
       if (token) {
-        //callapi get cart
         const response = await cartApi.getCartByUserId();
         if (response.status === HttpCodeString.SUCCESS) {
           setCartList(response.data);
@@ -52,9 +52,7 @@ const Cart = () => {
         const cartStorage: ICartStorage[] = JSON.parse(
           localStorage.getItem("cart") || "[]"
         );
-
         const listCart = await getProductInCartLocalStorage(cartStorage);
-
         setCartList(listCart);
       }
     } catch {
@@ -66,17 +64,13 @@ const Cart = () => {
 
   const getProductInCartLocalStorage = async (cartStorage: ICartStorage[]) => {
     const listCart: ICart[] = [];
-    //call api get product theo productId, size, color
-    const listProduct = cloneDeep(cartStorage).map((e) => {
-      return {
-        productId: e.productId?.toString(),
-        size: e.size,
-        color: e.color,
-      };
-    });
+    const listProduct = cloneDeep(cartStorage).map((e) => ({
+      productId: e.productId?.toString(),
+      size: e.size,
+      color: e.color,
+    }));
 
     let products: IProductCartStorage[] = [];
-
     try {
       const response = await cartApi.getCartByLocalStorageData({
         listCartInfo: listProduct,
@@ -101,7 +95,6 @@ const Cart = () => {
       };
       listCart.push(newCart);
     });
-
     return listCart;
   };
 
@@ -119,7 +112,6 @@ const Cart = () => {
         cartId: record.id,
         quantity: quantity,
       });
-
       if (response.status === HttpCodeString.SUCCESS) {
         setCartAfterUpdate(cartListRef.current, record, quantity);
         showToast({
@@ -151,9 +143,7 @@ const Cart = () => {
       }
       return e;
     });
-    // Nếu chưa login, lưu vào localStorage
     localStorage.setItem("cart", JSON.stringify(newCartStorage));
-    // Cập nhật số lượng giỏ hàng trong Redux store
     dispatch({ type: "cart/setCartCount", payload: newCartStorage.length });
     setCartAfterUpdate(cartListRef.current, record, quantity);
   };
@@ -177,14 +167,13 @@ const Cart = () => {
     setCartList(newCart);
   };
 
-  // Tạo debounce cho updateCart (trì hoãn 1 giây)
   const debouncedUpdateCart = useCallback(debounce(updateCartData, 1000), [
     token,
     cartList,
   ]);
 
   const updateQuantity = (record: ICart, quantity: number) => {
-    debouncedUpdateCart(record, quantity); // Gọi update cart với debounce
+    debouncedUpdateCart(record, quantity);
   };
 
   const removeFromCart = async (cartItem: ICart) => {
@@ -201,7 +190,6 @@ const Cart = () => {
         cartId: cartItem.id,
         quantity: 0,
       });
-
       if (response.status === HttpCodeString.SUCCESS) {
         updateCartAfterRemoveItem(cartItem);
         showToast({
@@ -228,8 +216,8 @@ const Cart = () => {
       JSON.stringify(
         cartStorage.filter(
           (item) =>
-            item.productId !== cartItem?.product?.id &&
-            item.size !== cartItem?.size &&
+            item.productId !== cartItem?.product?.id ||
+            item.size !== cartItem?.size ||
             item.color !== cartItem?.color
         )
       )
@@ -243,16 +231,12 @@ const Cart = () => {
   };
 
   const updateCartAfterRemoveItem = (cartItem: ICart) => {
-    // console.log(cartListRef.current);
-    // console.log(cartItem);
     const newCart = cartListRef.current?.filter(
-      (item) => {
-        return item.product?.id !== cartItem?.product?.id ||
-          item.size !== cartItem?.size ||
-          item.color !== cartItem?.color
-      }
+      (item) =>
+        item.product?.id !== cartItem?.product?.id ||
+        item.size !== cartItem?.size ||
+        item.color !== cartItem?.color
     );
-    // console.log(newCart);
     setCartList(newCart);
   };
 
@@ -260,7 +244,6 @@ const Cart = () => {
     if (token) {
       try {
         const response = await cartApi.updateCart({});
-
         if (response.status === HttpCodeString.SUCCESS) {
           setCartList([]);
           showToast({
@@ -306,46 +289,42 @@ const Cart = () => {
         dataIndex: "name",
         key: "name",
         responsive: ["xs", "sm", "md", "lg"],
-        render: (_: any, record: ICart) => {
-          return (
-            <div className="name-are">
-              <div className="name mb-1 font-semibold text-xl">
-                {record?.product?.name}
-              </div>
-              <div className="size mb-1 text-gray-500">
-                Kích thước: {record?.size}
-              </div>
-              <div className="color flex gap-2 text-gray-500">
-                <span>Màu:</span>
-                <div
-                  className={`color w-5 h-5 shrink-0 rounded-[50%]`}
-                  style={{ backgroundColor: record?.color }}
-                ></div>
-              </div>
+        render: (_: any, record: ICart) => (
+          <div className="name-are">
+            <div className="name mb-1 font-semibold text-xl">
+              {record?.product?.name}
             </div>
-          );
-        },
+            <div className="size mb-1 text-gray-500">
+              Kích thước: {record?.size}
+            </div>
+            <div className="color flex gap-2 text-gray-500">
+              <span>Màu:</span>
+              <div
+                className="color w-5 h-5 shrink-0 rounded-[50%]"
+                style={{ backgroundColor: record?.color }}
+              ></div>
+            </div>
+          </div>
+        ),
       },
       {
         title: "Giá",
         dataIndex: "priceRegular",
         key: "price",
-        render: (_: any, record: ICart) => {
-          return (
-            <div className="price">
-              {record?.product?.priceSale && (
-                <div className="price-old text-gray-400 line-through text-sm">
-                  {record?.product?.priceRegular?.toLocaleString()} đ
-                </div>
-              )}
-              <div className="price-new text-red-600 text-lg font-bold ml-2">
-                {record?.product?.priceSale?.toLocaleString() ||
-                  record?.product?.priceRegular?.toLocaleString()}{" "}
-                đ
+        render: (_: any, record: ICart) => (
+          <div className="price">
+            {record?.product?.priceSale && (
+              <div className="price-old text-gray-400 line-through text-sm">
+                {record?.product?.priceRegular?.toLocaleString()} đ
               </div>
+            )}
+            <div className="price-new text-red-600 text-lg font-bold ml-2">
+              {record?.product?.priceSale?.toLocaleString() ||
+                record?.product?.priceRegular?.toLocaleString()}{" "}
+              đ
             </div>
-          );
-        },
+          </div>
+        ),
       },
       {
         title: "Số lượng",
@@ -366,25 +345,45 @@ const Cart = () => {
         key: "total",
         render: (_: any, record: ICart) =>
           `${(
-            (record?.product?.priceSale || record?.product?.priceSale || 0) *
+            (record?.product?.priceSale || record?.product?.priceRegular || 0) *
             record?.quantity
-          ).toLocaleString()} đ`,
+          ).toLocaleString()
+          } đ`,
       },
       {
         title: "Hành động",
         key: "action",
-        fixed: 'right',
-        render: (_: any, record: any) => (
-          <Popconfirm
-            title="Bạn có chắc muốn xóa sản phẩm này?"
-            onConfirm={() => removeFromCart(record)}
-            okText="Xóa"
-            cancelText="Hủy"
-          >
-            <Tooltip title={"Xóa"}>
-              <Button danger icon={<DeleteOutlined />} />
+        fixed: "right",
+        render: (_: any, record: ICart) => (
+          <div className="flex gap-2">
+            <Popconfirm
+              title="Bạn có chắc muốn xóa sản phẩm này?"
+              onConfirm={() => removeFromCart(record)}
+              okText="Xóa"
+              cancelText="Hủy"
+            >
+              <Tooltip title="Xóa">
+                <Button danger icon={<DeleteOutlined />} />
+              </Tooltip>
+            </Popconfirm>
+            <Tooltip title="Mua ngay">
+              <Button
+                type="primary"
+                onClick={() =>
+                  navigate("/payment", {
+                    state: {
+                      productId: record.product?.id,
+                      quantity: record.quantity,
+                      size: record.size,
+                      color: record.color,
+                    },
+                  })
+                }
+              >
+                Mua ngay
+              </Button>
             </Tooltip>
-          </Popconfirm>
+          </div>
         ),
       },
     ]);
@@ -422,7 +421,6 @@ const Cart = () => {
             rowKey={"id"}
             dataSource={cartList}
             pagination={false}
-          // scroll={isMobile ? { x: 600 } : undefined}
           />
 
           <div className="text-right mt-4 text-lg font-semibold">
@@ -452,7 +450,7 @@ const Cart = () => {
                   navigate("/payment");
                 }}
               >
-                Thanh toán
+                Mua Hàng
               </Button>
             </Link>
             <Popconfirm

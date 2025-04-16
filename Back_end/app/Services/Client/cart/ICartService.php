@@ -11,5 +11,5 @@ interface ICartService
     public function getProductsInCartByUserId(Request $request);
     public function addCart(Request $request);
     public function updateCart(Request $request);
-
+    public function clearCart(Request $request);
 }

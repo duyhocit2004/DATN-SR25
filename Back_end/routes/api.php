@@ -48,6 +48,7 @@ Route::prefix('home')->group(function () {
 
 Route::prefix('carts')->group(function () {
     Route::post('/getProductsInCart', [CartController::class, 'getProductsInCart']);
+    Route::post('/clearCart', [CartController::class, 'clearCart']);
 });
 
 Route::prefix('admin')->group(function () {
