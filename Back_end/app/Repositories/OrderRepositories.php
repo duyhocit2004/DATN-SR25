@@ -80,6 +80,7 @@ class OrderRepositories
             DB::beginTransaction();
 
             $order = Order::create([
+                'user_id' => $data['user_id'] ?? null,
                 'code' => 'Od' . Str::random(4),
                 'customer_name' => $data['customerName'],
                 'email' => $data['email'] ?? 'default@email.com',

@@ -1,31 +1,25 @@
+
 "use client";
 import { useState, useEffect } from "react";
 import { Form, Input, Button, Card, Spin, Radio, Select } from "antd";
 import { useAuth } from "@/context/AuthContext";
-import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import {
-  ICart,
-  ICartStorage,
-  IProductCartStorage,
-  IVoucher,
-} from "@/types/interface";
+import { ICart, ICartStorage, IVoucher } from "@/types/interface";
 import cartApi from "@/api/cartApi";
 import { HttpCodeString, PaymentMethod } from "@/utils/constants";
-import { cloneDeep } from "lodash";
 import orderApi from "@/api/orderApi";
 import { showToast } from "@/components/toast";
-import PaymentByIDProduct from "./PaymentByIDProduct";
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
-const Payment = () => {
+const PaymentByIDProduct = ({ productId, quantity, size, color }) => {
   const { user, token } = useAuth();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [loadingApplyVoucher, setLoadingApplyVoucher] = useState(false);
   const [discountCode, setDiscountCode] = useState("");
-  const [cartList, setCartList] = useState<ICart[]>([]);
+  const [cartItem, setCartItem] = useState<ICart | null>(null);
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [finalAmount, setFinalAmount] = useState<number>(0);
   const [voucher, setVoucher] = useState<IVoucher | null>(null);
@@ -41,10 +35,6 @@ const Payment = () => {
   const [selectedReceiverCity, setSelectedReceiverCity] = useState<string | null>(null);
   const [selectedReceiverDistrict, setSelectedReceiverDistrict] = useState<string | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Check if single product purchase
-  const { productId, quantity, size, color } = location.state || {};
 
   // Fetch cities for both buyer and receiver
   useEffect(() => {
@@ -138,7 +128,7 @@ const Payment = () => {
           console.error("Error fetching receiver wards:", error);
         }
       };
-      fetchWards();
+      fetchWarts();
     } else {
       setReceiverWards([]);
     }
@@ -155,89 +145,67 @@ const Payment = () => {
     }
   }, [user, form]);
 
-  // Fetch cart info only if not a single product purchase
+  // Fetch single product details
   useEffect(() => {
-    if (!productId) {
-      getCartInfo();
-    }
-  }, [token, productId]);
-
-  useEffect(() => {
-    if (!productId) {
-      const totalPrice = cartList.reduce(
-        (total, item) =>
-          total +
-          (item?.product?.priceSale || item?.product?.priceRegular || 0) *
-            item.quantity,
-        0
-      );
-      setTotalAmount(totalPrice);
-    }
-  }, [cartList, productId]);
-
-  useEffect(() => {
-    if (!productId) {
-      setFinalAmount(totalAmount - (voucher?.voucherPrice || 0));
-    }
-  }, [totalAmount, voucher, productId]);
-
-  const getCartInfo = async () => {
-    setLoading(true);
-    try {
-      if (token) {
-        const response = await cartApi.getCartByUserId();
-        if (response.status === HttpCodeString.SUCCESS) {
-          setCartList(response.data);
+    const getProductInfo = async () => {
+      setLoading(true);
+      try {
+        if (token) {
+          const response = await cartApi.getCartByUserId();
+          if (response.status === HttpCodeString.SUCCESS) {
+            const item = response.data.find(
+              (cart) =>
+                cart.product?.id === productId &&
+                cart.size === size &&
+                cart.color === color
+            );
+            if (item) {
+              setCartItem({ ...item, quantity });
+            } else {
+              setCartItem(null);
+            }
+          }
+        } else {
+          const response = await cartApi.getCartByLocalStorageData({
+            listCartInfo: [{ productId, size, color }],
+          });
+          if (response.status === HttpCodeString.SUCCESS && response.data[0]) {
+            setCartItem({
+              id: null,
+              product: response.data[0],
+              productId,
+              size,
+              color,
+              quantity,
+            });
+          }
         }
-      } else {
-        const cartStorage: ICartStorage[] = JSON.parse(
-          localStorage.getItem("cart") || "[]"
-        );
-        const listCart = await getProductInCartLocalStorage(cartStorage);
-        setCartList(listCart);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+        setCartItem(null);
+      } finally {
+        setLoading(false);
       }
-    } catch {
-      setCartList([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    getProductInfo();
+  }, [token, productId, quantity, size, color]);
 
-  const getProductInCartLocalStorage = async (cartStorage: ICartStorage[]) => {
-    const listCart: ICart[] = [];
-    const listProduct = cloneDeep(cartStorage).map((e) => ({
-      productId: e.productId?.toString(),
-      size: e.size,
-      color: e.color,
-    }));
-
-    let products: IProductCartStorage[] = [];
-    try {
-      const response = await cartApi.getCartByLocalStorageData({
-        listCartInfo: listProduct,
-      });
-      if (response.status === HttpCodeString.SUCCESS) {
-        products = response.data || [];
-      }
-    } finally {
-      console.log("done");
+  // Calculate total amount for single item
+  useEffect(() => {
+    if (cartItem) {
+      const totalPrice =
+        (cartItem?.product?.priceSale || cartItem?.product?.priceRegular || 0) *
+        cartItem.quantity;
+      setTotalAmount(totalPrice);
+    } else {
+      setTotalAmount(0);
     }
-    cartStorage.forEach((ca) => {
-      const newCart: ICart = {
-        id: null,
-        ...ca,
-        product:
-          products.find(
-            (pr) =>
-              pr.id === ca.productId &&
-              pr.color === ca.color &&
-              pr.size === ca.size
-          ) || null,
-      };
-      listCart.push(newCart);
-    });
-    return listCart;
-  };
+  }, [cartItem]);
+
+  // Calculate final amount after voucher
+  useEffect(() => {
+    setFinalAmount(totalAmount - (voucher?.voucherPrice || 0));
+  }, [totalAmount, voucher]);
 
   const applyDiscount = async () => {
     try {
@@ -277,33 +245,45 @@ const Payment = () => {
     }
   };
 
-  const clearCart = async () => {
+  const clearCartItem = async () => {
     try {
       if (token) {
-        const response = await cartApi.clearCart();
+        const response = await cartApi.updateCart({
+          productId,
+          size,
+          color,
+          quantity: 0, // Xóa sản phẩm bằng cách đặt quantity = 0
+        });
         if (response.status === HttpCodeString.SUCCESS) {
-          setCartList([]);
+          setCartItem(null);
           showToast({
-            content: "Giỏ hàng đã được xóa!",
+            content: "Sản phẩm đã được xóa khỏi giỏ hàng!",
             duration: 5,
             type: "success",
           });
         } else {
-          throw new Error("Failed to clear cart via API");
+          throw new Error("Failed to clear cart item via API");
         }
       } else {
-        localStorage.removeItem("cart");
-        setCartList([]);
+        const cartStorage = JSON.parse(localStorage.getItem("cart") || "[]");
+        const updatedCart = cartStorage.filter(
+          (item: ICartStorage) =>
+            item.productId !== productId ||
+            item.size !== size ||
+            item.color !== color
+        );
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        setCartItem(null);
         showToast({
-          content: "Giỏ hàng đã được xóa!",
+          content: "Sản phẩm đã được xóa khỏi giỏ hàng!",
           duration: 5,
           type: "success",
         });
       }
     } catch (error) {
-      console.error("Error clearing cart:", error);
+      console.error("Error clearing cart item:", error);
       showToast({
-        content: "Xóa giỏ hàng thất bại!",
+        content: "Xóa sản phẩm khỏi giỏ hàng thất bại!",
         duration: 5,
         type: "error",
       });
@@ -313,16 +293,16 @@ const Payment = () => {
   const handlePayment = async () => {
     try {
       await form.validateFields();
-  
-      if (cartList.length === 0) {
+
+      if (!cartItem) {
         showToast({
-          content: "Giỏ hàng trống, không thể đặt hàng!",
+          content: "Không tìm thấy sản phẩm để thanh toán!",
           duration: 5,
           type: "error",
         });
         return;
       }
-  
+
       if (voucher?.code) {
         const voucherCheck = await orderApi.getVoucher({
           voucherCode: voucher.code,
@@ -343,31 +323,31 @@ const Payment = () => {
         }
         setVoucher(voucherCheck.data);
       }
-  
-      const products = cartList.map((e) => ({
-        productId: e.product?.id,
-        name: e.product?.name,
-        image: e.product?.image,
-        priceRegular: e.product?.priceRegular,
-        priceSale: e.product?.priceSale,
+
+      const product = {
+        productId: cartItem.product?.id,
+        name: cartItem.product?.name,
+        image: cartItem.product?.image,
+        priceRegular: cartItem.product?.priceRegular,
+        priceSale: cartItem.product?.priceSale,
         discount: null,
-        color: e.color,
-        size: e.size,
-        quantity: e.quantity,
-      }));
-  
+        color: cartItem.color,
+        size: cartItem.size,
+        quantity: cartItem.quantity,
+      };
+
       const city = cities.find((c) => c.code === form.getFieldValue("city"));
       const district = districts.find((d) => d.code === form.getFieldValue("district"));
       const ward = wards.find((w) => w.code === form.getFieldValue("ward"));
       const shippingAddress = `${form.getFieldValue("street") || ""}, ${ward?.name || ""}, ${district?.name || ""}, ${city?.name || ""}`;
-  
+
       const receiverCity = receiverCities.find((c) => c.code === form.getFieldValue("receiverCity"));
       const receiverDistrict = receiverDistricts.find((d) => d.code === form.getFieldValue("receiverDistrict"));
       const receiverWard = receiverWards.find((w) => w.code === form.getFieldValue("receiverWard"));
       const receiverAddress = form.getFieldValue("receiverStreet")
         ? `${form.getFieldValue("receiverStreet")}, ${receiverWard?.name || ""}, ${receiverDistrict?.name || ""}, ${receiverCity?.name || ""}`
         : null;
-  
+
       const payload = {
         user_id: user?.id || null,
         customerName: form.getFieldValue("customerName"),
@@ -381,13 +361,13 @@ const Payment = () => {
         voucherPrice: voucher?.voucherPrice || 0,
         shippingAddress: shippingAddress,
         note: form.getFieldValue("note"),
-        products: products,
+        products: [product],
         paymentMethod: paymentMethod,
       };
-  
+
       const response = await orderApi.addOrder(payload);
       if (response?.status === HttpCodeString.SUCCESS) {
-        await clearCart(); // Clear toàn bộ giỏ hàng khi thanh toán từ giỏ hàng
+        await clearCartItem(); // Chỉ xóa sản phẩm cụ thể khi mua ngay
         if (paymentMethod === PaymentMethod.ONLINE && response.data.vnpayUrl) {
           window.location.href = response.data.vnpayUrl;
         } else if (paymentMethod === PaymentMethod.COD) {
@@ -415,19 +395,6 @@ const Payment = () => {
     }
   };
 
-  // Render PaymentByIDProduct for single product purchase
-  if (productId && quantity && size && color) {
-    return (
-      <PaymentByIDProduct
-        productId={productId}
-        quantity={quantity}
-        size={size}
-        color={color}
-      />
-    );
-  }
-
-  // Render full cart payment UI
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50 to-white min-h-screen">
       <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 text-blue-900 tracking-tight">
@@ -685,34 +652,35 @@ const Payment = () => {
             className="border-0 shadow-md rounded-xl hover:shadow-lg transition-shadow duration-300"
           >
             <div className="space-y-4">
-              {cartList.map((item, index) => (
+              {cartItem ? (
                 <div
-                  key={index}
                   className="flex items-center justify-between py-3 border-b border-gray-200 hover:bg-blue-50 transition-colors duration-200 rounded-md px-2"
                 >
                   <div className="flex items-center gap-4">
                     <img
-                      src={item?.product?.image}
-                      alt={item.product?.name}
+                      src={cartItem?.product?.image}
+                      alt={cartItem.product?.name}
                       className="w-14 h-14 object-cover rounded-md border border-gray-100"
                     />
                     <div>
-                      <div className="font-semibold text-gray-800">{item.product?.name}</div>
-                      <div className="text-sm text-gray-600">Size: {item.size}</div>
-                      <div className="text-sm text-gray-600">Color: {item.color}</div>
+                      <div className="font-semibold text-gray-800">{cartItem.product?.name}</div>
+                      <div className="text-sm text-gray-600">Size: {cartItem.size}</div>
+                      <div className="text-sm text-gray-600">Color: {cartItem.color}</div>
                     </div>
-                    <div className="text-sm text-gray-600">× {item.quantity}</div>
+                    <div className="text-sm text-gray-600">× {cartItem.quantity}</div>
                   </div>
                   <div className="text-sm font-medium text-gray-800">
                     {(
-                      (item.product?.priceSale ||
-                        item.product?.priceRegular ||
-                        0) * item.quantity
+                      (cartItem.product?.priceSale ||
+                        cartItem.product?.priceRegular ||
+                        0) * cartItem.quantity
                     ).toLocaleString()}{" "}
                     đ
                   </div>
                 </div>
-              ))}
+              ) : (
+                <div className="text-center text-gray-600">Không có sản phẩm để hiển thị</div>
+              )}
             </div>
 
             <div className="mt-6 border-t border-gray-200 pt-4 space-y-3">
@@ -766,4 +734,4 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+export default PaymentByIDProduct;

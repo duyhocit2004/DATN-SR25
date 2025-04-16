@@ -43,6 +43,7 @@ class Order extends Model
 	];
 
 	protected $fillable = [
+		'user_id',
 		'code',
 		'customer_name',
 		'email',
