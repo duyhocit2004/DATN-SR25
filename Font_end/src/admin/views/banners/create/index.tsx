@@ -35,7 +35,13 @@ const AddBannerModal: React.FC<IProps> = ({ refreshData }) => {
   const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
-    setFormData({ image: null, type: "", status: null }); // Reset state
+    setFormData({
+      image: null,
+      type: "",
+      status: null,
+      link: "",
+      product_id: "",
+    }); // Reset state
     form.resetFields(); // Reset form
   };
 

@@ -97,7 +97,7 @@ const UpdateColorModal: React.FC<IProps> = ({ refreshData }) => {
 
   return (
     <Modal
-      title="Cập nhât màu"
+      title="Cập nhât"
       open={true}
       maskClosable={false}
       onCancel={onClose}
@@ -119,7 +119,7 @@ const UpdateColorModal: React.FC<IProps> = ({ refreshData }) => {
 
         {/* Nút hành động */}
         <div className="flex justify-end gap-2">
-          <Button onClick={onClose}>Hủy</Button>
+          <Button onClick={onClose}>HỦY</Button>
           <Button type="primary" loading={loading} onClick={handleSave}>
             Lưu
           </Button>
