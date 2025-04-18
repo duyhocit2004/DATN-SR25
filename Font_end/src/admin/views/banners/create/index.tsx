@@ -161,17 +161,7 @@ const AddBannerModal: React.FC<IProps> = ({ refreshData }) => {
             }}
           />
         </Form.Item>
-        {/* <Form.Item
-          label="ID sản phẩm"
-          name="product_id"
-          rules={[{ required: true, message: "Vui lòng nhập ID sản phẩm!" }]}
-        >
-          <Input
-            placeholder="VD: 123"
-            value={formData.product_id}
-            onChange={(e) => onChangeFormData("product_id", e.target.value)}
-          />
-        </Form.Item> */}
+      
 
         <Form.Item
           label="Link sản phẩm sale"
@@ -185,15 +175,6 @@ const AddBannerModal: React.FC<IProps> = ({ refreshData }) => {
           />
         </Form.Item>
 
-        {/* Nhập mô tả */}
-        {/* <Form.Item label="Mô tả" name="description">
-          <Input.TextArea
-            value={formData.description}
-            onChange={(e) => onChangeFormData("description", e.target.value)}
-            placeholder="Nhập mô tả banner..."
-            rows={3}
-          />
-        </Form.Item> */}
 
         {/* Nút hành động */}
         <div className="flex justify-end gap-2">
