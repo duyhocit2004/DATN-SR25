@@ -23,4 +23,7 @@ class AutoLockVouchers extends Command
         $lockedCount = $this->voucherRepositories->autoLockExpiredVouchers();
         $this->info("Đã khóa $lockedCount voucher hết hạn.");
     }
+    protected $commands = [
+        AutoLockVouchers::class,
+    ];
 }
