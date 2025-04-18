@@ -43,14 +43,15 @@ const BannerFilter: React.FC = () => {
             onChangeFilter("type", null);
           }}
           onSearch={(val) => {      
-
-
             onChangeFilter("type", val);
-          }
+          }}
           onSelect={(val) => {
+          }
           onChange={(val) => {
             onChangeFilter("type", val);
           }}
+          // onClear={() => onChangeFilter("type", null)}
+          // onChange={(val) => onChangeFilter("type", val)}
         />
       </div>
       <Button type="primary" onClick={handleSearch} loading={loading}>
