@@ -7,7 +7,7 @@ import { ActiveStatusData, BannerTypeData } from "@/utils/constantData";
 import { HttpCodeString } from "@/utils/constants";
 import { objectToFormData, urlToFile } from "@/utils/functions";
 import { UploadOutlined } from "@ant-design/icons";
-import { Modal, Button, Form, UploadFile, Upload, Select } from "antd";
+import { Modal, Button, Form, UploadFile, Upload, Select, Input } from "antd";
 import { RcFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
 
@@ -15,8 +15,16 @@ interface IBannerForm {
   id: number | null;
   image: UploadFile | null;
   type: string;
+  link: string;
+  productId: string;
   status: boolean | null;
 }
+
+
+
+
+
+
 
 interface IProps {
   refreshData: () => void;
@@ -31,6 +39,8 @@ const UpdateBannerModal: React.FC<IProps> = ({ refreshData }) => {
     image: null,
     type: "",
     status: null,
+    link: "",
+    productId: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -61,6 +71,8 @@ const UpdateBannerModal: React.FC<IProps> = ({ refreshData }) => {
       image: thumbnailUploadFile,
       type: currentBanner.type,
       status: currentBanner.status,
+      link: currentBanner.link,
+      productId: currentBanner.productId,
     });
     form.setFieldsValue({
       image: thumbnailUploadFile,
@@ -187,6 +199,29 @@ const UpdateBannerModal: React.FC<IProps> = ({ refreshData }) => {
             onChange={(value) => {
               onChangeFormData("type", value);
             }}
+          />
+        </Form.Item>
+        {/* <Form.Item
+          label="ID sản phẩm"
+          name="product_id"
+          rules={[{ required: true, message: "Vui lòng nhập ID sản phẩm!" }]}
+        >
+          <Input
+            placeholder="VD: 123"
+            value={formData.product_id}
+            onChange={(e) => onChangeFormData("product_id", e.target.value)}
+          />
+        </Form.Item> */}
+
+        <Form.Item
+          label="Link sản phẩm sale"
+          name="link"
+          rules={[{ required: true, message: "Vui lòng nhập link!" }]}
+        >
+          <Input
+            placeholder="https://example.com/products/123"
+            value={formData.link}
+            onChange={(e) => onChangeFormData("link", e.target.value)}
           />
         </Form.Item>
         <Form.Item

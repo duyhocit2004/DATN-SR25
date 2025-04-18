@@ -44,6 +44,12 @@ class AdminController extends Controller
         return BaseResponse::success($products);
     }
 
+    public function toggleStatus(Request $request)
+    {
+        $products = $this->adminService->toggleStatus($request);
+        return BaseResponse::success($products);
+    }
+
     public function addColor(Request $request)
     {
         $products = $this->adminService->addColor($request);

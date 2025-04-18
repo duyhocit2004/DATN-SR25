@@ -67,6 +67,31 @@ export const deleteVoucher = createAsyncThunk(
   }
 );
 
+export const toggleStatus = createAsyncThunk(
+  "vouchers/toggleStatus",
+  async ({ id, currentStatus }: { id: number; currentStatus: string }, { dispatch }) => {
+    const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+    const response = await adminApi.updateVoucherStatus({ id, status: newStatus });
+
+    if (response.status === HttpCodeString.SUCCESS) {
+      dispatch(fetchVouchers());
+      showToast({
+        content: `Voucher đã được chuyển sang trạng thái ${newStatus === "ACTIVE" ? "Hoạt động" : "Khóa"}!`,
+        duration: 5,
+        type: "success",
+      });
+    } else {
+      showToast({
+        content: "Cập nhật trạng thái voucher thất bại!",
+        duration: 5,
+        type: "error",
+      });
+    }
+
+    return response;
+  }
+);
+
 const adminVoucherSlice = createSlice({
   name: "adminVoucher",
   initialState,
@@ -108,6 +133,15 @@ const adminVoucherSlice = createSlice({
         state.loading = false;
       })
       .addCase(deleteVoucher.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(toggleStatus.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(toggleStatus.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(toggleStatus.rejected, (state) => {
         state.loading = false;
       });
   },

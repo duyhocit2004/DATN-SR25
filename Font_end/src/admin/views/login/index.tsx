@@ -30,8 +30,10 @@ const AdminLogin = () => {
     const data = cloneDeep(formData);
     data[key as keyof IFormData] = value;
     setFormData(data);
+    data[key as keyof IFormData] = value;
     form.setFieldsValue(data);
   };
+   
 
   const handleLogin = async (values: any) => {
     setLoading(true);

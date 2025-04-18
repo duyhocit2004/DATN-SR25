@@ -117,7 +117,7 @@ const Reviews: React.FC = () => {
         getReviews();
       } else {
         showToast({
-          content: "Đánh giá của bạn gửi thất bại!",
+          content: "Bạn chỉ có thể đánh giá khi mua sản phẩm !",
           duration: 5,
           type: "error",
         });

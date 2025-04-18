@@ -30,7 +30,8 @@ class CommonService implements ICommonService
         }
 
         if ($request->hasFile('image')) {
-            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
+            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), 
+            ['folder' => 'products', 'verify' => false]);
         }
 
         return $uploadedFile['secure_url'];

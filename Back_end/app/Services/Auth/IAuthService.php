@@ -15,6 +15,4 @@ interface IAuthService {
     public function forgotPassword(Request $request);
     public function changePassword(Request $request);
 
- 
-
 }

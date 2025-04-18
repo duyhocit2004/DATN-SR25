@@ -164,12 +164,13 @@ const WishList = () => {
         responsive: ["xs", "sm", "md", "lg"],
         render: (_: any, record: IWishlist) => {
           return (
-            <div className="name mb-1 font-semibold text-xl">
+            <Link to={`/products/${record.id}`} className="name mb-1 font-semibold text-xl text-blue-200 hover:underline">
               {record?.name}
-            </div>
+            </Link>
           );
         },
       },
+      
       {
         title: "Giá",
         dataIndex: "priceRegular",

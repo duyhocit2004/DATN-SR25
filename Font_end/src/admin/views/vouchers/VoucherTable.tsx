@@ -12,13 +12,44 @@ import { getLabelByValue } from "@/utils/functions";
 import { ActiveStatusBooleanData } from "@/utils/constantData";
 import { DeleteOutlined } from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
+import adminApi from "@/api/adminApi";
+import { HttpCodeString } from "@/utils/constants";
+import { showToast } from "@/components/toast";
 
 const VoucherTable: React.FC = () => {
   const dispatch = useAppDispatch();
   const { vouchers, pagination, totalElements, loading } = useAppSelector(
     (state) => state.adminVoucher
   );
+  const handleToggleStatus = async (id: number, currentStatus: boolean) => {
+    try {
+      const response = await adminApi.toggleStatus({ id });
+      if (response.status === HttpCodeString.SUCCESS) {
+        showToast({
+          content: `Voucher đã được ${currentStatus ? "khóa" : "mở khóa"}!`,
+          type: "success",
+        });
+        dispatch(fetchVouchers());
+      }
+    } catch {
+      showToast({
+        content: "Thao tác thất bại!",
+        type: "error",
+      });
+    }
+  };
+  const handleEditVoucher = (voucher: IVoucher) => {
+    if (!voucher.status) {
+      showToast({
+        content: "Voucher này đang bị khóa và không thể chỉnh sửa.",
+        type: "warning",
+      });
+      return;
+    }
 
+    setSelectedVoucher(voucher);
+    setIsModalVisible(true);
+  };
   const columns: ColumnsType<IVoucher> = [
     {
       title: "STT",
@@ -48,16 +79,35 @@ const VoucherTable: React.FC = () => {
       },
     },
     {
+      title: "Giá trị tối thiểu",
+      dataIndex: "minOrderValue",
+      key: "minOrderValue",
+      minWidth: 150,
+      render: (value: number) => `${value?.toLocaleString()} VND`,
+    },
+    {
       title: "Số lượng",
       dataIndex: "quantity",
       key: "quantity",
-      minWidth: 300,
+      minWidth: 100,
     },
     {
-      title: "Số lượng đã dùng",
+      title: "Đã dùng",
       dataIndex: "used",
       key: "used",
-      minWidth: 300,
+      minWidth: 100,
+    },
+    {
+      title: "Ngày bắt đầu",
+      dataIndex: "startDate",
+      key: "startDate",
+      render: (date: string) => dayjs(date).format('DD/MM/YYYY HH:mm:ss'),
+    },
+    {
+      title: "Ngày kết thúc",
+      dataIndex: "endDate",
+      key: "endDate",
+      render: (date: string) => dayjs(date).format('DD/MM/YYYY HH:mm:ss'),
     },
     {
       title: "Mô tả",
@@ -68,22 +118,13 @@ const VoucherTable: React.FC = () => {
     {
       title: "Trạng thái",
       dataIndex: "status",
+      minWidth: 100,
       key: "status",
-      minWidth: 150,
-      render: (status: boolean) => {
-        return <div>{getLabelByValue(ActiveStatusBooleanData, status)}</div>;
-      },
-    },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      minWidth: 200,
-      render: (createdAt: Dayjs) => {
-        return (
-          <div>{createdAt ? dayjs(createdAt).format("DD/MM/YYYY") : ""}</div>
-        );
-      },
+      render: (status: string) => (
+        <span className={status === "ACTIVE" ? "text-green-500" : "text-red-500"}>
+          {status === "ACTIVE" ? "Hoạt động" : "Khóa"}
+        </span>
+      ),
     },
     {
       title: "Hành động",
@@ -101,6 +142,15 @@ const VoucherTable: React.FC = () => {
                 handleDeleteVoucher(record.id);
               }}
             />
+            <Button
+              type="primary"
+              onClick={(e) => {
+                e.stopPropagation(); // Ngăn chặn sự kiện onRow
+                handleToggleStatus(record.id, record.status === "ACTIVE");
+              }}
+            >
+              {record.status === "ACTIVE" ? "Khóa" : "Mở khóa"}
+            </Button>
           </Tooltip>
         </div>
       ),
@@ -142,9 +192,12 @@ const VoucherTable: React.FC = () => {
       }}
       onRow={(record) => {
         return {
-          onClick: () => {
+          onClick: (event) => {
+            if ((event.target as HTMLElement).closest(".actions")) {
+              return;
+            }
             onRowClick(record);
-          }, // click row
+          },
         };
       }}
       tableLayout="auto"
@@ -155,3 +208,9 @@ const VoucherTable: React.FC = () => {
 };
 
 export default VoucherTable;
+
+
+function setIsModalVisible(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}
+

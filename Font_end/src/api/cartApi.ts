@@ -39,6 +39,16 @@ class CartApi extends BaseApi<Cart> {
       .post(`${this.uri}/updateCart`, payload)
       .then((res) => res.data);
   };
+  clearCart = (payload: any): Promise<IResponseData<ICart>> => {
+    return axiosClient
+      .post(`${this.uri}/clearCart`, payload)
+      .then((res) => res.data);
+  };
+  purchaseSingleProduct = (payload: any): Promise<IResponseData<ICart>> => {
+    return axiosClient
+      .post(`${this.uri}/purchaseSingleProduct`, payload)
+      .then((res) => res.data);
+  };
 }
 
 const cartApi = new CartApi();

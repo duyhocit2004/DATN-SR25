@@ -11,6 +11,19 @@ interface User {
 class UserApi extends BaseApi<User> {
   constructor() {
     super("users"); // Gán URI 'users' cho API này
+    screen.width;
+    caches;
+    // Gán các phương thức HTTP cho API này
+    length;
+    this.getAll = this.getAll.bind(this);
+    this.getById = this.getById.bind(this);
+    this.create = this.create.bind(this);
+    this.update = this.update.bind(this); 
+    this.delete = this.delete.bind(this);
+    this.getUserById = this.getUserById.bind(this);
+    this.getUserByEmail = this.getUserByEmail.bind(this);
+    this.getUserByPhoneNumber = this.getUserByPhoneNumber.bind(this);
+    this.getUserByName = this.getUserByName.bind(this);
   }
 }
 

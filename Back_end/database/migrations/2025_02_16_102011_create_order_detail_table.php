@@ -37,7 +37,7 @@ return new class extends Migration
 
             $table->integer('quantity');
             $table->double('total_price');
-            $table->string('status')->default('pending');
+            $table->string('status')->default('Unconfirmed');
             $table->timestamps();
         });
     }

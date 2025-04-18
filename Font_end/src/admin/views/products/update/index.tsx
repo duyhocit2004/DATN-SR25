@@ -267,6 +267,14 @@ const UpdateProduct: React.FC = () => {
       });
       return;
     }
+    if (variants.length === 0) {
+      showToast({
+        content: "Mỗi sản phẩm cần có ít nhất 1 biến thể!",
+        duration: 5,
+        type: "error",
+      });
+      return;
+    }
     if (variants.some((v) => !v.color || !v.size)) {
       showToast({
         content: "Mỗi biến thể cần có cả màu sắc và kích thước!",
@@ -280,6 +288,7 @@ const UpdateProduct: React.FC = () => {
 
     const payload = {
       ...formData,
+      productId: productId,
       categoryId:
         formData?.categoryId && formData?.categoryId?.length > 0
           ? formData.categoryId[formData.categoryId.length - 1]

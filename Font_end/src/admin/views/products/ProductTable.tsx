@@ -54,11 +54,11 @@ const ProductTable = () => {
       dataIndex: "quantity",
       minWidth: 150,
     },
-    {
-      title: "Mô tả",
-      dataIndex: "description",
-      minWidth: 350,
-    },
+    // {
+    //   title: "Mô tả",
+    //   dataIndex: "description",
+    //   minWidth: 350,
+    // },
     {
       title: "Đánh giá",
       dataIndex: "rate",

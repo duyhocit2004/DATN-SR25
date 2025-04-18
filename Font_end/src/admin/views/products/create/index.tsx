@@ -191,6 +191,14 @@ const AddProduct: React.FC = () => {
       });
       return;
     }
+    if (variants.length === 0){
+      showToast({
+        content: "Mỗi sản phẩm cần có ít nhất 1 biến thể!",
+        duration: 5,
+        type: "error",
+      });
+      return;
+    }
     if (variants.some((v) => !v.color || !v.size)) {
       showToast({
         content: "Mỗi biến thể cần có cả màu sắc và kích thước!",
@@ -392,7 +400,7 @@ const AddProduct: React.FC = () => {
                     className="!w-36"
                     placeholder="Nhập giảm giá"
                     min={0}
-                    max={99}
+                    max={50}
                     onChange={(value) => {
                       onChangeProductInfo("discount", value);
                     }}

@@ -31,16 +31,17 @@ class AdminService implements IAdminService
 
     protected $cloudinary;
 
-    public function __construct(ProductRepositories $productRepositories,
-                                VariantRepositories $variantRepositories,
-                                VoucherRepositories $voucherRepositories,
-                                ColorRepositories $colorRepositories,
-                                SizeRepositories $sizeRepositories,
-                                CategoriesRepositories $categoriesRepositories,
-                                AuthRepositories $authRepositories,
-                                BannersRepositories $bannersRepositories,
-                                Cloudinary $cloudinary)
-    {
+    public function __construct(
+        ProductRepositories $productRepositories,
+        VariantRepositories $variantRepositories,
+        VoucherRepositories $voucherRepositories,
+        ColorRepositories $colorRepositories,
+        SizeRepositories $sizeRepositories,
+        CategoriesRepositories $categoriesRepositories,
+        AuthRepositories $authRepositories,
+        BannersRepositories $bannersRepositories,
+        Cloudinary $cloudinary
+    ) {
         $this->productRepositories = $productRepositories;
         $this->variantRepositories = $variantRepositories;
         $this->voucherRepositories = $voucherRepositories;
@@ -84,7 +85,7 @@ class AdminService implements IAdminService
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
-        $vouchers= $this->voucherRepositories->getAllVoucher($request);
+        $vouchers = $this->voucherRepositories->getAllVoucher($request);
         return $vouchers;
     }
 
@@ -121,6 +122,17 @@ class AdminService implements IAdminService
         }
 
         $voucher = $this->voucherRepositories->deleteVoucher($request);
+        return $voucher;
+    }
+    public function toggleStatus(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $voucher = $this->voucherRepositories->toggleStatus($request);
         return $voucher;
     }
 
@@ -272,7 +284,7 @@ class AdminService implements IAdminService
 
     public function getAllCategoriesNonTree(Request $request)
     {
-        $categories= $this->categoriesRepositories->getAllCategoriesNonTree($request);
+        $categories = $this->categoriesRepositories->getAllCategoriesNonTree($request);
         $categories->getCollection()->transform(function ($category) {
             return [
                 'id' => $category->id,

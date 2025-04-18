@@ -194,12 +194,34 @@ const ListProduct = () => {
     },
     {
       title: "Hành động",
+
       key: "action",
       render: (_, record: IReview) => (
         <Button type="link" onClick={() => navigate(`/admin/reviews/${record.id}`)}>
           Xem chi tiết
         </Button>
       ),
+========
+      dataIndex: "action",
+      minWidth: 120,
+      fixed: "right",
+      render: (value, record, index) => {
+        return (
+          <div className="actions">
+            <Tooltip title={"Xóa"}>
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteProduct(record.id);
+                }}
+              />
+            </Tooltip>
+          </div>
+        );
+      },
+
     },
   ];
   useEffect(() => {

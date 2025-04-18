@@ -3,58 +3,79 @@ import { showToast } from "@/components/toast";
 import { useAppDispatch } from "@/store/hooks";
 import { setShowAddModal } from "@/store/reducers/adminVoucherSlice";
 import { HttpCodeString } from "@/utils/constants";
-import { Modal, Input, Button, Form, InputNumber } from "antd";
+import { Modal, Input, Button, Form, InputNumber, DatePicker } from "antd";
+import dayjs from "dayjs";
+import moment from "moment";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface IVoucherForm {
   voucherCode: string;
   quantity: number | null;
   voucherPrice: number | null;
+  startDate: Date | null;
+  endDate: Date | null;
   description: string;
+  minOrderValue: string| null;
 }
 
 interface IProps {
   refreshData: () => void;
 }
-const AddVoucherModal: React.FC<IProps> = ({refreshData}) => {
+const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
   const dispatch = useAppDispatch();
   const [form] = Form.useForm(); // Khởi tạo form
   const [formData, setFormData] = useState<IVoucherForm>({
     voucherCode: "",
     quantity: null,
+    startDate: null,
+    endDate: null,
     voucherPrice: null,
     description: "",
+    minOrderValue : null,
   });
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const resetForm = () => {
     setFormData({
       voucherCode: "",
       quantity: null,
+      startDate: null,
+      endDate: null,
       voucherPrice: null,
       description: "",
+      minOrderValue : null,
     }); // Reset state
     form.resetFields(); // Reset form
   };
 
-  // Hàm cập nhật state & form
   const onChangeFormData = (key: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
     form.setFieldsValue({ [key]: value });
   };
 
-  // Lưu dữ liệu
-  const handleSave = () => {
-    form
-      .validateFields()
-      .then(() => {
-        onSave();
-      })
-      .catch(() => console.log("Validation failed!"));
-  };
+
 
   const onSave = async () => {
-    const payload = { ...formData };
+    const payload = {
+      voucherCode: formData.voucherCode,
+      quantity: formData.quantity,
+      voucherPrice: formData.voucherPrice,
+      startDate: formData.startDate ? dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss") : null,
+      endDate: formData.endDate ? dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss") : null,
+      min_order_value: form.getFieldValue('minOrderValue'),
+      description: formData.description,
+    };
+
+    if (!formData.startDate || !formData.endDate || moment(formData.startDate).isAfter(formData.endDate)) {
+      showToast({
+        content: "Ngày kết thúc phải lớn hơn ngày bắt đầu!",
+        type: "error",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await adminApi.addVoucher(payload);
@@ -67,6 +88,7 @@ const AddVoucherModal: React.FC<IProps> = ({refreshData}) => {
           duration: 5,
           type: "success",
         });
+        navigate("/admin/vouchers");
       } else {
         showToast({
           content: "Thêm voucher thất bại!",
@@ -78,6 +100,8 @@ const AddVoucherModal: React.FC<IProps> = ({refreshData}) => {
       setLoading(false);
     }
   };
+
+
   const onClose = () => {
     dispatch(setShowAddModal(false));
   };
@@ -119,6 +143,20 @@ const AddVoucherModal: React.FC<IProps> = ({refreshData}) => {
           />
         </Form.Item>
         <Form.Item
+          label="Giá trị đơn tối thiểu"
+          name="minOrderValue"
+          rules={[{ required: true, message: "Vui lòng nhập giá trị tối thiểu" }]}
+        >
+          <InputNumber
+            min={0}
+            className="!w-full"
+            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+            addonAfter="VND"
+          />
+        </Form.Item>
+
+        <Form.Item
           name="quantity"
           label="Số lượng"
           rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
@@ -131,6 +169,51 @@ const AddVoucherModal: React.FC<IProps> = ({refreshData}) => {
             onChange={(value) => {
               onChangeFormData("quantity", value);
             }}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Ngày bắt đầu"
+          name="startDate"
+          rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu!" }]}
+        >
+          <DatePicker
+            showTime
+            format="YYYY-MM-DD HH:mm:ss"
+            disabledDate={(current) => current && current < moment().startOf("day")}
+            onChange={(date) => onChangeFormData("startDate", date)}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Ngày kết thúc"
+          name="endDate"
+          rules={[
+            { required: true, message: "Vui lòng chọn ngày kết thúc!" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                const startDate = getFieldValue("startDate");
+                if (!value || !startDate) {
+                  return Promise.resolve();
+                }
+                if (moment(value).isAfter(startDate)) {
+                  return Promise.resolve();
+                }
+                if (moment(value).isSame(startDate, "day") && moment(value).isAfter(startDate)) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("Ngày kết thúc phải lớn hơn ngày bắt đầu!"));
+              },
+            }),
+          ]}
+        >
+          <DatePicker
+            showTime
+            format="YYYY-MM-DD HH:mm:ss"
+            disabledDate={(current) => {
+              const startDate = form.getFieldValue("startDate");
+              return current && startDate && current < moment(startDate).startOf("day");
+            }}
+            onChange={(date) => onChangeFormData("endDate", date)}
           />
         </Form.Item>
 
@@ -147,7 +230,7 @@ const AddVoucherModal: React.FC<IProps> = ({refreshData}) => {
         {/* Nút hành động */}
         <div className="flex justify-end gap-2">
           <Button onClick={onClose}>Hủy</Button>
-          <Button type="primary" loading={loading} onClick={handleSave}>
+          <Button type="primary" loading={loading} onClick={onSave}>
             Lưu
           </Button>
         </div>

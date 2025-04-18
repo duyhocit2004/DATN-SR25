@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Select,
   Pagination,
-  Checkbox,
   Slider,
   Row,
   Col,
@@ -11,15 +10,11 @@ import {
   Spin,
   Tree,
   TreeProps,
+  Button,
 } from "antd";
-import {
-  ICategory,
-  IListCategory,
-  IPagination,
-  IProduct,
-} from "@/types/interface";
+import { IListCategory, IPagination, IProduct } from "@/types/interface";
 import ProductItem from "@/client/components/ProductItem";
-import { HttpCode, HttpCodeString } from "@/utils/constants";
+import { HttpCodeString } from "@/utils/constants";
 import { cloneDeep } from "lodash";
 import FilterProduct, { IFilterData } from "../components/FilterProduct";
 import { useSearchParams } from "react-router-dom";
@@ -41,33 +36,51 @@ interface IPayloadSeach {
 }
 const paginationDefault = {
   page: 0,
-  size: 15,
+  size: 9,
+};
+// Thêm CSS inline hoặc trong file CSS riêng
+const filterPanelStyle: React.CSSProperties = {
+  position: "sticky",
+  top: "10px", 
+  maxHeight: "calc(100vh - 40px)", 
+  overflowY: "auto", 
+  background: "white",
+  borderRadius: "50px",
+  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+  paddingBottom: "16px",
 };
 const sortDefault = "default";
 const ProductList: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const isFirstRender = useRef(true);
+  const debounceCompleted = useRef({
+    price: false,
+    sort: false,
+    category: false,
+  });
   const [loading, setLoading] = useState<boolean>(true);
-  const [pagination, setPagination] = useState<IPagination>(
-    cloneDeep(paginationDefault)
-  );
-  const [categoriesForFilter, setCategoriesForFilter] = useState<
-    IListCategory[]
-  >([]);
+  const [loadingTreeCategories, setLoadingTreeCategories] = useState<boolean>(true);
+  const [pagination, setPagination] = useState<IPagination>(cloneDeep(paginationDefault));
+
+  const [categoriesForFilter, setCategoriesForFilter] = useState<IListCategory[]>([]);
   const [categories, setCategories] = useState<IListCategory[]>([]);
-  const [totalProducts, setTotalProducts] = useState<number>(0);
-  const [products, setProducts] = useState<IProduct[]>([]);
-  const [sortOption, setSortOption] = useState<string>(sortDefault);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [debounceSelectedCategories, setDebounceSelectedCategories] = useState<
-    string[]
-  >([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000]);
-  const [debouncePriceRange, setDebouncePriceRange] = useState<
-    [number, number]
-  >([0, 1000000]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
   const [categoryId, setCategoryId] = useState<number | null>(null);
 
+  const [totalProducts, setTotalProducts] = useState<number>(0);
+  const [products, setProducts] = useState<IProduct[]>([]);
+
+  const [sortOption, setSortOption] = useState<string>(sortDefault);
+  const [debounceSortOption, setDebounceSortOption] = useState<string>(sortDefault);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [debounceSelectedCategories, setDebounceSelectedCategories] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000]);
+  const [debouncePriceRange, setDebouncePriceRange] = useState<[number, number]>([0, 1000000]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+
+
+
+  // Lấy danh mục sản phẩm , thiết lập trạng thái ban đầu 
   useEffect(() => {
     setCategoryId(
       searchParams.get("categoryId")
@@ -76,10 +89,15 @@ const ProductList: React.FC = () => {
     );
   }, [searchParams]);
 
+
+  // Nếu có categoryId trong URL, nó sẽ được sử dụng để lọc danh mục
   useEffect(() => {
+    setSelectedCategories(categoryId ? [categoryId?.toString()] : []);
     const treeCategories = findCategoryDFS(cloneDeep(categories), categoryId);
     setCategoriesForFilter(treeCategories || []);
   }, [categoryId, categories]);
+
+  // Gọi API để lấy danh sách danh mục 
   useEffect(() => {
     getTreeCategories();
   }, []);
@@ -88,81 +106,77 @@ const ProductList: React.FC = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebounceSelectedCategories(selectedCategories);
+      debounceCompleted.current.category = true;
     }, 1000); // Delay 1 giây
 
     return () => clearTimeout(timeoutId);
   }, [selectedCategories]);
+  // Sắp xếp
   useEffect(() => {
-    setPagination(cloneDeep(paginationDefault));
-    const payload: IPayloadSeach = {
-      pageNum: paginationDefault?.page,
-      pageSize: paginationDefault?.size,
-      name: searchTerm,
-      categoriesId: debounceSelectedCategories?.length > 0
-      ? debounceSelectedCategories[
-        debounceSelectedCategories?.length - 1
-        ]
-      : "",
-      fromPrice: priceRange?.[0] ? priceRange?.[0].toString() : "",
-      toPrice: priceRange?.[1] ? priceRange?.[1].toString() : "",
-      sortType: sortOption === sortDefault ? null : sortOption,
-    };
-    fetchProducts(payload);
-  }, [debounceSelectedCategories]);
-  // Lọc sản phẩm theo danh mục, giá và tìm kiếm
+    const timeoutId = setTimeout(() => {
+      setDebounceSortOption(sortOption);
+      debounceCompleted.current.sort = true;
+    }, 1000); // Delay 1 giây
+
+    return () => clearTimeout(timeoutId);
+  }, [sortOption]);
+  // Giá 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncePriceRange(priceRange);
+      debounceCompleted.current.price = true;
     }, 1000); // Delay 1 giây
 
     return () => clearTimeout(timeoutId);
   }, [priceRange]);
-  useEffect(() => {
-    setPagination(cloneDeep(paginationDefault));
-    const payload: IPayloadSeach = {
-      pageNum: paginationDefault?.page,
-      pageSize: paginationDefault?.size,
-      name: searchTerm,
-      categoriesId: debounceSelectedCategories?.length > 0
-      ? debounceSelectedCategories[
-        debounceSelectedCategories?.length - 1
-        ]
-      : "",
-      fromPrice: debouncePriceRange?.[0]
-        ? debouncePriceRange?.[0].toString()
-        : "",
-      toPrice: debouncePriceRange?.[1]
-        ? debouncePriceRange?.[1].toString()
-        : "",
-      sortType: sortOption === sortDefault ? null : sortOption,
-    };
-    fetchProducts(payload);
-  }, [debouncePriceRange]);
 
-  // Sắp xếp sản phẩm
-  useEffect(() => {
-    setPagination(cloneDeep(paginationDefault));
-    const payload: IPayloadSeach = {
-      pageNum: paginationDefault?.page,
-      pageSize: paginationDefault?.size,
-      name: searchTerm,
-      categoriesId: debounceSelectedCategories?.length > 0
-      ? debounceSelectedCategories[
-        debounceSelectedCategories?.length - 1
-        ]
-      : "",
-      fromPrice: debouncePriceRange?.[0]
-        ? debouncePriceRange?.[0].toString()
-        : "",
-      toPrice: debouncePriceRange?.[1]
-        ? debouncePriceRange?.[1].toString()
-        : "",
-      sortType: sortOption === sortDefault ? null : sortOption,
-    };
-    fetchProducts(payload);
-  }, [sortOption]);
 
+
+  // Gọi fetchProducts khi tất cả debounce hoàn tất
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false; // Đánh dấu lần đầu đã qua
+      return;
+    }
+    // Kiểm tra xem cả 3 state debounce đã hoàn thành chưa
+    if (
+      debounceCompleted.current.category &&
+      debounceCompleted.current.price &&
+      debounceCompleted.current.sort
+    ) {
+      setPagination(cloneDeep(paginationDefault));
+      const payload: IPayloadSeach = {
+        pageNum: paginationDefault?.page,
+        pageSize: paginationDefault?.size,
+        name: searchTerm,
+        categoriesId:
+          debounceSelectedCategories?.length > 0
+            ? debounceSelectedCategories[debounceSelectedCategories?.length - 1]
+            : "",
+        fromPrice: debouncePriceRange?.[0]
+          ? debouncePriceRange?.[0].toString()
+          : "",
+        toPrice: debouncePriceRange?.[1]
+          ? debouncePriceRange?.[1].toString()
+          : "",
+        sortType:
+          debounceSortOption === sortDefault ? null : debounceSortOption,
+      };
+      fetchProducts(payload);
+    }
+  }, [debouncePriceRange, debounceSelectedCategories, debounceSortOption]);
+
+
+
+
+  // Hàm gọi API DS sản phẩm 
   const fetchProducts = async (filterData: IPayloadSeach) => {
+    //Tránh TH có category mà logic xử lý debounceSelectedCategories chưa hoàn tất sẽ không call api nữa
+    if (
+      searchParams.get("categoryId") &&
+      debounceSelectedCategories?.length === 0
+    )
+      return;
     try {
       setLoading(true);
       const result = await productApi.getProductsByFilter(filterData);
@@ -181,9 +195,11 @@ const ProductList: React.FC = () => {
     }
   };
 
+
+  // Lấy danh mục theo dạng cây 
   const getTreeCategories = async () => {
     try {
-      setLoading(true);
+      setLoadingTreeCategories(true);
       const result = await homeApi.getAllCategories();
       if (result?.status === HttpCodeString.SUCCESS) {
         setCategories(result?.data);
@@ -193,15 +209,40 @@ const ProductList: React.FC = () => {
     } catch {
       setCategories([]);
     } finally {
-      setLoading(false);
+      setLoadingTreeCategories(false);
     }
   };
 
-  const findCategoryDFS = (
-    treeArray: IListCategory[],
-    catId: number | null
-  ): IListCategory[] | null => {
-    if (!catId && catId !== 0) return treeArray;
+
+  // Hàm reset bộ lọc
+  const resetFilters = () => {
+    setSearchTerm("");
+    setSelectedCategories([]);
+    setDebounceSelectedCategories([]);
+    setPriceRange([0, 1000000]);
+    setDebouncePriceRange([0, 1000000]);
+    setSortOption(sortDefault);
+    setDebounceSortOption(sortDefault);
+    setPagination(cloneDeep(paginationDefault));
+    setCategoryId(null); // Reset categoryId nếu cần
+
+    // Gọi API để lấy tất cả sản phẩm
+    const payload: IPayloadSeach = {
+      pageNum: paginationDefault.page,
+      pageSize: paginationDefault.size,
+      name: "",
+      categoriesId: "",
+      fromPrice: "",
+      toPrice: "",
+      sortType: null,
+    };
+    fetchProducts(payload);
+  };
+
+  // Đệ quy DFS
+  const findCategoryDFS = (treeArray: IListCategory[], catId: number | null): IListCategory[] | null => {
+    if (!catId && catId !== 0)
+      return treeArray;
 
     for (const node of treeArray) {
       // Thêm thuộc tính hasChildren nếu node có con
@@ -209,7 +250,8 @@ const ProductList: React.FC = () => {
         node.hasChildren = true;
       }
 
-      if (node.id === catId) return [{ ...node }]; // Trả về node đã cập nhật
+      if (node.id === catId)
+        return [{ ...node }]; // Trả về node đã cập nhật
 
       if (node.children) {
         const found = findCategoryDFS(node.children, catId);
@@ -221,18 +263,27 @@ const ProductList: React.FC = () => {
     return null; // Không tìm thấy
   };
 
+
+
+
+  // Tìm theo tên 
   const onSearchKeyWord = (value: string) => {
+    //Tránh TH có category mà logic xử lý debounceSelectedCategories chưa hoàn tất sẽ không call api nữa
+    if (
+      searchParams.get("categoryId") &&
+      debounceSelectedCategories?.length === 0
+    )
+      return;
     setSearchTerm(value);
     setPagination(cloneDeep(paginationDefault));
     const payload: IPayloadSeach = {
       pageNum: paginationDefault?.page,
       pageSize: paginationDefault?.size,
       name: value,
-      categoriesId: debounceSelectedCategories?.length > 0
-      ? debounceSelectedCategories[
-        debounceSelectedCategories?.length - 1
-        ]
-      : "",
+      categoriesId:
+        debounceSelectedCategories?.length > 0
+          ? debounceSelectedCategories[debounceSelectedCategories?.length - 1]
+          : "",
       fromPrice: debouncePriceRange?.[0]
         ? debouncePriceRange?.[0].toString()
         : "",
@@ -244,6 +295,8 @@ const ProductList: React.FC = () => {
     fetchProducts(payload);
   };
 
+
+  // chuyển trang 
   const onChangePagination = (pageNumber: number, pageSize: number) => {
     setPagination({
       page: pageNumber,
@@ -268,6 +321,8 @@ const ProductList: React.FC = () => {
     fetchProducts(payload);
   };
 
+
+  // Lọc sản phẩm (trên mobile hoặc qua component FilterProduct)
   const handleFilterProduct = (filterData: IFilterData) => {
     setPagination(cloneDeep(paginationDefault));
     const payload: IPayloadSeach = {
@@ -277,8 +332,8 @@ const ProductList: React.FC = () => {
       categoriesId:
         filterData?.selectedCategories?.length > 0
           ? filterData?.selectedCategories[
-              filterData?.selectedCategories?.length - 1
-            ]
+          filterData?.selectedCategories?.length - 1
+          ]
           : "",
       fromPrice: filterData?.priceRange?.[0]
         ? filterData?.priceRange?.[0].toString()
@@ -291,6 +346,8 @@ const ProductList: React.FC = () => {
     fetchProducts(payload);
   };
 
+
+  // chọn danh mục trong cây 
   const onSelect: TreeProps["onSelect"] = (selectedKeysValue) => {
     const newSelectedKeys = selectedKeysValue.map((num) => num.toString());
     if (categoryId) {
@@ -301,14 +358,19 @@ const ProductList: React.FC = () => {
     }
   };
 
+
+
   return (
     <div className="container mx-auto px-4 pt-10 md:pt-20">
       <Row gutter={[32, 16]}>
         {/* Cột Filter cho màn hình lớn */}
         <Col span={0} md={8} lg={6}>
+        <div style={filterPanelStyle}>
           <div className=" bg-white shadow rounded-md">
             <h3 className="text-lg font-semibold mb-4 p-4">Bộ lọc</h3>
-
+            <Button type="text" onClick={resetFilters}>
+              Tất cả sản phẩm
+            </Button>
             <Collapse defaultActiveKey={["1", "2", "3"]} ghost>
               {/* Thanh tìm kiếm */}
               <Panel header="Tìm kiếm" key="1">
@@ -326,39 +388,48 @@ const ProductList: React.FC = () => {
                   (categoriesForFilter?.length > 1 ||
                     (categoriesForFilter?.length === 1 &&
                       categoriesForFilter[0]?.hasChildren)))) && (
-                <Panel header="Danh mục" key="2">
-                  {/* <Checkbox.Group
-                  rootClassName="w-full gap-2"
-                  onChange={(values) =>
-                    setSelectedCategories(values as string[])
-                  }
-                >
-                  {renderCategories(categoriesForFilter)}
-                </Checkbox.Group> */}
-                  <Tree
-                    // checkable
-                    fieldNames={{
-                      key: "id",
-                      title: "name",
-                      children: "children",
-                    }}
-                    treeData={
-                      categoryId
-                        ? categoriesForFilter[0]?.children
-                        : categoriesForFilter
-                    }
-                    onSelect={onSelect}
-                    // onCheck={onCheckCategory}
-                  />
-                </Panel>
-              )}
+                  <Panel className="relative" header="Danh mục" key="2">
+                    {loadingTreeCategories && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          background: "rgba(255, 255, 255, 0.7)",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          zIndex: 10,
+                        }}
+                      >
+                        <Spin size="large" />
+                      </div>
+                    )}
+                    <Tree
+                      // checkable
+                      fieldNames={{
+                        key: "id",
+                        title: "name",
+                        children: "children",
+                      }}
+                      treeData={
+                        categoryId
+                          ? categoriesForFilter[0]?.children
+                          : categoriesForFilter
+                      }
+                      onSelect={onSelect}
+                    />
+                  </Panel>
+                )}
 
               {/* Filter theo giá */}
               <Panel header="Khoảng giá" key="3">
                 <Slider
                   range
                   min={0}
-                  max={10000000}
+                  max={1000000}
                   step={100000}
                   defaultValue={priceRange}
                   onChange={(values) =>
@@ -372,6 +443,7 @@ const ProductList: React.FC = () => {
               </Panel>
             </Collapse>
           </div>
+        </div>
         </Col>
         {/* Cột Filter cho màn hình nhỏ */}
         <Col span={24} md={0}>
@@ -388,6 +460,7 @@ const ProductList: React.FC = () => {
             {/* Icon Filter */}
             <FilterProduct
               categories={categoriesForFilter}
+              categoryId={categoryId}
               onFilter={handleFilterProduct}
             />
           </div>

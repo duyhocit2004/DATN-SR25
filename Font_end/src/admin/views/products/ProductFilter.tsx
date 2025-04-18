@@ -15,26 +15,30 @@ const ProductFilter = () => {
     keyword: "",
     categoryId: null,
   });
+
   const onChangeFilter = (key: string, value: any) => {
     setFilterData((prev) => {
-      return {
-        ...prev,
-        [key]: value,
-      };
+      const newFilter = { ...prev, [key]: value };
+      if (key === "categoryId") {
+        handleSearch(newFilter); // Gọi API ngay khi thay đổi danh mục
+      }
+      return newFilter;
     });
   };
-  const handleSearch = () => {
+
+  const handleSearch = (data = filterData) => {
     dispatch(
       setFilter({
-        keyword: filterData.keyword,
+        keyword: data.keyword,
         categoryId:
-          filterData.categoryId && filterData.categoryId?.length > 0
-            ? filterData.categoryId[filterData.categoryId.length - 1]
+          data.categoryId && data.categoryId?.length > 0
+            ? data.categoryId[data.categoryId.length - 1]
             : null,
       })
     );
     dispatch(fetchProducts());
   };
+
   return (
     <div className="filter-data flex items-center gap-2">
       <div className="control-area flex items-center gap-2 flex-1">
@@ -69,10 +73,11 @@ const ProductFilter = () => {
           placeholder="Chọn danh mục"
         />
       </div>
-      <Button type="primary" onClick={handleSearch} loading={loading}>
+      <Button type="primary" onClick={() => handleSearch()} loading={loading}>
         Tìm kiếm
       </Button>
     </div>
   );
 };
+
 export default ProductFilter;

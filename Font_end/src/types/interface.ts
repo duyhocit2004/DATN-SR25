@@ -86,6 +86,8 @@ export interface IBanner {
   image: string;
   status: boolean;
   type: string;
+  link: string ;
+  productId: string;
   created_at?: Dayjs;
   updated_at?: Dayjs;
 }
@@ -139,6 +141,7 @@ export interface IResponseData<T> {
   timestamp: number;
 }
 export interface IDataPaging<T> {
+  [x: string]: any;
   data: T;
   total: number;
 }
@@ -169,6 +172,8 @@ export interface IVoucher {
   voucherPrice: number;
   quantity: number;
   used: number;
+  startDate: Date | string;
+  endDate: Date | string;
   description?: string;
   status?: string;
   createdAt?: Dayjs;
@@ -226,6 +231,7 @@ export interface IReply {
 }
 
 export interface IOrder {
+  [x: string]: any;
   id: number;
   code: string;
   phoneNumber: string | null;

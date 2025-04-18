@@ -11,6 +11,8 @@ interface IOrderService
     public function getOrdersPaging(Request $request);
     public function getOrderDetail(Request $request);
     public function updateOrder(Request $request);
+    public function deleteOrder(Request $request);
+    public function refundOrder(Request $request);
     public function getVoucher(Request $request);
 
 }

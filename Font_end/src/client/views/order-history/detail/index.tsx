@@ -1,6 +1,7 @@
+
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setSelectedOrder } from "@/store/reducers/orderSlice";
-import { OrderStatusData } from "@/utils/constantData";
+import { OrderStatusDataClient } from "@/utils/constantData";
 import { getColorOrderStatus, getLabelByValue } from "@/utils/functions";
 import { Modal, Tag } from "antd";
 import dayjs from "dayjs";
@@ -18,12 +19,6 @@ const OrderDetail = () => {
       open={!!selectedOrder}
       onCancel={handleClose}
       footer={false}
-      // footer={[
-      //   <Button key="close" onClick={() => setSelectedOrder(null)}>
-      //     Đóng
-      //   </Button>,
-      // ]}
-      // width={600}
     >
       {selectedOrder && (
         <div>
@@ -40,10 +35,46 @@ const OrderDetail = () => {
             <p>
               <strong>Trạng thái:</strong>{" "}
               <Tag color={getColorOrderStatus(selectedOrder?.status)}>
-                {getLabelByValue(OrderStatusData, selectedOrder?.status)}
+                {getLabelByValue(OrderStatusDataClient, selectedOrder?.status)}
               </Tag>
             </p>
           </div>
+
+          {/* Thông tin người đặt hàng */}
+          <h3 className="font-bold mt-10 mb-4">Thông tin người đặt hàng</h3>
+          <div className="customer-info grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <p>
+              <strong>Họ và tên:</strong> {selectedOrder?.customerName || "-"}
+            </p>
+            <p>
+              <strong>Số điện thoại:</strong> {selectedOrder?.phoneNumber || "-"}
+            </p>
+            <p>
+              <strong>Địa chỉ:</strong> {selectedOrder?.shippingAddress || "-"}
+            </p>
+            <p>
+              <strong>Email:</strong> {selectedOrder?.email || "-"}
+            </p>
+          </div>
+
+          {/*Thông tin người nhận hàng */}
+          {selectedOrder?.receiverName && (
+            <>
+              <h3 className="font-bold mt-10 mb-4">Thông tin người nhận hàng</h3>
+              <div className="receiver-info grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <p>
+                  <strong>Họ và tên:</strong> {selectedOrder?.receiverName || "-"}
+                </p>
+                <p>
+                  <strong>Số điện thoại:</strong> {selectedOrder?.receiverPhoneNumber || "-"}
+                </p>
+                <p>
+                  <strong>Địa chỉ:</strong> {selectedOrder?.receiverAddress || "-"}
+                </p>
+              </div>
+            </>
+          )}
+
           <h3 className="font-bold mt-10 mb-4">Danh sách sản phẩm:</h3>
 
           <div className="product-list overflow-auto">
@@ -67,8 +98,11 @@ const OrderDetail = () => {
                   </div>
                 </div>
                 <div className="min-w-24">
+                  <p className="text-black-500 font-semibold">
+                    Giá :  {product.priceRegular?.toLocaleString()} đ
+                  </p>
                   <p className="text-red-500 font-semibold">
-                    {product.priceRegular?.toLocaleString()} đ
+                    Giá Sale :  {product.priceSale?.toLocaleString()} đ
                   </p>
                 </div>
               </div>
