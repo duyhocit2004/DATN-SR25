@@ -1,0 +1,43 @@
+// .header-container { 
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   z-index: 1000;
+//   background-color: #fff;
+//   box-shadow: 0 2px 8px rgba(0, 21, 41, 0.1);
+// }
+// .user-info {
+//   display: flex;
+//   margin: 0;
+//   padding: 5px 12px;
+//   color: rgba(0, 0, 0, 0.88);
+//   font-weight: normal;
+//   font-size: 14px;
+//   line-height: 1.5714285714285714;
+//   cursor: pointer;
+//   transition: all 0.2s;
+//   border-radius: 4px;
+// }
+// .main-content {
+//   margin-top: 80px; 
+// }
+.header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 21, 41, 0.1);
+  height: 100px;
+}
+
+.main-content {
+  margin-top: calc(80px + 20px); /* Đảm bảo nội dung không bị che */
+  padding: 20px;
+}
+.header-container img {
+  height: 80px; // Điều chỉnh chiều cao ảnh
+  width: auto; // Giữ tỷ lệ ảnh
+}

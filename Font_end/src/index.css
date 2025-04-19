@@ -1,0 +1,43 @@
+@import "tailwindcss";
+@theme {
+  --breakpoint-xs: 320px;
+}
+@layer utilities {
+  .container {
+    max-width: 90%; /* Mặc định là full width */
+  }
+
+  @media (min-width: 640px) { /* sm */
+    .container {
+      max-width: 700px;
+    }
+  }
+
+  @media (min-width: 768px) { /* md */
+    .container {
+      max-width: 1000px;
+    }
+  }
+
+  @media (min-width: 1024px) { /* lg */
+    .container {
+      max-width: 1200px;
+    }
+  }
+
+  @media (min-width: 1280px) { /* xl */
+    .container {
+      max-width: 1240px;
+    }
+  }
+
+  @media (min-width: 1536px) { /* 2xl */
+    .container {
+      max-width: 1200px;
+    }
+  }
+}
+
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */

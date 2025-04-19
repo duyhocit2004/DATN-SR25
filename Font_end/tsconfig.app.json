@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true    // Không sinh ra file JS, vì công cụ build (như Vite) sẽ xử lý
+  },
+  "include": ["src"]
+}

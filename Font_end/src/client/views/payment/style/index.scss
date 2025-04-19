@@ -1,0 +1,191 @@
+$primary-color: #1e90ff;
+$background-color: #f9fafb;
+$card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+$border-radius: 8px;
+$transition: all 0.3s ease;
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+
+  @media (min-width: 768px) {
+    padding: 24px;
+  }
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 24px;
+  color: #1f2937;
+
+  @media (min-width: 768px) {
+    font-size: 1.875rem;
+  }
+}
+
+.loadingOverlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.75);
+  z-index: 1000;
+}
+
+.card {
+  background: $background-color;
+  border-radius: $border-radius;
+  box-shadow: $card-shadow;
+  padding: 16px;
+}
+
+.grid {
+  display: grid;
+  gap: 24px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.formCard,
+.orderCard {
+  background: #fff;
+  border-radius: $border-radius;
+  box-shadow: $card-shadow;
+  transition: $transition;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.discountWrapper {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+
+  input {
+    border-radius: $border-radius;
+    border: 1px solid #d1d5db;
+    padding: 8px;
+    flex: 1;
+  }
+
+  button {
+    border-radius: $border-radius;
+    background: $primary-color;
+    border: none;
+    padding: 8px 16px;
+    transition: $transition;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+}
+
+.cartItems {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cartItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+  transition: $transition;
+
+  &:hover {
+    background: #f1f5f9;
+  }
+}
+
+.itemDetails {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.itemImage {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemName {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.itemMeta {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.itemQuantity {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.itemPrice {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.orderSummary {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+  color: #1f2937;
+}
+
+.discount {
+  color: #dc2626;
+}
+
+.totalLabel {
+  font-weight: 700;
+}
+
+.totalAmount {
+  font-weight: 700;
+  color: $primary-color;
+}
+
+.paymentForm {
+  margin-top: 16px;
+}
+
+.payButton {
+  background: $primary-color;
+  border: none;
+  border-radius: $border-radius;
+  padding: 12px;
+  font-weight: 500;
+  transition: $transition;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
