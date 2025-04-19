@@ -29,7 +29,6 @@ class OrderSeeder extends Seeder
                 'user_name' => fake()->name(),
                 'email' => fake()->safeEmail(),
                 'phone_number' => fake()->phoneNumber(),
-                'total_price' => rand(50000, 1000000),
                 'address' => fake()->address(),
                 'note' => fake()->optional()->sentence(),
             ]);

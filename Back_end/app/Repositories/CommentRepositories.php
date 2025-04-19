@@ -10,6 +10,7 @@ use App\Models\Size;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use function PHPUnit\Framework\isEmpty;
 
 class CommentRepositories
 {
@@ -67,6 +68,12 @@ class CommentRepositories
                 $query->where('product_id', $productId);
             })
             ->exists();
+
+        $comment = Comment::query()->where('phone_number', '=', $request->input('phoneNumber'))->where('product_id', '=', $productId)->get();
+
+        if(!isEmpty($comment)){
+            BaseResponse::failure("400", "You cannot rate a product twice", "cannot.rate.a.product.twice", []);
+        }
 
         if($orderExists){
             $comment = Comment::create([

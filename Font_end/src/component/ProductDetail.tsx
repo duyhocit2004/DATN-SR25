@@ -122,7 +122,6 @@ const ProductDetail: React.FC = () => {
                         />
                     </div>
 
-<<<<<<< HEAD
                     <div className="col-lg-3 col-sm-6 pb-5 pb-md-0">
                         <h4 className="section-sub-title">Sản phẩm mới nhất</h4>
                         <div className="product-default left-details product-widget">
@@ -237,14 +236,6 @@ const ProductDetail: React.FC = () => {
 
     
    
-=======
-                    <button className="btn-add-cart" onClick={handleAddToCart}>
-                        Thêm vào giỏ hàng
-                    </button>
-                </div>
-            </div>
-        </div>
->>>>>>> ac837e85b9c2ab138216b228990b2cb4719fa1d5
     );
 };
 

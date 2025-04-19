@@ -16,58 +16,91 @@ use Illuminate\Support\Str;
 
 class OrderRepositories
 {
-    public function addOrder(Request $request)
+
+    public function addOrder(array $data)
     {
         try {
-            $products = $request->input('products');
+            $products = $data['products'];
             $totalAmount = 0;
+            $voucherAmount = 0;
+
+            // Validate products
             foreach ($products as $product) {
                 $productReal = Product::where('id', $product['productId'])->first();
-                if (!empty($productReal)) {
-                    if ($productReal['quantity'] < $product['quantity']) {
-                        BaseResponse::failure('400', 'quantity is less than order quantity', 'quantity.is.less.than.order.quantity', []);
+                $productVariant = ProductVariant::where('product_id', $product['productId'])->first();
+                if (!empty($productReal) && !empty($productVariant)) {
+                    if ($productVariant['quantity'] < $product['quantity']) {
+                        return BaseResponse::failure('400', 'quantity is less than order quantity', 'quantity.is.less.than.order.quantity', []);
                     }
                     if (!empty($productReal['price_sale'])) {
-                        $totalAmount = $totalAmount + ($productReal['price_sale'] * $product['quantity']);
+                        $totalAmount += $productReal['price_sale'] * $product['quantity'];
                     } else {
-                        $totalAmount = $totalAmount + ($productReal['price_regular'] * $product['quantity']);
+                        $totalAmount += $productReal['price_regular'] * $product['quantity'];
                     }
                 } else {
-                    BaseResponse::failure('400', 'Product not found', 'product.not.found', []);
+                    return BaseResponse::failure('400', 'Product not found', 'product.not.found', []);
                 }
             }
 
-            if ($request->input('voucher')) {
-                $voucher = Voucher::where('code', $request->input('voucher'))->first();
+            // Validate voucher
+            if (!empty($data['voucher'])) {
+                $voucher = Voucher::where('code', $data['voucher'])->first();
                 if ($voucher) {
-                    $totalAmount = $totalAmount - $voucher['voucher_price'];
+                    if ($voucher->end_date && $voucher->end_date < now()) {
+                        return BaseResponse::failure('400', 'Voucher expired', 'voucher.expired', []);
+                    }
+                    if ($voucher->min_order_value && $totalAmount < $voucher->min_order_value) {
+                        return BaseResponse::failure('400', 'Order does not meet minimum value for voucher', 'order.not.meet.min.value', []);
+                    }
+                    $voucherAmount = $voucher->voucher_price;
+                    $totalAmount -= $voucherAmount;
                 } else {
-                    BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
+                    return BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
                 }
             }
 
             if ($totalAmount < 0) {
                 $totalAmount = 0;
             }
+
+            // Validate addresses
+            if (empty($data['shippingAddress'])) {
+                return BaseResponse::failure('400', 'Shipping address is required', 'shipping.address.required', []);
+            }
+
+            // Optional: Validate address format (e.g., contains at least street, ward, district, city)
+            if (!preg_match('/.*,.*,.*,.*$/', $data['shippingAddress'])) {
+                return BaseResponse::failure('400', 'Invalid shipping address format', 'invalid.shipping.address.format', []);
+            }
+
+            if (!empty($data['receiverAddress']) && !preg_match('/.*,.*,.*,.*$/', $data['receiverAddress'])) {
+                return BaseResponse::failure('400', 'Invalid receiver address format', 'invalid.receiver.address.format', []);
+            }
+
             DB::beginTransaction();
+
             $order = Order::create([
+                'user_id' => $data['user_id'] ?? null,
                 'code' => 'Od' . Str::random(4),
-                'customer_name' => $request->input('customerName'),
-                'email' => $request->input('email') ?? 'default@email.com',
-                'phone_number' => $request->input('phoneNumber'),
-                'total_price' => $totalAmount,
-                'voucher' => $request->input('voucher'),
-                'voucher_price' => $request->input('voucherPrice'),
-                'address' => $request->input('shippingAddress', ''),
-                'note' => $request->input('note'),
-                'status' => 'Processing',
-                'product_id' => 'Processing',
-                'date' => $request->input('createAt') ? $request->input('createAt') : now()
+                'customer_name' => $data['customerName'],
+                'email' => $data['email'] ?? 'default@email.com',
+                'phone_number' => $data['phoneNumber'],
+                'receiver_name' => $data['receiverName'] ?? null,
+                'receiver_phone_number' => $data['receiverPhoneNumber'] ?? null,
+                'receiver_address' => $data['receiverAddress'] ?? null,
+                'shipping_address' => $data['shippingAddress'],
+                'total_price' => $totalAmount, // Use calculated totalAmount
+                'voucher' => $data['voucher'] ?? null,
+                'voucher_price' => $voucherAmount,
+                'payment_method' => $data['paymentMethod'] ?? '',
+                'payment_status' => 'UNPAID',
+                'note' => $data['note'] ?? null,
+                'status' => 'Unconfirmed',
+                'date' => now(),
             ]);
 
-            $listProducts = [];
-
-            foreach ($products as $product) {
+            // Process order details
+            foreach ($data['products'] as $product) {
                 $productReal = Product::where('id', $product['productId'])->first();
                 OrderDetail::create([
                     'order_id' => $order->id,
@@ -81,27 +114,13 @@ class OrderRepositories
                     'quantity_order' => $product['quantity'],
                     'product_id' => $product['productId'],
                 ]);
-                DB::update('update products set quantity = quantity - ? where id = ?', [$product['quantity'], $product['productId']]);
-                DB::update('update vouchers set used = used + 1 where code = ?', [$request->input('voucher')]);
-                Cart::query()->where('color', '=', $product['color'])->where('size', '=', $product['size'])->where('product_id', '=', $product['productId'])->delete();
-
-                $sql = "
-                    UPDATE product_variants
-                    JOIN colors ON product_variants.color_id = colors.id
-                    JOIN sizes ON product_variants.size_id = sizes.id
-                    SET product_variants.quantity = product_variants.quantity - ?
-                    WHERE colors.code = ? AND sizes.size = ? AND product_variants.product_id = ?
-                ";
-                DB::statement($sql, [$product['quantity'], $product['color'], $product['size'], $product['productId']]);
-                $listProducts[] = $product;
             }
+
             DB::commit();
-            $order['products'] = $listProducts;
             return $order;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            BaseResponse::failure(500, '', $e->getMessage(), []);
-//            BaseResponse::failure(500, "System error addProductWithVariant", []);
+            throw $e;
         }
     }
 
@@ -114,8 +133,30 @@ class OrderRepositories
         $toDate = $request->input('toDate');
         $paymentStatus = $request->input('paymentStatus');
         $paymentMethod = $request->input('paymentMethod');
+        $voucherCode = $request->input('voucherCode');
+        $totalAmount = $request->input('totalAmount');
 
         $query = Order::with(['order_details']);
+
+        // Only validate voucher if voucherCode is provided
+        if (!empty($voucherCode)) {
+            $voucher = Voucher::where('code', $voucherCode)->first();
+            if (!$voucher) {
+                return BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
+            }
+            if ($voucher->status !== 'ACTIVE') {
+                return BaseResponse::failure('400', 'Voucher is not active', 'voucher.not.active', []);
+            }
+            if ($voucher->end_date && $voucher->end_date < now()) {
+                return BaseResponse::failure('400', 'Voucher expired', 'voucher.expired', []);
+            }
+            if ($voucher->min_order_value && $totalAmount < $voucher->min_order_value) {
+                return BaseResponse::failure('400', 'Order does not meet minimum value for voucher', 'order.not.meet.min.value', []);
+            }
+            // Optionally filter orders by voucher
+            $query->where('voucher', $voucherCode);
+        }
+
         if (!empty($status)) {
             $query->where('status', '=', $status);
         }
@@ -131,12 +172,15 @@ class OrderRepositories
         if (!empty($toDate)) {
             $query->where('date', '<=', $toDate);
         }
-        if (!empty($sortType)) {
-            $query->orderByRaw('IFNULL(date, status) ' . $sortType);
+        if (!empty($paymentStatus)) {
+            $query->where('payment_status', '=', $paymentStatus);
         }
+        if (!empty($paymentMethod)) {
+            $query->where('payment_method', '=', $paymentMethod);
+        }
+
         $orders = $query->get();
         return $orders;
-
     }
 
     public function getOrdersPaging(Request $request)
@@ -154,7 +198,8 @@ class OrderRepositories
 
         $query = Order::with(['order_details']);
         if (!empty($status)) {
-            $query->where('status', '=', $status);
+            $statuses = is_array($status) ? $status : explode(',', $status);
+            $query->whereIn('status', $statuses);
         }
         if (!empty($phoneNumber)) {
             $query->where('phone_number', '=', $phoneNumber);
@@ -167,6 +212,12 @@ class OrderRepositories
         }
         if (!empty($toDate)) {
             $query->where('date', '<=', $toDate);
+        }
+        if (!empty($paymentStatus)) {
+            $query->where('payment_status', '=', $paymentStatus);
+        }
+        if (!empty($paymentMethod)) {
+            $query->where('payment_method', '=', $paymentMethod);
         }
         if (!empty($sortType)) {
             $query->orderByRaw('IFNULL(date, status) ' . $sortType);
@@ -185,7 +236,7 @@ class OrderRepositories
 
     public function updateOrder(Request $request)
     {
-        $order = Order::where('id', $request->input('orderId'))->first();
+        $order = Order::where('id', $request->input('id'))->first();
 
         if (!empty($order)) {
             $order->update([
@@ -197,5 +248,56 @@ class OrderRepositories
         } else {
             BaseResponse::failure(400, '', 'order.item.not.found', []);
         }
+    }
+
+    public function updateOrderPayment($orderCode, $paymentStatus)
+    {
+        // Tìm đơn hàng theo mã đơn hàng (orderCode)
+        $order = Order::where('code', $orderCode)->first();
+
+        // Nếu không tìm thấy đơn hàng, trả về lỗi
+        if (!$order) {
+            throw new \Exception('Order not found');
+        }
+
+        // Cập nhật trạng thái thanh toán
+        $order->update([
+            'payment_status' => $paymentStatus,
+        ]);
+
+        return $order;
+    }
+
+    public function deleteOrder($orderId)
+    {
+        $order = Order::find($orderId);
+        if (!$order) {
+            return false;
+        }
+        $order->delete();
+        return true;
+    }
+
+
+
+
+    public function refundOrder($orderId)
+    {
+        \Log::info('Bắt đầu xử lý refundOrder trong repository cho orderId:', ['orderId' => $orderId]);
+
+        $order = Order::find($orderId);
+
+        if (!$order || $order->payment_method !== 'ONLINE' || $order->payment_status !== 'PAID') {
+            \Log::warning('Đơn hàng không hợp lệ để hoàn tiền:', ['order' => $order]);
+            throw new \Exception('Đơn hàng không hợp lệ để hoàn tiền.');
+        }
+
+        $order->update([
+            'payment_status' => 'REFUNDED',
+            'status' => 'CANCELLED',
+        ]);
+
+        \Log::info('Cập nhật trạng thái hoàn tiền thành công cho orderId:', ['orderId' => $orderId]);
+        return $order;
     }
 }

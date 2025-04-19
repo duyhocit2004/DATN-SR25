@@ -43,10 +43,14 @@ class Order extends Model
 	];
 
 	protected $fillable = [
+		'user_id',
 		'code',
 		'customer_name',
 		'email',
 		'phone_number',
+		'receiver_name',
+		'receiver_phone_number',
+		'receiver_address',
 		'total_price',
 		'voucher',
 		'voucher_price',
@@ -54,8 +58,8 @@ class Order extends Model
 		'note',
 		'status',
 		'date',
-        'payment_status',
-        'payment_method',
+		'payment_status',
+		'payment_method',
 	];
 
 	public function order_details()

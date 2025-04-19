@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Helpers\BaseResponse;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -32,8 +33,6 @@ class CartRepositories
                 $results = $results->merge($result);
             }
         }
-
-
         return $results;
     }
 
@@ -56,6 +55,14 @@ class CartRepositories
 
     public function addCart(Request $request, $userId)
     {
+        $productVariant = ProductVariant::where('product_id', $request->input('productId'))->first();
+        if (!empty($productVariant)) {
+            if ($productVariant['quantity'] < $request->input('quantity')) {
+                BaseResponse::failure('400', 'quantity is less than cart quantity', 'quantity.is.less.than.cart.quantity', []);
+            }
+        } else {
+            BaseResponse::failure('400', 'Product Variant not found', 'product.variant.not.found', []);
+        }
 
         $cart = Cart::where('product_id', $request->input('productId'))
             ->where('color', $request->input('color'))
@@ -76,43 +83,57 @@ class CartRepositories
             ]);
         }
 
-//        $sql = "
-        //        INSERT INTO carts (product_id, quantity, color, size, user_id)
-        //        VALUES (?, ?, ?, ?, ?)
-        //        ON DUPLICATE KEY UPDATE
-        //        quantity = quantity + VALUES(quantity)
-//          ";
-//
-//        DB::statement($sql, [$request->input('productId'), $request->input('quantity'), $request->input('color'), $request->input('size'), $userId]);
-
         return $cart;
     }
 
-    public function updateCart(Request $request, $userId)
+    public function updateCart(array $data, $userId)
     {
-        $cart = Cart::where('user_id', $userId)->where('id', $request->input('cartId'))->first();
+        try {
+            $productId = $data['productId'];
+            $size = $data['size'];
+            $color = $data['color'];
+            $quantity = $data['quantity'];
 
-        if (!empty($cart)) {
+            $cart = Cart::where('user_id', $userId)
+                ->where('product_id', $productId)
+                ->where('size', $size)
+                ->where('color', $color)
+                ->first();
 
-            if (is_null($request->input('quantity'))) {
-                DB::table('carts')->truncate();
-            }
-
-            if ($request->input('quantity') > 0) {
-                $cart->quantity = $request->input('quantity');
-                $cart->save();
+            if ($cart) {
+                if ($quantity <= 0) {
+                    // Xóa sản phẩm khỏi giỏ hàng nếu quantity = 0
+                    $cart->delete();
+                } else {
+                    // Cập nhật số lượng
+                    $cart->update(['quantity' => $quantity]);
+                }
+                return BaseResponse::success(['message' => 'Cart updated successfully']);
             } else {
-                $cart->delete();
+                return BaseResponse::failure(400, 'Cart item not found', 'cart.item.not.found', []);
             }
-        } else {
-            BaseResponse::failure(400, '', 'cart.item.not.found', []);
+        } catch (\Exception $e) {
+            throw $e;
         }
+    }
 
+    public function clearCart($userId = null)
+    {
+        try {
+            if ($userId) {
+                // Xóa toàn bộ giỏ hàng của người dùng đã đăng nhập
+                Cart::where('user_id', $userId)->delete();
+                return BaseResponse::success(['message' => 'Cart cleared successfully']);
+            } else {
+                return BaseResponse::failure(400, 'User not authenticated', 'user.not.authenticated', []);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function truncate()
     {
         DB::table('carts')->truncate();
     }
-
 }

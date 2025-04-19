@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Client;
 
 use App\Helpers\BaseResponse;
+
 use App\Helpers\CommonHelper;
+
 use App\Http\Controllers\Controller;
 use App\Services\Auth\IAuthService;
 use Illuminate\Http\JsonResponse;
@@ -59,4 +61,8 @@ class AuthController extends Controller
         $dataResponse = $this->authService->loginAdmin($request);
         return BaseResponse::success($dataResponse);
     }
+
+    
+   
 }
+

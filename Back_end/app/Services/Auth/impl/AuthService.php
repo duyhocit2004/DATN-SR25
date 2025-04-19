@@ -3,15 +3,19 @@
 namespace App\Services\Auth\impl;
 
 use App\Helpers\BaseResponse;
+
+use App\Models\User;
 use App\Repositories\AuthRepositories;
 use App\Services\Auth\IAuthService;
 use Cloudinary\Cloudinary;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use function PHPUnit\Framework\isEmpty;
 
 
 class AuthService implements IAuthService
@@ -21,7 +25,9 @@ class AuthService implements IAuthService
     protected $cloudinary;
 
     public function __construct(AuthRepositories $authRepositories,
-                                Cloudinary $cloudinary)
+
+ Cloudinary $cloudinary)
+
     {
         $this->authRepositories = $authRepositories;
         $this->cloudinary = $cloudinary;
@@ -128,6 +134,7 @@ class AuthService implements IAuthService
             'email_verified_at' => null,
             'gender' => $request->gender,
             'user_image' => null,
+            'status' => 'ACTIVE',
             'password' => Hash::make($request->password),
             'remember_token' => null,
         ]);
@@ -148,7 +155,9 @@ class AuthService implements IAuthService
     public function getUser(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+
+        if (empty($user) ) {
+
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
@@ -181,7 +190,10 @@ class AuthService implements IAuthService
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
 
-        if($userId == $request->input('id')){
+
+        if ($userId != $request->input('id')) {
+
+
             BaseResponse::failure(401, 'unauthorized', 'unauthorized', []);
         }
 
@@ -194,5 +206,42 @@ class AuthService implements IAuthService
             : null;
         $user = $this->authRepositories->updateUser($request, $secureUrl, $userId);
         return $user;
+    }
+
+    public function forgotPassword(Request $request)
+    {
+
+        // $validate = Validator::make($request->all(), [
+        //     'email' => 'required',
+        //     'phoneNumber' => 'required'
+        // ], [
+        //     'email.required' => 'name là bắt buộc',
+        //     'phoneNumber.required' => 'phoneNumber là bắt buộc',
+        // ]);
+        // if ($validate->fails()) {
+        //     BaseResponse::failure(400, '', $validate->errors()->first(), []);
+        // };
+
+        $newPassword = $this->authRepositories->forgotPassword(  $request);
+        return $newPassword;
+
+    }
+
+    public function changePassword($request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $userId = $user->id;
+
+        if (empty($user)) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        if ($userId != $request->input('id')) {
+            BaseResponse::failure(401, 'unauthorized', 'unauthorized', []);
+        }
+
+        $this->authRepositories->changePassword($userId, $request->input('newPassword'));
+        JWTAuth::invalidate(JWTAuth::getToken());
     }
 }

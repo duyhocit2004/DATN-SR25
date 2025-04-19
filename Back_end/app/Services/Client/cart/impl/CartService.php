@@ -8,10 +8,8 @@ use App\Services\Client\cart\ICartService;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-
 class CartService implements ICartService
 {
-
     public CartRepositories $cartRepositories;
 
     public function __construct(CartRepositories $cartRepositories)
@@ -20,34 +18,34 @@ class CartService implements ICartService
     }
 
     public function getProductsInCart(Request $request)
-{
-    $listRequest = $request->input('listCartInfo');
+    {
+        $listRequest = $request->input('listCartInfo');
 
-    $listProductInCart = $this->cartRepositories->getProductsInCart($listRequest);
-    $list = $listProductInCart->map(function ($item) {
-        return [
-            'id' => $item->id,
-            'categoriesId' => $item->categories_id,
-            'name' => $item->name,
-            'image' => $item->image,
-            'priceRegular' => $item->price_regular,
-            'priceSale' => $item->price_sale,
-            'description' => $item->description,
-            'views' => $item->views,
-            'content' => $item->content,
-            'quantitySold' => $item->quantity_sold,
-            'rate' => $item->rate,
-            'discount' => $item->discount,
-            'quantity' => $item->variantQuantity,
-            'size' => $item->size,
-            'color' => $item->color,
-            'createdAt' => $item->created_at,
-            'updatedAt' => $item->updated_at,
-            'deletedAt' => $item->deleted_at,
-        ];
-    });
-    return $list;
-}
+        $listProductInCart = $this->cartRepositories->getProductsInCart($listRequest);
+        $list = $listProductInCart->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'categoriesId' => $item->categories_id,
+                'name' => $item->name,
+                'image' => $item->image,
+                'priceRegular' => $item->price_regular,
+                'priceSale' => $item->price_sale,
+                'description' => $item->description,
+                'views' => $item->views,
+                'content' => $item->content,
+                'quantitySold' => $item->quantity_sold,
+                'rate' => $item->rate,
+                'discount' => $item->discount,
+                'quantity' => $item->variantQuantity,
+                'size' => $item->size,
+                'color' => $item->color,
+                'createdAt' => $item->created_at,
+                'updatedAt' => $item->updated_at,
+                'deletedAt' => $item->deleted_at,
+            ];
+        });
+        return $list;
+    }
 
     public function getProductsInCartByUserId(Request $request)
     {
@@ -93,17 +91,44 @@ class CartService implements ICartService
         $cart = $this->cartRepositories->addCart($request, $userId);
         return $cart;
     }
+
     public function updateCart(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
 
-        if(!is_null($request->input('cartId')) && !is_null($request->input('quantity'))){
-            $this->cartRepositories->updateCart($request, $userId);
-        }else{
-            $this->cartRepositories->truncate();
+        // Nếu không có productId, size, color, hoặc quantity, xóa toàn bộ giỏ hàng
+        if (
+            is_null($request->input('productId')) &&
+            is_null($request->input('size')) &&
+            is_null($request->input('color')) &&
+            is_null($request->input('quantity'))
+        ) {
+            $this->cartRepositories->clearCart($userId);
+            return [];
+        }
+
+        // Cập nhật hoặc xóa sản phẩm cụ thể
+        if (
+            !is_null($request->input('productId')) &&
+            !is_null($request->input('size')) &&
+            !is_null($request->input('color')) &&
+            !is_null($request->input('quantity'))
+        ) {
+            $this->cartRepositories->updateCart([
+                'productId' => $request->input('productId'),
+                'size' => $request->input('size'),
+                'color' => $request->input('color'),
+                'quantity' => $request->input('quantity'),
+            ], $userId);
         }
 
         return [];
+    }
+
+    public function clearCart(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        return $this->cartRepositories->clearCart($user->id);
     }
 }
