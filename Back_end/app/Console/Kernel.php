@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\AutoLockVouchers;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -12,7 +13,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('vouchers:auto-lock')->daily();
+        
+        $schedule->command('vouchers:auto-lock')->everyMinute();
     }
     /**
      * Register the commands for the application.
@@ -23,8 +25,8 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
-    // protected $commands = [
-    //     AutoLockVouchers::class,
-    // ];
+    protected $commands = [
+        AutoLockVouchers::class,
+    ];
     
 }
