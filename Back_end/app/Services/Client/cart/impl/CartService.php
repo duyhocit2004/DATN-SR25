@@ -92,40 +92,52 @@ class CartService implements ICartService
         return $cart;
     }
 
+    // public function updateCart(Request $request)
+    // {
+    //     $user = JWTAuth::parseToken()->authenticate();
+    //     $userId = $user->id;
+
+    //     // Nếu không có productId, size, color, hoặc quantity, xóa toàn bộ giỏ hàng
+    //     if (
+    //         is_null($request->input('productId')) &&
+    //         is_null($request->input('size')) &&
+    //         is_null($request->input('color')) &&
+    //         is_null($request->input('quantity'))
+    //     ) {
+    //         $this->cartRepositories->clearCart($userId);
+    //         return [];
+    //     }
+
+    //     // Cập nhật hoặc xóa sản phẩm cụ thể
+    //     if (
+    //         !is_null($request->input('productId')) &&
+    //         !is_null($request->input('size')) &&
+    //         !is_null($request->input('color')) &&
+    //         !is_null($request->input('quantity'))
+    //     ) {
+    //         $this->cartRepositories->updateCart([
+    //             'productId' => $request->input('productId'),
+    //             'size' => $request->input('size'),
+    //             'color' => $request->input('color'),
+    //             'quantity' => $request->input('quantity'),
+    //         ], $userId);
+    //     }
+
+    //     return [];
+    // }
     public function updateCart(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
 
-        // Nếu không có productId, size, color, hoặc quantity, xóa toàn bộ giỏ hàng
-        if (
-            is_null($request->input('productId')) &&
-            is_null($request->input('size')) &&
-            is_null($request->input('color')) &&
-            is_null($request->input('quantity'))
-        ) {
-            $this->cartRepositories->clearCart($userId);
-            return [];
-        }
-
-        // Cập nhật hoặc xóa sản phẩm cụ thể
-        if (
-            !is_null($request->input('productId')) &&
-            !is_null($request->input('size')) &&
-            !is_null($request->input('color')) &&
-            !is_null($request->input('quantity'))
-        ) {
-            $this->cartRepositories->updateCart([
-                'productId' => $request->input('productId'),
-                'size' => $request->input('size'),
-                'color' => $request->input('color'),
-                'quantity' => $request->input('quantity'),
-            ], $userId);
+        if(!is_null($request->input('cartId')) && !is_null($request->input('quantity'))){
+            $this->cartRepositories->updateCart($request, $userId);
+        }else{
+            $this->cartRepositories->truncate();
         }
 
         return [];
     }
-
     public function clearCart(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();

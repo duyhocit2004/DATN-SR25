@@ -26,3 +26,4 @@ class AccountApi extends BaseApi<Account> {
 
 const accountApi = new AccountApi();
 export default accountApi;
+ 
