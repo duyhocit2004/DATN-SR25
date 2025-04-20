@@ -86,35 +86,56 @@ class CartRepositories
         return $cart;
     }
 
-    public function updateCart(array $data, $userId)
+    // public function updateCart(array $data, $userId)
+    // {
+    //     try {
+    //         $productId = $data['productId'];
+    //         $size = $data['size'];
+    //         $color = $data['color'];
+    //         $quantity = $data['quantity'];
+
+    //         $cart = Cart::where('user_id', $userId)
+    //             ->where('product_id', $productId)
+    //             ->where('size', $size)
+    //             ->where('color', $color)
+    //             ->first();
+
+    //         if ($cart) {
+    //             if ($quantity <= 0) {
+    //                 // Xóa sản phẩm khỏi giỏ hàng nếu quantity = 0
+    //                 $cart->delete();
+    //             } else {
+    //                 // Cập nhật số lượng
+    //                 $cart->update(['quantity' => $quantity]);
+    //             }
+    //             return BaseResponse::success(['message' => 'Cart updated successfully']);
+    //         } else {
+    //             return BaseResponse::failure(400, 'Cart item not found', 'cart.item.not.found', []);
+    //         }
+    //     } catch (\Exception $e) {
+    //         throw $e;
+    //     }
+    // }
+    public function updateCart(Request $request, $userId)
     {
-        try {
-            $productId = $data['productId'];
-            $size = $data['size'];
-            $color = $data['color'];
-            $quantity = $data['quantity'];
+        $cart = Cart::where('user_id', $userId)->where('id', $request->input('cartId'))->first();
 
-            $cart = Cart::where('user_id', $userId)
-                ->where('product_id', $productId)
-                ->where('size', $size)
-                ->where('color', $color)
-                ->first();
+        if (!empty($cart)) {
 
-            if ($cart) {
-                if ($quantity <= 0) {
-                    // Xóa sản phẩm khỏi giỏ hàng nếu quantity = 0
-                    $cart->delete();
-                } else {
-                    // Cập nhật số lượng
-                    $cart->update(['quantity' => $quantity]);
-                }
-                return BaseResponse::success(['message' => 'Cart updated successfully']);
-            } else {
-                return BaseResponse::failure(400, 'Cart item not found', 'cart.item.not.found', []);
+            if (is_null($request->input('quantity'))) {
+                DB::table('carts')->truncate();
             }
-        } catch (\Exception $e) {
-            throw $e;
+
+            if ($request->input('quantity') > 0) {
+                $cart->quantity = $request->input('quantity');
+                $cart->save();
+            } else {
+                $cart->delete();
+            }
+        } else {
+            BaseResponse::failure(400, '', 'cart.item.not.found', []);
         }
+
     }
 
     public function clearCart($userId = null)

@@ -93,14 +93,14 @@ const OrderFilter = () => {
     <div className="filter-data flex gap-2">
       <div className="control-area flex items-center gap-2 flex-wrap flex-1">
         <Input
-          className="!w-99"
+          className="!w-90"
           value={filterData.orderCode}
           placeholder={"Mã đơn hàng"}
           maxLength={200}
           onChange={(val) => onChangeFilter("orderCode", val.target.value)}
         />
         <Input
-          className="!w-99"
+          className="!w-90"
           value={filterData.phoneNumber}
           placeholder={"Số điện thoại KH"}
           maxLength={10}
@@ -109,7 +109,7 @@ const OrderFilter = () => {
         <Select
           mode="multiple"
           placeholder="Trạng thái đơn"
-          className="!w-99"
+          className="!w-90"
           value={filterData.status}
           onChange={(value) => onChangeFilter("status", value)}
           allowClear
@@ -117,7 +117,7 @@ const OrderFilter = () => {
         />
         <Select
           placeholder="Trạng thái thanh toán"
-          className="!w-99"
+          className="!w-90"
           value={filterData.paymentStatus}
           onChange={(value) => onChangeFilter("paymentStatus", value)}
           allowClear
@@ -125,14 +125,14 @@ const OrderFilter = () => {
         />
         <Select
           placeholder="Phương thức thanh toán"
-          className="!w-99"
+          className="!w-90"
           value={filterData.paymentMethod}
           onChange={(value) => onChangeFilter("paymentMethod", value)}
           allowClear
           options={PaymentMethodData}
         />
         <RangePicker
-          className="!w-99 h-8"
+          className="!w-90 h-8"
           value={filterData.dateTime}
           onChange={(dates) => onChangeFilter("dateTime", dates)}
           format="DD/MM/YYYY"

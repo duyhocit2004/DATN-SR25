@@ -86,7 +86,7 @@ export interface IBanner {
   image: string;
   status: boolean;
   type: string;
-  link: string ;
+  link: string;
   productId: string;
   created_at?: Dayjs;
   updated_at?: Dayjs;
@@ -101,6 +101,7 @@ export interface ICartStorage {
   quantity: number;
 }
 export interface ICart {
+  [x: string]: any;
   id: number | null;
   product: IProductCartStorage | null;
   size: string;
@@ -174,6 +175,7 @@ export interface IVoucher {
   used: number;
   startDate: Date | string;
   endDate: Date | string;
+  minOrderValue: number;
   description?: string;
   status?: string;
   createdAt?: Dayjs;
