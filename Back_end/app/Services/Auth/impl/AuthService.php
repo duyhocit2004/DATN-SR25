@@ -219,21 +219,8 @@ class AuthService implements IAuthService
 
     public function forgotPassword(Request $request)
     {
-
-        // $validate = Validator::make($request->all(), [
-        //     'email' => 'required',
-        //     'phoneNumber' => 'required'
-        // ], [
-        //     'email.required' => 'name là bắt buộc',
-        //     'phoneNumber.required' => 'phoneNumber là bắt buộc',
-        // ]);
-        // if ($validate->fails()) {
-        //     BaseResponse::failure(400, '', $validate->errors()->first(), []);
-        // };
-
-        $newPassword = $this->authRepositories->forgotPassword(  $request);
-        return $newPassword;
-
+        $result = $this->authRepositories->forgotPassword($request);
+        return $result;
     }
 
     public function changePassword($request)

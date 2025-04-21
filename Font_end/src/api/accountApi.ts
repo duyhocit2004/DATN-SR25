@@ -22,6 +22,9 @@ class AccountApi extends BaseApi<Account> {
   register = (payload: any): Promise<IResponseData<IResponseRegister>> => {
     return axiosClient.post(`/users/register`, payload).then((res) => res.data);
   };
+  forgotPassword = (payload: { email: string }): Promise<IResponseData<any>> => {
+    return axiosClient.post(`/users/forgotPassword`, payload).then((res) => res.data);
+  };
 }
 
 const accountApi = new AccountApi();
