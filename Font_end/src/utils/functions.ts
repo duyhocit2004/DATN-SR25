@@ -225,7 +225,7 @@ export const getColorOrderStatus = (status: string) => {
     case OrderStatus.CONFIRMED:
       return "blue"; // Đã xác nhận
     case OrderStatus.CANCEL_CONFIRM:
-      return "red";
+      return "red";  // Hủy xác nhận 
     case OrderStatus.PROCESSING:
       return "purple"; // Đang chuẩn bị hàng
     case OrderStatus.SHIPPING:

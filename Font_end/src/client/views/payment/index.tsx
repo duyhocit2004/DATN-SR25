@@ -788,6 +788,7 @@ import { showToast } from "@/components/toast";
 import PaymentByIDProduct from "./PaymentByIDProduct";
 import { dispatchAction } from "@/store/actionHelper";
 import { useAppDispatch } from "@/store/hooks";
+import React from "react";
 
 const { Option } = Select;
 
@@ -1224,7 +1225,7 @@ const Payment = () => {
         : null;
 
       const payload = {
-        user_id: user?.id || null,
+        users_id: user?.id || null,
         customerName: form.getFieldValue("customerName"),
         email: form.getFieldValue("email"),
         phoneNumber: form.getFieldValue("phoneNumber"),

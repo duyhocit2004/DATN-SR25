@@ -9,6 +9,7 @@ interface User {
 }
 
 class UserApi extends BaseApi<User> {
+  [x: string]: any;
   constructor() {
     super("users"); // Gán URI 'users' cho API này
     screen.width;

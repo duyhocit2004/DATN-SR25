@@ -59,6 +59,12 @@ export const BannerType = {
   ADVERTISEMENT: "advertisment",
 };
 
+export const RefundStatus = {
+  NONE: "none",
+  REFUND_REQUESTED: "refuned requested",
+  REFUNDED: "refuned"
+};
+
 export const PersonType = {
   MEN: "men",
   WOMEN: "women",

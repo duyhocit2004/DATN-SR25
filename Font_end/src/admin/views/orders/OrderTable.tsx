@@ -138,35 +138,28 @@ const OrderTable = () => {
       key: "action",
       minWidth: 150,
       render: (record: IOrder) => {
+        const canRefund =
+          record.paymentMethod === "ONLINE" &&
+          (record.status === "Cancel" || record.status === "Cancelconfirm") &&
+          record.paymentStatus === "PAID";
+    
         return (
           <div className="flex gap-2">
-            {/* Nút Xóa
-            {(record.status === "Cancel" || record.status === "Cancel Confirm") && (
-              <button
-                className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
-                onClick={() => handleDeleteOrder(record.id)}
+            {canRefund && (
+              <Button
+                type="primary"
+                danger
+                loading={loadingRefund === record.id}
+                onClick={() => handleRefund(record.id)}
               >
-                Xóa
-              </button>
-            )} */}
-
-            {/* Nút Hoàn Tiền */}
-            {record.paymentMethod === "ONLINE" &&
-              record.status === "Cancel" &&
-              record.paymentStatus === "PAID" && (
-                <Button
-                  type="primary"
-                  danger
-                  loading={loadingRefund === record.id} // Hiển thị trạng thái loading riêng cho từng đơn hàng
-                  onClick={() => handleRefund(record.id)}
-                >
-                  Hoàn Tiền
-                </Button>
-              )}
+                Hoàn tiền
+              </Button>
+            )}
           </div>
         );
       },
     }
+    
   ];
 
   const showOrderDetail = (order: IOrder) => {
@@ -209,11 +202,11 @@ const OrderTable = () => {
 
 
   const handleRefund = async (orderId: number) => {
-    console.log("Gọi hàm handleRefund với orderId:", orderId); // Kiểm tra
+    console.log("Gọi hàm handleRefund với orderId:", orderId);
     try {
       setLoadingRefund(orderId);
       const response = await adminApi.refundOrder({ orderId });
-      console.log("Phản hồi từ API refundOrder:", response); // Kiểm tra phản hồi
+      console.log("Phản hồi từ API refundOrder:", response); 
       if (response?.success) {
         message.success("Hoàn tiền thành công!");
         dispatch(fetchOrders());

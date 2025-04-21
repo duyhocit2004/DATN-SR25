@@ -59,7 +59,7 @@ class OrderService implements IOrderService
             return [
                 'id' => $order->id,
                 'code' => $order->code,
-                'user_id' => $order->user_id,
+                'users_id' => $order->users_id,
                 'customerName' => $order->customer_name,
                 'email' => $order->email,
                 "phoneNumber" => $order->phone_number,
@@ -106,7 +106,7 @@ class OrderService implements IOrderService
             return [
                 'id' => $order->id,
                 'code' => $order->code,
-                'user_id' => $order->user_id,
+                'users_id' => $order->users_id,
                 'customerName' => $order->customer_name,
                 'email' => $order->email,
                 "phoneNumber" => $order->phone_number,
@@ -164,7 +164,7 @@ class OrderService implements IOrderService
         $list = [
             'id' => $order->id,
             'code' => $order->code,
-            'user_id' => $order->user_id,
+            'users_id' => $order->users_id,
             'customerName' => $order->customer_name,
             'email' => $order->email,
             "phoneNumber" => $order->phone_number,
