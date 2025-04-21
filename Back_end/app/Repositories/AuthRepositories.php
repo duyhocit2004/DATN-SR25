@@ -17,9 +17,26 @@ class AuthRepositories
 {
     public function getAccountByEmail($email)
     {
-        $user = User::query()->where('email', '=', $email)->first();
+        $user11 = User::query()->where('email', '=', $email)->first();
+        $user = [
+            "id"=>$user11->id,
+            "name"=>$user11->name,
+            "email"=>$user11->email,
+            "phoneNumber"=>$user11->phoneNumber,
+            "role"=>$user11->role,
+            "emailVerifiedAt"=>$user11->emailVerifiedAt,
+            "gender"=>$user11->gender,
+            "userImage"=>$user11->userImage,
+            "createdAt"=>$user11->createdAt,
+            "updatedAt"=>$user11->updatedAt,
+            "deletedAt"=>$user11->deletedAt,
+            "status"=>$user11->status,
+            "password"=>$user11->password
+        ];
         return $user;
     }
+
+    
     public function updateUserAdmin($request, $imageLink)
     {
         $user = User::find($request->input('id'));

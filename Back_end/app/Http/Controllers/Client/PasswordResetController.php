@@ -21,6 +21,8 @@ class PasswordResetController extends Controller
         return BaseResponse::success([$request]);
     }
     
+
+    
     // public function resetPassword(Request $request)
     // {
     //     $validatedData = $request->validate(['token' => 'required', 'new_password' => 'required']);
