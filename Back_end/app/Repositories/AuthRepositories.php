@@ -125,7 +125,7 @@ class AuthRepositories
         ->first();
 
         if (!$user) {
-            BaseResponse::failure('400', 'size not found', 'size.not.found', []);
+            return ['success' => false, 'message' => 'Email không tồn tại trong hệ thống'];
         }
 
         $newPassword = Str::random(8);
@@ -134,11 +134,15 @@ class AuthRepositories
             'password' => Hash::make($newPassword),
         ]);
         
-        Mail::send('forgotpassword', ['newPassword' => $newPassword], function ($message) use ($user) {
-            $message->to($user->email);
-            $message->subject('Mật khẩu mới của bạn');
-        });
-        return $newPassword;
+        try {
+            Mail::send('forgotpassword', ['newPassword' => $newPassword], function ($message) use ($user) {
+                $message->to($user->email);
+                $message->subject('Mật khẩu mới của bạn');
+            });
+            return ['success' => true, 'message' => 'Mật khẩu mới đã được gửi đến email của bạn'];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => 'Không thể gửi email. Vui lòng thử lại sau'];
+        }
     }
 
     public function changePassword($userId, $newPassword)
