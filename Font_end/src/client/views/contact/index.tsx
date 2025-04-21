@@ -1,10 +1,15 @@
 import React, { useState, useRef } from "react";
 import { MailOutlined, PhoneOutlined, EnvironmentOutlined } from "@ant-design/icons";
 import emailjs from "@emailjs/browser";
+import { useAuth } from "@/context/AuthContext";
+
 
 const ContactUs: React.FC = () => {
   const [formStatus, setFormStatus] = useState<string | null>(null);
   const form = useRef<HTMLFormElement>(null);
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
+
 
   const sendEmail = (e: React.FormEvent) => {
     e.preventDefault();
@@ -12,10 +17,10 @@ const ContactUs: React.FC = () => {
     if (form.current) {
       emailjs
         .sendForm(
-          "service_z8qreuh", // Thay bằng Service ID của bạn
-          "template_a3wcow8", // Thay bằng Template ID của bạn
+          "service_4hdrbsz", // Thay bằng Service ID của bạn
+          "template_2ogzr22", // Thay bằng Template ID của bạn
           form.current,
-          "3aQUQJg7LQjr1oLT5" // Thay bằng Public Key của bạn
+          "OhQzQb1tfiHVYmidF" // Thay bằng Public Key của bạn
         )
         .then(
           () => {
@@ -60,40 +65,71 @@ const ContactUs: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">Liên hệ  cho chúng tôi</h2>
           {formStatus && (
             <div
-              className={`p-4 mb-4 rounded ${
-                formStatus.includes("thành công") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-              }`}
+              className={`p-4 mb-4 rounded ${formStatus.includes("thành công") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                }`}
             >
               {formStatus}
             </div>
           )}
           <form ref={form} onSubmit={sendEmail} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium">
-                Họ và tên
-              </label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                required
-                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Nhập họ và tên"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                required
-                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Nhập email"
-              />
-            </div>
+            {isLoggedIn ? (
+              <>
+                <input type="hidden" name="name" value={user?.name || "Người dùng"} />
+                <input type="hidden" name="email" value={user?.email || "example@email.com"} />
+                {/* <input type="hidden" name="phone" value={user?.phone || "000000000"} /> */}
+                <input type="hidden" name="phone" value={user?.phoneNumber || "000000000"} />
+
+              </>
+            ) : (
+              <>
+                {/* Họ và tên */}
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium">
+                    Họ và tên
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    required
+                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Nhập họ và tên"
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    required
+                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Nhập email"
+                  />
+                </div>
+
+                {/* Số điện thoại */}
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium">
+                    Số điện thoại
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    id="phone"
+                    required
+                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Nhập số điện thoại"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Trường tin nhắn (luôn hiển thị) */}
             <div>
               <label htmlFor="message" className="block text-sm font-medium">
                 Tin nhắn
@@ -107,6 +143,8 @@ const ContactUs: React.FC = () => {
                 placeholder="Nhập tin nhắn của bạn"
               ></textarea>
             </div>
+
+            {/* Nút gửi */}
             <button
               type="submit"
               className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
