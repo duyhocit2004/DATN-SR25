@@ -38,7 +38,6 @@ const Register = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      
       <div className="max-w-md w-full bg-white p-4 sm:p-6 shadow-md rounded-md">
         {loading && (
           <div
@@ -55,10 +54,8 @@ const Register = () => {
               zIndex: 10,
               toolbar: "hidden",
               pointerEvents: "none",      
-              borderRadius: "8px",    
-
+              borderRadius: "8px",   
               boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",   
-              
               backdropFilter: "blur(4px)",
               border: "1px solid rgba(0, 0, 0, 0.1)",
             }}

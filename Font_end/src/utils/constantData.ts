@@ -9,6 +9,7 @@ import {
   Gender,
   ActiveStatus,
   ActiveStatusString,
+  RefundStatus,
 } from "./constants";
 
 export const OrderStatusDataAdmin = [
@@ -51,6 +52,10 @@ export const OrderStatusDataClient = [
     label: "Đã xác nhận",
   },
   {
+    value: OrderStatus.CANCEL_CONFIRM,
+    label: "Đã hủy",
+  },
+  {
     value: OrderStatus.PROCESSING,
     label: "Đang chuẩn bị hàng",
   },
@@ -86,6 +91,20 @@ export const PaymentMethodData = [
   {
     value: PaymentMethod.ONLINE,
     label: "Online",
+  },
+];
+export const RefundStatusData = [
+  {
+    value: RefundStatus.NONE,
+    label: "Chưa yêu cầu"
+  },
+  {
+    value: RefundStatus.REFUND_REQUESTED,
+    label: "Đã yêu cầu hoàn tiền"
+  },
+  {
+    value: RefundStatus.REFUNDED,
+    label: "Đã hoàn tiền"
   },
 ];
 

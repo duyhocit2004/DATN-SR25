@@ -1,5 +1,5 @@
 import accountApi from "@/api/accountApi";
-import { showToast } from "@/components/toast"; // Import showToast
+import { showToast } from "@/components/toast";
 import { useAuth } from "@/context/AuthContext";
 import { HttpCodeString } from "@/utils/constants";
 import { Form, Input, Button, Spin } from "antd";
@@ -10,10 +10,10 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
+
   const handleLogin = async (values: any) => {
     setLoading(true);
     try {
-      // Gửi request API đăng nhập tại đây
       const response = await accountApi.login(values);
 
       if (response.status === HttpCodeString.SUCCESS) {
@@ -37,68 +37,76 @@ const Login = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 pt-10 md:pt-20 flex items-center justify-center">
+    <div className="min-h-screen flex items-start justify-center pt-24 bg-white">
 
-      <div className="max-w-md w-full bg-white p-6 shadow-md rounded-md">
+      <div className="relative w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
         {loading && (
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              background: "rgba(255, 255, 255, 0.7)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 10,
-            }}
-          >
+          <div className="absolute inset-0 bg-white bg-opacity-70 flex justify-center items-center z-10">
             <Spin size="large" />
           </div>
         )}
-        <h2 className="text-2xl font-semibold text-center mb-4">Đăng nhập</h2>
+        <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">Đăng nhập</h2>
 
         <Form layout="vertical" onFinish={handleLogin}>
           {/* Email */}
           <Form.Item
-            label="Email"
+            label={
+              <span>
+                Email <span className="text-red-500">*</span>
+              </span>
+            }
             name="email"
             rules={[
               { required: true, message: "Vui lòng nhập email!" },
               { type: "email", message: "Email không hợp lệ!" },
             ]}
           >
-            <Input placeholder="Nhập email" />
+            <Input
+              className="bg-gray-100 border-none rounded-md focus:ring-0 focus:bg-gray-200"
+              placeholder="Nhập email"
+            />
           </Form.Item>
 
           {/* Password */}
           <Form.Item
-            label="Mật khẩu"
+            label={
+              <span>
+                Mật khẩu <span className="text-red-500">*</span>
+              </span>
+            }
             name="password"
             rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
           >
-            <Input.Password placeholder="Nhập mật khẩu" />
+            <Input.Password
+              className="bg-gray-100 border-none rounded-md focus:ring-0 focus:bg-gray-200"
+              placeholder="Nhập mật khẩu"
+            />
           </Form.Item>
 
-          {/* Nút Submit */}
+          {/* Submit Button */}
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md h-10"
+            >
               Đăng nhập
             </Button>
           </Form.Item>
-          <div className="text-end mt-2">
-            <a href="/forgot-password" className="text-primary">
+
+          {/* Forgot Password */}
+          <div className="text-right mt-2">
+            <a href="/forgot-password" className="text-blue-600 hover:underline">
               Quên mật khẩu?
             </a>
           </div>
         </Form>
 
-        {/* Link đến trang đăng ký */}
-        <p className="text-center mt-4">
+        {/* Register Link */}
+        <p className="text-center mt-4 text-gray-600">
           Chưa có tài khoản?{" "}
-          <Link to="/register" className="text-blue-500">
+          <Link to="/register" className="text-blue-600 hover:underline">
             Đăng ký ngay
           </Link>
         </p>
