@@ -11,6 +11,7 @@ $background-light: #f8f9fa;
 $shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 $border-radius: 6px;
 $transition: all 0.2s ease;
+$row-height: 100px; // Height for each product row
 
 // Mixins
 @mixin button-styles {
@@ -23,9 +24,163 @@ $transition: all 0.2s ease;
 
 // Main Container
 .cart-container {
-  max-width: 1200px;
-  margin: 0 auto;
+  min-height: calc(100vh - 200px);
   padding: 20px;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  .cart-heading {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .loading-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+
+  .table-container {
+    flex: 1;
+    overflow: hidden;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .ant-table-wrapper {
+    .ant-table {
+      .ant-table-container {
+        .ant-table-header {
+          position: sticky;
+          top: 0;
+          z-index: 1;
+          background: white;
+        }
+
+        .ant-table-body {
+          max-height: calc(100vh - 400px) !important;
+          overflow-y: auto !important;
+          scrollbar-width: thin;
+          
+          &::-webkit-scrollbar {
+            width: 6px;
+          }
+          
+          &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+          }
+          
+          &::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+            
+            &:hover {
+              background: #555;
+            }
+          }
+        }
+      }
+      
+      .ant-table-row {
+        height: $row-height;
+      }
+      
+      .ant-table-cell {
+        vertical-align: middle;
+      }
+    }
+  }
+
+  .cart-footer {
+    background: white;
+    padding: 16px 20px;
+    border-top: 1px solid $border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+
+    .total-amount {
+      font-size: 18px;
+      font-weight: bold;
+      color: $text-primary;
+      white-space: nowrap;
+      
+      .text-red-500 {
+        color: $danger-color;
+        font-weight: 700;
+        margin-left: 8px;
+      }
+    }
+
+    .footer-buttons {
+      display: flex;
+      gap: 12px;
+      margin: 0;
+
+      .ant-btn {
+        @include button-styles;
+
+        &.ant-btn-default {
+          background: #f3f4f6;
+          border-color: #d1d5db;
+          color: #374151;
+
+          &:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+          }
+        }
+
+        &.ant-btn-danger {
+          background: $danger-color;
+          border-color: $danger-color;
+          color: #fff;
+
+          &:hover {
+            background: darken($danger-color, 10%);
+            border-color: darken($danger-color, 10%);
+          }
+        }
+      }
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      padding: 12px;
+      gap: 12px;
+
+      .total-amount {
+        width: 100%;
+        text-align: center;
+      }
+
+      .footer-buttons {
+        width: 100%;
+        flex-direction: column;
+
+        .ant-btn {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .name-are {
+    .name {
+      color: #333;
+    }
+  }
 
   @media (max-width: 768px) {
     padding: 12px;
@@ -56,6 +211,8 @@ $transition: all 0.2s ease;
   border-radius: 12px;
   box-shadow: $shadow;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 // Table Styling
@@ -71,6 +228,9 @@ $transition: all 0.2s ease;
     font-size: 15px;
     padding: 14px 16px;
     border-bottom: 2px solid $border-color;
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
 
   .ant-table-tbody > tr {
@@ -124,6 +284,7 @@ $transition: all 0.2s ease;
     font-size: 16px;
     font-weight: 600;
     color: $text-primary;
+    line-height: 1.2;
   }
 
   .size,
@@ -143,8 +304,8 @@ $transition: all 0.2s ease;
 // Price Column
 .price {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 4px;
 
   .price-old {
     font-size: 13px;
@@ -186,11 +347,19 @@ $transition: all 0.2s ease;
 .action-buttons {
   display: flex;
   gap: 10px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
 
   .ant-btn {
     border-radius: $border-radius;
     font-size: 13px;
     padding: 4px 12px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &.ant-btn-danger {
       background: #fff;
@@ -222,14 +391,13 @@ $transition: all 0.2s ease;
   color: $text-primary;
   margin-top: 20px;
   text-align: right;
+  padding: 15px;
+  border-top: 2px solid $border-color;
 
   .text-red-500 {
     color: $danger-color;
     font-weight: 700;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 16px;
+    margin-left: 8px;
   }
 }
 
@@ -240,6 +408,7 @@ $transition: all 0.2s ease;
   gap: 12px;
   justify-content: flex-end;
   margin-top: 24px;
+  padding: 0 15px;
 
   .ant-btn {
     @include button-styles;

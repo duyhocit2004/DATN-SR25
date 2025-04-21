@@ -121,7 +121,10 @@ const Header: React.FC = () => {
     try {
       const response = await homeApi.getAllCategories();
       if (response?.status === HttpCodeString.SUCCESS) {
-        setCategories(response.data);
+        setCategories(response.data.map(category => ({
+          ...category,
+          icon: null // or any default icon you want to use
+        })));
       } else {
         setCategories([]);
       }
@@ -149,7 +152,7 @@ const Header: React.FC = () => {
 
         {/* Middle: Navigation (Hidden on small screens) */}
         <nav className="hidden md:flex space-x-6">
-          <Link to="/" className="hover:text-blue-500">
+          <Link to="/" className="text-gray-900 hover:text-blue-500 font-medium">
             Trang Chủ
           </Link>
           {/* <Dropdown overlay={menuCategories} trigger={["hover"]}>
@@ -157,6 +160,7 @@ const Header: React.FC = () => {
           </Dropdown> */}
 
           <CategoryPopover
+            className="text-gray-900 hover:text-blue-500 font-medium"
             dataItems={categories}
             onChange={(values) => {
               handleNavigateToProducts(values);
@@ -165,10 +169,10 @@ const Header: React.FC = () => {
           {/* <Link to="/blog" className="hover:text-blue-500">
             Blog
           </Link> */}
-          <Link to="/products" className="hover:text-blue-500">
+          <Link to="/products" className="text-gray-900 hover:text-blue-500 font-medium">
             Sản phẩm
           </Link>
-          <Link to="/contact" className="hover:text-blue-500">
+          <Link to="/contact" className="text-gray-900 hover:text-blue-500 font-medium">
             Liên Hệ
           </Link>
         </nav>
@@ -177,14 +181,14 @@ const Header: React.FC = () => {
         <div className="flex items-center gap-4">
           <Tooltip title="Đơn hàng">
             <AuditOutlined
-              className="text-xl cursor-pointer"
+              className="text-xl cursor-pointer text-gray-700"
               onClick={() => navigate("/order-history")}
             />
           </Tooltip>
           <Badge count={wishlistCount > 9 ? "9+" : wishlistCount} size="small">
             <Tooltip title="Sản phẩm yêu thích">
               <HeartOutlined
-                className="text-xl cursor-pointer"
+                className="text-xl cursor-pointer text-gray-700"
                 onClick={() => navigate("/wishlist")}
               />
             </Tooltip>
@@ -192,7 +196,7 @@ const Header: React.FC = () => {
           <Badge count={cartCount > 9 ? "9+" : cartCount} size="small">
             <Tooltip title="Giỏ hàng">
               <ShoppingCartOutlined
-                className="text-xl cursor-pointer"
+                className="text-xl cursor-pointer text-gray-700"
                 onClick={() => navigate("/cart")}
               />
             </Tooltip>
@@ -203,13 +207,13 @@ const Header: React.FC = () => {
             placement="bottomRight"
           >
             <Tooltip title="Tài khoản">
-              <UserOutlined className="text-xl cursor-pointer hover:text-green-500" />
+              <UserOutlined className="text-xl cursor-pointer text-gray-700" />
             </Tooltip>
           </Dropdown>
 
           {/* Mobile Menu Button (Hidden on larger screens) */}
           <MenuOutlined
-            className="text-xl cursor-pointer md:!hidden"
+            className="text-xl cursor-pointer md:!hidden text-gray-700"
             onClick={() => setOpenDrawer(true)}
           />
         </div>
@@ -222,14 +226,15 @@ const Header: React.FC = () => {
         placement="left"
       >
         <nav className="flex flex-col space-y-4">
-          <Link to="/" className="text-lg" onClick={() => setOpenDrawer(false)}>
-            Home
+          <Link to="/" className="text-gray-2900 hover:text-blue-500 font-medium" onClick={() => setOpenDrawer(false)}>
+            Trang Chủ
           </Link>
           <CategoryPopover
             dataItems={categories}
             isMobile={true}
             onChange={(values) => {
               handleNavigateToProducts(values);
+              setOpenDrawer(false);
             }}
           />
           {/* <Link
@@ -239,15 +244,11 @@ const Header: React.FC = () => {
           >
             Blog
           </Link> */}
-          <Link to="/products" className="text-lg">
+          <Link to="/products" className="text-gray-2900 hover:text-blue-500 font-medium" onClick={() => setOpenDrawer(false)}>
             Sản phẩm
           </Link>
-          <Link
-            to="/contact"
-            className="text-lg"
-            onClick={() => setOpenDrawer(false)}
-          >
-            Thông Tin Liên Hệ
+          <Link to="/contact" className="text-gray-2900 hover:text-blue-500 font-medium" onClick={() => setOpenDrawer(false)}>
+            Liên Hệ
           </Link>
         </nav>
       </Drawer>

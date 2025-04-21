@@ -190,10 +190,7 @@ class AuthService implements IAuthService
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
 
-
         if ($userId != $request->input('id')) {
-
-
             BaseResponse::failure(401, 'unauthorized', 'unauthorized', []);
         }
 
@@ -204,6 +201,15 @@ class AuthService implements IAuthService
         $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
             ? $uploadedFile['secure_url']
             : null;
+
+        // Handle password change if oldPassword and newPassword are provided
+        if ($request->has('oldPassword') && $request->has('newPassword')) {
+            if (!Hash::check($request->input('oldPassword'), $user->password)) {
+                BaseResponse::failure(400, 'Mật khẩu cũ không đúng', 'old.password.incorrect', []);
+            }
+            $user->password = Hash::make($request->input('newPassword'));
+        }
+
         $user = $this->authRepositories->updateUser($request, $secureUrl, $userId);
         return $user;
     }

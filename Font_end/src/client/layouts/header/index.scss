@@ -31,6 +31,18 @@
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 21, 41, 0.1);
   height: 100px;
+
+  // Override Ant Design link styles
+  :where(.css-dev-only-do-not-override-1261szd) a {
+    color: inherit;
+  }
+
+  nav a {
+    color: #111827 !important; // text-gray-900
+    &:hover {
+      color: #3B82F6 !important; // text-blue-500
+    }
+  }
 }
 
 .main-content {

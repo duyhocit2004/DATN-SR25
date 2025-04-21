@@ -13,7 +13,6 @@ interface Account {
 }
 
 class AccountApi extends BaseApi<Account> {
-   [x: string]: any;
   constructor() {
     super("accounts"); // Gán URI 'accounts' cho API này
   }
