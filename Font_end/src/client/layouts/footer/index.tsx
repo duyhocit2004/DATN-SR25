@@ -3,8 +3,8 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube, FaTiktok, FaWikipediaW 
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white pt-12 pb-6">
-      <div className="container mx-auto px-4">
+    <footer className="bg-gray-900 text-white mt-auto">
+      <div className="container mx-auto px-4 py-8">
         {/* Footer Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-70">
           {/* ABOUT US */}
@@ -93,7 +93,7 @@ const Footer = () => {
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-gray-700 mt-10 pt-6 text-center text-gray-400">
+        <div className="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
           © {new Date().getFullYear()} FPT POLYTECHNIC 
         </div>
       </div>

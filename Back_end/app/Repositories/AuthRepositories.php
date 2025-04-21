@@ -47,13 +47,19 @@ class AuthRepositories
             BaseResponse::failure('400', 'user not found', 'user.not.found', []);
         }
 
-        $user->update([
+        $updateData = [
             'name' => $request->input('name', $user->name),
             'phone_number' => $request->input('phoneNumber', $user->phone_number),
             'gender' => $request->input('gender', $user->gender),
             'image' => empty($imageLink) ? $user->image : $imageLink,
-            'password' => Hash::make($request->input('password', $user->password)),
-        ]);
+        ];
+
+        // Only update password if it's provided in the request
+        if ($request->has('newPassword')) {
+            $updateData['password'] = Hash::make($request->input('newPassword'));
+        }
+
+        $user->update($updateData);
 
         return $user;
     }

@@ -18,7 +18,7 @@ import { cloneDeep } from "lodash";
 import RelatedProducts from "../components/RelatedProducts";
 import Reviews from "../components/Reviews";
 import { addToCart } from "@/utils/functions";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import productApi from "@/api/productApi";
 import { HttpCodeString } from "@/utils/constants";
 import PageLoading from "@/components/page-loading";
@@ -41,6 +41,8 @@ const ProductDetail = () => {
   const [productDetail, setProductDetail] = useState<IProduct | null>(null);
   const [notExistProduct, setNotExistProduct] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const handleQuantityChange = (value: number) => {
     setQuantity(value);
@@ -156,6 +158,40 @@ const ProductDetail = () => {
         dispatch
       );
     }
+  };
+
+  const handleBuyNow = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!selectedColor || !selectedSize || quantity === 0) {
+      showToast({
+        content: "Vui lòng chọn đầy đủ thông tin sản phẩm!",
+        duration: 5,
+        type: "error",
+      });
+      return;
+    }
+
+    // Tạo đối tượng sản phẩm đã chọn
+    const selectedProduct = {
+      productId: productDetail?.id,
+      quantity: quantity,
+      size: selectedSize,
+      color: selectedColor,
+      product: {
+        id: productDetail?.id,
+        name: productDetail?.name,
+        image: productDetail?.listImage?.[0],
+        priceRegular: productDetail?.priceRegular,
+        priceSale: productDetail?.priceSale,
+        discount: productDetail?.discount,
+      }
+    };
+
+    navigate("/payment", {
+      state: {
+        selectedCartItems: [selectedProduct]
+      },
+    });
   };
 
   const handleWishlist = async (e: React.MouseEvent, wishlist: boolean) => {
@@ -340,6 +376,16 @@ const ProductDetail = () => {
                       onClick={handleAddToCart}
                     >
                       Thêm vào giỏ
+                    </button>
+                    <button
+                      className={`bg-blue-500 border-none text-white px-3 py-2 rounded-[20px] font-semibold ${maxQuantity > 0 && quantity > 0
+                        ? "hover:bg-blue-600 cursor-pointer"
+                        : "cursor-not-allowed !bg-gray-300"
+                        }`}
+                      disabled={maxQuantity === 0 || quantity === 0}
+                      onClick={handleBuyNow}
+                    >
+                      Mua ngay
                     </button>
                     {maxQuantity === 0 && selectedColor && selectedSize && (
                       <div className="out-of-stock bg-black text-white h-10 flex justify-center items-center p-3">
