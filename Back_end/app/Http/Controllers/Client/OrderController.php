@@ -6,21 +6,25 @@ use App\Helpers\BaseResponse;
 use App\Http\Controllers\Controller;
 use App\Services\Client\order\IOrderService;
 use App\Services\VnPay\IVnpayService;
+use App\Services\MoMo\IMoMoService;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
     public IOrderService $orderService;
     public IVnpayService $vnpayService;
+    public IMoMoService $moMoService;
 
 
     public function __construct(
         IOrderService $orderService,
-        IVnpayService $vnpayService
+        IVnpayService $vnpayService,
+        IMoMoService $moMoService
     ) {
 
         $this->orderService = $orderService;
         $this->vnpayService = $vnpayService;
+        $this->moMoService = $moMoService;
     }
 
     public function addOrder(Request $request)
@@ -29,8 +33,13 @@ class OrderController extends Controller
         $paymentUrl = null;
 
         if (!empty($order)) {
-            $paymentUrl = $this->vnpayService->createPaymentUrl($order->code, $order->total_price);
-
+            if ($order->payment_method == 'vnpay') {
+                $paymentUrl = $this->vnpayService->createPaymentUrl($order->code, $order->total_price);
+            } elseif ($order->payment_method == 'momo_atm') {
+                $paymentUrl = $this->moMoService->createPaymentUrlMoMoATM($order->code, $order->total_price);
+            } elseif ($order->payment_method == 'momo') {
+                $paymentUrl = $this->moMoService->createPaymentUrlPayMoMoPayMoMo($order->code, $order->total_price);
+            }
         }
 
         return BaseResponse::success([
