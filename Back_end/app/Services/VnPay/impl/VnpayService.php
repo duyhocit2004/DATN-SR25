@@ -5,6 +5,7 @@ namespace App\Services\VnPay\impl;
 use App\Repositories\OrderRepositories;
 use App\Services\VnPay\IVnpayService;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
 
 
 class VnpayService implements IVnpayService{
@@ -125,49 +126,85 @@ class VnpayService implements IVnpayService{
     
     public function refund($transactionId, $amount)
     {
-        $vnp_TmnCode = env('VNP_TMN_CODE');
-        $vnp_HashSecret = env('VNP_HASH_SECRET');
-        $vnp_Url = env('VNP_URL');
+        try {
+            $vnp_TmnCode = env('VNP_TMN_CODE');
+            $vnp_HashSecret = env('VNP_HASH_SECRET');
+            $vnp_Url = env('VNP_URL');
 
-        $inputData = [
-            "vnp_Version" => "2.1.0",
-            "vnp_TmnCode" => $vnp_TmnCode,
-            "vnp_Command" => "refund",
-            "vnp_TransactionType" => "02",
-            "vnp_TxnRef" => $transactionId,
-            "vnp_Amount" => $amount * 100,
-            "vnp_OrderInfo" => "Hoan tien giao dich " . $transactionId,
-            "vnp_TransactionNo" => $transactionId,
-            "vnp_CreateDate" => date('YmdHis'),
-            "vnp_CreateBy" => "admin",
-        ];
+            $inputData = [
+                "vnp_Version" => "2.1.0",
+                "vnp_TmnCode" => $vnp_TmnCode,
+                "vnp_Command" => "refund",
+                "vnp_TransactionType" => "02",
+                "vnp_TxnRef" => $transactionId,
+                "vnp_Amount" => $amount * 100,
+                "vnp_OrderInfo" => "Hoan tien giao dich " . $transactionId,
+                "vnp_TransactionNo" => $transactionId,
+                "vnp_CreateDate" => date('YmdHis'),
+                "vnp_CreateBy" => "admin",
+            ];
 
-        ksort($inputData);
-        $query = "";
-        $i = 0;
-        $hashdata = "";
-        foreach ($inputData as $key => $value) {
-            if ($i == 1) {
-                $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
-            } else {
-                $hashdata .= urlencode($key) . "=" . urlencode($value);
-                $i = 1;
+            ksort($inputData);
+            $query = "";
+            $i = 0;
+            $hashdata = "";
+            foreach ($inputData as $key => $value) {
+                if ($i == 1) {
+                    $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
+                } else {
+                    $hashdata .= urlencode($key) . "=" . urlencode($value);
+                    $i = 1;
+                }
+                $query .= urlencode($key) . "=" . urlencode($value) . '&';
             }
-            $query .= urlencode($key) . "=" . urlencode($value) . '&';
-        }
 
-        $vnp_Url = $vnp_Url . "?" . $query;
-        if (isset($vnp_HashSecret)) {
-            $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
-            $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
-        }
+            $vnp_Url = $vnp_Url . "?" . $query;
+            if (isset($vnp_HashSecret)) {
+                $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
+                $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+            }
 
-        // In a real implementation, you would make an HTTP request to VNPay's API
-        // For now, we'll simulate a successful response
-        return [
-            'success' => true,
-            'message' => 'Hoàn tiền thành công',
-            'transaction_id' => $transactionId
-        ];
+            // Thực hiện gọi API VNPay
+            $client = new Client();
+            $response = $client->post($vnp_Url, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+                'verify' => false // Bỏ qua SSL verification trong môi trường development
+            ]);
+
+            $responseData = json_decode($response->getBody(), true);
+
+            // Kiểm tra kết quả từ VNPay
+            if ($responseData && isset($responseData['vnp_ResponseCode']) && $responseData['vnp_ResponseCode'] === '00') {
+                return [
+                    'success' => true,
+                    'message' => 'Hoàn tiền thành công',
+                    'transaction_id' => $transactionId,
+                    'response' => $responseData
+                ];
+            } else {
+                \Log::error('Lỗi hoàn tiền VNPay:', [
+                    'transaction_id' => $transactionId,
+                    'response' => $responseData
+                ]);
+                return [
+                    'success' => false,
+                    'message' => 'Hoàn tiền thất bại: ' . ($responseData['vnp_Message'] ?? 'Không xác định'),
+                    'transaction_id' => $transactionId,
+                    'response' => $responseData
+                ];
+            }
+        } catch (\Exception $e) {
+            \Log::error('Lỗi khi gọi API hoàn tiền VNPay:', [
+                'transaction_id' => $transactionId,
+                'error' => $e->getMessage()
+            ]);
+            return [
+                'success' => false,
+                'message' => 'Lỗi khi gọi API hoàn tiền: ' . $e->getMessage(),
+                'transaction_id' => $transactionId
+            ];
+        }
     }
 }

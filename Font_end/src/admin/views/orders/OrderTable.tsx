@@ -1,7 +1,7 @@
 import adminApi from "@/api/adminApi";
 import axiosClient from "@/configs/axiosClient";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchOrders, setPagination } from "@/store/reducers/adminOrderSlice";
+import { fetchOrders, setPagination, setOrders } from "@/store/reducers/adminOrderSlice";
 import { IOrder } from "@/types/interface";
 import { OrderStatusDataAdmin, PaymentMethodData, PaymentStatusData } from "@/utils/constantData";
 import { HttpCodeString } from "@/utils/constants";
@@ -125,6 +125,7 @@ const OrderTable = () => {
       title: "Hành động",
       key: "action",
       fixed: "right",
+      width: 150,
       render: (record: IOrder) => {
         const canRefund = 
           (record.status === "Cancel Confirm" || record.status === "Cancel") && 
@@ -133,8 +134,8 @@ const OrderTable = () => {
           !record.refundCompleted;
 
         return (
-          <div className="flex gap-2">
-            {canRefund && (
+          <div className="flex gap-2 justify-center">
+            {canRefund ? (
               <Button
                 type="primary"
                 danger
@@ -143,10 +144,9 @@ const OrderTable = () => {
               >
                 Hoàn tiền
               </Button>
-            )}
-            {record.refundCompleted && (
+            ) : record.refundCompleted ? (
               <Tag color="green">Đã hoàn tiền</Tag>
-            )}
+            ) : null}
           </div>
         );
       },
@@ -180,23 +180,6 @@ const OrderTable = () => {
     }
   };
 
-
-  const handlePagingChange = (page: number, size: number) => {
-    dispatch(
-      setPagination({
-        page: page,
-        pageSize: size,
-      })
-    );
-    dispatch(fetchOrders());
-  };
-
-
-  const handleRefund = async (orderId: number) => {
-    setSelectedOrderId(orderId);
-    setRefundModalVisible(true);
-  };
-
   const handleRefundConfirm = async () => {
     if (!selectedOrderId) return;
 
@@ -213,19 +196,39 @@ const OrderTable = () => {
         setSelectedOrderId(null);
         setRefundMethod('DIRECT');
         
+        // Cập nhật trạng thái đơn hàng trong danh sách
+        const updatedOrders = orders.map(order => {
+          if (order.id === selectedOrderId) {
+            return {
+              ...order,
+              refundCompleted: true,
+              payment_status: 'REFUNDED'
+            };
+          }
+          return order;
+        });
+        
+        // Cập nhật state orders
+        dispatch(setOrders(updatedOrders));
+        
+        const successMessage = refundMethod === 'DIRECT'
+          ? "Hoàn tiền thành công! Vui lòng kiểm tra VNPay để xác nhận giao dịch."
+          : "Đã gửi mã QR hoàn tiền qua email khách hàng! Vui lòng kiểm tra email.";
+        
         message.success({
-          content: "Hoàn tiền thành công!",
+          content: successMessage,
           duration: 5,
           style: {
             marginTop: '15vh',
           },
         });
-
-        // Cập nhật lại danh sách orders
-        dispatch(fetchOrders());
       } else {
+        const errorMessage = refundMethod === 'DIRECT'
+          ? "Hoàn tiền qua VNPay thất bại! Vui lòng thử lại sau."
+          : "Gửi mã QR hoàn tiền thất bại! Vui lòng thử lại sau.";
+          
         message.error({
-          content: "Hoàn tiền thất bại!",
+          content: errorMessage,
           duration: 5,
           style: {
             marginTop: '15vh',
@@ -234,8 +237,12 @@ const OrderTable = () => {
       }
     } catch (error) {
       console.error("Lỗi khi hoàn tiền:", error);
+      const errorMessage = refundMethod === 'DIRECT'
+        ? "Đã xảy ra lỗi khi hoàn tiền qua VNPay! Vui lòng thử lại sau."
+        : "Đã xảy ra lỗi khi gửi mã QR hoàn tiền! Vui lòng thử lại sau.";
+        
       message.error({
-        content: "Đã xảy ra lỗi khi hoàn tiền!",
+        content: errorMessage,
         duration: 5,
         style: {
           marginTop: '15vh',
@@ -246,9 +253,25 @@ const OrderTable = () => {
     }
   };
 
+  const handleRefund = (orderId: number) => {
+    setSelectedOrderId(orderId);
+    setRefundModalVisible(true);
+  };
+
+  const handlePagingChange = (page: number, size: number) => {
+    dispatch(
+      setPagination({
+        page: page,
+        pageSize: size,
+      })
+    );
+    dispatch(fetchOrders());
+  };
+
   // Thêm useEffect để theo dõi thay đổi của orders
   useEffect(() => {
     // Cập nhật lại giao diện khi orders thay đổi
+    console.log('Orders updated:', orders);
   }, [orders]);
   
   return (

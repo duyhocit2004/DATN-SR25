@@ -79,16 +79,15 @@ class OrderController extends Controller
             
             $result = $this->refundService->processRefund($orderId, $refundMethod);
             
-            if ($result) {
-                $order = \App\Models\Order::find($orderId);
+            if ($result['success']) {
                 return BaseResponse::success([
-                    'message' => 'Hoàn tiền thành công!',
+                    'message' => $result['message'],
                     'refundMethod' => $refundMethod,
-                    'order' => $order
+                    'order' => $result['order']
                 ]);
             }
             
-            return BaseResponse::failure(400, 'Hoàn tiền thất bại', 'refund.failed', []);
+            return BaseResponse::failure(400, $result['message'], 'refund.failed', []);
         } catch (\Exception $e) {
             \Log::error('Lỗi khi hoàn tiền:', ['error' => $e->getMessage()]);
             return BaseResponse::failure(400, $e->getMessage(), 'refund.failed', []);
