@@ -223,21 +223,22 @@ class AuthService implements IAuthService
         return $result;
     }
 
-    public function changePassword($request)
-    {
-        $user = JWTAuth::parseToken()->authenticate();
-        $userId = $user->id;
+    // public function changePassword($request)
+    // {
+    //     $user = JWTAuth::parseToken()->authenticate();
+    //     $userId = $user->id;
 
-        if (empty($user)) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
-        }
+    //     if (empty($user)) {
+    //         JWTAuth::invalidate(JWTAuth::getToken());
+    //         BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+    //     }
 
-        if ($userId != $request->input('id')) {
-            BaseResponse::failure(401, 'unauthorized', 'unauthorized', []);
-        }
+    //     if ($userId != $request->input('id')) {
+    //         BaseResponse::failure(401, 'unauthorized', 'unauthorized', []);
+    //     }
 
-        $this->authRepositories->changePassword($userId, $request->input('newPassword'));
-        JWTAuth::invalidate(JWTAuth::getToken());
-    }
+    //     $this->authRepositories->changePassword($userId, $request->input('newPassword'));
+    //     JWTAuth::invalidate(JWTAuth::getToken());
+    // }
 }
+
