@@ -7,16 +7,40 @@ namespace Composer\Autoload;
 class ComposerStaticInit690e04a27fa241bad9da145ee44cf2eb
 {
     public static $prefixLengthsPsr4 = array (
+        'S' => 
+        array (
+            'SimpleSoftwareIO\\QrCode\\' => 24,
+        ),
         'P' => 
         array (
             'Predis\\' => 7,
         ),
+        'D' => 
+        array (
+            'DASPRiD\\Enum\\' => 13,
+        ),
+        'B' => 
+        array (
+            'BaconQrCode\\' => 12,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'SimpleSoftwareIO\\QrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/simplesoftwareio/simple-qrcode/src',
+        ),
         'Predis\\' => 
         array (
             0 => __DIR__ . '/..' . '/predis/predis/src',
+        ),
+        'DASPRiD\\Enum\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dasprid/enum/src',
+        ),
+        'BaconQrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/bacon/bacon-qr-code/src',
         ),
     );
 

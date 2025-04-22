@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Typography, Spin, Select, Card } from "antd";
+import { Button, Typography, Spin, Select, Card, Tag } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import orderApi from "@/api/orderApi";
 import {
@@ -44,6 +44,14 @@ const OrderDetail: React.FC = () => {
     if (JSON.stringify(order) !== JSON.stringify(originOrder)) {
       setIsEdit(true);
     }
+  }, [order]);
+
+  useEffect(() => {
+    console.log("Order Status:", order?.status);
+    console.log("Payment Method:", order?.paymentMethod);
+    console.log("Payment Status:", order?.paymentStatus);
+    console.log("Is Cancel Confirm:", order?.status === OrderStatus.CANCEL_CONFIRM);
+    console.log("Is Cancel:", order?.status === OrderStatus.CANCEL);
   }, [order]);
 
   const columns: ColumnsType<IProductOrder> = [
@@ -163,8 +171,12 @@ const OrderDetail: React.FC = () => {
   const onChangeData = <K extends keyof IOrder>(key: K, value: IOrder[K]) => {
     const data = cloneDeep(order) || ({} as IOrder);
   
-    // Nếu trạng thái là "CANCEL" hoặc "CANCEL CONFIRM", cố định trạng thái
-    if (key === "status" && (value === OrderStatus.CANCEL || value === OrderStatus.CANCEL_CONFIRM)) {
+    // Nếu trạng thái là "CANCEL", "CANCEL CONFIRM" hoặc "DELIVERED", cố định trạng thái
+    if (key === "status" && (
+      value === OrderStatus.CANCEL || 
+      value === OrderStatus.CANCEL_CONFIRM ||
+      value === OrderStatus.DELIVERED
+    )) {
       data[key] = value;
       setOrder(data);
       return; // Không cho phép thay đổi trạng thái khác
@@ -182,10 +194,11 @@ const OrderDetail: React.FC = () => {
   };
 
   const isStatusDisabled = (originStatus: string, targetStatus: string) => {
-    // Nếu trạng thái đã lưu là "CANCEL" hoặc "CANCEL CONFIRM", không cho phép chọn trạng thái khác
+    // Nếu trạng thái đã lưu là "CANCEL", "CANCEL CONFIRM" hoặc "DELIVERED", không cho phép chọn trạng thái khác
     if (
       originStatus === OrderStatus.CANCEL ||
-      originStatus === OrderStatus.CANCEL_CONFIRM
+      originStatus === OrderStatus.CANCEL_CONFIRM ||
+      originStatus === OrderStatus.DELIVERED
     ) {
       return true; // Vô hiệu hóa tất cả các trạng thái khác
     }
@@ -240,7 +253,7 @@ const OrderDetail: React.FC = () => {
           <Button
             type="primary"
             disabled={!isEdit}
-            onClick={() => { handleUpdateOrder() }} 
+            onClick={() => { handleUpdateOrder() }}
           >
             Lưu
           </Button>

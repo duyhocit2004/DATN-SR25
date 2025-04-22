@@ -198,22 +198,11 @@ const Cart = () => {
   const removeCartApi = async (cartItem: ICart) => {
     try {
       const response = await cartApi.updateCart({
-          cartId: cartItem.id,
+        cartId: cartItem.id,
         quantity: 0,
       });
       if (response.status === HttpCodeString.SUCCESS) {
         updateCartAfterRemoveItem(cartItem);
-        showToast({
-          content: "Đã xóa sản phẩm khỏi giỏ hàng!",
-          duration: 5,
-          type: "success",
-        });
-      } else {
-        showToast({
-          content: "Xóa sản phẩm thất bại!",
-          duration: 5,
-          type: "error",
-        });
       }
     } catch { }
   };
@@ -234,11 +223,6 @@ const Cart = () => {
       )
     );
     updateCartAfterRemoveItem(cartItem);
-    showToast({
-      content: "Đã xóa sản phẩm khỏi giỏ hàng!",
-      duration: 5,
-      type: "success",
-    });
   };
 
   const updateCartAfterRemoveItem = (cartItem: ICart) => {
@@ -265,28 +249,12 @@ const Cart = () => {
         if (response.status === HttpCodeString.SUCCESS) {
           setCartList([]);
           setSelectedItems([]);
-          showToast({
-            content: "Đã xóa tất cả sản phẩm khỏi giỏ hàng!",
-            duration: 5,
-            type: "success",
-          });
-        } else {
-          showToast({
-            content: "Xóa giỏ hàng thất bại!",
-            duration: 5,
-            type: "error",
-          });
         }
       } catch { }
     } else {
       localStorage.removeItem("cart");
       setCartList([]);
       setSelectedItems([]);
-      showToast({
-        content: "Đã xóa tất cả sản phẩm khỏi giỏ hàng!",
-        duration: 5,
-        type: "success",
-      });
     }
   };
 

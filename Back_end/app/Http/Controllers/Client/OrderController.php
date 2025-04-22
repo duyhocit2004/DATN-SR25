@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Helpers\BaseResponse;
 use App\Http\Controllers\Controller;
 use App\Services\Client\order\IOrderService;
+use App\Services\Refund\IRefundService;
 use App\Services\VnPay\IVnpayService;
 use Illuminate\Http\Request;
 
@@ -12,15 +13,16 @@ class OrderController extends Controller
 {
     public IOrderService $orderService;
     public IVnpayService $vnpayService;
-
+    public IRefundService $refundService;
 
     public function __construct(
         IOrderService $orderService,
-        IVnpayService $vnpayService
+        IVnpayService $vnpayService,
+        IRefundService $refundService
     ) {
-
         $this->orderService = $orderService;
         $this->vnpayService = $vnpayService;
+        $this->refundService = $refundService;
     }
 
     public function addOrder(Request $request)
@@ -70,18 +72,28 @@ class OrderController extends Controller
     public function refundOrder(Request $request)
     {
         try {
-            \Log::info('Gọi refundOrder với dữ liệu:', $request->all()); // Kiểm tra dữ liệu nhận được
-            $order = $this->orderService->refundOrder($request);
-            return BaseResponse::success([
-                'message' => 'Hoàn tiền thành công!',
-                'data' => $order,
-            ]);
+            \Log::info('Gọi refundOrder với dữ liệu:', $request->all());
+            
+            $orderId = $request->input('orderId');
+            $refundMethod = $request->input('refundMethod', 'DIRECT'); // Default to direct refund
+            
+            $result = $this->refundService->processRefund($orderId, $refundMethod);
+            
+            if ($result) {
+                $order = \App\Models\Order::find($orderId);
+                return BaseResponse::success([
+                    'message' => 'Hoàn tiền thành công!',
+                    'refundMethod' => $refundMethod,
+                    'order' => $order
+                ]);
+            }
+            
+            return BaseResponse::failure(400, 'Hoàn tiền thất bại', 'refund.failed', []);
         } catch (\Exception $e) {
-            \Log::error('Lỗi khi hoàn tiền:', ['error' => $e->getMessage()]); // Log lỗi
+            \Log::error('Lỗi khi hoàn tiền:', ['error' => $e->getMessage()]);
             return BaseResponse::failure(400, $e->getMessage(), 'refund.failed', []);
         }
     }
-
 
     public function getVoucher(Request $request)
     {

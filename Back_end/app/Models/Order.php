@@ -9,6 +9,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Order
@@ -34,6 +35,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Order extends Model
 {
+	use HasFactory;
+
 	protected $table = 'orders';
 
 	protected $casts = [
@@ -43,24 +46,33 @@ class Order extends Model
 	];
 
 	protected $fillable = [
-		'user_id',
 		'code',
+		'user_id',
 		'customer_name',
 		'email',
 		'phone_number',
 		'receiver_name',
 		'receiver_phone_number',
 		'receiver_address',
+		'shipping_address',
 		'total_price',
 		'voucher',
 		'voucher_price',
-		'shipping_address',
-		'note',
 		'status',
-		'date',
 		'payment_status',
 		'payment_method',
+		'transaction_id',
+		'note',
+		'refundCompleted',
+		'date',
+		'created_at',
+		'updated_at'
 	];
+
+	public function user()
+	{
+		return $this->belongsTo(User::class);
+	}
 
 	public function order_details()
 	{

@@ -89,7 +89,7 @@ class OrderRepositories
                 'receiver_phone_number' => $data['receiverPhoneNumber'] ?? null,
                 'receiver_address' => $data['receiverAddress'] ?? null,
                 'shipping_address' => $data['shippingAddress'],
-                'total_price' => $totalAmount, // Use calculated totalAmount
+                'total_price' => $totalAmount,
                 'voucher' => $data['voucher'] ?? null,
                 'voucher_price' => $voucherAmount,
                 'payment_method' => $data['paymentMethod'] ?? '',
@@ -97,6 +97,8 @@ class OrderRepositories
                 'note' => $data['note'] ?? null,
                 'status' => 'Unconfirmed',
                 'date' => now(),
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
 
             // Process order details
