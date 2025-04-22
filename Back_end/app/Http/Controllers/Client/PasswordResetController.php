@@ -55,6 +55,8 @@ class PasswordResetController extends Controller
         }
     }
     
+
+    
     // public function resetPassword(Request $request)
     // {
     //     $validatedData = $request->validate(['token' => 'required', 'new_password' => 'required']);

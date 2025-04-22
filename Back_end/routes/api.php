@@ -75,6 +75,8 @@ Route::prefix('orders')->group(function () {
 Route::post('/vnpay/create', [VNPayController::class, 'createPayment']);
 Route::get('/vnpay/return', [VNPayController::class, 'returnPayment']);
 
+
+
 //các api cần authen
 Route::middleware('jwt.auth')->group(function () {
     Route::prefix('products')->group(function () {
@@ -90,6 +92,7 @@ Route::middleware('jwt.auth')->group(function () {
     Route::prefix('users')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/changePassword', [AuthController::class, 'changePassword']);
+        
 
     });
     Route::post('/uploadImage', [CommonController::class, 'uploadImage']);

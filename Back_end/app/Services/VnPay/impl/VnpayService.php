@@ -18,6 +18,7 @@ class VnpayService implements IVnpayService{
 
     public function createPaymentUrl($orderCode, $amount)
     {
+        
         $orderDescription = "Thanh toán đơn hàng " . $orderCode;
 
         $vnp_TmnCode = env('VNP_TMN_CODE'); // Mã website từ VNPAY

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 interface IProductService
 {
-    public function getAllProductWithImages(Request $request);
+    // public function getAllProductWithImages(Request $request);
 
     public function getProduct(Request $request);
 
