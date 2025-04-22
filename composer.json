@@ -1,6 +1,0 @@
-{
-    "require": {
-        "predis/predis": "^2.3",
-        "simplesoftwareio/simple-qrcode": "^4.2"
-    }
-}
