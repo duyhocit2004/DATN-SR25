@@ -35,9 +35,8 @@ const BannerFilter: React.FC = () => {
           placeholder={"Chọn loại banner"}
           options={BannerTypeData}
           allowClear
-          onChange={(val) => {
-            onChangeFilter("type", val);
-          }}
+          onChange={(val) => onChangeFilter("type", val)}
+          onClear={() => onChangeFilter("type", null)}
         />
       </div>
       <Button type="primary" onClick={handleSearch} loading={loading}>

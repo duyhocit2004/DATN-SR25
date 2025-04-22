@@ -58,9 +58,11 @@ class ProductRepositories
 
         $result = DB::table('orders')
             ->whereBetween('created_at', [$fromDate, $toDate])
+            ->where('payment_status', '=', 'PAID')
+            ->where('status', '=', 'Delivered')
             ->selectRaw('
                 COUNT(*) as total_orders,
-                COALESCE(SUM(CASE WHEN payment_status = "PAID" THEN total_price ELSE 0 END), 0) as total_revenue
+                COALESCE(SUM(total_price), 0) as total_revenue
             ')
             ->first();
 
@@ -97,11 +99,13 @@ class ProductRepositories
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$selectedDate, $endOfDay])
+                ->where('payment_status', '=', 'PAID')
+                ->where('status', '=', 'Delivered')
                 ->selectRaw('
-                DATE_FORMAT(created_at, "%H:00") as hour,
-                COUNT(*) as total_orders,
-                SUM(CASE WHEN payment_status = "PAID" THEN total_price ELSE 0 END) as total_revenue
-            ')
+                    DATE_FORMAT(created_at, "%H:00") as hour,
+                    COUNT(*) as total_orders,
+                    COALESCE(SUM(total_price), 0) as total_revenue
+                ')
                 ->groupBy('hour')
                 ->orderBy('hour', 'asc')
                 ->get()
@@ -126,10 +130,12 @@ class ProductRepositories
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$startDate, $endDate])
+                ->where('payment_status', '=', 'PAID')
+                ->where('status', '=', 'Delivered')
                 ->selectRaw('
                     DATE_FORMAT(created_at, "%d/%m/%Y") as day,
                     COUNT(*) as total_orders,
-                    SUM(CASE WHEN payment_status = "PAID" THEN total_price ELSE 0 END) as total_revenue
+                    COALESCE(SUM(total_price), 0) as total_revenue
                 ')
                 ->groupBy('day')
                 ->orderBy('day', 'asc')
@@ -170,10 +176,12 @@ class ProductRepositories
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$startDate, $endDate])
+                ->where('payment_status', '=', 'PAID')
+                ->where('status', '=', 'Delivered')
                 ->selectRaw('
                     YEARWEEK(created_at, 1) as week,
                     COUNT(*) as total_orders,
-                    SUM(CASE WHEN payment_status = "PAID" THEN total_price ELSE 0 END) as total_revenue
+                    COALESCE(SUM(total_price), 0) as total_revenue
                 ')
                 ->groupBy('week')
                 ->orderBy('week', 'asc')
@@ -211,10 +219,12 @@ class ProductRepositories
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$startDate, $endDate])
+                ->where('payment_status', '=', 'PAID')
+                ->where('status', '=', 'Delivered')
                 ->selectRaw('
                     DATE_FORMAT(created_at, "%Y-%m") as month,
                     COUNT(*) as total_orders,
-                    SUM(CASE WHEN payment_status = "PAID" THEN total_price ELSE 0 END) as total_revenue
+                    COALESCE(SUM(total_price), 0) as total_revenue
                 ')
                 ->groupBy('month')
                 ->orderBy('month', 'asc')
@@ -262,10 +272,12 @@ class ProductRepositories
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$startDate, $endDate])
+                ->where('payment_status', '=', 'PAID')
+                ->where('status', '=', 'Delivered')
                 ->selectRaw('
                     DATE_FORMAT(created_at, "%m") as month,
                     COUNT(*) as total_orders,
-                    COALESCE(SUM(CASE WHEN payment_status = "PAID" THEN total_price ELSE 0 END), 0) as total_revenue
+                    COALESCE(SUM(total_price), 0) as total_revenue
                 ')
                 ->groupBy('month')
                 ->orderBy('month', 'asc')
