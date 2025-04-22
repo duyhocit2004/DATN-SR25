@@ -53,8 +53,9 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime'
     ];
 
+   
     protected $hidden = [
-        'password',
+        // bcrypt('password'),
         'remember_token'
     ];
 
@@ -67,6 +68,7 @@ class User extends Authenticatable implements JWTSubject
         'gender',
         'user_image',
         'password',
+        // bcrypt('password'),
         'remember_token',
         'status'
     ];
@@ -113,6 +115,7 @@ class User extends Authenticatable implements JWTSubject
             'userImage' => $this->user_image,
             'emailVerifiedAt' => $this->email_verified_at,
             'status' => $this->status,
+            'password' => $this->password,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
             'deletedAt' => $this->deleted_at,
