@@ -14,26 +14,14 @@ class MoMoController extends Controller
         $this->moMoService = $moMoService;
     }
 
-    public function createPaymentUrlMoMoATM(Request $request)
+    public function createPaymentUrlMoMoATM($orderCode, $amount)
     {
-        $orderCode = $request->input('orderCode');
-        $amount = $request->input('amount');
-
-        if (empty($orderCode) || empty($amount)) {
-            return BaseResponse::failure( 400, 'orderCode and amount are required', 'orderCode and amount are required', null);
-        }
     
         $paymentUrl = $this->moMoService->createPaymentUrlMoMoATM($orderCode, $amount);
         return BaseResponse::success(['url' => $paymentUrl]);
     }
-    public function createPaymentUrlPayMoMo(Request $request){
-        $orderCode = $request->input('orderCode');
-        $amount = $request->input('amount');
+    public function createPaymentUrlPayMoMo($orderCode, $amount){
 
-        if (empty($orderCode) || empty($amount)) {
-            return BaseResponse::failure( 400, 'orderCode and amount are required', 'orderCode and amount are required', null);
-        }
-    
         $paymentUrl = $this->moMoService->createPaymentUrlPayMoMoPayMoMo($orderCode, $amount);
         return BaseResponse::success(['url' => $paymentUrl]);
     }
