@@ -27,6 +27,8 @@ class AdminController extends Controller
         $products = $this->adminService->getDashboardChart($request);
         return BaseResponse::success($products);
     }
+
+    
     public function addVoucher(Request $request)
     {
         $products = $this->adminService->addVoucher($request);

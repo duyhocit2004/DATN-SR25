@@ -14,15 +14,23 @@ class MoMoController extends Controller
         $this->moMoService = $moMoService;
     }
 
-    public function createPaymentUrlMoMoATM($orderCode, $amount)
+    public function createPaymentUrlMoMoATM(Request $request)
     {
-    
+        $orderCode = $request->input('orderCode');
+        $amount = $request->input('amount');
         $paymentUrl = $this->moMoService->createPaymentUrlMoMoATM($orderCode, $amount);
         return BaseResponse::success(['url' => $paymentUrl]);
     }
-    public function createPaymentUrlPayMoMo($orderCode, $amount){
-
+    public function createPaymentUrlPayMoMo(Request $request,$orderCode, $amount){
+        // $orderCode = $request->input('orderCode');
+        // $amount = $request->input('amount');
         $paymentUrl = $this->moMoService->createPaymentUrlPayMoMoPayMoMo($orderCode, $amount);
+
         return BaseResponse::success(['url' => $paymentUrl]);
+    }
+    public function handleReturnMoMo(Request $request)
+    {
+        $link = $this->moMoService->handleReturnMoMo($request);
+        return redirect()->to($link);
     }
 }
