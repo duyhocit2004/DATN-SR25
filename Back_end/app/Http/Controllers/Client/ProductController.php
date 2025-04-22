@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Services\Client\product\IProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -21,68 +23,112 @@ class ProductController extends Controller
 
     public function getAllProductWithImages(Request $request): JsonResponse
     {
-        $products = $this->productService->getAllProductWithImages($request);
-        return BaseResponse::success($products);
+        $cacheKey = 'products:all:' . md5(json_encode($request->all()));
+        
+        return Cache::remember($cacheKey, 60, function () use ($request) {
+            $products = $this->productService->getAllProductWithImages($request);
+            return BaseResponse::success($products);
+        });
     }
 
     public function getProduct(Request $request): JsonResponse
     {
-        $products = $this->productService->getProduct($request);
-        return BaseResponse::success($products);
+        $cacheKey = 'product:' . $request->id;
+        
+        return Cache::remember($cacheKey, 60, function () use ($request) {
+            $products = $this->productService->getProduct($request);
+            return BaseResponse::success($products);
+        });
     }
 
     public function getProductDetail(Request $request): JsonResponse
     {
-        $products = $this->productService->getProductDetail($request);
-        return BaseResponse::success($products);
+        $cacheKey = 'product:detail:' . $request->id;
+        
+        return Cache::remember($cacheKey, 60, function () use ($request) {
+            $products = $this->productService->getProductDetail($request);
+            return BaseResponse::success($products);
+        });
     }
 
     public function getColorByProductIdAndSize(Request $request): JsonResponse
     {
-        $sizes = $this->productService->getColorByProductIdAndSize($request);
-        return BaseResponse::success($sizes);
+        $cacheKey = 'product:colors:' . $request->product_id . ':' . $request->size_id;
+        
+        return Cache::remember($cacheKey, 60, function () use ($request) {
+            $sizes = $this->productService->getColorByProductIdAndSize($request);
+            return BaseResponse::success($sizes);
+        });
     }
 
     public function getSizeByProductIdAndColor(Request $request): JsonResponse
     {
-        $sizes = $this->productService->getSizeByProductIdAndColor($request);
-        return BaseResponse::success($sizes);
+        $cacheKey = 'product:sizes:' . $request->product_id . ':' . $request->color_id;
+        
+        return Cache::remember($cacheKey, 60, function () use ($request) {
+            $sizes = $this->productService->getSizeByProductIdAndColor($request);
+            return BaseResponse::success($sizes);
+        });
     }
 
     public function getTopDiscountedProducts(Request $request): JsonResponse
     {
-        $sizes = $this->productService->getTopDiscountedProducts($request);
-        return BaseResponse::success($sizes);
+        $cacheKey = 'products:top:discounted';
+        
+        return Cache::remember($cacheKey, 60, function () use ($request) {
+            $products = $this->productService->getTopDiscountedProducts($request);
+            return BaseResponse::success($products);
+        });
     }
 
     public function getTopNewestProducts(Request $request): JsonResponse
     {
-        $sizes = $this->productService->getTopNewestProducts($request);
-        return BaseResponse::success($sizes);
+        $cacheKey = 'products:top:newest';
+        
+        return Cache::remember($cacheKey, 60, function () use ($request) {
+            $products = $this->productService->getTopNewestProducts($request);
+            return BaseResponse::success($products);
+        });
     }
 
     public function getTopBestSellingProducts(Request $request): JsonResponse
     {
-        $sizes = $this->productService->getTopBestSellingProducts($request);
-        return BaseResponse::success($sizes);
+        $cacheKey = 'products:top:best-selling';
+        
+        return Cache::remember($cacheKey, 60, function () use ($request) {
+            $products = $this->productService->getTopBestSellingProducts($request);
+            return BaseResponse::success($products);
+        });
     }
 
     public function getRelatedProducts(Request $request): JsonResponse
     {
-        $sizes = $this->productService->getRelatedProducts($request);
-        return BaseResponse::success($sizes);
+        $cacheKey = 'products:related:' . $request->product_id;
+        
+        return Cache::remember($cacheKey, 60, function () use ($request) {
+            $products = $this->productService->getRelatedProducts($request);
+            return BaseResponse::success($products);
+        });
     }
 
-    public function getAllSizes(Request $request)
+    public function getAllSizes(Request $request): JsonResponse
     {
-        $sizes = $this->productService->getAllSizes($request);
-        return BaseResponse::success($sizes);
+        $cacheKey = 'sizes:all';
+        
+        return Cache::remember($cacheKey, 3600, function () {
+            $sizes = DB::table('sizes')->select('id', 'name')->get();
+            return BaseResponse::success($sizes);
+        });
     }
 
-    public function getAllColors(Request $request)
+    public function getAllColors(Request $request): JsonResponse
     {
-        $color = $this->productService->getAllColors($request);
-        return BaseResponse::success($color);
+        $cacheKey = 'colors:all';
+        
+        return Cache::remember($cacheKey, 3600, function () {
+            $colors = DB::table('colors')->select('id', 'name', 'code')->get();
+            return BaseResponse::success($colors);
+        });
     }
 
     public function getWishList(Request $request): JsonResponse

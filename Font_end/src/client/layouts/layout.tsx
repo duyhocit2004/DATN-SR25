@@ -55,25 +55,24 @@ const ClientLayout: React.FC = () => {
 
   return (
     <AuthProvider>
-      <div className="client-layout-container">
-        <Header />
+      <Layout className="min-h-screen flex flex-col">
+        <div className="fixed top-0 left-0 right-0 z-[1031]">
+          <Header />
+        </div>
         <Content
+          className="flex-1 mt-[64px]"
           style={{
-            margin: "64px 0px 0px 0px",
-            paddingBottom: "24px",
-            minHeight: "calc(100vh - 413px)",
+            padding: "24px 0",
           }}
         >
           <Breadcrumb style={{ margin: "16px 0" }}>
-          <Breadcrumb.Item>User</Breadcrumb.Item>
-          <Breadcrumb.Item>Bill</Breadcrumb.Item>
-        </Breadcrumb>
-          {/* <div className="content-page"> */}
+            {/* <Breadcrumb.Item>User</Breadcrumb.Item>
+            <Breadcrumb.Item>Bill</Breadcrumb.Item> */}
+          </Breadcrumb>
           <Outlet />
-          {/* </div> */}
         </Content>
         <Footer />
-      </div>
+      </Layout>
     </AuthProvider>
   );
 };

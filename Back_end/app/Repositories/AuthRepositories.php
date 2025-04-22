@@ -64,13 +64,19 @@ class AuthRepositories
             BaseResponse::failure('400', 'user not found', 'user.not.found', []);
         }
 
-        $user->update([
+        $updateData = [
             'name' => $request->input('name', $user->name),
             'phone_number' => $request->input('phoneNumber', $user->phone_number),
             'gender' => $request->input('gender', $user->gender),
             'image' => empty($imageLink) ? $user->image : $imageLink,
-            'password' => Hash::make($request->input('password', $user->password)),
-        ]);
+        ];
+
+        // Only update password if it's provided in the request
+        if ($request->has('newPassword')) {
+            $updateData['password'] = Hash::make($request->input('newPassword'));
+        }
+
+        $user->update($updateData);
 
         return $user;
     }
@@ -136,7 +142,7 @@ class AuthRepositories
         ->first();
 
         if (!$user) {
-            BaseResponse::failure('400', 'size not found', 'size.not.found', []);
+            return ['success' => false, 'message' => 'Email không tồn tại trong hệ thống'];
         }
 
         $newPassword = Str::random(8);
@@ -145,11 +151,15 @@ class AuthRepositories
             'password' => Hash::make($newPassword),
         ]);
         
-        Mail::send('forgotpassword', ['newPassword' => $newPassword], function ($message) use ($user) {
-            $message->to($user->email);
-            $message->subject('Mật khẩu mới của bạn');
-        });
-        return $newPassword;
+        try {
+            Mail::send('forgotpassword', ['newPassword' => $newPassword], function ($message) use ($user) {
+                $message->to($user->email);
+                $message->subject('Mật khẩu mới của bạn');
+            });
+            return ['success' => true, 'message' => 'Mật khẩu mới đã được gửi đến email của bạn'];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => 'Không thể gửi email. Vui lòng thử lại sau'];
+        }
     }
 
     public function changePassword($userId, $newPassword)

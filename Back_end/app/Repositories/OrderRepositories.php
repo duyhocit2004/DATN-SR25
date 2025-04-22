@@ -80,7 +80,7 @@ class OrderRepositories
             DB::beginTransaction();
 
             $order = Order::create([
-                'user_id' => $data['user_id'] ?? null,
+                'users_id' => $data['users_id'] ?? null,
                 'code' => 'Od' . Str::random(4),
                 'customer_name' => $data['customerName'],
                 'email' => $data['email'] ?? 'default@email.com',
@@ -89,7 +89,7 @@ class OrderRepositories
                 'receiver_phone_number' => $data['receiverPhoneNumber'] ?? null,
                 'receiver_address' => $data['receiverAddress'] ?? null,
                 'shipping_address' => $data['shippingAddress'],
-                'total_price' => $totalAmount, // Use calculated totalAmount
+                'total_price' => $totalAmount,
                 'voucher' => $data['voucher'] ?? null,
                 'voucher_price' => $voucherAmount,
                 'payment_method' => $data['paymentMethod'] ?? '',
@@ -97,6 +97,8 @@ class OrderRepositories
                 'note' => $data['note'] ?? null,
                 'status' => 'Unconfirmed',
                 'date' => now(),
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
 
             // Process order details

@@ -93,6 +93,9 @@ const adminOrderSlice = createSlice({
       state.pagination.page = action.payload.page;
       state.pagination.pageSize = action.payload.pageSize;
     },
+    setOrders: (state, action) => {
+      state.orders = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -112,5 +115,5 @@ const adminOrderSlice = createSlice({
   },
 });
 
-export const { setFilter, setPagination } = adminOrderSlice.actions;
+export const { setFilter, setPagination, setOrders } = adminOrderSlice.actions;
 export default adminOrderSlice;

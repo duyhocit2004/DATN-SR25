@@ -1,15 +1,15 @@
 import adminApi from "@/api/adminApi";
 import axiosClient from "@/configs/axiosClient";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchOrders, setPagination } from "@/store/reducers/adminOrderSlice";
+import { fetchOrders, setPagination, setOrders } from "@/store/reducers/adminOrderSlice";
 import { IOrder } from "@/types/interface";
 import { OrderStatusDataAdmin, PaymentMethodData, PaymentStatusData } from "@/utils/constantData";
 import { HttpCodeString } from "@/utils/constants";
 import { getColorOrderStatus, getLabelByValue } from "@/utils/functions";
-import { Button, message, Table, Tag } from "antd";
+import { Button, message, Table, Tag, Modal, Radio } from "antd";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const OrderTable = () => {
@@ -18,7 +18,11 @@ const OrderTable = () => {
   const { orders, pagination, totalElements, loading } = useAppSelector(
     (state) => state.adminOrder
   );
-  const [loadingRefund, setLoadingRefund] = useState<number | null>(null); // Trạng thái loading cho nút hoàn tiền
+  const [loadingRefund, setLoadingRefund] = useState<number | null>(null);
+  const [refundModalVisible, setRefundModalVisible] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [refundMethod, setRefundMethod] = useState('DIRECT');
+
   const columns: ColumnsType<IOrder> = [
     {
       title: "STT",
@@ -117,56 +121,36 @@ const OrderTable = () => {
       key: "note",
       minWidth: 250,
     },
-    // {
-    //   title: "Hành động",
-    //   key: "action",
-    //   minWidth: 150,
-    //   render: (record: IOrder) => {
-    //     console.log("Trạng thái đơn hàng:", record.status); // Kiểm tra trạng thái
-    //     return record.status === "Cancel" || record.status === "Cancel Confirm" ? (
-    //       <button
-    //         className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
-    //         onClick={() => handleDeleteOrder(record.id)}
-    //       >
-    //         Xóa
-    //       </button>
-    //     ) : null;Set fire. 
-    //   },
-    // }
     {
       title: "Hành động",
       key: "action",
-      minWidth: 150,
+      fixed: "right",
+      width: 150,
       render: (record: IOrder) => {
-        return (
-          <div className="flex gap-2">
-            {/* Nút Xóa
-            {(record.status === "Cancel" || record.status === "Cancel Confirm") && (
-              <button
-                className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
-                onClick={() => handleDeleteOrder(record.id)}
-              >
-                Xóa
-              </button>
-            )} */}
+        const canRefund = 
+          (record.status === "Cancel Confirm" || record.status === "Cancel") && 
+          record.paymentMethod === "ONLINE" &&
+          record.paymentStatus === "PAID" &&
+          !record.refundCompleted;
 
-            {/* Nút Hoàn Tiền */}
-            {record.paymentMethod === "ONLINE" &&
-              record.status === "Cancel" &&
-              record.paymentStatus === "PAID" && (
-                <Button
-                  type="primary"
-                  danger
-                  loading={loadingRefund === record.id} // Hiển thị trạng thái loading riêng cho từng đơn hàng
-                  onClick={() => handleRefund(record.id)}
-                >
-                  Hoàn Tiền
-                </Button>
-              )}
+        return (
+          <div className="flex gap-2 justify-center">
+            {canRefund ? (
+              <Button
+                type="primary"
+                danger
+                loading={loadingRefund === record.id}
+                onClick={() => handleRefund(record.id)}
+              >
+                Hoàn tiền
+              </Button>
+            ) : record.refundCompleted ? (
+              <Tag color="green">Đã hoàn tiền</Tag>
+            ) : null}
           </div>
         );
       },
-    }
+    },
   ];
 
   const showOrderDetail = (order: IOrder) => {
@@ -196,6 +180,83 @@ const OrderTable = () => {
     }
   };
 
+  const handleRefundConfirm = async () => {
+    if (!selectedOrderId) return;
+
+    try {
+      setLoadingRefund(selectedOrderId);
+      const response = await adminApi.refundOrder({ 
+        orderId: selectedOrderId,
+        refundMethod 
+      });
+      
+      if (response?.status === HttpCodeString.SUCCESS) {
+        // Đóng modal trước
+        setRefundModalVisible(false);
+        setSelectedOrderId(null);
+        setRefundMethod('DIRECT');
+        
+        // Cập nhật trạng thái đơn hàng trong danh sách
+        const updatedOrders = orders.map(order => {
+          if (order.id === selectedOrderId) {
+            return {
+              ...order,
+              refundCompleted: true,
+              payment_status: 'REFUNDED'
+            };
+          }
+          return order;
+        });
+        
+        // Cập nhật state orders
+        dispatch(setOrders(updatedOrders));
+        
+        const successMessage = refundMethod === 'DIRECT'
+          ? "Hoàn tiền thành công! Vui lòng kiểm tra VNPay để xác nhận giao dịch."
+          : "Đã gửi mã QR hoàn tiền qua email khách hàng! Vui lòng kiểm tra email.";
+        
+        message.success({
+          content: successMessage,
+          duration: 5,
+          style: {
+            marginTop: '15vh',
+          },
+        });
+      } else {
+        const errorMessage = refundMethod === 'DIRECT'
+          ? "Hoàn tiền qua VNPay thất bại! Vui lòng thử lại sau."
+          : "Gửi mã QR hoàn tiền thất bại! Vui lòng thử lại sau.";
+          
+        message.error({
+          content: errorMessage,
+          duration: 5,
+          style: {
+            marginTop: '15vh',
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Lỗi khi hoàn tiền:", error);
+      const errorMessage = refundMethod === 'DIRECT'
+        ? "Đã xảy ra lỗi khi hoàn tiền qua VNPay! Vui lòng thử lại sau."
+        : "Đã xảy ra lỗi khi gửi mã QR hoàn tiền! Vui lòng thử lại sau.";
+        
+      message.error({
+        content: errorMessage,
+        duration: 5,
+        style: {
+          marginTop: '15vh',
+        },
+      });
+    } finally {
+      setLoadingRefund(null);
+    }
+  };
+
+  const handleRefund = (orderId: number) => {
+    setSelectedOrderId(orderId);
+    setRefundModalVisible(true);
+  };
 
   const handlePagingChange = (page: number, size: number) => {
     dispatch(
@@ -207,54 +268,65 @@ const OrderTable = () => {
     dispatch(fetchOrders());
   };
 
-
-  const handleRefund = async (orderId: number) => {
-    console.log("Gọi hàm handleRefund với orderId:", orderId); // Kiểm tra
-    try {
-      setLoadingRefund(orderId);
-      const response = await adminApi.refundOrder({ orderId });
-      console.log("Phản hồi từ API refundOrder:", response); // Kiểm tra phản hồi
-      if (response?.success) {
-        message.success("Hoàn tiền thành công!");
-        dispatch(fetchOrders());
-      } else {
-        message.error(response?.message || "Hoàn tiền thất bại!");
-      }
-    } catch (error) {
-      console.error("Lỗi khi hoàn tiền:", error);
-      message.error("Đã xảy ra lỗi khi hoàn tiền!");
-    } finally {
-      setLoadingRefund(null);
-    }
-  };
+  // Thêm useEffect để theo dõi thay đổi của orders
+  useEffect(() => {
+    // Cập nhật lại giao diện khi orders thay đổi
+    console.log('Orders updated:', orders);
+  }, [orders]);
   
   return (
-    <Table<IOrder>
-      columns={columns}
-      rowKey={(record) => record.id}
-      dataSource={orders}
-      pagination={{
-        pageSize: pagination?.pageSize,
-        current: pagination?.page,
-        showSizeChanger: true,
-        total: totalElements,
-        pageSizeOptions: [5, 10, 15, 20],
-        showTotal(total, range) {
-          return "Tổng: " + total;
-        },
-        onChange: handlePagingChange,
-      }}
-      // onRow={(record) => {
-      //   return {
-      //     onClick: () => {
-      //       onRowClick(record);
-      //     }, // click row
-      //   };
-      // }}
-      tableLayout="auto"
-      loading={loading}
-      scroll={{ x: "100%", y: "calc(100vh - 408px)" }}
-    />
+    <>
+      <Table<IOrder>
+        columns={columns}
+        rowKey={(record) => record.id}
+        dataSource={orders}
+        pagination={{
+          pageSize: pagination?.pageSize,
+          current: pagination?.page,
+          showSizeChanger: true,
+          total: totalElements,
+          pageSizeOptions: [5, 10, 15, 20],
+          showTotal(total, range) {
+            return "Tổng: " + total;
+          },
+          onChange: handlePagingChange,
+        }}
+        tableLayout="auto"
+        loading={loading}
+        scroll={{ x: "100%", y: "calc(100vh - 408px)" }}
+      />
+      
+      <Modal
+        title="Chọn phương thức hoàn tiền"
+        open={refundModalVisible}
+        onOk={handleRefundConfirm}
+        onCancel={() => {
+          setRefundModalVisible(false);
+          setSelectedOrderId(null);
+          setRefundMethod('DIRECT');
+        }}
+        okText="Xác nhận"
+        cancelText="Hủy"
+        confirmLoading={loadingRefund !== null}
+        maskClosable={false}
+        closable={!loadingRefund}
+        keyboard={!loadingRefund}
+      >
+        <Radio.Group
+          onChange={(e) => setRefundMethod(e.target.value)}
+          value={refundMethod}
+          className="flex flex-col gap-4"
+          disabled={loadingRefund !== null}
+        >
+          <Radio value="DIRECT" className="text-gray-700">
+            Hoàn tiền trực tiếp qua VNPay
+          </Radio>
+          <Radio value="QR_CODE" className="text-gray-700">
+            Gửi mã QR để hoàn tiền
+          </Radio>
+        </Radio.Group>
+      </Modal>
+    </>
   );
 };
 export default OrderTable;

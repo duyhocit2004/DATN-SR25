@@ -152,6 +152,15 @@ class AdminApi extends BaseApi<{ data: any }> {
       .post(`${this.uri}/orders/updateOrder`, payload)
       .then((res) => res.data);
   };
+  refundOrder = (payload: { orderId: number }): Promise<IResponseData<IOrder>> => {
+    return axiosClient
+      .post(`${this.uri}/orders/refundOrder`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`, 
+        },
+      })
+      .then((res) => res.data);
+  };
   getReviewDetail = (payload: any): Promise<IResponseData<IReview[]>> => {
     return axiosClient
       .post(`${this.uri}/getCommentWithReply`, payload)
@@ -179,6 +188,7 @@ class AdminApi extends BaseApi<{ data: any }> {
       .post(`${this.uri}/orders/deleteOrder`, payload)
       .then((res) => res.data);
   };
+
   deleteCategory = (payload: any): Promise<IResponseData<ICategory>> => {
     return axiosClient
       .post(`${this.uri}/categories/deleteCategory`, payload)
@@ -215,7 +225,7 @@ class AdminApi extends BaseApi<{ data: any }> {
   };
   updateUser = (payload: any): Promise<IResponseData<IAccount>> => {
     return axiosClient
-      .post(`${this.uri}/users/updateUserAdmin`, payload, {
+      .post(`${this.uri}/users/updateUser`, payload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

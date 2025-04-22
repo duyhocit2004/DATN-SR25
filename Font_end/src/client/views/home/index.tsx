@@ -5,7 +5,10 @@ import imgSupport2 from "../../../../public/images/home/support-2.png";
 import imgSupport3 from "../../../../public/images/home/support-3.png";
 import imgSupport4 from "../../../../public/images/home/support-4.png";
 import imgBlog from "../../../../public/images/blog/home/post-1.jpg";
-import imgBrand from "../../../../public/images/brands/brand1.png";
+import imgBrand1 from "../../../../public/images/brands/brand1.png";
+import imgBrand2 from "../../../../public/images/brands/brand2.png";
+import imgBrand3 from "../../../../public/images/brands/brand3.png";
+import imgBrand4 from "../../../../public/images/brands/brand4.png";
 import ProductItem from "@/client/components/ProductItem";
 import {
   IAllBanner,
@@ -21,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 import "./index.scss";
 
 
-const brands = [imgBrand, imgBrand, imgBrand, imgBrand];
+const brands = [imgBrand1, imgBrand2, imgBrand3, imgBrand4];
 
 const Home = () => {
   const navigate = useNavigate();
