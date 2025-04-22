@@ -79,6 +79,7 @@ Route::get('/vnpay/return', [VNPayController::class, 'returnPayment']);
 
 Route::post('/momo/createAtm',[MoMoController::class,'createPaymentUrlMoMoATM']);
 Route::post('/momo/createPay',[MoMoController::class,'createPaymentUrlPayMoMo']);
+Route::get('/momo/return',[MoMoController::class,'handleReturnMoMo']);
 
 //các api cần authen
 Route::middleware('jwt.auth')->group(function () {
