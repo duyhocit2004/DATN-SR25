@@ -266,6 +266,7 @@ export interface IProductOrder {
   quantitySold: number | null;
   discount: number | null;
   orderId: number;
+  productId: number;
 }
 export interface IResponseOrder {
   order: IOrder;

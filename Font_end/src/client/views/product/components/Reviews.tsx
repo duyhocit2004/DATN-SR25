@@ -35,12 +35,11 @@ interface ReplyFormData {
 const Reviews: React.FC = () => {
   const [formReview] = Form.useForm();
   const [formReply] = Form.useForm();
-  const { token } = useAuth();
-  // Lấy productId từ URL params
+  const { token, user } = useAuth();
   const { productId } = useParams<{ productId: string }>();
 
   const [reviews, setReviews] = useState<IReview[]>([]);
-  const [repliedComment, setRepliedComment] = useState<number | null>(null); // Lưu ID của comment được trả lời
+  const [repliedComment, setRepliedComment] = useState<number | null>(null);
   const [reviewFormData, setReviewFormData] = useState<ReviewFormData>({
     newContent: "",
     newRate: 0,
@@ -54,6 +53,18 @@ const Reviews: React.FC = () => {
   const [loadingList, setLoadingList] = useState(false);
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [loadingReply, setLoadingReply] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(false);
+
+  // Check if user has already reviewed this product
+  useEffect(() => {
+    if (productId && (user?.phoneNumber || reviewFormData.phoneNumber)) {
+      const phoneNumber = user?.phoneNumber || reviewFormData.phoneNumber;
+      const hasUserReviewed = reviews.some(
+        (review) => review.phoneNumber === phoneNumber
+      );
+      setHasReviewed(hasUserReviewed);
+    }
+  }, [reviews, user, reviewFormData.phoneNumber, productId]);
 
   // Gọi API để lấy reviews khi productId thay đổi
   useEffect(() => {
@@ -100,7 +111,7 @@ const Reviews: React.FC = () => {
         productId,
         content: reviewFormData.newContent,
         rate: reviewFormData.newRate,
-        phoneNumber: reviewFormData.phoneNumber,
+        phoneNumber: user ? user.phoneNumber : reviewFormData.phoneNumber,
       });
       if (response.status === HttpCodeString.SUCCESS) {
         showToast({
@@ -115,6 +126,7 @@ const Reviews: React.FC = () => {
         });
         formReview.resetFields();
         getReviews();
+        setHasReviewed(true);
       } else {
         showToast({
           content: "Bạn chỉ có thể đánh giá khi mua sản phẩm !",
@@ -357,74 +369,88 @@ const Reviews: React.FC = () => {
           {/* Form Submit Đánh Giá */}
           <Card>
             <h3 className="text-xl font-semibold mb-4">
-              Để lại đánh giá của bạn
+              {hasReviewed ? "Bạn đã đánh giá sản phẩm này" : "Để lại đánh giá của bạn"}
             </h3>
-            <Form form={formReview}>
-              <Form.Item
-                name="newRate"
-                rules={[
-                  {
-                    required: true,
-                    message: "Rate không được trống",
-                  },
-                ]}
-              >
-                <Rate
-                  value={reviewFormData.newRate}
-                  onChange={(value) => {
-                    onChangeReviewFormData("newRate", value);
-                  }}
-                />
-              </Form.Item>
-              <Form.Item
-                name="phoneNumber"
-                rules={[
-                  {
-                    required: true,
-                    message: "Số điện thoại không được trống",
-                  },
-                  {
-                    pattern: /^(0[3|5|7|8|9])([0-9]{8})$/,
-                    message: "Số điện thoại không hợp lệ!",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Nhập số điện thoại"
-                  value={reviewFormData.phoneNumber}
-                  onChange={(e) => {
-                    onChangeReviewFormData("phoneNumber", e.target.value);
-                  }}
-                  onBlur={(e) => {
-                    onBlurReviewFormData("phoneNumber", e.target.value);
-                  }}
-                />
-              </Form.Item>
-              <Form.Item name="newContent">
-                <Input.TextArea
-                  rows={4}
-                  maxLength={500}
-                  placeholder="Chia sẻ cảm nhận của bạn về sản phẩm"
-                  value={reviewFormData.newContent}
-                  onChange={(e) => {
-                    onChangeReviewFormData("newContent", e.target.value);
-                  }}
-                  onBlur={(e) => {
-                    onBlurReviewFormData("newContent", e.target.value);
-                  }}
-                />
-              </Form.Item>
-              <Form.Item>
+            {!hasReviewed ? (
+              <Form form={formReview}>
+                <Form.Item
+                  name="newRate"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Rate không được trống",
+                    },
+                  ]}
+                >
+                  <Rate
+                    value={reviewFormData.newRate}
+                    onChange={(value) => {
+                      onChangeReviewFormData("newRate", value);
+                    }}
+                  />
+                </Form.Item>
+                {!user && (
+                  <Form.Item
+                    name="phoneNumber"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Số điện thoại không được trống",
+                      },
+                      {
+                        pattern: /^(0[3|5|7|8|9])([0-9]{8})$/,
+                        message: "Số điện thoại không hợp lệ!",
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder="Nhập số điện thoại"
+                      value={reviewFormData.phoneNumber}
+                      onChange={(e) => {
+                        onChangeReviewFormData("phoneNumber", e.target.value);
+                      }}
+                      onBlur={(e) => {
+                        onBlurReviewFormData("phoneNumber", e.target.value);
+                      }}
+                    />
+                  </Form.Item>
+                )}
+                <Form.Item
+                  name="newContent"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Nội dung không được trống",
+                    },
+                  ]}
+                >
+                  <Input.TextArea
+                    placeholder="Nhập nội dung đánh giá"
+                    value={reviewFormData.newContent}
+                    onChange={(e) => {
+                      onChangeReviewFormData("newContent", e.target.value);
+                    }}
+                    onBlur={(e) => {
+                      onBlurReviewFormData("newContent", e.target.value);
+                    }}
+                  />
+                </Form.Item>
                 <Button
-                  color={"purple"}
-                  variant="solid"
-                  loading={loadingCreate}
+                  type="primary"
                   onClick={handleSubmitReview}
+                  loading={loadingCreate}
                 >
                   Gửi đánh giá
                 </Button>
-              </Form.Item>
-            </Form>
+              </Form>
+            ) : (
+              <div className="text-center p-4">
+                <p className="text-gray-600">Cảm ơn bạn đã mua hàng và để lại đánh giá sản phẩm để chúng tôi có thể đưa ra trải nghiệm tốt hơn cho bạn !</p>
+                {/* <p className="text-sm text-gray-500 mt-2">
+                  Bạn cần mua sản phẩm mới để có thể đánh giá lại
+                </p> */}
+              </div>
+            )}
           </Card>
         </Col>
       </Row>

@@ -79,6 +79,7 @@ class OrderService implements IOrderService
                         return [
                             'id' => $product->id,
                             'orderId' => $product->order_id,
+                            'product_id' => $product->product_id,
                             'name' => $product->name,
                             'image' => $product->image,
                             'priceRegular' => $product->price_regular,
@@ -125,6 +126,7 @@ class OrderService implements IOrderService
                         return [
                             'id' => $product->id,
                             'orderId' => $product->order_id,
+                            'product_id' => $product->product_id,
                             'name' => $product->name,
                             'image' => $product->image,
                             'priceRegular' => $product->price_regular,

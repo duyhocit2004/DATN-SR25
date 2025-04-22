@@ -33,7 +33,7 @@ class ProductController extends Controller
 
     public function getProduct(Request $request): JsonResponse
     {
-        $cacheKey = 'product:' . $request->id;
+        $cacheKey = 'product:' . $request->input('productId');
         
         return Cache::remember($cacheKey, 60, function () use ($request) {
             $products = $this->productService->getProduct($request);
