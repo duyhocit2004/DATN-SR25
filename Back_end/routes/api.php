@@ -11,6 +11,8 @@ use App\Http\Controllers\Common\CommonController;
 use App\Http\Controllers\VNPayController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Client\PasswordResetController;
+use App\Http\Controllers\MoMoController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -75,7 +77,9 @@ Route::prefix('orders')->group(function () {
 Route::post('/vnpay/create', [VNPayController::class, 'createPayment']);
 Route::get('/vnpay/return', [VNPayController::class, 'returnPayment']);
 
-
+Route::post('/momo/createAtm',[MoMoController::class,'createPaymentUrlMoMoATM']);
+Route::post('/momo/createPay',[MoMoController::class,'createPaymentUrlPayMoMo']);
+Route::get('/momo/return',[MoMoController::class,'handleReturnMoMo']);
 
 //các api cần authen
 Route::middleware('jwt.auth')->group(function () {

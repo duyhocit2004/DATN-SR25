@@ -32,7 +32,8 @@ class Comment extends Model
 	protected $casts = [
 		'parent_id' => 'int',
 		'product_id' => 'int',
-		'rate' => 'float'
+		'rate' => 'float',
+		'order_id' => 'int'
 	];
 
 	protected $fillable = [
@@ -40,7 +41,8 @@ class Comment extends Model
 		'product_id',
 		'content',
 		'rate',
-		'phone_number'
+		'phone_number',
+		'order_id',
 		// 'created_at' => 'datetime',
 		// 'updated_at' => 'datetime'
 		// 'created_at' => 'datetime:Y-m-d H:i:s',
@@ -80,5 +82,10 @@ class Comment extends Model
     public function children()
     {
         return $this->hasMany(Comment::class, 'parent_id');  // 'parent_id' là cột tham chiếu đến id của category cha
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
     }
 }

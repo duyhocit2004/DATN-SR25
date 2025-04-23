@@ -63,42 +63,50 @@ class CommentRepositories
     public function addComment(Request $request)
     {
         $productId = $request->input('productId');
-        $orderExists = Order::where('phone_number', $request->input('phoneNumber'))
+        $phoneNumber = $request->input('phoneNumber');
+        
+        // Check if user has already reviewed this product
+        $existingReview = Comment::where('phone_number', $phoneNumber)
+            ->where('product_id', $productId)
+            ->first();
+
+        if ($existingReview) {
+            return BaseResponse::failure("400", "Sản phẩm này đã được bạn đánh giá", "already.reviewed", []);
+        }
+
+        // Find the most recent order for this phone number that contains this product
+        $order = Order::where('phone_number', $phoneNumber)
             ->whereHas('order_details', function ($query) use ($productId) {
                 $query->where('product_id', $productId);
             })
-            ->exists();
+            ->orderBy('created_at', 'desc')
+            ->first();
 
-        $comment = Comment::query()->where('phone_number', '=', $request->input('phoneNumber'))->where('product_id', '=', $productId)->get();
-
-        if(!isEmpty($comment)){
-            BaseResponse::failure("400", "You cannot rate a product twice", "cannot.rate.a.product.twice", []);
+        if (!$order) {
+            return BaseResponse::failure("400", "Cảm ơn bạn đã mua sản phẩm này", "order.not.found", []);
         }
 
-        if($orderExists){
-            $comment = Comment::create([
-                'parent_id' => $request->input('parentId'),
-                'product_id' => $request->input('productId'),
-                'content' => $request->input('content'),
-                'rate' => $request->input('rate'),
-                'phone_number' => $request->input('phoneNumber'),
-            ]);
+        // Create the review
+        $comment = Comment::create([
+            'parent_id' => $request->input('parentId'),
+            'product_id' => $productId,
+            'content' => $request->input('content'),
+            'rate' => $request->input('rate'),
+            'phone_number' => $phoneNumber,
+            'order_id' => $order->id,
+        ]);
 
-            $averageRate = DB::table('comment')
-                ->where('product_id', $request->input('productId'),)
-                ->avg('rate');
+        // Update product average rating
+        $averageRate = DB::table('comment')
+            ->where('product_id', $productId)
+            ->avg('rate');
 
-            if ($averageRate !== null) {
-                DB::table('products')
-                    ->where('id', $request->input('productId'),)
-                    ->update(['rate' => $averageRate]);
-
-                return response()->json(['message' => 'Rate updated successfully', 'product_id' => $request->input('productId'), 'avg_rate' => $averageRate]);
-            }
-
-            return $comment;
-        }else{
-            BaseResponse::failure("400", "order.not.found", "order.not.found", []);
+        if ($averageRate !== null) {
+            DB::table('products')
+                ->where('id', $productId)
+                ->update(['rate' => $averageRate]);
         }
+
+        return $comment;
     }
 }

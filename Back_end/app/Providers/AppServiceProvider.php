@@ -4,26 +4,28 @@ namespace App\Providers;
 
 // use App\Repositories\SizeRepositories;
 // use App\Services\Size\SizeService;
-use App\Services\Admin\IAdminService;
-use App\Services\Admin\impl\AdminService;
-use App\Services\Admin\product\IAdminProductService;
-use App\Services\Admin\product\impl\AdminProductService;
 use App\Services\Auth\IAuthService;
+use App\Services\MoMo\IMoMoService;
+use Illuminate\Pagination\Paginator;
+use App\Services\Admin\IAdminService;
+use App\Services\VnPay\IVnpayService;
 use App\Services\Auth\impl\AuthService;
+use App\Services\Common\ICommonService;
+use App\Services\MoMo\impl\MoMoService;
+use Illuminate\Support\ServiceProvider;
+use App\Services\Admin\impl\AdminService;
+use App\Services\VnPay\impl\VnpayService;
 use App\Services\Client\cart\ICartService;
-use App\Services\Client\cart\impl\CartService;
-use App\Services\Client\order\impl\OrderService;
+use App\Services\Common\impl\CommonService;
 use App\Services\Client\order\IOrderService;
 use App\Services\Client\product\IHomeService;
-use App\Services\Client\product\impl\HomeService;
-use App\Services\Client\product\impl\ProductService;
+use App\Services\Client\cart\impl\CartService;
+use App\Services\Client\order\impl\OrderService;
 use App\Services\Client\product\IProductService;
-use App\Services\Common\ICommonService;
-use App\Services\Common\impl\CommonService;
-use App\Services\VnPay\impl\VnpayService;
-use App\Services\VnPay\IVnpayService;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\ServiceProvider;
+use App\Services\Client\product\impl\HomeService;
+use App\Services\Admin\product\IAdminProductService;
+use App\Services\Client\product\impl\ProductService;
+use App\Services\Admin\product\impl\AdminProductService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -41,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IOrderService::class, OrderService::class);
         $this->app->bind(IAdminService::class, AdminService::class);
         $this->app->bind(IVnpayService::class, VnpayService::class);
-
+        $this->app->bind(IMoMoService::class, MoMoService::class);
         //Admin
         $this->app->bind(IAdminProductService::class, AdminProductService::class);
     }

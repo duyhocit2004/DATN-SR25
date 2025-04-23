@@ -14,17 +14,22 @@ class OrderController extends Controller
 {
     public IOrderService $orderService;
     public IVnpayService $vnpayService;
+    public IMoMoService $moMoService;
+
     public IRefundService $refundService;
     public IMomoService $momoService;
 
     public function __construct(
         IOrderService $orderService,
         IVnpayService $vnpayService,
+
         IRefundService $refundService,
         IMomoService $momoService
+
     ) {
         $this->orderService = $orderService;
         $this->vnpayService = $vnpayService;
+        $this->moMoService = $moMoService;
         $this->refundService = $refundService;
         $this->momoService = $momoService;
     }

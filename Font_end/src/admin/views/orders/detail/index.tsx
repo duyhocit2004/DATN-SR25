@@ -178,18 +178,18 @@ const OrderDetail: React.FC = () => {
       value === OrderStatus.DELIVERED
     )) {
       data[key] = value;
+      
+      // Nếu trạng thái là "DELIVERED" và phương thức thanh toán là COD, tự động cập nhật trạng thái thanh toán
+      if (value === OrderStatus.DELIVERED && data.paymentMethod === PaymentMethod.COD) {
+        data.paymentStatus = PaymentStatus.PAID;
+      }
+      
       setOrder(data);
-      return; // Không cho phép thay đổi trạng thái khác
+      return;
     }
   
     // Cập nhật trạng thái khác
     data[key] = value;
-  
-    // Nếu trạng thái là "DELIVERED" và phương thức thanh toán là COD, tự động cập nhật trạng thái thanh toán
-    if (data.paymentMethod === PaymentMethod.COD && key === "status" && value === OrderStatus.DELIVERED) {
-      data.paymentStatus = PaymentStatus.PAID;
-    }
-  
     setOrder(data);
   };
 
