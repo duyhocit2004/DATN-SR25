@@ -43,11 +43,8 @@ class ProductService implements IProductService
 
     public function getAllProductWithImages(Request $request)
     {
-<<<<<<< HEAD
         $products = $this->productRepositories->getAllProductWithImages($request);
-=======
-        $products = $this->productRepositories->getAllproductWithImages($request);
->>>>>>> db54c947f76814d317e1a7d354df5d5a3543cc1b
+
         $list = $products->getCollection()->map(function ($product) {
             return [
                 'id' => $product->id,
@@ -55,10 +52,6 @@ class ProductService implements IProductService
                 'categoriesName' => $product->category ? $product->category->name : null,
                 'name' => $product->name,
                 "image" => $product->image,
-<<<<<<< HEAD
-=======
-                'listImage' => $product->image_products->isEmpty() ? [] : $product->image_products->pluck('image_link'),
->>>>>>> db54c947f76814d317e1a7d354df5d5a3543cc1b
                 'priceRegular' => $product->price_regular,
                 'priceSale' => $product->price_sale,
                 'description' => $product->description,
@@ -87,12 +80,16 @@ class ProductService implements IProductService
         ]);
 
         if ($validate->fails()) {
-            BaseResponse::failure(400, '', $validate->errors()->first(), []);
+            return BaseResponse::failure(400, '', $validate->errors()->first(), []);
         }
 
         \Log::info('Product ID received:', ['productId' => $request->input('productId')]);
         $getProductResult = $this->productRepositories->getProduct($request->input('productId'));
         \Log::info('Product result:', ['result' => $getProductResult]);
+
+        if (!$getProductResult) {
+            return BaseResponse::failure(400, '', 'product.not.found', []);
+        }
 
         return $getProductResult;
     }

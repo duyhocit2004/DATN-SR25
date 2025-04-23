@@ -14,10 +14,9 @@ class MoMoController extends Controller
         $this->moMoService = $moMoService;
     }
 
-    public function createPaymentUrlMoMoATM(Request $request)
+    public function createPaymentUrlMoMoATM($orderCode, $amount)
     {
-        $orderCode = $request->input('orderCode');
-        $amount = $request->input('amount');
+    
         $paymentUrl = $this->moMoService->createPaymentUrlMoMoATM($orderCode, $amount);
         return BaseResponse::success(['url' => $paymentUrl]);
     }
