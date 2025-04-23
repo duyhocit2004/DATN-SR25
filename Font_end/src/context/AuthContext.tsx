@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { cloneDeep } from "lodash";
+import adminApi from "@/api/adminApi";
+import { HttpCodeString } from "@/utils/constants";
 
 interface User {
   id: number;
@@ -17,6 +19,7 @@ interface AuthContextType {
   user: User | null;
   login: (token: string) => void;
   logout: () => void;
+  refreshUserInfo: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,10 +30,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
   const [user, setUser] = useState<User | null>(null);
 
+  const fetchUserInfo = async (email: string) => {
+    try {
+      const response = await adminApi.getUserByEmail({ email });
+      if (response?.status === HttpCodeString.SUCCESS) {
+        const userData = response.data;
+        setUser({
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          phoneNumber: userData.phoneNumber,
+          role: userData.role,
+          gender: userData.gender,
+          userImage: userData.userImage,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
+  };
+
+  const refreshUserInfo = async () => {
+    if (user?.email) {
+      await fetchUserInfo(user.email);
+    }
+  };
+
   useEffect(() => {
     if (token) {
       try {
         const decoded: any = jwtDecode(token);
+        // Set basic user info from token
         setUser({
           id: decoded.id,
           name: decoded.name,
@@ -41,7 +71,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           userImage: decoded.userImage,
         });
 
-        // Tính thời gian hết hạn token
+        // Fetch complete user info
+        fetchUserInfo(decoded.email);
+
+        // Set token expiration
         const expiresIn = decoded.exp * 1000 - Date.now();
         setTimeout(() => {
           logout();
@@ -53,27 +86,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [token]);
 
-  // Hàm đăng nhập
   const login = (newToken: string) => {
     localStorage.setItem("access_token", newToken);
     setToken(newToken);
   };
 
-  // Hàm đăng xuất
   const logout = () => {
     const userData = cloneDeep(user);
     localStorage.removeItem("access_token");
     setToken(null);
     setUser(null);
     if (userData?.role === "admin") {
-      window.location.href = "/"; // Chuyển về trang login
+      window.location.href = "/";
     } else {
-      window.location.href = "/login"; // Chuyển về trang login
+      window.location.href = "/login";
     }
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={{ token, user, login, logout, refreshUserInfo }}>
       {children}
     </AuthContext.Provider>
   );

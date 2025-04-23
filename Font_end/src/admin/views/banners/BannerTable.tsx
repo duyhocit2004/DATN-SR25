@@ -67,15 +67,14 @@ const BannerTable: React.FC = () => {
   
     {
       title: "Liên kết",
-      dataIndex: "productId", 
-      key: "productId",     
+      dataIndex: "link", 
+      key: "link",     
       minWidth: 200,
-      render: (productId: number | null) => {
-        if (!productId) return <span>Không có</span>;
-        const productLink = `/products/${productId}`;
+      render: (link: string | null, record: IBanner) => {
+        if (!link) return <span>Không có</span>;
         return (
-          <a href={productLink} target="_blank" rel="noopener noreferrer">
-            Đi đến sản phẩm
+          <a href={link} target="_blank" rel="noopener noreferrer">
+            {link}
           </a>
         );
       },

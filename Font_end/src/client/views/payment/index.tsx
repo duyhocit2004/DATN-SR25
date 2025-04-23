@@ -153,14 +153,31 @@ const Payment = () => {
 
   // Initialize form with user info and default payment method
   useEffect(() => {
+    console.log("Current user:", user);
     if (user) {
+      console.log("User details:", {
+        name: user.name,
+        phone: user.phoneNumber,
+        email: user.email?.trim(),
+      });
+      
+      // Set form values with default empty string for undefined values
       form.setFieldsValue({
-        customerName: user.name,
-        phoneNumber: user.phoneNumber,
-        email: user.email,
+        customerName: user.name || '',
+        phoneNumber: user.phoneNumber || '',
+        email: user.email?.trim() || '',
         paymentMethod: PaymentMethod.COD,
         onlinePaymentMethod: "VNPAY"
       });
+
+      // If phone number is undefined, show a message to the user
+      if (!user.phoneNumber) {
+        showToast({
+          content: "Vui lòng cập nhật số điện thoại của bạn",
+          duration: 5,
+          type: "warning",
+        });
+      }
     }
   }, [user, form]);
 
@@ -411,15 +428,28 @@ const Payment = () => {
   const handlePayment = async () => {
     try {
       const values = await form.validateFields();
-      
+
       const selectedProducts = cartList
         .filter((item) => selectedItems.includes(item.id || `${item.productId}-${item.size}-${item.color}`))
         .map((item) => ({
-          productId: item.productId,
+          productId: item.product?.id,
           quantity: item.quantity,
           size: item.size,
           color: item.color,
+          name: item.product?.name,
+          image: item.product?.image,
+          priceRegular: item.product?.priceRegular,
+          priceSale: item.product?.priceSale
         }));
+
+      if (selectedProducts.length === 0) {
+        showToast({
+          content: "Vui lòng chọn sản phẩm để thanh toán!",
+          duration: 5,
+          type: "error",
+        });
+        return;
+      }
 
       const city = cities.find((c) => c.code === form.getFieldValue("city"));
       const district = districts.find((d) => d.code === form.getFieldValue("district"));
@@ -433,7 +463,7 @@ const Payment = () => {
         ? `${form.getFieldValue("receiverStreet")}, ${receiverWard?.name || ""}, ${receiverDistrict?.name || ""}, ${receiverCity?.name || ""}`
         : undefined;
 
-      const payload: IOrder = {
+      const payload = {
         users_id: user?.id || null,
         customerName: form.getFieldValue("customerName"),
         email: form.getFieldValue("email"),
@@ -450,6 +480,8 @@ const Payment = () => {
         paymentMethod: paymentMethod,
         onlinePaymentMethod: paymentMethod === PaymentMethod.ONLINE ? onlinePaymentMethod : undefined,
       };
+
+      console.log("Payload gửi lên:", payload);
 
       setLoading(true);
       const response = await orderApi.addOrder(payload);
@@ -476,34 +508,9 @@ const Payment = () => {
           });
           navigate("/order-history");
         }
-      } else if (response?.status === 500) {
-        // Handle payment service errors
-        const errorMessage = response.message || "Dịch vụ thanh toán hiện không khả dụng. Vui lòng chọn phương thức thanh toán khác!";
-        showToast({
-          content: `${errorMessage} (${response?.messageKey || 'unknown'})`,
-          duration: 5,
-          type: "error",
-        });
-        
-        if (response?.messageKey === 'payment.error') {
-          // Reset payment method to COD if online payment fails
-          if (paymentMethod === PaymentMethod.ONLINE) {
-            setPaymentMethod(PaymentMethod.COD);
-            setOnlinePaymentMethod("VNPAY"); // Reset to default online payment method
-            form.setFieldsValue({
-              paymentMethod: PaymentMethod.COD,
-              onlinePaymentMethod: undefined
-            });
-            showToast({
-              content: "Đã chuyển sang phương thức thanh toán COD do lỗi thanh toán online",
-              duration: 5,
-              type: "info",
-            });
-          }
-        }
       } else {
         showToast({
-          content: "Đặt hàng thất bại! Vui lòng thử lại sau.",
+          content: response?.message || "Đặt hàng thất bại! Vui lòng thử lại.",
           duration: 5,
           type: "error",
         });
@@ -569,13 +576,15 @@ const Payment = () => {
                   { required: true, message: "Vui lòng nhập số điện thoại!" },
                   {
                     pattern: /^(0[3|5|7|8|9])([0-9]{8})$/,
-                    message: "Số điện thoại không hợp lệ!",
+                    message: "Số điện thoại không hợp lệ! Vui lòng nhập số điện thoại bắt đầu bằng 03, 05, 07, 08, 09 và có 10 số.",
                   },
                 ]}
+                help={!user?.phoneNumber ? "Vui lòng cập nhật số điện thoại của bạn trong thông tin cá nhân" : undefined}
               >
                 <Input
                   placeholder="Nhập số điện thoại"
                   className="rounded-lg border-gray-300 focus:border-blue-500"
+                  maxLength={10}
                 />
               </Form.Item>
               <Form.Item

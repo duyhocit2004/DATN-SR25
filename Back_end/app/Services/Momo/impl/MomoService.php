@@ -1,175 +1,172 @@
 <?php
 
-namespace App\Services\Momo\impl;
+namespace App\Services\MoMo\impl;
 
-use App\Repositories\OrderRepositories;
-use App\Services\Momo\IMomoService;
 use Illuminate\Http\Request;
-use GuzzleHttp\Client;
+use App\Services\MoMo\IMoMoService;
 use Illuminate\Support\Facades\Log;
+use App\Repositories\OrderRepositories;
 
-class MomoService implements IMomoService
+class MoMoService implements IMoMoService
 {
-    private OrderRepositories $orderRepositories;
-
+    public OrderRepositories $orderRepositories;
     public function __construct(OrderRepositories $orderRepositories)
     {
         $this->orderRepositories = $orderRepositories;
     }
-
-    public function createPaymentUrl($orderCode, $amount)
+    public function execPostRequest($url, $data)
     {
-        try {
-            $endpoint = config('momo.endpoint');
-            $partnerCode = config('momo.partner_code');
-            $accessKey = config('momo.access_key');
-            $secretKey = config('momo.secret_key');
-            $returnUrl = config('momo.return_url');
-            $notifyUrl = config('momo.notify_url');
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt(
+            $ch,
+            CURLOPT_HTTPHEADER,
+            array(
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($data)
+            )
+        );
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        //execute post
+        $result = curl_exec($ch);
+        //close connection
+        curl_close($ch);
+        return $result;
+    }
+    public function createPaymentUrlMoMoATM($orderCode, $amount)
+    {
+        // cấu hình thông tin MoMo bên env
+        $endpoint = env('MOMO_END_POINT');
+        $partnerCode = env('MOMO_PARTNER_CODE');
+        $accessKey = env('MOMO_ACCESS_KEY');
+        $secretKey = env('MOMO_SECRET_KEY');
+        $redirectUrl = env('MOMO_RETURN_URL');
+        $ipnUrl = env('MOMO_NOTIFY_URL');
 
-            // Log configuration
-            Log::info('MOMO Payment Configuration:', [
-                'endpoint' => $endpoint,
-                'partnerCode' => $partnerCode,
-                'accessKey' => $accessKey,
-                'returnUrl' => $returnUrl,
-                'notifyUrl' => $notifyUrl,
-                'orderCode' => $orderCode,
-                'amount' => $amount
-            ]);
+        $orderInfo = "Thanh toán qua MoMo";
+        $totalamount = $amount;
+        $orderId = $orderCode;
+        $extraData = "";
 
-            if (!$endpoint || !$partnerCode || !$accessKey || !$secretKey || !$returnUrl || !$notifyUrl) {
-                Log::error('Missing MOMO configuration');
-                throw new \Exception('Missing MOMO configuration');
-            }
 
-            $orderId = $orderCode;
-            $orderInfo = "Thanh toán đơn hàng " . $orderCode;
-            $requestId = time() . "";
-            $requestType = config('momo.request_type');
-            $extraData = "";
+        $requestId = time() . "";
+        $requestType = "payWithATM";
+  
+        //before sign HMAC SHA256 signature
+        $rawHash = "accessKey=" . $accessKey . "&amount=" . $totalamount . "&extraData=" . $extraData . "&ipnUrl=" . $ipnUrl . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&partnerCode=" . $partnerCode . "&redirectUrl=" . $redirectUrl . "&requestId=" . $requestId . "&requestType=" . $requestType;
+        $signature = hash_hmac("sha256", $rawHash, $secretKey);
+        $data = array(
+            'partnerCode' => $partnerCode,
+            'partnerName' => "Test",
+            "storeId" => "mã đơn hàng" . $orderId,
+            'requestId' => $requestId,
+            'amount' => $totalamount,
+            'orderId' => $orderId,
+            'orderInfo' => $orderInfo,
+            'redirectUrl' => $redirectUrl,
+            'ipnUrl' => $ipnUrl,
+            'lang' => 'vi',
+            'extraData' => $extraData,
+            'requestType' => $requestType,
+            'signature' => $signature
+        );
+        $result = $this->execPostRequest($endpoint, json_encode($data));
+        $jsonResult = json_decode($result, true);  // decode json
 
-            // Create signature
-            $rawHash = "accessKey=" . $accessKey . "&amount=" . $amount . "&extraData=" . $extraData . "&ipnUrl=" . $notifyUrl . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&partnerCode=" . $partnerCode . "&redirectUrl=" . $returnUrl . "&requestId=" . $requestId . "&requestType=" . $requestType;
-            $signature = hash_hmac("sha256", $rawHash, $secretKey);
+        //Just a example, please check more in there
 
-            $data = [
-                'partnerCode' => $partnerCode,
-                'partnerName' => "Test",
-                'storeId' => "MomoTestStore",
-                'requestId' => $requestId,
-                'amount' => $amount,
-                'orderId' => $orderId,
-                'orderInfo' => $orderInfo,
-                'redirectUrl' => $returnUrl,
-                'ipnUrl' => $notifyUrl,
-                'lang' => config('momo.lang'),
-                'extraData' => $extraData,
-                'requestType' => $requestType,
-                'signature' => $signature
-            ];
+        return $jsonResult['payUrl'] ?? null;
+        // dd($jsonResult);
 
-            Log::info('MOMO Payment Request:', array_merge($data, ['rawHash' => $rawHash]));
-
-            try {
-                $client = new Client();
-                $response = $client->post($endpoint, [
-                    'json' => $data,
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                    ],
-                    'timeout' => 30,
-                    'connect_timeout' => 30
-                ]);
-
-                $result = json_decode($response->getBody(), true);
-                Log::info('MOMO Payment Response:', $result);
-
-                if (!isset($result['payUrl'])) {
-                    Log::error('Invalid MOMO response - missing payUrl:', $result);
-                    throw new \Exception('Invalid MOMO response: ' . json_encode($result));
-                }
-
-                return $result['payUrl'];
-            } catch (\GuzzleHttp\Exception\RequestException $e) {
-                Log::error('MOMO API Request Error:', [
-                    'message' => $e->getMessage(),
-                    'request' => $e->getRequest(),
-                    'response' => $e->hasResponse() ? $e->getResponse()->getBody()->getContents() : null
-                ]);
-                throw new \Exception('MOMO API Request Error: ' . $e->getMessage());
-            }
-        } catch (\Exception $e) {
-            Log::error('MOMO Payment Error:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            throw $e;
-        }
     }
 
-    public function handleReturn($request)
+    public function createPaymentUrlPayMoMoPayMoMo($orderCode, $amount)
     {
-        try {
-            Log::info('MOMO Return Data:', $request->all());
+        // cấu hình thông tin MoMo bên env
+        $endpoint = env('MOMO_END_POINT');
+        $partnerCode = env('MOMO_PARTNER_CODE');
+        $accessKey = env('MOMO_ACCESS_KEY');
+        $secretKey = env('MOMO_SECRET_KEY');
+        $redirectUrl = env('MOMO_RETURN_URL');
+        $ipnUrl = env('MOMO_NOTIFY_URL');
 
-            $partnerCode = $request->input('partnerCode');
-            $orderId = $request->input('orderId');
-            $requestId = $request->input('requestId');
-            $amount = $request->input('amount');
-            $orderInfo = $request->input('orderInfo');
-            $orderType = $request->input('orderType');
-            $transId = $request->input('transId');
-            $resultCode = $request->input('resultCode');
-            $message = $request->input('message');
-            $payType = $request->input('payType');
-            $responseTime = $request->input('responseTime');
-            $extraData = $request->input('extraData');
-            $signature = $request->input('signature');
+        $orderInfo = "Thanh toán đơn hàng".$orderCode;
+        $totalamount = $amount; 
+        $orderId = $orderCode;
+        $extraData = "";
 
-            $rawHash = "accessKey=" . config('momo.access_key') . "&amount=" . $amount . "&extraData=" . $extraData . "&message=" . $message . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&orderType=" . $orderType . "&partnerCode=" . $partnerCode . "&payType=" . $payType . "&requestId=" . $requestId . "&responseTime=" . $responseTime . "&resultCode=" . $resultCode . "&transId=" . $transId;
 
-            $partnerSignature = hash_hmac("sha256", $rawHash, config('momo.secret_key'));
+        $requestId = time() . "";
+        $requestType = "captureWallet";
+        // $extraData = ($_POST["extraData"] ? $_POST["extraData"] : "");
+        //before sign HMAC SHA256 signature
+        $rawHash = "accessKey=" . $accessKey . "&amount=" . $totalamount . "&extraData=" . $extraData . "&ipnUrl=" . $ipnUrl . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&partnerCode=" . $partnerCode . "&redirectUrl=" . $redirectUrl . "&requestId=" . $requestId . "&requestType=" . $requestType;
+        $signature = hash_hmac("sha256", $rawHash, $secretKey);
+        $data = array(
+            'partnerCode' => $partnerCode,
+            'partnerName' => "Test",
+            "storeId" => "thanh toán qua ví MoMo",
+            'requestId' => $requestId,
+            'amount' => $totalamount,
+            'orderId' => $orderId,
+            'orderInfo' => $orderInfo,
+            'redirectUrl' => $redirectUrl,
+            'ipnUrl' => $ipnUrl,
+            'lang' => 'vi',
+            'extraData' => $extraData,
+            'requestType' => $requestType,
+            'signature' => $signature
+        );
+        $result = $this->execPostRequest($endpoint, json_encode($data));
+        $jsonResult = json_decode($result, true);  // decode json
 
-            if ($signature === $partnerSignature) {
-                if ($resultCode == 0) {
-                    // Cập nhật thông tin đơn hàng
-                    $order = $this->orderRepositories->updateOrderPayment(
-                        $orderId,
-                        'PAID'
-                    );
-                    
-                    if ($order) {
-                        $order->update([
-                            'transaction_id' => $transId,
-                            'payment_status' => 'PAID',
-                            'date' => now(),
-                            'updated_at' => now()
-                        ]);
-                    }
-                    
-                    return 'http://localhost:5173/momo-return?resultCode=' . $resultCode . '&transId=' . $transId;
-                } else {
-                    Log::warning('MOMO Payment Failed:', [
-                        'resultCode' => $resultCode,
-                        'message' => $message
+        //Just a example, please check more in there
+
+        return $jsonResult['payUrl'] ?? null;
+    }
+
+    public function handleReturnMoMo(Request $request)
+    {
+        //lấy tất cả dữ liệu trả vể từ momo
+        $response = $request->all();
+
+        // Tạo lại chữ ký để xác thực
+        $rawHash = "accessKey=" . env('MOMO_ACCESS_KEY') . "&amount=" . $response['amount'] .
+            "&extraData=" . $response['extraData'] . "&message=" . $response['message'] .
+            "&orderId=" . $response['orderId'] . "&orderInfo=" . $response['orderInfo'] .
+            "&orderType=" . $response['orderType'] . "&partnerCode=" . $response['partnerCode'] .
+            "&payType=" . $response['payType'] . "&requestId=" . $response['requestId'] .
+            "&responseTime=" . $response['responseTime'] . "&resultCode=" . $response['resultCode'] .
+            "&transId=" . $response['transId'];
+
+        $signature = hash_hmac("sha256", $rawHash, env('MOMO_SECRET_KEY'));
+
+            // Chữ ký hợp lệ, xử lý kết quả thanh toán
+        if ($signature === $response['signature']) {
+            if ($response['resultCode'] == 0) {
+                $order = $this->orderRepositories->updateOrderPayment(
+                    $response['orderId'],
+                    'PAID'
+                );
+
+                if ($order) {
+                    $order->update([
+                        'transaction_id' => $response['transId'],
+                        'payment_status' => 'PAID',
+                        'updated_at' => now()
                     ]);
-                    return 'http://localhost:5173/momo-return?resultCode=' . $resultCode . '&transId=' . $transId;
                 }
             } else {
-                Log::error('MOMO Invalid Signature', [
-                    'received' => $signature,
-                    'calculated' => $partnerSignature,
-                    'rawHash' => $rawHash
-                ]);
-                return 'http://localhost:5173/momo-return?status=invalid';
+                return response()->json(['message' => 'Received'], 200);
             }
-        } catch (\Exception $e) {
-            Log::error('MOMO Return Error:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            throw $e;
+
+            return response()->json(['message' => 'Received'], 200);
         }
+
+        return response()->json(['message' => 'Invalid signature'], 400);
+
     }
-} 
+}

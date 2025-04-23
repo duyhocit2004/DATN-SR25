@@ -109,16 +109,16 @@ class User extends Authenticatable implements JWTSubject
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'phoneNumber' => $this->phone_number,
+            'phone_number' => $this->phone_number,
             'role' => $this->role,
             'gender' => $this->gender,
-            'userImage' => $this->user_image,
-            'emailVerifiedAt' => $this->email_verified_at,
+            // 'userImage' => $this->user_image,
+            'email_verified_at' => $this->email_verified_at,
             'status' => $this->status,
             'password' => $this->password,
-            'createdAt' => $this->created_at,
-            'updatedAt' => $this->updated_at,
-            'deletedAt' => $this->deleted_at,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'deleted_at' => $this->deleted_at,
         ];
     }
 }

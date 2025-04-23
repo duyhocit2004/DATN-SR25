@@ -1,9 +1,14 @@
 <?php
 
-namespace App\Services\Momo;
+namespace App\Services\MoMo;
 
-interface IMomoService
+use Illuminate\Http\Request;
+
+interface IMoMoService
 {
-    public function createPaymentUrl($orderCode, $amount);
-    public function handleReturn($request);
-} 
+    public function createPaymentUrlMoMoATM($orderCode, $amount);
+
+    public function createPaymentUrlPayMoMoPayMoMo($orderCode,$amount);
+    // public function createPaymentUrlPayMoMoPayMoMo(Request $request);
+    public function handleReturnMoMo(Request $request);
+}
