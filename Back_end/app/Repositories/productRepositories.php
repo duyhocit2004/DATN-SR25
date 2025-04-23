@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class ProductRepositories
 {
-    public function getDataStats(Request $request)
+    public function getDataStats(Request $request,$fromDate = null,$toDate = null)
     {
         $filterType = $request->input('time', 'year');
         $selectedDate = $request->input('date')

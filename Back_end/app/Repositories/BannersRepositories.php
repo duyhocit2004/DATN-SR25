@@ -12,7 +12,7 @@ class BannersRepositories
 {
     public function getAllBanner()
     {
-        $listBanners = Banner::all()->groupBy('type');
+        $listBanners = Banner::query()->orderBy('id','desc')->get()->groupBy('type');
         return $listBanners;
     }
 

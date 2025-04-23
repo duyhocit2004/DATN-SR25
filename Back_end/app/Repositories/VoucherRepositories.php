@@ -11,7 +11,7 @@ class VoucherRepositories
     public function getVoucher(Request $request)
     {
         $voucherCode = $request->input('voucherCode');
-        $voucher = Voucher::query()->where('code', '=', $voucherCode)->first();
+        $voucher = Voucher::query()->where('code', '=', $voucherCode)->orderBy('id','desc')->first();
         return $voucher;
     }
 

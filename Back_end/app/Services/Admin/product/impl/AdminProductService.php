@@ -70,6 +70,7 @@ class AdminProductService implements IAdminProductService
                 $product['price_sale'] = $request->input('price');
             }
 
+            // chuyển đổi dữ liệu từ JSON sang mảng
             $listVariants = json_decode($request->input('variants'), true);
             $toTatalQuantity = 0;
             foreach ($listVariants as &$variant) {

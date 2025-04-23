@@ -36,7 +36,7 @@ class CategoriesRepositories
             $query->where('name', 'like', '%' . $name . '%');
         }
 
-        $categories = $query->paginate($perPage, ['*'], 'page', $page);
+        $categories = $query->orderBy('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
         return $categories;
     }
 
