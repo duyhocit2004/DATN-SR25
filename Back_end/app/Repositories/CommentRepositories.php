@@ -56,7 +56,7 @@ class CommentRepositories
             $query->where('comment.rate', '=', $rate);
         }
 
-        $comments = $query->paginate($perPage, ['*'], 'page', $page);
+        $comments = $query->orderBy('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
         return $comments;
     }
 

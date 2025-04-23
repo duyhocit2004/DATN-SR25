@@ -13,73 +13,83 @@ use Illuminate\Support\Facades\DB;
 
 class ProductRepositories
 {
-    public function getDataStats(Request $request)
+    public function getDataStats(Request $request   )
     {
-        $filterType = $request->input('time', 'year');
-        $selectedDate = $request->input('date')
-            ? Carbon::parse($request->input('date'))->startOfDay()
-            : Carbon::today()->startOfDay();
-
+        // $filterType = $request->input('time', 'year');
+        // $selectedDate = $request->input('date')
+        //     ? Carbon::parse($request->input('date'))->startOfDay()
+        //     : Carbon::today()->startOfDay();
         $fromDate = null;
         $toDate = null;
 
-        switch ($filterType) {
-            case 'day':
-                $fromDate = $selectedDate;
-                $toDate = $selectedDate->copy()->endOfDay();
-                break;
-            case 'week':
-                $fromDate = Carbon::now()->startOfWeek();
-                $toDate = Carbon::now()->endOfWeek();
-                break;
-            case 'month':
-                $fromDate = Carbon::now()->startOfMonth();
-                $toDate = Carbon::now()->endOfMonth();
-                break;
-            case 'quarter':
-                $fromDate = Carbon::now()->firstOfQuarter();
-                $toDate = Carbon::now()->lastOfQuarter();
-                break;
-            case 'year':
-                // Use the year from selectedDate, fallback to current year if invalid
-                try {
-                    $year = $selectedDate->year;
-                } catch (\Exception $e) {
-                    $year = Carbon::now()->year;
-                }
-                $fromDate = Carbon::create($year, 1, 1)->startOfDay();
-                $toDate = Carbon::create($year, 12, 31)->endOfDay();
-                break;
-            default:
-                $fromDate = Carbon::now()->startOfYear();
-                $toDate = Carbon::now()->endOfYear();
-                break;
-        }
+        // switch ($filterType) {
+        //     case 'day':
+        //         $fromDate = $selectedDate;
+        //         $toDate = $selectedDate->copy()->endOfDay();
+        //         break;
+        //     case 'week':
+        //         $fromDate = Carbon::now()->startOfWeek();
+        //         $toDate = Carbon::now()->endOfWeek();
+        //         break;
+        //     case 'month':
+        //         $fromDate = Carbon::now()->startOfMonth();
+        //         $toDate = Carbon::now()->endOfMonth();
+        //         break;
+        //     case 'quarter':
+        //         $fromDate = Carbon::now()->firstOfQuarter();
+        //         $toDate = Carbon::now()->lastOfQuarter();
+        //         break;
+        //     case 'year':
+        //         // Use the year from selectedDate, fallback to current year if invalid
+        //         try {
+        //             $year = $selectedDate->year;
+        //         } catch (\Exception $e) {
+        //             $year = Carbon::now()->year;
+        //         }
+        //         $fromDate = Carbon::create($year, 1, 1)->startOfDay();
+        //         $toDate = Carbon::create($year, 12, 31)->endOfDay();
+        //         break;
+        //     default:
+        //         $fromDate = Carbon::now()->startOfYear();
+        //         $toDate = Carbon::now()->endOfYear();
+        //         break;
+        // }
 
-        $result = DB::table('orders')
+
+        $fromDate = $request->input('startDate')?? Carbon::now()->startOfYear()->toDateString() ;
+        $toDate = $request->input('endDate') ?? Carbon::now()->endOfYear()->toDateString(); 
+
+        $Unconfirmed = DB::table('orders')
             ->whereBetween('created_at', [$fromDate, $toDate])
-            ->where('payment_status', '=', 'PAID')
-            ->where('status', '=', 'Delivered')
-            ->selectRaw('
-                COUNT(*) as total_orders,
-                COALESCE(SUM(total_price), 0) as total_revenue
-            ')
-            ->first();
+            ->where('payment_status', '=', 'UNPAID')
+            ->where('status', '=', 'Unconfirmed')
+            // ->selectRaw('
+            //     COUNT(*) as total_orders')
+            ->count();
 
         // Count all products created on or before $toDate
-        $totalProducts = DB::table('products')
-            ->where('created_at', '<=', $toDate)
+        $Processing = DB::table('orders')
+            ->whereBetween('created_at', [$fromDate,$toDate])
+            ->where('payment_status', '=', 'PAID')
+            ->where('status', '=', 'Processing')
             ->count();
 
         // Count all users created on or before $toDate
         $totalUsers = DB::table('users')
-            ->where('created_at', '<=', $toDate)
+            ->whereBetween('created_at', [$fromDate,$toDate])
+            ->count();
+
+        // count all failOrder
+        $Delivered = DB::table('orders')
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->where('payment_status', '=', 'PAID')
+            ->where('status', '=', 'Delivered')
             ->count();
         return [
-            'order' => $result->total_orders ?? 0,
-            'product' => $totalProducts ?? 0,
-            'revenue' => $result->total_revenue ?? 0,
+            'order' => $Unconfirmed ?? 0,
+            'product' => $Processing ?? 0,
             'user' => $totalUsers ?? 0,
+            'revenue' => $Delivered ?? 0,
         ];
     }
 
@@ -353,7 +363,7 @@ class ProductRepositories
             $query->orderByRaw('IFNULL(price_sale, price_regular) ' . $sortType);
         }
 
-        $products = $query->paginate($perPage, ['*'], 'page', $page);
+        $products = $query->orderby('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
         return $products;
     }
 

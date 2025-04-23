@@ -122,7 +122,7 @@ class AuthRepositories
             $query->where('gender', '=' ,$gender);
         }
 
-        $users = $query->paginate($perPage, ['*'], 'page', $page);
+        $users = $query->orderBy('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
         return $users;
     }
 
