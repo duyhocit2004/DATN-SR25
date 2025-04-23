@@ -1,18 +1,37 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchOrders, setSelectedOrder } from "@/store/reducers/orderSlice";
-import { IOrder } from "@/types/interface";
+import { IOrder, IProductOrder } from "@/types/interface";
 import { OrderStatusDataClient } from "@/utils/constantData";
 import { getColorOrderStatus, getLabelByValue } from "@/utils/functions";
-import { Table, Tag } from "antd";
+import { Table, Tag, Button, Modal, Card, Image } from "antd";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const OrderTable = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+  const [selectedOrder, setSelectedOrderForReview] = useState<IOrder | null>(null);
   const { orders, loading, phoneNumber } = useAppSelector(
     (state) => state.order
   );
+
+  const handleReviewClick = (order: IOrder) => {
+    if (order.products && order.products.length === 1) {
+      const product = order.products[0];
+      navigate(`/products/${product.productId}`);
+    } else {
+      setSelectedOrderForReview(order);
+      setIsReviewModalVisible(true);
+    }
+  };
+
+  const handleProductReview = (productId: number) => {
+    setIsReviewModalVisible(false);
+    navigate(`/products/${productId}`);
+  };
 
   const columns: ColumnsType<IOrder> = [
     {
@@ -66,14 +85,33 @@ const OrderTable = () => {
       key: "note",
       minWidth: 250,
     },
+    {
+      title: "Hành động",
+      key: "action",
+      minWidth: 250,
+      render: (_, record) => (
+        <div className="flex gap-2">
+          {record.status === "Delivered" && (
+            <Button
+              type="primary"
+              onClick={() => handleReviewClick(record)}
+            >
+              Đánh giá
+            </Button>
+          )}
+        </div>
+      ),
+    },
   ];
 
   useEffect(() => {
     dispatch(fetchOrders({ phoneNumber: phoneNumber }));
   }, []);
+
   const showOrderDetail = (order: IOrder) => {
     dispatch(setSelectedOrder(order));
   };
+
   return (
     <>
       <Table
@@ -85,8 +123,54 @@ const OrderTable = () => {
         scroll={{ x: "100%" }}
       />
 
-      {/* Modal Chi tiết Đơn hàng */}
+      <Modal
+        title="Chọn sản phẩm để đánh giá"
+        open={isReviewModalVisible}
+        onCancel={() => setIsReviewModalVisible(false)}
+        footer={null}
+        width={800}
+      >
+        <div className="grid grid-cols-1 gap-4">
+          {selectedOrder?.products?.map((product: IProductOrder) => (
+            <Card 
+              key={product.id} 
+              hoverable 
+              className="flex cursor-pointer"
+              onClick={() => handleProductReview(product.productId)}
+            >
+              <div className="flex items-center space-x-4">
+                <div className="w-24 h-24 flex-shrink-0">
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover rounded"
+                    preview={false}
+                  />
+                </div>
+                <div className="flex-grow">
+                  <h3 className="text-lg font-medium mb-2">{product.name}</h3>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-gray-500">Số lượng: {product.quantity}</p>
+                      <p className="text-gray-500">
+                        Màu sắc: {product.color}, Size: {product.size}
+                      </p>
+                      <p className="text-red-500 font-medium">
+                        Giá: {product.priceSale?.toLocaleString() || product.priceRegular.toLocaleString()} đ
+                      </p>
+                    </div>
+                    <Button type="primary" size="large">
+                      Đánh giá ngay
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </Modal>
     </>
   );
 };
+
 export default OrderTable;

@@ -370,7 +370,10 @@ class ProductRepositories
 
     public function getProduct($productId)
     {
+        \Log::info('Repository - Looking for product:', ['productId' => $productId]);
         $product = Product::with(['image_products', 'sizes', 'colors', 'category'])->find($productId);
+        \Log::info('Repository - Found product:', ['product' => $product]);
+        
         if ($product) {
             $product->sizes = $product->sizes->unique('size')->pluck('size');
             $product->colors = $product->colors->unique('code')->pluck('code');

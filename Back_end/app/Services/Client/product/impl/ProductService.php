@@ -41,35 +41,34 @@ class ProductService implements IProductService
         $this->commentRepositories = $commentRepositories;
     }
 
-    // public function getAllProductWithImages(Request $request)
-    // {
+    public function getAllProductWithImages(Request $request)
+    {
+        $products = $this->productRepositories->getAllproductWithImages($request);
+        $list = $products->getCollection()->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'categoriesId' => $product->categories_id,
+                'categoriesName' => $product->category ? $product->category->name : null,
+                'name' => $product->name,
+                "image" => $product->image,
+                'listImage' => $product->image_products->isEmpty() ? [] : $product->image_products->pluck('image_link'),
+                'priceRegular' => $product->price_regular,
+                'priceSale' => $product->price_sale,
+                'description' => $product->description,
+                'views' => $product->views,
+                'content' => $product->content,
+                'rate' => $product->rate,
+                'quantity' => $product->quantity,
+                'quantitySold' => $product->quantity_sold,
+                'discount' => $product->discount,
+                'createdAt' => $product->created_at,
+                'updatedAt' => $product->updated_at,
+                'deletedAt' => $product->deleted_at,
+            ];
+        });
 
-    //     $products = $this->productRepositories->getAllproductWithImages($request);
-    //     $list = $products->getCollection()->map(function ($product) {
-    //         return [
-    //             'id' => $product->id,
-    //             'categoriesId' => $product->categories_id,
-    //             'categoriesName' => $product->category ? $product->category->name : null,
-    //             'name' => $product->name,
-    //             "image" => $product->image,
-    //             //                'listImage' => $product->image_products->isEmpty() ? [] : $product->image_products->pluck('image_link'),
-    //             'priceRegular' => $product->price_regular,
-    //             'priceSale' => $product->price_sale,
-    //             'description' => $product->description,
-    //             'views' => $product->views,
-    //             'content' => $product->content,
-    //             'rate' => $product->rate,
-    //             'quantity' => $product->quantity,
-    //             'quantitySold' => $product->quantity_sold,
-    //             'discount' => $product->discount,
-    //             'createdAt' => $product->created_at,
-    //             'updatedAt' => $product->updated_at,
-    //             'deletedAt' => $product->deleted_at,
-    //         ];
-    //     });
-
-    //     return $products->setCollection($list);
-    // }
+        return $products->setCollection($list);
+    }
 
     public function getProduct(Request $request)
     {
@@ -84,10 +83,11 @@ class ProductService implements IProductService
             BaseResponse::failure(400, '', $validate->errors()->first(), []);
         }
 
+        \Log::info('Product ID received:', ['productId' => $request->input('productId')]);
         $getProductResult = $this->productRepositories->getProduct($request->input('productId'));
+        \Log::info('Product result:', ['result' => $getProductResult]);
 
         return $getProductResult;
-
     }
 
     public function getProductDetail(Request $request)

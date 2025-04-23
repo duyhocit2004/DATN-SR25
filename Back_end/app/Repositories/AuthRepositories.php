@@ -162,14 +162,14 @@ class AuthRepositories
         }
     }
 
-    public function changePassword($userId, $newPassword)
-    {
-        $user = User::find($userId);
+    // public function changePassword($userId, $newPassword)
+    // {
+    //     $user = User::find($userId);
 
-        $user->update([
-            'password' => Hash::make($newPassword),
-        ]);
-    }
+    //     $user->update([
+    //         'password' => Hash::make($newPassword),
+    //     ]);
+    // }
 
 
 }
