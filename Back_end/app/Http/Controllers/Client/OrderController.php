@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Client\order\IOrderService;
 use App\Services\Refund\IRefundService;
 use App\Services\VnPay\IVnpayService;
-use App\Services\MoMo\IMoMoService;
+use App\Services\Momo\IMomoService;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -17,17 +17,21 @@ class OrderController extends Controller
     public IMoMoService $moMoService;
 
     public IRefundService $refundService;
+    public IMomoService $momoService;
 
     public function __construct(
         IOrderService $orderService,
         IVnpayService $vnpayService,
-        IMoMoService $moMoService,
-        IRefundService $refundService
+
+        IRefundService $refundService,
+        IMomoService $momoService
+
     ) {
         $this->orderService = $orderService;
         $this->vnpayService = $vnpayService;
         $this->moMoService = $moMoService;
         $this->refundService = $refundService;
+        $this->momoService = $momoService;
     }
 
     public function addOrder(Request $request)
@@ -36,18 +40,24 @@ class OrderController extends Controller
         $paymentUrl = null;
 
         if (!empty($order)) {
-            if ($order->payment_method == 'vnpay') {
-                $paymentUrl = $this->vnpayService->createPaymentUrl($order->code, $order->total_price);
-            } elseif ($order->payment_method == 'momo_atm') {
-                $paymentUrl = $this->moMoService->createPaymentUrlMoMoATM($order->code, $order->total_price);
-            } elseif ($order->payment_method == 'momo') {
-                $paymentUrl = $this->moMoService->createPaymentUrlPayMoMoPayMoMo($order->code, $order->total_price);
+            if ($request->input('paymentMethod') === 'ONLINE') {
+                if ($request->input('onlinePaymentMethod') === 'VNPAY') {
+                    $paymentUrl = $this->vnpayService->createPaymentUrl($order->code, $order->total_price);
+                } elseif ($request->input('onlinePaymentMethod') === 'MOMO') {
+                    try {
+                        $paymentUrl = $this->momoService->createPaymentUrl($order->code, $order->total_price);
+                    } catch (\Exception $e) {
+                        \Log::error('Momo payment error: ' . $e->getMessage());
+                        return BaseResponse::failure(500, 'Momo payment service is currently unavailable', 'payment.error', []);
+                    }
+                }
             }
         }
 
         return BaseResponse::success([
             "order" => $order,
-            "vnpayUrl" => $paymentUrl,
+            "vnpayUrl" => $request->input('onlinePaymentMethod') === 'VNPAY' ? $paymentUrl : null,
+            "momoUrl" => $request->input('onlinePaymentMethod') === 'MOMO' ? $paymentUrl : null,
         ]);
     }
     public function getOrders(Request $request)

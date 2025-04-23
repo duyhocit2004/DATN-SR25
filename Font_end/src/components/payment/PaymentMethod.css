@@ -1,0 +1,83 @@
+.payment-methods {
+  padding: 15px;
+}
+
+.payment-type {
+  margin-bottom: 15px;
+}
+
+.online-payment-methods {
+  margin-left: 20px;
+  margin-top: 10px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.online-payment-methods:hover {
+  background-color: #f1f3f5;
+  border-color: #dee2e6;
+}
+
+.payment-method-option {
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: white;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.payment-method-option:hover {
+  border-color: #2563eb;
+  background-color: #f0f7ff;
+  transform: translateY(-1px);
+}
+
+.payment-method-option.selected {
+  border-color: #2563eb;
+  background-color: #e6f0ff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.payment-method-option img {
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.payment-method-option .text-sm {
+  color: #6b7280;
+}
+
+/* Additional styles for better visual hierarchy */
+.payment-method-option .text-lg {
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.payment-method-option.selected .text-lg {
+  color: #2563eb;
+}
+
+.payment-method-option.selected .text-sm {
+  color: #4b5563;
+}
+
+/* Highlight online payment option */
+.payment-option[data-online="true"] {
+  background-color: #e6f0ff;
+  border: 1px solid #b3d1ff;
+}
+
+.payment-option[data-online="true"]:hover {
+  background-color: #d1e3ff;
+}
+
+.payment-option[data-online="true"] label {
+  color: #2563eb;
+  font-weight: 500;
+} 

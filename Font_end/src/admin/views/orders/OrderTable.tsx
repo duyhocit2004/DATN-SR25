@@ -124,8 +124,7 @@ const OrderTable = () => {
     {
       title: "Hành động",
       key: "action",
-      fixed: "right",
-      width: 150,
+      minWidth: 150,
       render: (record: IOrder) => {
         const canRefund = 
           (record.status === "Cancel Confirm" || record.status === "Cancel") && 
@@ -134,7 +133,7 @@ const OrderTable = () => {
           !record.refundCompleted;
 
         return (
-          <div className="flex gap-2 justify-center">
+          <div className="flex flex-row gap-2 justify-center">
             {canRefund ? (
               <Button
                 type="primary"
@@ -290,10 +289,18 @@ const OrderTable = () => {
             return "Tổng: " + total;
           },
           onChange: handlePagingChange,
+          position: ['bottomRight']
         }}
         tableLayout="auto"
         loading={loading}
-        scroll={{ x: "100%", y: "calc(100vh - 408px)" }}
+        scroll={{ x: "100%", y: "calc(100vh - 280px)" }}
+        className="orders-table"
+        style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          height: 'calc(100vh - 180px)',
+          marginBottom: '16px'
+        }}
       />
       
       <Modal

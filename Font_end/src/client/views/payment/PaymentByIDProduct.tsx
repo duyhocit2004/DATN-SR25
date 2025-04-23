@@ -25,7 +25,8 @@ const PaymentByIDProduct = () => {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [finalAmount, setFinalAmount] = useState<number>(0);
   const [voucher, setVoucher] = useState<IVoucher | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentMethod, setPaymentMethod] = useState<string>(PaymentMethod.COD);
+  const [onlinePaymentMethod, setOnlinePaymentMethod] = useState<string>("VNPAY");
   const [cities, setCities] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any[]>([]);
   const [wards, setWards] = useState<any[]>([]);
@@ -145,6 +146,8 @@ const PaymentByIDProduct = () => {
         customerName: user.name,
         phoneNumber: user.phoneNumber,
         email: user.email,
+        paymentMethod: PaymentMethod.COD,
+        onlinePaymentMethod: "VNPAY"
       });
     }
   }, [user, form]);
@@ -296,11 +299,21 @@ const PaymentByIDProduct = () => {
 
   const handlePayment = async () => {
     try {
-      await form.validateFields();
+      const values = await form.validateFields();
 
       if (!cartItem) {
         showToast({
           content: "Không tìm thấy sản phẩm để thanh toán!",
+          duration: 5,
+          type: "error",
+        });
+        return;
+      }
+
+      // Validate online payment method if online payment is selected
+      if (values.paymentMethod === PaymentMethod.ONLINE && !values.onlinePaymentMethod) {
+        showToast({
+          content: "Vui lòng chọn phương thức thanh toán online!",
           duration: 5,
           type: "error",
         });
@@ -340,41 +353,54 @@ const PaymentByIDProduct = () => {
         quantity: cartItem.quantity,
       };
 
-      const city = cities.find((c) => c.code === form.getFieldValue("city"));
-      const district = districts.find((d) => d.code === form.getFieldValue("district"));
-      const ward = wards.find((w) => w.code === form.getFieldValue("ward"));
-      const shippingAddress = `${form.getFieldValue("street") || ""}, ${ward?.name || ""}, ${district?.name || ""}, ${city?.name || ""}`;
+      const city = cities.find((c) => c.code === values.city);
+      const district = districts.find((d) => d.code === values.district);
+      const ward = wards.find((w) => w.code === values.ward);
+      const shippingAddress = `${values.street || ""}, ${ward?.name || ""}, ${district?.name || ""}, ${city?.name || ""}`;
 
-      const receiverCity = receiverCities.find((c) => c.code === form.getFieldValue("receiverCity"));
-      const receiverDistrict = receiverDistricts.find((d) => d.code === form.getFieldValue("receiverDistrict"));
-      const receiverWard = receiverWards.find((w) => w.code === form.getFieldValue("receiverWard"));
-      const receiverAddress = form.getFieldValue("receiverStreet")
-        ? `${form.getFieldValue("receiverStreet")}, ${receiverWard?.name || ""}, ${receiverDistrict?.name || ""}, ${receiverCity?.name || ""}`
+      const receiverCity = receiverCities.find((c) => c.code === values.receiverCity);
+      const receiverDistrict = receiverDistricts.find((d) => d.code === values.receiverDistrict);
+      const receiverWard = receiverWards.find((w) => w.code === values.receiverWard);
+      const receiverAddress = values.receiverStreet
+        ? `${values.receiverStreet}, ${receiverWard?.name || ""}, ${receiverDistrict?.name || ""}, ${receiverCity?.name || ""}`
         : null;
 
       const payload = {
         user_id: user?.id || null,
-        customerName: form.getFieldValue("customerName"),
-        email: form.getFieldValue("email"),
-        phoneNumber: form.getFieldValue("phoneNumber"),
-        receiverName: form.getFieldValue("receiverName") || null,
-        receiverPhoneNumber: form.getFieldValue("receiverPhoneNumber") || null,
+        customerName: values.customerName,
+        email: values.email,
+        phoneNumber: values.phoneNumber,
+        receiverName: values.receiverName || null,
+        receiverPhoneNumber: values.receiverPhoneNumber || null,
         receiverAddress: receiverAddress,
         totalAmount: finalAmount,
         voucher: voucher?.code || null,
         voucherPrice: voucher?.voucherPrice || 0,
         shippingAddress: shippingAddress,
-        note: form.getFieldValue("note"),
+        note: values.note,
         products: [product],
-        paymentMethod: paymentMethod,
+        paymentMethod: values.paymentMethod,
+        onlinePaymentMethod: values.paymentMethod === PaymentMethod.ONLINE ? values.onlinePaymentMethod : undefined,
       };
 
+      setLoading(true);
       const response = await orderApi.addOrder(payload);
+      
       if (response?.status === HttpCodeString.SUCCESS) {
-        await clearCartItem(); // Chỉ xóa sản phẩm cụ thể khi mua ngay
-        if (paymentMethod === PaymentMethod.ONLINE && response.data.vnpayUrl) {
-          window.location.href = response.data.vnpayUrl;
-        } else if (paymentMethod === PaymentMethod.COD) {
+        await clearCartItem();
+        if (values.paymentMethod === PaymentMethod.ONLINE) {
+          if (values.onlinePaymentMethod === "VNPAY" && response.data.vnpayUrl) {
+            window.location.href = response.data.vnpayUrl;
+          } else if (values.onlinePaymentMethod === "MOMO" && response.data.momoUrl) {
+            window.location.href = response.data.momoUrl;
+          } else {
+            showToast({
+              content: "Không thể tạo URL thanh toán. Vui lòng thử lại!",
+              duration: 5,
+              type: "error",
+            });
+          }
+        } else if (values.paymentMethod === PaymentMethod.COD) {
           showToast({
             content: "Đặt hàng thành công!",
             duration: 5,
@@ -384,7 +410,7 @@ const PaymentByIDProduct = () => {
         }
       } else {
         showToast({
-          content: "Đặt hàng thất bại!",
+          content: response?.message || "Đặt hàng thất bại!",
           duration: 5,
           type: "error",
         });
@@ -396,6 +422,8 @@ const PaymentByIDProduct = () => {
         duration: 5,
         type: "error",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -709,7 +737,15 @@ const PaymentByIDProduct = () => {
                 rules={[{ required: true, message: "Vui lòng chọn phương thức thanh toán!" }]}
               >
                 <Radio.Group
-                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setPaymentMethod(value);
+                    if (value === PaymentMethod.ONLINE) {
+                      form.setFieldsValue({ onlinePaymentMethod: "VNPAY" });
+                    } else {
+                      form.setFieldsValue({ onlinePaymentMethod: undefined });
+                    }
+                  }}
                   value={paymentMethod}
                   className="flex flex-col gap-2"
                 >
@@ -722,6 +758,33 @@ const PaymentByIDProduct = () => {
                 </Radio.Group>
               </Form.Item>
             </Form>
+
+            {paymentMethod === PaymentMethod.ONLINE && (
+              <div style={{ marginTop: 16 }}>
+                <Form.Item
+                  label="Phương thức thanh toán online"
+                  name="onlinePaymentMethod"
+                  rules={[{ required: true, message: "Vui lòng chọn phương thức thanh toán online!" }]}
+                >
+                  <Radio.Group
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setOnlinePaymentMethod(value);
+                      form.setFieldsValue({ onlinePaymentMethod: value });
+                    }}
+                    value={onlinePaymentMethod}
+                    className="ant-radio-group ant-radio-group-outline flex flex-col gap-2"
+                  >
+                    <Radio value="VNPAY" className="ant-radio-wrapper">
+                      VNPay
+                    </Radio>
+                    <Radio value="MOMO" className="ant-radio-wrapper">
+                      Momo
+                    </Radio>
+                  </Radio.Group>
+                </Form.Item>
+              </div>
+            )}
 
             <Button
               type="primary"
