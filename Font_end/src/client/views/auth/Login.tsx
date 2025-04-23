@@ -15,7 +15,7 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await accountApi.login(values);
-      login(response.data.accessToken);
+      login(response.data.accessToken, response.data.user);
       showToast({
         content: "Đăng nhập thành công!",
         duration: 5,

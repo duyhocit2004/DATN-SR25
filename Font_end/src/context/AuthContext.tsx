@@ -17,7 +17,7 @@ interface User {
 interface AuthContextType {
   token: string | null;
   user: User | null;
-  login: (token: string) => void;
+  login: (token: string, userData?: any) => void;
   logout: () => void;
   refreshUserInfo: () => Promise<void>;
 }
@@ -86,9 +86,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [token]);
 
-  const login = (newToken: string) => {
+  const login = (newToken: string, userData?: any) => {
     localStorage.setItem("access_token", newToken);
     setToken(newToken);
+    
+    if (userData) {
+      setUser({
+        id: userData.id,
+        name: userData.name,
+        email: userData.email,
+        phoneNumber: userData.phone_number,
+        role: userData.role,
+        gender: userData.gender,
+        userImage: userData.userImage,
+      });
+    }
   };
 
   const logout = () => {

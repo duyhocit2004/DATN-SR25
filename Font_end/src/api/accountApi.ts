@@ -12,6 +12,23 @@ interface Account {
   email: string;
 }
 
+interface IResponseLogin {
+  accessToken: string;
+  tokenType: string;
+  expiresIn: number;
+  expiresTime: number;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    phone_number: string;
+    role: string;
+    gender: string;
+    userImage: string | null;
+    status: string;
+  };
+}
+
 class AccountApi extends BaseApi<Account> {
   constructor() {
     super("accounts"); // Gán URI 'accounts' cho API này

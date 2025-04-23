@@ -43,26 +43,40 @@ class AuthService implements IAuthService
 
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
-                BaseResponse::failure(401, '', 'email.or.password.is.wrong', []);
+                return BaseResponse::failure(401, '', 'email.or.password.is.wrong', []);
             }
+
+            $user = auth()->user();
+            if (!$user) {
+                return BaseResponse::failure(401, '', 'email.or.password.is.wrong', []);
+            }
+
+            if ($user->status !== config('constants.STATUS_ACTIVE')) {
+                return BaseResponse::failure(400, 'User does not active', 'user.does.not.active', []);
+            }
+
+            $payload = JWTAuth::setToken($token)->getPayload();
+            $expiresIn = $payload['exp'] - time();
+
+            return [
+                "accessToken" => $token,
+                "tokenType" => "Bearer",
+                "expiresIn" => $expiresIn * 1000,
+                "expiresTime" => $payload['exp'],
+                "user" => [
+                    "id" => $user->id,
+                    "name" => $user->name,
+                    "email" => $user->email,
+                    "phone_number" => $user->phone_number,
+                    "role" => $user->role,
+                    "gender" => $user->gender,
+                    "userImage" => $user->user_image,
+                    "status" => $user->status
+                ]
+            ];
         } catch (JWTException $e) {
-            BaseResponse::failure(500, '', 'Could not create token', []);
+            return BaseResponse::failure(500, '', 'Could not create token', []);
         }
-
-        $user = auth()->user();
-        if (!empty($user) && $user->status !== config('constants.STATUS_ACTIVE')) {
-            BaseResponse::failure(400, 'User does not active', 'user.does.not.active', []);
-        }
-
-        $payload = JWTAuth::setToken($token)->getPayload();
-        $expiresIn = $payload['exp'] - time();
-
-        return [
-            "accessToken" => $token,
-            "tokenType" => "Bearer",
-            "expiresIn" => $expiresIn * 1000,
-            "expiresTime" => $payload['exp'],
-        ];
     }
 
     public function loginAdmin(Request $request)
