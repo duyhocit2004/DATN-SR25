@@ -198,6 +198,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\RefundServiceProvider::class,
+        App\Providers\MomoServiceProvider::class,
 
     ],
 

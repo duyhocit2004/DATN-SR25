@@ -9,6 +9,7 @@ import {
   ICartStorage,
   IProductCartStorage,
   IVoucher,
+  IOrder,
 } from "@/types/interface";
 import cartApi from "@/api/cartApi";
 import { HttpCodeString, PaymentMethod } from "@/utils/constants";
@@ -34,7 +35,8 @@ const Payment = () => {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [finalAmount, setFinalAmount] = useState<number>(0);
   const [voucher, setVoucher] = useState<IVoucher | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentMethod, setPaymentMethod] = useState<string>(PaymentMethod.COD);
+  const [onlinePaymentMethod, setOnlinePaymentMethod] = useState<string>("VNPAY");
   const [cities, setCities] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any[]>([]);
   const [wards, setWards] = useState<any[]>([]);
@@ -149,13 +151,15 @@ const Payment = () => {
     }
   }, [selectedReceiverDistrict, form]);
 
-  // Initialize form with user info
+  // Initialize form with user info and default payment method
   useEffect(() => {
     if (user) {
       form.setFieldsValue({
         customerName: user.name,
         phoneNumber: user.phoneNumber,
         email: user.email,
+        paymentMethod: PaymentMethod.COD,
+        onlinePaymentMethod: "VNPAY"
       });
     }
   }, [user, form]);
@@ -165,7 +169,9 @@ const Payment = () => {
     if (!productId && selectedCartItems) {
       setCartList(selectedCartItems);
       setSelectedItems(
-        selectedCartItems.map((item: ICart) => item.id || `${item.productId}-${item.size}-${item.color}`)
+        selectedCartItems.map((item: ICart) => 
+          item.id || `${item.productId}-${item.size}-${item.color}`
+        )
       );
     } else if (!productId) {
       getCartInfo();
@@ -379,56 +385,41 @@ const Payment = () => {
     }
   };
 
+  // Handle payment method change
+  const handlePaymentMethodChange = (value: string) => {
+    setPaymentMethod(value);
+    if (value === PaymentMethod.ONLINE) {
+      form.setFieldsValue({ 
+        paymentMethod: value,
+        onlinePaymentMethod: onlinePaymentMethod 
+      });
+    } else {
+      form.setFieldsValue({ 
+        paymentMethod: value,
+        onlinePaymentMethod: undefined 
+      });
+    }
+  };
+
+  // Handle online payment method change
+  const handleOnlinePaymentMethodChange = (e: any) => {
+    const value = e.target.value as string;
+    setOnlinePaymentMethod(value);
+    form.setFieldsValue({ onlinePaymentMethod: value });
+  };
+
   const handlePayment = async () => {
     try {
-      await form.validateFields();
-
-      // Chỉ lấy các sản phẩm được chọn
-      const selectedCartItems = cartList.filter((item) =>
-        selectedItems.includes(item.id || `${item.productId}-${item.size}-${item.color}`)
-      );
-
-      if (selectedCartItems.length === 0) {
-        showToast({
-          content: "Vui lòng chọn ít nhất một sản phẩm để đặt hàng!",
-          duration: 5,
-          type: "error",
-        });
-        return;
-      }
-
-      if (voucher?.code) {
-        const voucherCheck = await orderApi.getVoucher({
-          voucherCode: voucher.code,
-          totalAmount: totalAmount,
-        });
-        if (
-          voucherCheck?.status !== HttpCodeString.SUCCESS ||
-          voucherCheck.data.status !== "ACTIVE"
-        ) {
-          showToast({
-            content: "Voucher không hợp lệ hoặc đã hết hạn! Vui lòng xóa mã giảm giá và thử lại.",
-            duration: 5,
-            type: "error",
-          });
-          setVoucher(null);
-          setDiscountCode("");
-          return;
-        }
-        setVoucher(voucherCheck.data);
-      }
-
-      const products = selectedCartItems.map((e) => ({
-        productId: e.product?.id,
-        name: e.product?.name,
-        image: e.product?.image,
-        priceRegular: e.product?.priceRegular,
-        priceSale: e.product?.priceSale,
-        discount: null,
-        color: e.color,
-        size: e.size,
-        quantity: e.quantity,
-      }));
+      const values = await form.validateFields();
+      
+      const selectedProducts = cartList
+        .filter((item) => selectedItems.includes(item.id || `${item.productId}-${item.size}-${item.color}`))
+        .map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          size: item.size,
+          color: item.color,
+        }));
 
       const city = cities.find((c) => c.code === form.getFieldValue("city"));
       const district = districts.find((d) => d.code === form.getFieldValue("district"));
@@ -440,31 +431,43 @@ const Payment = () => {
       const receiverWard = receiverWards.find((w) => w.code === form.getFieldValue("receiverWard"));
       const receiverAddress = form.getFieldValue("receiverStreet")
         ? `${form.getFieldValue("receiverStreet")}, ${receiverWard?.name || ""}, ${receiverDistrict?.name || ""}, ${receiverCity?.name || ""}`
-        : null;
+        : undefined;
 
-      const payload = {
+      const payload: IOrder = {
         users_id: user?.id || null,
         customerName: form.getFieldValue("customerName"),
         email: form.getFieldValue("email"),
         phoneNumber: form.getFieldValue("phoneNumber"),
-        receiverName: form.getFieldValue("receiverName") || null,
-        receiverPhoneNumber: form.getFieldValue("receiverPhoneNumber") || null,
+        receiverName: form.getFieldValue("receiverName") || undefined,
+        receiverPhoneNumber: form.getFieldValue("receiverPhoneNumber") || undefined,
         receiverAddress: receiverAddress,
         totalAmount: finalAmount,
-        voucher: voucher?.code || null,
+        voucher: voucher?.code || undefined,
         voucherPrice: voucher?.voucherPrice || 0,
         shippingAddress: shippingAddress,
         note: form.getFieldValue("note"),
-        products: products,
+        products: selectedProducts,
         paymentMethod: paymentMethod,
+        onlinePaymentMethod: paymentMethod === PaymentMethod.ONLINE ? onlinePaymentMethod : undefined,
       };
 
       setLoading(true);
       const response = await orderApi.addOrder(payload);
+      
       if (response?.status === HttpCodeString.SUCCESS) {
-        await clearCart(); // Xóa các sản phẩm được chọn
-        if (paymentMethod === PaymentMethod.ONLINE && response.data.vnpayUrl) {
-          window.location.href = response.data.vnpayUrl;
+        await clearCart();
+        if (paymentMethod === PaymentMethod.ONLINE) {
+          if (onlinePaymentMethod === "VNPAY" && response.data.vnpayUrl) {
+            window.location.href = response.data.vnpayUrl;
+          } else if (onlinePaymentMethod === "MOMO" && response.data.momoUrl) {
+            window.location.href = response.data.momoUrl;
+          } else {
+            showToast({
+              content: "Không thể tạo URL thanh toán. Vui lòng thử lại!",
+              duration: 5,
+              type: "error",
+            });
+          }
         } else if (paymentMethod === PaymentMethod.COD) {
           showToast({
             content: "Đặt hàng thành công!",
@@ -473,9 +476,34 @@ const Payment = () => {
           });
           navigate("/order-history");
         }
+      } else if (response?.status === 500) {
+        // Handle payment service errors
+        const errorMessage = response.message || "Dịch vụ thanh toán hiện không khả dụng. Vui lòng chọn phương thức thanh toán khác!";
+        showToast({
+          content: `${errorMessage} (${response?.messageKey || 'unknown'})`,
+          duration: 5,
+          type: "error",
+        });
+        
+        if (response?.messageKey === 'payment.error') {
+          // Reset payment method to COD if online payment fails
+          if (paymentMethod === PaymentMethod.ONLINE) {
+            setPaymentMethod(PaymentMethod.COD);
+            setOnlinePaymentMethod("VNPAY"); // Reset to default online payment method
+            form.setFieldsValue({
+              paymentMethod: PaymentMethod.COD,
+              onlinePaymentMethod: undefined
+            });
+            showToast({
+              content: "Đã chuyển sang phương thức thanh toán COD do lỗi thanh toán online",
+              duration: 5,
+              type: "info",
+            });
+          }
+        }
       } else {
         showToast({
-          content: "Đặt hàng thất bại!",
+          content: "Đặt hàng thất bại! Vui lòng thử lại sau.",
           duration: 5,
           type: "error",
         });
@@ -483,7 +511,7 @@ const Payment = () => {
     } catch (error) {
       console.error("Payment error:", error);
       showToast({
-        content: "Đã xảy ra lỗi khi đặt hàng!",
+        content: "Đã xảy ra lỗi khi đặt hàng! Vui lòng thử lại sau.",
         duration: 5,
         type: "error",
       });
@@ -832,7 +860,7 @@ const Payment = () => {
                 rules={[{ required: true, message: "Vui lòng chọn phương thức thanh toán!" }]}
               >
                 <Radio.Group
-                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  onChange={(e) => handlePaymentMethodChange(e.target.value)}
                   value={paymentMethod}
                   className="flex flex-col gap-2"
                 >
@@ -845,6 +873,79 @@ const Payment = () => {
                 </Radio.Group>
               </Form.Item>
             </Form>
+
+            {paymentMethod === PaymentMethod.ONLINE && (
+              <div style={{ marginTop: 16 }}>
+                <Form.Item
+                  label="Phương thức thanh toán online"
+                  name="onlinePaymentMethod"
+                  rules={[{ required: true, message: "Vui lòng chọn phương thức thanh toán online!" }]}
+                >
+                  <div className="flex flex-col gap-4">
+                    <div 
+                      className={`payment-method-option ${onlinePaymentMethod === 'VNPAY' ? 'selected' : ''}`}
+                      onClick={() => {
+                        setOnlinePaymentMethod('VNPAY');
+                        form.setFieldsValue({ onlinePaymentMethod: 'VNPAY' });
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <img src="/images/icon/vnpay-logo.png" alt="VNPay" className="w-8 h-8" />
+                        <div>
+                          <span className="text-lg font-medium">VNPay</span>
+                          <p className="text-sm text-gray-500 mt-1">Thanh toán qua VNPay với thẻ ATM, Visa, Mastercard</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div 
+                      className={`payment-method-option ${onlinePaymentMethod === 'MOMO' ? 'selected' : ''}`}
+                      onClick={() => {
+                        setOnlinePaymentMethod('MOMO');
+                        form.setFieldsValue({ onlinePaymentMethod: 'MOMO' });
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <img src="/images/icon/momo-logo.png" alt="Momo" className="w-8 h-8" />
+                        <div>
+                          <span className="text-lg font-medium">Momo</span>
+                          <p className="text-sm text-gray-500 mt-1">Thanh toán qua ví điện tử Momo</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Form.Item>
+                <style jsx>{`
+                  .payment-method-option {
+                    padding: 16px;
+                    border: 2px solid #e5e7eb;
+                    border-radius: 8px;
+                    background-color: white;
+                    transition: all 0.2s ease;
+                    cursor: pointer;
+                  }
+                  
+                  .payment-method-option:hover {
+                    border-color: #2563eb;
+                    background-color: #f0f7ff;
+                    transform: translateY(-1px);
+                  }
+                  
+                  .payment-method-option.selected {
+                    border-color: #2563eb;
+                    background-color: #e6f0ff;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                  }
+                  
+                  .payment-method-option .text-lg {
+                    color: #1f2937;
+                  }
+                  
+                  .payment-method-option.selected .text-lg {
+                    color: #2563eb;
+                  }
+                `}</style>
+              </div>
+            )}
 
             <Button
               type="primary"

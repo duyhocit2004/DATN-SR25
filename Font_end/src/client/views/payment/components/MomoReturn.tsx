@@ -2,21 +2,21 @@ import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { showToast } from "@/components/toast";
 
-const VNPayReturn = () => {
+const MomoReturn = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const responseCode = searchParams.get("vnp_ResponseCode");
-    const transactionNo = searchParams.get("vnp_TransactionNo");
+    const resultCode = searchParams.get("resultCode");
+    const transId = searchParams.get("transId");
 
-    if (responseCode === "00") {
+    if (resultCode === "0") {
       showToast({
-        content: `Thanh toán thành công! Mã giao dịch: ${transactionNo}`,
+        content: `Thanh toán thành công! Mã giao dịch: ${transId}`,
         duration: 5,
         type: "success",
       });
-      navigate("/order-history"); 
+      navigate("/order-history");
     } else {
       showToast({
         content: "Thanh toán thất bại! Vui lòng thử lại.",
@@ -30,4 +30,4 @@ const VNPayReturn = () => {
   return <div>Đang xử lý thanh toán...</div>;
 };
 
-export default VNPayReturn;
+export default MomoReturn; 
