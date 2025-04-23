@@ -90,12 +90,12 @@ export interface IListCategory {
 export interface IBanner {
   id: number;
   image: string;
-  status: boolean;
+  status: string;
   type: string;
-  link: string;
-  productId: string;
-  created_at?: Dayjs;
-  updated_at?: Dayjs;
+  link: string | null;
+  productId: number | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface IAllBanner {

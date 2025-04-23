@@ -89,50 +89,6 @@ export default function Checkout() {
           </button>
         </div>
       </div>
-
-      <style jsx>{`
-        .checkout-container {
-          padding: 20px;
-        }
-        .payment-section {
-          background: white;
-          border-radius: 8px;
-          padding: 20px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .payment-info {
-          margin-top: 20px;
-        }
-        .amount-info {
-          margin-bottom: 20px;
-        }
-        .total {
-          font-weight: bold;
-          color: #2563eb;
-        }
-        .required {
-          color: red;
-          margin-bottom: 10px;
-        }
-        .payment-button {
-          width: 100%;
-          padding: 12px;
-          background: #2563eb;
-          color: white;
-          border: none;
-          border-radius: 6px;
-          font-weight: 500;
-          cursor: pointer;
-          margin-top: 20px;
-        }
-        .payment-button:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-        }
-        .payment-button:hover:not(:disabled) {
-          background: #1d4ed8;
-        }
-      `}</style>
     </div>
   );
 } 

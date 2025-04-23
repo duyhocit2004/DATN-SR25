@@ -116,7 +116,12 @@ const adminProductSlice = createSlice({
       .addCase(deleteProduct.pending, (state) => {
         state.loading = true;
       })
-      .addCase(deleteProduct.fulfilled, (state) => {
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        if (action.payload.status === HttpCodeString.SUCCESS) {
+          const deletedProductId = action.meta.arg;
+          state.products = state.products.filter(product => product.id !== deletedProductId);
+          state.totalElements = state.totalElements - 1;
+        }
         state.loading = false;
       })
       .addCase(deleteProduct.rejected, (state) => {
