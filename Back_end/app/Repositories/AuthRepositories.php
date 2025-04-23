@@ -18,18 +18,23 @@ class AuthRepositories
     public function getAccountByEmail($email)
     {
         $user11 = User::query()->where('email', '=', $email)->first();
+        
+        if (!$user11) {
+            return null;
+        }
+
         $user = [
             "id"=>$user11->id,
             "name"=>$user11->name,
             "email"=>$user11->email,
-            "phoneNumber"=>$user11->phoneNumber,
+            "phone_number"=>$user11->phone_number,
             "role"=>$user11->role,
-            "emailVerifiedAt"=>$user11->emailVerifiedAt,
+            "email_verified_at"=>$user11->email_verified_at,
             "gender"=>$user11->gender,
-            "userImage"=>$user11->userImage,
-            "createdAt"=>$user11->createdAt,
-            "updatedAt"=>$user11->updatedAt,
-            "deletedAt"=>$user11->deletedAt,
+            "userImage"=>$user11->user_image,
+            "createdAt"=>$user11->created_at,
+            "updatedAt"=>$user11->updated_at,
+            "deletedAt"=>$user11->deleted_at,
             "status"=>$user11->status,
             "password"=>$user11->password
         ];
@@ -117,7 +122,7 @@ class AuthRepositories
             $query->where('gender', '=' ,$gender);
         }
 
-        $users = $query->paginate($perPage, ['*'], 'page', $page);
+        $users = $query->orderBy('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
         return $users;
     }
 

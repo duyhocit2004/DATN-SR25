@@ -7,6 +7,8 @@
 //use App\Http\Controllers\Admin\colorAdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProductAdminController;
+use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Admin\MomoController;
 
 
 /*
@@ -129,3 +131,14 @@ use App\Http\Controllers\Admin\ProductAdminController;
 //Route::get('voucher/{id}/edit', [VoucherAdminController::class, 'edit']) -> name('vouchers.edit');
 //Route::put('vouchers/{id}', [VoucherAdminController::class, 'update']) -> name('vouchers.update');
 //Route::delete('vouchers/{id}', [VoucherAdminController::class, 'destroy']) -> name('vouchers.destroy');
+
+Route::prefix('payment')->group(function () {
+    Route::post('create', [PaymentController::class, 'createPayment'])->name('payment.create');
+    Route::get('return', [PaymentController::class, 'return'])->name('payment.return');
+    Route::post('notify', [PaymentController::class, 'notify'])->name('payment.notify');
+});
+
+Route::prefix('momo')->group(function () {
+    Route::get('return', [MomoController::class, 'returnPayment'])->name('momo.return');
+    Route::post('notify', [MomoController::class, 'notifyPayment'])->name('momo.notify');
+});

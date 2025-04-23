@@ -31,7 +31,7 @@ class BannersRepositories
             $query->where('type', '=', $type);
         }
 
-        $listBanners = $query->paginate($perPage, ['*'], 'page', $page);
+        $listBanners = $query->orderBy('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
         return $listBanners;
     }
 

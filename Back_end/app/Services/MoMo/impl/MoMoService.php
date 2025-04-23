@@ -160,13 +160,13 @@ class MoMoService implements IMoMoService
                     ]);
                 }
             } else {
-                return 'http://localhost:5173/vnpay-return?vnp_ResponseCode=' . $response['resultCode'] . '&vnp_TransactionNo=' . $response['transId'];
+                return response()->json(['message' => 'Received'], 200);
             }
 
-            return 'http://localhost:5173/vnpay-return?vnp_ResponseCode=' . $response['resultCode'] . '&vnp_TransactionNo=' . $response['transId'];
+            return response()->json(['message' => 'Received'], 200);
         }
 
-        return 'http://localhost:5173/vnpay-return?vnp_ResponseCode=' . $response['resultCode'] . '&vnp_TransactionNo=' . $response['transId'];
+        return response()->json(['message' => 'Invalid signature'], 400);
 
     }
 }

@@ -224,7 +224,7 @@ class OrderRepositories
         if (!empty($sortType)) {
             $query->orderByRaw('IFNULL(date, status) ' . $sortType);
         }
-        $orders = $query->paginate($perPage, ['*'], 'page', $page);
+        $orders = $query->orderBy('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
         return $orders;
 
     }
@@ -241,9 +241,17 @@ class OrderRepositories
         $order = Order::where('id', $request->input('id'))->first();
 
         if (!empty($order)) {
+            $status = $request->input('status', $order->status);
+            $paymentStatus = $request->input('paymentStatus', $order->payment_status);
+
+            // Check if status is delivered and payment method is COD
+            if ($status === 'Delivered' && $order->payment_method === 'COD') {
+                $paymentStatus = 'PAID';
+            }
+
             $order->update([
-                'status' => $request->input('status', $order->status),
-                'payment_status' => $request->input('paymentStatus', $order->payment_status),
+                'status' => $status,
+                'payment_status' => $paymentStatus,
                 'payment_method' => $request->input('paymentMethod', $order->payment_method),
             ]);
             return $order;
