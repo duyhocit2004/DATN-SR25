@@ -31,14 +31,33 @@ export const fetchProducts = createAsyncThunk(
     const state = getState() as { adminProduct: AdminProductState };
     const { filter, pagination } = state.adminProduct;
 
+    // Lấy tất cả sản phẩm không phân trang
     const payload = {
       name: filter.keyword,
       categoriesId: filter.categoryId,
-      pageNum: pagination.page,
-      pageSize: pagination.pageSize,
+      pageNum: 1,
+      pageSize: 1000, // Lấy số lượng lớn để có thể lấy tất cả sản phẩm
     };
 
     const response = await productApi.getProductsByFilter(payload);
+    
+    if (response?.status === HttpCodeString.SUCCESS) {
+      // Sắp xếp toàn bộ danh sách sản phẩm theo thứ tự mới nhất
+      const sortedProducts = [...response.data.data].sort((a: IProduct, b: IProduct) => {
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return dateB - dateA;
+      });
+
+      // Phân trang sau khi đã sắp xếp
+      const startIndex = (pagination.page - 1) * pagination.pageSize;
+      const endIndex = startIndex + pagination.pageSize;
+      const paginatedProducts = sortedProducts.slice(startIndex, endIndex);
+
+      // Cập nhật lại response với dữ liệu đã phân trang
+      response.data.data = paginatedProducts;
+      response.data.total = sortedProducts.length;
+    }
 
     return response;
   }

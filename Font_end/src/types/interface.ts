@@ -332,10 +332,13 @@ export interface IVariant {
 }
 
 export interface IDashboardStatistical {
-  totalProduct: number;
-  totalOrder: number;
-  totalUser: number;
-  totalRevenue: number;
+  order: number;
+  unconfirmedOrders: number;
+  confirmedOrders: number;
+  cancelledOrders: number;
+  product: number;
+  revenue: number;
+  user: number;
 }
 
 export interface IDashboardChart {
