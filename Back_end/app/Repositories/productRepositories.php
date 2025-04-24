@@ -121,7 +121,6 @@ class ProductRepositories
             'cancelled_orders' => $cancelledOrders ?? 0,
             'product' => $totalProducts ?? 0,
             'revenue' => $revenue ?? 0,
-
             'user' => $totalUsers ?? 0,
             'revenue' => $Delivered ?? 0,
         ];
