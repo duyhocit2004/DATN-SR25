@@ -7,6 +7,7 @@ return [
     'ORDER_STATS_DELIVERED' => 'Delivered',
     'STATUS_ACTIVE' => 'ACTIVE',
     'STATUS_INACTIVE' => 'INACTIVE',
+    
 
     'ORDER_STATUS' => [
         'UNCONFIRMED' => 'Unconfirmed',
@@ -16,6 +17,7 @@ return [
         'SHIPPING' => 'Shipping',
         'DELIVERED' => 'Delivered',
         'CANCEL' => 'Cancel', 
+        
     ],
 
 ];

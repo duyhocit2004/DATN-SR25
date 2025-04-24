@@ -40,7 +40,7 @@ class OrderController extends Controller
                     $paymentUrl = $this->vnpayService->createPaymentUrl($order->code, $order->total_price);
                 } elseif ($request->input('onlinePaymentMethod') === 'MOMO') {
                     try {
-                        $paymentUrl = $this->momoService->createPaymentUrl($order->code, $order->total_price);
+                        $paymentUrl = $this->momoService->createPaymentUrlPayMoMoPayMoMo($order->code, $order->total_price);
                     } catch (\Exception $e) {
                         \Log::error('Momo payment error: ' . $e->getMessage());
                         return BaseResponse::failure(500, 'Momo payment service is currently unavailable', 'payment.error', []);

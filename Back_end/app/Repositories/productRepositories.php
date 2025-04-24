@@ -13,16 +13,14 @@ use Illuminate\Support\Facades\DB;
 
 class ProductRepositories
 {
-    public function getDataStats(Request $request)
+    public function getDataStats(Request $request   )
     {
-        $filterType = $request->input('time', 'year');
-        $selectedDate = $request->input('date')
-            ? Carbon::parse($request->input('date'))->startOfDay()
-            : Carbon::today()->startOfDay();
-
+        // $filterType = $request->input('time', 'year');
+        // $selectedDate = $request->input('date')
+        //     ? Carbon::parse($request->input('date'))->startOfDay()
+        //     : Carbon::today()->startOfDay();
         $fromDate = null;
         $toDate = null;
-
         switch ($filterType) {
             case 'day':
                 $fromDate = $selectedDate;
@@ -89,11 +87,19 @@ class ProductRepositories
         // Đếm tổng số sản phẩm
         $totalProducts = DB::table('products')
             ->where('created_at', '<=', $toDate)
+
             ->count();
 
         // Đếm tổng số người dùng
         $totalUsers = DB::table('users')
-            ->where('created_at', '<=', $toDate)
+            ->whereBetween('created_at', [$fromDate,$toDate])
+            ->count();
+
+        // count all failOrder
+        $Delivered = DB::table('orders')
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->where('payment_status', '=', 'PAID')
+            ->where('status', '=', 'Delivered')
             ->count();
 
         // Debug log
@@ -108,13 +114,16 @@ class ProductRepositories
         ]);
 
         return [
+
             'order' => $orderStats->total_orders ?? 0,
             'unconfirmed_orders' => $unconfirmedOrders ?? 0,
             'confirmed_orders' => $confirmedOrders ?? 0,
             'cancelled_orders' => $cancelledOrders ?? 0,
             'product' => $totalProducts ?? 0,
             'revenue' => $revenue ?? 0,
+
             'user' => $totalUsers ?? 0,
+            'revenue' => $Delivered ?? 0,
         ];
     }
 
@@ -362,7 +371,7 @@ class ProductRepositories
             $query->orderByRaw('IFNULL(price_sale, price_regular) ' . $sortType);
         }
 
-        $products = $query->paginate($perPage, ['*'], 'page', $page);
+        $products = $query->orderby('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
         return $products;
     }
 

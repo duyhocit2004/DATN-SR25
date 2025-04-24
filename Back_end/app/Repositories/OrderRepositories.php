@@ -224,7 +224,7 @@ class OrderRepositories
         if (!empty($sortType)) {
             $query->orderByRaw('IFNULL(date, status) ' . $sortType);
         }
-        $orders = $query->paginate($perPage, ['*'], 'page', $page);
+        $orders = $query->orderBy('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
         return $orders;
 
     }
