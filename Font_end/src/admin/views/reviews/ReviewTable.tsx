@@ -12,6 +12,13 @@ const ReviewTable: React.FC = () => {
   );
   const navigate = useNavigate();
 
+  // Sort reviews by createdAt in descending order
+  const sortedReviews = [...reviews].sort((a, b) => {
+    const dateA = new Date(a.createdAt).getTime();
+    const dateB = new Date(b.createdAt).getTime();
+    return dateB - dateA;
+  });
+
   const columns: ColumnsType<IResponseReview> = [
     {
       title: "STT",
@@ -80,7 +87,7 @@ const ReviewTable: React.FC = () => {
     <Table<IResponseReview>
       columns={columns}
       rowKey={(record) => record.id}
-      dataSource={reviews}
+      dataSource={sortedReviews}
       pagination={{
         pageSize: pagination?.pageSize,
         current: pagination?.page,

@@ -41,7 +41,6 @@ class ProductRepositories
                 $toDate = Carbon::now()->lastOfQuarter();
                 break;
             case 'year':
-                // Use the year from selectedDate, fallback to current year if invalid
                 try {
                     $year = $selectedDate->year;
                 } catch (\Exception $e) {
@@ -56,29 +55,65 @@ class ProductRepositories
                 break;
         }
 
-        $result = DB::table('orders')
+        // Lấy tổng số đơn hàng và doanh thu
+        $orderStats = DB::table('orders')
             ->whereBetween('created_at', [$fromDate, $toDate])
-            ->where('payment_status', '=', 'PAID')
-            ->where('status', '=', 'Delivered')
-            ->selectRaw('
-                COUNT(*) as total_orders,
-                COALESCE(SUM(total_price), 0) as total_revenue
-            ')
+            ->selectRaw('COUNT(*) as total_orders')
             ->first();
 
-        // Count all products created on or before $toDate
+        // Đếm số đơn hàng chưa xác nhận
+        $unconfirmedOrders = DB::table('orders')
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->where('status', 'Unconfirmed')
+            ->count();
+
+        // Đếm số đơn hàng đã xác nhận
+        $confirmedOrders = DB::table('orders')
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->where('status', 'Confirmed')
+            ->count();
+
+        // Đếm số đơn hàng đã hủy
+        $cancelledOrders = DB::table('orders')
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->whereIn('status', ['Cancel', 'Cancel Confirm'])
+            ->count();
+
+        // Tính tổng doanh thu từ đơn hàng đã giao và đã thanh toán
+        $revenue = DB::table('orders')
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->where('status', 'Delivered')
+            ->where('payment_status', 'PAID')
+            ->sum('total_price');
+
+        // Đếm tổng số sản phẩm
         $totalProducts = DB::table('products')
             ->where('created_at', '<=', $toDate)
             ->count();
 
-        // Count all users created on or before $toDate
+        // Đếm tổng số người dùng
         $totalUsers = DB::table('users')
             ->where('created_at', '<=', $toDate)
             ->count();
+
+        // Debug log
+        \Log::info('Order Stats:', [
+            'total_orders' => $orderStats->total_orders,
+            'unconfirmed' => $unconfirmedOrders,
+            'confirmed' => $confirmedOrders,
+            'cancelled' => $cancelledOrders,
+            'revenue' => $revenue,
+            'fromDate' => $fromDate,
+            'toDate' => $toDate
+        ]);
+
         return [
-            'order' => $result->total_orders ?? 0,
+            'order' => $orderStats->total_orders ?? 0,
+            'unconfirmed_orders' => $unconfirmedOrders ?? 0,
+            'confirmed_orders' => $confirmedOrders ?? 0,
+            'cancelled_orders' => $cancelledOrders ?? 0,
             'product' => $totalProducts ?? 0,
-            'revenue' => $result->total_revenue ?? 0,
+            'revenue' => $revenue ?? 0,
             'user' => $totalUsers ?? 0,
         ];
     }
@@ -87,18 +122,23 @@ class ProductRepositories
     public function getDashboardChart(Request $request)
     {
         $filterType = $request->input('time', 'month');
-        // Sử dụng ngày từ request nếu có, nếu không thì lấy ngày hiện tại
-        $selectedDate = $request->input('date')
-            ? Carbon::parse($request->input('date'))->startOfDay()
-            : Carbon::today()->startOfDay();
+        $startDate = $request->input('startDate') 
+            ? Carbon::createFromFormat('d/m/Y', $request->input('startDate'))->startOfDay()
+            : null;
+        $endDate = $request->input('endDate')
+            ? Carbon::createFromFormat('d/m/Y', $request->input('endDate'))->endOfDay()
+            : null;
 
         $listResult = [];
 
         if ('day' == $filterType) {
-            $endOfDay = $selectedDate->copy()->endOfDay();
+            if (!$startDate || !$endDate) {
+                $startDate = Carbon::today()->startOfDay();
+                $endDate = Carbon::today()->endOfDay();
+            }
 
             $result = DB::table('orders')
-                ->whereBetween('created_at', [$selectedDate, $endOfDay])
+                ->whereBetween('created_at', [$startDate, $endDate])
                 ->where('payment_status', '=', 'PAID')
                 ->where('status', '=', 'Delivered')
                 ->selectRaw('
@@ -125,8 +165,10 @@ class ProductRepositories
             }
         }
         if ('week' == $filterType) {
-            $startDate = Carbon::now()->startOfWeek();
-            $endDate = Carbon::now()->endOfWeek();
+            if (!$startDate || !$endDate) {
+                $startDate = Carbon::now()->startOfWeek();
+                $endDate = Carbon::now()->endOfWeek();
+            }
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$startDate, $endDate])
@@ -142,7 +184,6 @@ class ProductRepositories
                 ->get()
                 ->keyBy('day');
 
-            // Danh sách các ngày trong tuần
             $allDays = [];
             $current = $startDate->copy();
             while ($current->lte($endDate)) {
@@ -150,29 +191,20 @@ class ProductRepositories
                 $current->addDay();
             }
 
-            // Kết quả đầu ra
-            $listResult = [];
-            foreach ($allDays as $index => $day) {
-                if ($result->has($day)) {
-                    $listResult[] = [
-                        'stt' => $day,
-                        'order' => $result[$day]->total_orders,
-                        'revenue' => $result[$day]->total_revenue
-                    ];
-                } else {
-                    $listResult[] = [
-                        'stt' => $day,
-                        'order' => 0,
-                        'revenue' => 0
-                    ];
-                }
+            foreach ($allDays as $day) {
+                $listResult[] = [
+                    'stt' => $day,
+                    'order' => $result->has($day) ? $result[$day]->total_orders : 0,
+                    'revenue' => $result->has($day) ? $result[$day]->total_revenue : 0
+                ];
             }
         }
 
         if ('month' == $filterType) {
-            $startDate = Carbon::now()->startOfMonth();
-            $endDate = Carbon::now()->endOfMonth();
-
+            if (!$startDate || !$endDate) {
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+            }
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$startDate, $endDate])
@@ -191,31 +223,24 @@ class ProductRepositories
             $allWeeks = [];
             $current = $startDate->copy()->startOfWeek();
             while ($current->lte($endDate)) {
-                $allWeeks[] = $current->format('oW'); // oW: YEARWEEK (ISO-8601)
+                $allWeeks[] = $current->format('oW');
                 $current->addWeek();
             }
 
-            // Lặp qua tất cả các tuần để đảm bảo tuần nào không có dữ liệu cũng được thêm
             foreach ($allWeeks as $index => $week) {
-                if ($result->has($week)) {
-                    $listResult[] = [
-                        'stt' => $index + 1,
-                        'order' => $result[$week]->total_orders,
-                        'revenue' => $result[$week]->total_revenue
-                    ];
-                } else {
-                    $listResult[] = [
-                        'stt' => $index + 1,
-                        'order' => 0,
-                        'revenue' => 0
-                    ];
-                }
+                $listResult[] = [
+                    'stt' => $index + 1,
+                    'order' => $result->has($week) ? $result[$week]->total_orders : 0,
+                    'revenue' => $result->has($week) ? $result[$week]->total_revenue : 0
+                ];
             }
         }
 
         if ('quarter' == $filterType) {
-            $startDate = Carbon::now()->firstOfQuarter();
-            $endDate = Carbon::now()->lastOfQuarter();
+            if (!$startDate || !$endDate) {
+                $startDate = Carbon::now()->firstOfQuarter();
+                $endDate = Carbon::now()->lastOfQuarter();
+            }
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$startDate, $endDate])
@@ -231,7 +256,6 @@ class ProductRepositories
                 ->get()
                 ->keyBy('month');
 
-            // Danh sách các tháng trong quý
             $allMonths = [];
             $current = $startDate->copy();
             while ($current->lte($endDate)) {
@@ -239,36 +263,21 @@ class ProductRepositories
                 $current->addMonth();
             }
 
-            // Kết quả đầu ra
-            $listResult = [];
             foreach ($allMonths as $month) {
                 $monthNumber = (int) substr($month, 5, 2);
-                if ($result->has($month)) {
-                    $listResult[] = [
-                        'stt' => $monthNumber, // Thứ tự tháng trong quý
-                        'order' => $result[$month]->total_orders,
-                        'revenue' => $result[$month]->total_revenue
-                    ];
-                } else {
-                    $listResult[] = [
-                        'stt' => $monthNumber, // Thứ tự tháng trong quý
-                        'order' => 0, // Mặc định nếu không có dữ liệu
-                        'revenue' => 0
-                    ];
-                }
+                $listResult[] = [
+                    'stt' => $monthNumber,
+                    'order' => $result->has($month) ? $result[$month]->total_orders : 0,
+                    'revenue' => $result->has($month) ? $result[$month]->total_revenue : 0
+                ];
             }
-
         }
 
         if ('year' == $filterType) {
-            // Lấy năm từ selectedDate, nếu không hợp lệ thì dùng năm hiện tại
-            try {
-                $year = $selectedDate->year;
-            } catch (\Exception $e) {
-                $year = Carbon::now()->year;
+            if (!$startDate || !$endDate) {
+                $startDate = Carbon::now()->startOfYear();
+                $endDate = Carbon::now()->endOfYear();
             }
-            $startDate = Carbon::create($year, 1, 1)->startOfDay();
-            $endDate = Carbon::create($year, 12, 31)->endOfDay();
 
             $result = DB::table('orders')
                 ->whereBetween('created_at', [$startDate, $endDate])
@@ -291,7 +300,7 @@ class ProductRepositories
 
             foreach ($allMonths as $month) {
                 $listResult[] = [
-                    'stt' => (int) $month, // Trả về số tháng (1-12)
+                    'stt' => (int) $month,
                     'order' => $result->has($month) ? $result[$month]->total_orders : 0,
                     'revenue' => $result->has($month) ? $result[$month]->total_revenue : 0
                 ];

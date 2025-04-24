@@ -6,6 +6,7 @@ export interface IResponseReview {
   productId: number;
   productName: string;
   rate: number;
+  createdAt: string;
 }
 
 export interface IReply {

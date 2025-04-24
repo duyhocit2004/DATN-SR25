@@ -225,14 +225,6 @@ const UpdateProduct: React.FC = () => {
 
   // Xử lý chọn ảnh đại diện
   const handleThumbnailChange = ({ fileList }: { fileList: UploadFile[] }) => {
-    // if (file?.status === "removed") {
-    //   setThumbnail(null);
-    //   return;
-    // }
-    // setThumbnail({
-    //   ...file,
-    //   originFileObj: file as RcFile
-    // });
     if (fileList.length === 0) {
       setThumbnail(null);
       return;
@@ -446,16 +438,6 @@ const UpdateProduct: React.FC = () => {
                     { required: true, message: "Vui lòng chọn danh mục!" },
                   ]}
                 >
-                  {/* <Select
-                    placeholder="Chọn danh mục"
-                    onChange={(value) => {
-                      onChangeProductInfo("categoryId", value);
-                    }}
-                  >
-                    <Option value="ao-phong">Áo phông</Option>
-                    <Option value="quan-jean">Quần jean</Option>
-                    <Option value="ao-khoac">Áo khoác</Option>
-                  </Select> */}
                   <Cascader
                     options={categories?.map((e) => {
                       return {

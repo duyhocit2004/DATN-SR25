@@ -1,7 +1,7 @@
 import adminApi from "@/api/adminApi";
 import { IDashboardChart } from "@/types/interface";
 import { HttpCodeString } from "@/utils/constants";
-import { Radio, RadioChangeEvent, Spin, DatePicker } from "antd";
+import { Spin, DatePicker, Typography } from "antd";
 import { useEffect, useState } from "react";
 import {
   XAxis,
@@ -13,7 +13,8 @@ import {
   Legend,
   Area,
 } from "recharts";
-const { YearPicker } = DatePicker;
+const { RangePicker } = DatePicker;
+const { Title } = Typography;
 
 interface IOrderAndRevenue {
   name: string;
@@ -28,45 +29,12 @@ interface DashboardChartProps {
   setSelectedDate: (date: string | null) => void;
 }
 
-const getChartData = (
-  filterType: string,
-  data: IDashboardChart[],
-  selectedYear?: string
-): IOrderAndRevenue[] => {
-  switch (filterType) {
-    case "day":
-      return data.map((item) => ({
-        name: item.stt,
-        order: item.order,
-        revenue: item.revenue,
-      }));
-    case "week":
-      return data.map((item) => ({
-        name: `Ngày ${item.stt}`,
-        order: item.order,
-        revenue: item.revenue,
-      }));
-    case "month":
-      return data.map((item) => ({
-        name: `Tuần ${item.stt}`,
-        order: item.order,
-        revenue: item.revenue,
-      }));
-    case "quarter":
-      return data.map((item) => ({
-        name: `Tháng ${item.stt}`,
-        order: item.order,
-        revenue: item.revenue,
-      }));
-    case "year":
-      return data.map((item) => ({
-        name: `Tháng ${item.stt}`,
-        order: item.order,
-        revenue: item.revenue,
-      }));
-    default:
-      return [];
-  }
+const getChartData = (data: IDashboardChart[]): IOrderAndRevenue[] => {
+  return data.map((item) => ({
+    name: item.stt,
+    order: item.order,
+    revenue: item.revenue,
+  }));
 };
 
 const DashboardChart = ({
@@ -76,49 +44,59 @@ const DashboardChart = ({
   setSelectedDate,
 }: DashboardChartProps) => {
   const [loading, setLoading] = useState(false);
-  const [orderAndRevenueData, setOrderAndRevenueData] = useState<
-    IOrderAndRevenue[]
-  >([]);
+  const [orderAndRevenueData, setOrderAndRevenueData] = useState<IOrderAndRevenue[]>([]);
+  const [dateRange, setDateRange] = useState<[string, string] | null>(null);
+  const [totalRevenue, setTotalRevenue] = useState<number>(0);
+  const [totalOrders, setTotalOrders] = useState<number>(0);
 
   useEffect(() => {
     getData();
-  }, [filterType, selectedDate]);
+  }, [dateRange]);
 
   const getData = async () => {
     setLoading(true);
     try {
-      const payload: { time: string; date?: string } = {
-        time: filterType,
-      };
-      if ((filterType === "day" || filterType === "year") && selectedDate) {
-        // For year filter, ensure date is in YYYY-01-01 format
-        payload.date =
-          filterType === "year" ? `${selectedDate}-01-01` : selectedDate;
+      const payload: { startDate?: string; endDate?: string } = {};
+      
+      if (dateRange) {
+        payload.startDate = dateRange[0];
+        payload.endDate = dateRange[1];
       }
+
       const response = await adminApi.getDashboardChart(payload);
       if (response?.status === HttpCodeString.SUCCESS) {
-        const data = getChartData(filterType, response.data, selectedDate);
+        const data = getChartData(response.data);
         setOrderAndRevenueData(data);
+        
+        // Calculate totals
+        const totalRev = data.reduce((sum, item) => sum + item.revenue, 0);
+        const totalOrd = data.reduce((sum, item) => sum + item.order, 0);
+        setTotalRevenue(totalRev);
+        setTotalOrders(totalOrd);
       } else {
         setOrderAndRevenueData([]);
+        setTotalRevenue(0);
+        setTotalOrders(0);
       }
     } catch (error) {
       console.error("Error fetching chart data:", error);
       setOrderAndRevenueData([]);
+      setTotalRevenue(0);
+      setTotalOrders(0);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFilterChange = (e: RadioChangeEvent) => {
-    setFilterType(e.target.value);
-    if (e.target.value !== "day" && e.target.value !== "year") {
-      setSelectedDate(null);
-    }
+  const handleDateRangeChange = (dates: any, dateStrings: [string, string]) => {
+    setDateRange(dateStrings);
   };
 
-  const handleDateChange = (date: any, dateString: string) => {
-    setSelectedDate(dateString || null);
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(value);
   };
 
   return (
@@ -144,31 +122,28 @@ const DashboardChart = ({
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-bold">Biểu đồ đơn hàng & doanh thu</h2>
         <div className="flex items-center gap-4">
-          <Radio.Group value={filterType} onChange={handleFilterChange}>
-            <Radio.Button value="day">Ngày</Radio.Button>
-            <Radio.Button value="week">Tuần</Radio.Button>
-            <Radio.Button value="month">Tháng</Radio.Button>
-            <Radio.Button value="quarter">Quý</Radio.Button>
-            <Radio.Button value="year">Năm</Radio.Button>
-          </Radio.Group>
-          {filterType === "day" && (
-            <DatePicker
-              onChange={handleDateChange}
-              format="DD-MM-YYYY"
-              placeholder="Chọn ngày"
-            />
-          )}
-          {filterType === "year" && (
-            <YearPicker
-              onChange={handleDateChange}
-              format="YYYY"
-              placeholder="Chọn năm"
-            />
-          )}
+          <RangePicker
+            onChange={handleDateRangeChange}
+            format="DD/MM/YYYY"
+            placeholder={['Từ ngày', 'Đến ngày']}
+          />
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={300}>
+      <div className="mb-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <Title level={5} className="text-gray-500">Tổng số đơn hàng</Title>
+            <Title level={3} className="!mb-0">{totalOrders}</Title>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <Title level={5} className="text-gray-500">Tổng doanh thu</Title>
+            <Title level={3} className="!mb-0">{formatCurrency(totalRevenue)}</Title>
+          </div>
+        </div>
+      </div>
+
+      <ResponsiveContainer width="100%" height={400}>
         <AreaChart data={orderAndRevenueData}>
           <defs>
             <linearGradient id="orderGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -184,7 +159,14 @@ const DashboardChart = ({
           <XAxis dataKey="name" />
           <YAxis yAxisId="left" />
           <YAxis yAxisId="right" orientation="right" />
-          <Tooltip />
+          <Tooltip 
+            formatter={(value: number, name: string) => {
+              if (name === 'Doanh thu') {
+                return formatCurrency(value);
+              }
+              return value;
+            }}
+          />
           <Legend />
           <Area
             type="monotone"

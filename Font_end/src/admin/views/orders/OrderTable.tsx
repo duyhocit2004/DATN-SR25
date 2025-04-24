@@ -18,6 +18,14 @@ const OrderTable = () => {
   const { orders, pagination, totalElements, loading } = useAppSelector(
     (state) => state.adminOrder
   );
+
+  // Sort orders by orderTime in descending order
+  const sortedOrders = [...orders].sort((a, b) => {
+    const dateA = new Date(a.orderTime).getTime();
+    const dateB = new Date(b.orderTime).getTime();
+    return dateB - dateA;
+  });
+
   const [loadingRefund, setLoadingRefund] = useState<number | null>(null);
   const [refundModalVisible, setRefundModalVisible] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
@@ -278,7 +286,7 @@ const OrderTable = () => {
       <Table<IOrder>
         columns={columns}
         rowKey={(record) => record.id}
-        dataSource={orders}
+        dataSource={sortedOrders}
         pagination={{
           pageSize: pagination?.pageSize,
           current: pagination?.page,

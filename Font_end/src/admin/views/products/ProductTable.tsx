@@ -81,7 +81,7 @@ const ProductTable = () => {
                 icon={<DeleteOutlined />}
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleDeleteProduct(record.id);
+                  handleDeleteProduct(Number(record.id));
                 }}
               />
             </Tooltip>
@@ -106,7 +106,7 @@ const ProductTable = () => {
   };
 
   const onRowClick = (record: IProduct) => {
-    navigate("/admin/products/" + record?.id);
+    navigate("/admin/products/update/" + record?.id);
   };
   return (
     <Table<IProduct>

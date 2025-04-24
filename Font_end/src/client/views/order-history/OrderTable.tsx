@@ -112,12 +112,19 @@ const OrderTable = () => {
     dispatch(setSelectedOrder(order));
   };
 
+  // Sort orders by orderTime in descending order
+  const sortedOrders = [...orders].sort((a, b) => {
+    const dateA = new Date(a.orderTime).getTime();
+    const dateB = new Date(b.orderTime).getTime();
+    return dateB - dateA;
+  });
+
   return (
     <>
       <Table
         loading={loading}
         columns={columns}
-        dataSource={orders}
+        dataSource={sortedOrders}
         rowKey="id"
         pagination={false}
         scroll={{ x: "100%" }}
