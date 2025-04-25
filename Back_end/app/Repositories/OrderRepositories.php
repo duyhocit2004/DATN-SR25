@@ -428,8 +428,13 @@ class OrderRepositories
             DB::beginTransaction();
 
             try {
+                // Lưu trạng thái cũ
+                $oldStatus = $order->status;
+                $oldPaymentStatus = $order->payment_status;
+
                 // Update order status
                 $updateResult = $order->update([
+                    'status' => 'Cancel',
                     'refund_status' => 'REFUNDED',
                     'refund_reason' => $refundReason,
                     'refunded_by' => $adminId,
@@ -443,23 +448,43 @@ class OrderRepositories
 
                 \Log::info('Order updated successfully', ['order' => $order->toArray()]);
 
-                // Add status history
-                $historyResult = OrderStatusHistory::create([
+                // Add order status history
+                $orderHistoryResult = OrderStatusHistory::create([
                     'order_id' => $order->id,
-                    'old_status' => $order->status,
+                    'old_status' => $oldStatus,
+                    'new_status' => 'Cancel',
+                    'name_change' => Auth::user()->name ?? 'System',
+                    'role_change' => Auth::user()->role ?? 'System',
+                    'note' => $refundReason,
+                    'change_at' => now()
+                ]);
+
+                if (!$orderHistoryResult) {
+                    throw new \Exception('Không thể tạo lịch sử trạng thái đơn hàng');
+                }
+
+                // Add payment status history
+                $paymentHistoryResult = PaymentStatusHistory::create([
+                    'order_id' => $order->id,
+                    'old_status' => $oldPaymentStatus,
                     'new_status' => 'REFUNDED',
                     'name_change' => Auth::user()->name ?? 'System',
                     'role_change' => Auth::user()->role ?? 'System',
-                    'note' => $refundReason
+                    'note' => $refundReason,
+                    'change_at' => now()
                 ]);
 
-                if (!$historyResult) {
-                    throw new \Exception('Không thể tạo lịch sử trạng thái');
+                if (!$paymentHistoryResult) {
+                    throw new \Exception('Không thể tạo lịch sử trạng thái thanh toán');
                 }
 
-                \Log::info('Status history created');
+                \Log::info('Status histories created successfully');
 
                 DB::commit();
+
+                // Refresh order with relationships
+                $order = Order::with(['order_details', 'statusHistories', 'paymentStatusHistories'])
+                    ->find($orderId);
 
                 return [
                     'status' => 'success',
