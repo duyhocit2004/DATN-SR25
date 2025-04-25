@@ -85,7 +85,7 @@ const UpdateAccountForm: React.FC = () => {
     const payloadFormData = objectToFormData(payload);
 
     try {
-      const response = await adminApi.updateUser(payloadFormData);
+      const response = await adminApi.updateUserAdmin(payloadFormData);
       if (response?.status === HttpCodeString.SUCCESS) {
         showToast({
           content: "Cập nhật tài khoản thành công!",

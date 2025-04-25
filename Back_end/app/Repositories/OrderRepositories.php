@@ -7,6 +7,7 @@ use App\Models\Order;
 use Firebase\JWT\JWT;
 use App\Models\Product;
 use App\Models\Voucher;
+use App\Models\OrderDetail;
 
 use App\Models\OrderStatusHistory;
 use App\Models\PaymentStatusHistory;
@@ -303,7 +304,7 @@ class OrderRepositories
                 'payment_method' => $request->input('paymentMethod', $order->payment_method),
             ]);
             if($data !== []){
-                orderStatusHistories::create([
+                \App\Models\OrderStatusHistory::create([
                     'order_id' => $order->id,
                     'old_status' => $data['old_status'],
                     'new_status' => $data['new_status'],
