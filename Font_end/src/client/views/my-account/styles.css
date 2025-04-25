@@ -1,0 +1,122 @@
+.my-account-container {
+  display: flex;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.account-sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.account-content {
+  flex: 1;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  min-height: 500px;
+}
+
+/* Menu styles */
+.account-sidebar .ant-menu {
+  border-right: none;
+}
+
+.account-sidebar .ant-menu-item {
+  height: 48px;
+  line-height: 48px;
+  margin: 0 !important;
+  border-radius: 0;
+}
+
+.account-sidebar .ant-menu-item:hover {
+  color: #ee4d2d;
+}
+
+.account-sidebar .ant-menu-item-selected {
+  background-color: #fff1f0 !important;
+  color: #ee4d2d !important;
+}
+
+.account-sidebar .ant-menu-item-selected::after {
+  border-right-color: #ee4d2d !important;
+}
+
+.account-sidebar .anticon {
+  font-size: 18px;
+}
+
+/* Form styles */
+.account-content .ant-form-item-label {
+  font-weight: 500;
+}
+
+.account-content .ant-input,
+.account-content .ant-select-selector {
+  border-radius: 4px;
+}
+
+.account-content .ant-btn-primary {
+  border-radius: 4px;
+  border: none;
+}
+
+/* Notification styles in my-account */
+.notification-list {
+  margin: 0;
+  border-radius: 0;
+}
+
+.notification-item {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item.unread {
+  background-color: #fafafa;
+}
+
+.notification-item:hover {
+  background-color: #f5f5f5;
+}
+
+.notification-icon {
+  font-size: 20px;
+  margin-right: 16px;
+}
+
+.notification-title {
+  font-size: 14px !important;
+  margin-bottom: 4px !important;
+}
+
+.notification-message {
+  color: #666;
+  margin-bottom: 8px !important;
+}
+
+.notification-meta {
+  color: #999;
+  font-size: 12px;
+}
+
+.notification-meta .ant-btn-link {
+  color: #ee4d2d;
+  font-size: 12px;
+  padding: 0;
+  height: auto;
+}
+
+.notification-meta .ant-btn-link:hover {
+  color: #ff6b4c;
+} 

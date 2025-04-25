@@ -12,6 +12,7 @@ use App\Http\Controllers\VNPayController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Client\PasswordResetController;
 use App\Http\Controllers\MoMoController;
+use App\Http\Controllers\Client\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,6 +101,13 @@ Route::middleware('jwt.auth')->group(function () {
     });
     Route::post('/uploadImage', [CommonController::class, 'uploadImage']);
 
+    // Notification routes
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::post('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+        Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::post('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+    });
 
     // các api màn admin
     Route::prefix('admin')->group(function () {

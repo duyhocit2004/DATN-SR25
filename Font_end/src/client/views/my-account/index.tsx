@@ -12,6 +12,9 @@ import type { UploadChangeParam } from 'antd/es/upload';
 import type { RcFile } from 'antd/es/upload/interface';
 import axiosClient from "@/configs/axiosClient";
 import { useNavigate } from "react-router-dom";
+import { NotificationModal } from "@/components/Notification";
+import { NotificationContainer } from "@/components/Notification";
+import './styles.css';
 
 interface IFormData {
   id: number | null;
@@ -68,6 +71,8 @@ const MyAccount: React.FC = () => {
   const navigate = useNavigate();
   const [tempImageFile, setTempImageFile] = useState<RcFile | null>(null);
   const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [activeSection, setActiveSection] = useState<'profile' | 'notifications'>('profile');
 
   useEffect(() => {
     if (user) {
@@ -255,7 +260,14 @@ const MyAccount: React.FC = () => {
             </div>
             
             <div className="mt-4">
-              <div className="flex items-center space-x-2 px-4 py-3 text-orange-500 bg-gray-100">
+              <div 
+                className={`flex items-center space-x-2 px-4 py-3 cursor-pointer ${
+                  activeSection === 'profile' 
+                    ? 'text-orange-500 bg-gray-100' 
+                    : 'hover:text-orange-500'
+                }`}
+                onClick={() => setActiveSection('profile')}
+              >
                 <UserOutlined />
                 <span>Tài khoản của tôi</span>
               </div>
@@ -266,177 +278,192 @@ const MyAccount: React.FC = () => {
                 <ShoppingOutlined />
                 <span>Đơn mua</span>
               </div>
-              <div className="flex items-center space-x-2 px-4 py-3 hover:text-orange-500 cursor-pointer">
+              <div 
+                className={`flex items-center space-x-2 px-4 py-3 cursor-pointer ${
+                  activeSection === 'notifications' 
+                    ? 'text-orange-500 bg-gray-100' 
+                    : 'hover:text-orange-500'
+                }`}
+                onClick={() => setActiveSection('notifications')}
+              >
                 <NotificationOutlined />
                 <span>Thông báo</span>
               </div>
-              {/* <div className="flex items-center space-x-2 px-4 py-3 hover:text-orange-500 cursor-pointer">
-                <WalletOutlined />
-                <span>Ví Shopee</span>
-              </div> */}
             </div>
           </div>
 
           {/* Main Content */}
           <div className="flex-1">
-            <div className="bg-white rounded shadow-sm">
-              <div className="px-8 py-4 border-b">
-                <h1 className="text-lg font-medium">Hồ Sơ Của Tôi</h1>
-                <div className="text-gray-500 text-sm">Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
-              </div>
+            {activeSection === 'profile' ? (
+              <>
+                <div className="bg-white rounded shadow-sm">
+                  <div className="px-8 py-4 border-b">
+                    <h1 className="text-lg font-medium">Hồ Sơ Của Tôi</h1>
+                    <div className="text-gray-500 text-sm">Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
+                  </div>
 
-              <div className="p-8">
-                <Form
-                  layout="horizontal"
-                  onFinish={onUpdate}
-                  initialValues={cloneDeep(formData)}
-                  form={form}
-                  labelCol={{ span: 6 }}
-                  wrapperCol={{ span: 14 }}
-                  onValuesChange={(changedValues) => {
-                    if ("oldPassword" in changedValues) {
-                      setShowPasswordFields(!!changedValues.oldPassword);
-                    }
-                  }}
-                >
-                  <Form.Item
-                    label="Tên đăng nhập"
-                  >
-                    <div className="text-gray-800">{formData.email}</div>
-                  </Form.Item>
-
-                  <Form.Item
-                    label="Họ và tên"
-                    name="name"
-                    rules={[{ required: true, message: "Vui lòng nhập họ và tên" }]}
-                  >
-                    <Input placeholder="Nhập họ và tên" className="h-10" />
-                  </Form.Item>
-
-                  <Form.Item
-                    label="Email"
-                    name="email"
-                    rules={[
-                      { required: true, message: "Vui lòng nhập email" },
-                      { 
-                        type: "email", 
-                        message: "Vui lòng nhập email hợp lệ",
-                        transform: (value) => value?.trim()
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Nhập email" className="h-10" />
-                  </Form.Item>
-
-                  <Form.Item
-                    label="Số điện thoại"
-                    name="phoneNumber"
-                    rules={[
-                      { required: true, message: "Vui lòng nhập số điện thoại" },
-                      {
-                        pattern: /^(0[3|5|7|8|9])([0-9]{8})$/,
-                        message: "Số điện thoại không hợp lệ!",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Nhập số điện thoại" className="h-10" />
-                  </Form.Item>
-
-                  <Form.Item
-                    label="Giới tính"
-                    name="gender"
-                    rules={[{ required: true, message: "Vui lòng chọn giới tính" }]}
-                  >
-                    <Select
-                      placeholder="Chọn giới tính"
-                      options={PersonTypeData}
-                      className="h-10"
-                    />
-                  </Form.Item>
-
-                  <Form.Item wrapperCol={{ offset: 6, span: 14 }}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      loading={loading}
-                      className="bg-orange-500 hover:bg-orange-600 h-10 px-8"
+                  <div className="p-8">
+                    <Form
+                      layout="horizontal"
+                      onFinish={onUpdate}
+                      initialValues={cloneDeep(formData)}
+                      form={form}
+                      labelCol={{ span: 6 }}
+                      wrapperCol={{ span: 14 }}
+                      onValuesChange={(changedValues) => {
+                        if ("oldPassword" in changedValues) {
+                          setShowPasswordFields(!!changedValues.oldPassword);
+                        }
+                      }}
                     >
-                      Lưu thay đổi
-                    </Button>
-                  </Form.Item>
-                </Form>
-              </div>
-            </div>
-
-            {/* Password Section */}
-            <div className="bg-white rounded shadow-sm mt-6">
-              <div className="px-8 py-4 border-b">
-                <h1 className="text-lg font-medium">Đổi Mật Khẩu</h1>
-                <div className="text-gray-500 text-sm">Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác</div>
-              </div>
-
-              <div className="p-8">
-                <Form
-                  layout="horizontal"
-                  labelCol={{ span: 6 }}
-                  wrapperCol={{ span: 14 }}
-                >
-                  <Form.Item
-                    label="Mật khẩu hiện tại"
-                    name="oldPassword"
-                  >
-                    <Input.Password placeholder="Nhập mật khẩu hiện tại" className="h-10" />
-                  </Form.Item>
-
-                  {showPasswordFields && (
-                    <>
                       <Form.Item
-                        label="Mật khẩu mới"
-                        name="newPassword"
-                        rules={[
-                          { required: true, message: "Vui lòng nhập mật khẩu mới" },
-                          { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự" },
-                        ]}
+                        label="Tên đăng nhập"
                       >
-                        <Input.Password placeholder="Nhập mật khẩu mới" className="h-10" />
+                        <div className="text-gray-800">{formData.email}</div>
                       </Form.Item>
 
                       <Form.Item
-                        label="Xác nhận mật khẩu"
-                        name="confirmPassword"
-                        dependencies={["newPassword"]}
+                        label="Họ và tên"
+                        name="name"
+                        rules={[{ required: true, message: "Vui lòng nhập họ và tên" }]}
+                      >
+                        <Input placeholder="Nhập họ và tên" className="h-10" />
+                      </Form.Item>
+
+                      <Form.Item
+                        label="Email"
+                        name="email"
                         rules={[
-                          {
-                            required: true,
-                            message: "Vui lòng xác nhận mật khẩu mới",
+                          { required: true, message: "Vui lòng nhập email" },
+                          { 
+                            type: "email", 
+                            message: "Vui lòng nhập email hợp lệ",
+                            transform: (value) => value?.trim()
                           },
-                          ({ getFieldValue }) => ({
-                            validator(_, value) {
-                              if (!value || getFieldValue("newPassword") === value) {
-                                return Promise.resolve();
-                              }
-                              return Promise.reject(new Error("Mật khẩu không khớp"));
-                            },
-                          }),
                         ]}
                       >
-                        <Input.Password placeholder="Xác nhận mật khẩu mới" className="h-10" />
+                        <Input placeholder="Nhập email" className="h-10" />
                       </Form.Item>
-                    </>
-                  )}
 
-                  <Form.Item wrapperCol={{ offset: 6, span: 14 }}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      className="bg-orange-500 hover:bg-orange-600 h-10 px-8"
+                      <Form.Item
+                        label="Số điện thoại"
+                        name="phoneNumber"
+                        rules={[
+                          { required: true, message: "Vui lòng nhập số điện thoại" },
+                          {
+                            pattern: /^(0[3|5|7|8|9])([0-9]{8})$/,
+                            message: "Số điện thoại không hợp lệ!",
+                          },
+                        ]}
+                      >
+                        <Input placeholder="Nhập số điện thoại" className="h-10" />
+                      </Form.Item>
+
+                      <Form.Item
+                        label="Giới tính"
+                        name="gender"
+                        rules={[{ required: true, message: "Vui lòng chọn giới tính" }]}
+                      >
+                        <Select
+                          placeholder="Chọn giới tính"
+                          options={PersonTypeData}
+                          className="h-10"
+                        />
+                      </Form.Item>
+
+                      <Form.Item wrapperCol={{ offset: 6, span: 14 }}>
+                        <Button
+                          type="primary"
+                          htmlType="submit"
+                          loading={loading}
+                          className="bg-orange-500 hover:bg-orange-600 h-10 px-8"
+                        >
+                          Lưu thay đổi
+                        </Button>
+                      </Form.Item>
+                    </Form>
+                  </div>
+                </div>
+
+                {/* Password Section */}
+                <div className="bg-white rounded shadow-sm mt-6">
+                  <div className="px-8 py-4 border-b">
+                    <h1 className="text-lg font-medium">Đổi Mật Khẩu</h1>
+                    <div className="text-gray-500 text-sm">Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác</div>
+                  </div>
+
+                  <div className="p-8">
+                    <Form
+                      layout="horizontal"
+                      labelCol={{ span: 6 }}
+                      wrapperCol={{ span: 14 }}
                     >
-                      Xác nhận
-                    </Button>
-                  </Form.Item>
-                </Form>
+                      <Form.Item
+                        label="Mật khẩu hiện tại"
+                        name="oldPassword"
+                      >
+                        <Input.Password placeholder="Nhập mật khẩu hiện tại" className="h-10" />
+                      </Form.Item>
+
+                      {showPasswordFields && (
+                        <>
+                          <Form.Item
+                            label="Mật khẩu mới"
+                            name="newPassword"
+                            rules={[
+                              { required: true, message: "Vui lòng nhập mật khẩu mới" },
+                              { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự" },
+                            ]}
+                          >
+                            <Input.Password placeholder="Nhập mật khẩu mới" className="h-10" />
+                          </Form.Item>
+
+                          <Form.Item
+                            label="Xác nhận mật khẩu"
+                            name="confirmPassword"
+                            dependencies={["newPassword"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Vui lòng xác nhận mật khẩu mới",
+                              },
+                              ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                  if (!value || getFieldValue("newPassword") === value) {
+                                    return Promise.resolve();
+                                  }
+                                  return Promise.reject(new Error("Mật khẩu không khớp"));
+                                },
+                              }),
+                            ]}
+                          >
+                            <Input.Password placeholder="Xác nhận mật khẩu mới" className="h-10" />
+                          </Form.Item>
+                        </>
+                      )}
+
+                      <Form.Item wrapperCol={{ offset: 6, span: 14 }}>
+                        <Button
+                          type="primary"
+                          htmlType="submit"
+                          className="bg-orange-500 hover:bg-orange-600 h-10 px-8"
+                        >
+                          Xác nhận
+                        </Button>
+                      </Form.Item>
+                    </Form>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="bg-white rounded shadow-sm">
+                <div className="px-8 py-4 border-b">
+                  <h1 className="text-lg font-medium">Thông Báo Của Tôi</h1>
+                  <div className="text-gray-500 text-sm">Quản lý thông báo về đơn hàng, cập nhật và các hoạt động khác</div>
+                </div>
+                <NotificationContainer />
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
