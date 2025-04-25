@@ -591,19 +591,9 @@ const OrderDetail: React.FC = () => {
             <div className="grid grid-cols-2 gap-4 ">
               <div className="flex gap-4">
                 <Text strong>Trạng thái thanh toán :</Text>
-                <Select
-                  placeholder="Trạng thái thanh toán"
-                  className="!w-40"
-                  value={order?.paymentStatus}
-                  onChange={(value) => onChangeData("paymentStatus", value)}
-                  options={PaymentStatusData.map((status) => ({
-                    ...status,
-                    disabled:
-                      order?.status === OrderStatus.CANCEL ||
-                      order?.status === OrderStatus.CANCEL_CONFIRM ||
-                      order?.refund_status === 'REFUNDED'
-                  }))}
-                />
+                <Tag color={getColorOrderStatus(order?.paymentStatus)}>
+                  {order?.paymentStatus ? getLabelByValue(PaymentStatusData, order?.paymentStatus) : "Chưa có"}
+                </Tag>
               </div>
               <div className="flex flex-col gap-2">
                 <div className="flex gap-4 items-center">

@@ -220,9 +220,9 @@ class AdminApi extends BaseApi<{ data: any }> {
       })
       .then((res) => res.data);
   };
-  updateUser = (payload: any): Promise<IResponseData<IAccount>> => {
+  updateUserAdmin = (payload: any): Promise<IResponseData<IAccount>> => {
     return axiosClient
-      .post(`${this.uri}/users/updateUser`, payload, {
+      .post(`${this.uri}/users/updateUserAdmin`, payload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
