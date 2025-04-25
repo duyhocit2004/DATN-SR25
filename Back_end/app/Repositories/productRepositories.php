@@ -13,45 +13,47 @@ use Illuminate\Support\Facades\DB;
 
 class ProductRepositories
 {
-    public function getDataStats(Request $request   )
+    public function getDataStats(Request $request,$fromDate = null,$toDate = null)
     {
         // $filterType = $request->input('time', 'year');
         // $selectedDate = $request->input('date')
         //     ? Carbon::parse($request->input('date'))->startOfDay()
         //     : Carbon::today()->startOfDay();
-        $fromDate = null;
-        $toDate = null;
-        switch ($filterType) {
-            case 'day':
-                $fromDate = $selectedDate;
-                $toDate = $selectedDate->copy()->endOfDay();
-                break;
-            case 'week':
-                $fromDate = Carbon::now()->startOfWeek();
-                $toDate = Carbon::now()->endOfWeek();
-                break;
-            case 'month':
-                $fromDate = Carbon::now()->startOfMonth();
-                $toDate = Carbon::now()->endOfMonth();
-                break;
-            case 'quarter':
-                $fromDate = Carbon::now()->firstOfQuarter();
-                $toDate = Carbon::now()->lastOfQuarter();
-                break;
-            case 'year':
-                try {
-                    $year = $selectedDate->year;
-                } catch (\Exception $e) {
-                    $year = Carbon::now()->year;
-                }
-                $fromDate = Carbon::create($year, 1, 1)->startOfDay();
-                $toDate = Carbon::create($year, 12, 31)->endOfDay();
-                break;
-            default:
-                $fromDate = Carbon::now()->startOfYear();
-                $toDate = Carbon::now()->endOfYear();
-                break;
-        }
+        $fromDate = $request ->input('fromDate') ? Carbon::createFromFormat('d/m/y',$request->input('fromDate')) : Carbon::now()->startOfYear();
+        $toDate = $request ->input('toDate') ? Carbon::createFromFormat('d/m/y',$request->input('toDate')) : Carbon::now()->endOfYear();
+
+
+        // switch ($filterType) {
+        //     case 'day':
+        //         $fromDate = $selectedDate;
+        //         $toDate = $selectedDate->copy()->endOfDay();
+        //         break;
+        //     case 'week':
+        //         $fromDate = Carbon::now()->startOfWeek();
+        //         $toDate = Carbon::now()->endOfWeek();
+        //         break;
+        //     case 'month':
+        //         $fromDate = Carbon::now()->startOfMonth();
+        //         $toDate = Carbon::now()->endOfMonth();
+        //         break;
+        //     case 'quarter':
+        //         $fromDate = Carbon::now()->firstOfQuarter();
+        //         $toDate = Carbon::now()->lastOfQuarter();
+        //         break;
+        //     case 'year':
+        //         try {
+        //             $year = $selectedDate->year;
+        //         } catch (\Exception $e) {
+        //             $year = Carbon::now()->year;
+        //         }
+        //         $fromDate = Carbon::create($year, 1, 1)->startOfDay();
+        //         $toDate = Carbon::create($year, 12, 31)->endOfDay();
+        //         break;
+        //     default:
+        //         $fromDate = Carbon::now()->startOfYear();
+        //         $toDate = Carbon::now()->endOfYear();
+        //         break;
+        // }
 
         // Lấy tổng số đơn hàng và doanh thu
         $orderStats = DB::table('orders')
@@ -87,7 +89,6 @@ class ProductRepositories
         // Đếm tổng số sản phẩm
         $totalProducts = DB::table('products')
             ->where('created_at', '<=', $toDate)
-
             ->count();
 
         // Đếm tổng số người dùng

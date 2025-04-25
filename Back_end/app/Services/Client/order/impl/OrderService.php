@@ -204,7 +204,7 @@ class OrderService implements IOrderService
     public function updateOrder(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
@@ -217,7 +217,7 @@ class OrderService implements IOrderService
     {
         // Xác thực người dùng
         $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
             JWTAuth::invalidate(JWTAuth::getToken());
             return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }

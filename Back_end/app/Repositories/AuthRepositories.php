@@ -42,7 +42,7 @@ class AuthRepositories
     }
 
     
-    public function updateUserAdmin($request, $imageLink)
+    public function updateUserAdmin(Request $request, $imageLink)
     {
         $user = User::find($request->input('id'));
 
@@ -50,12 +50,9 @@ class AuthRepositories
             BaseResponse::failure('400', 'user not found', 'user.not.found', []);
         }
 
+        
         $user->update([
-            'name' => $request->input('name', $user->name),
-            'phone_number' => $request->input('phoneNumber', $user->phone_number),
-            'gender' => $request->input('gender', $user->gender),
             'status' => $request->input('status', $user->status),
-            'image' => empty($imageLink) ? $user->image : $imageLink,
         ]);
 
         return $user;
