@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('name_change')->nullable();
             $table->string('role_change')->nullable();
             $table->text('note')->nullable();
+            $table->timestamp('change_at')->nullable();
             $table->timestamps();
         });
     }

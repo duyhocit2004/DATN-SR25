@@ -40,4 +40,4 @@ class OrderStatusHistory extends Model
     protected $casts = [
         'change_at' => 'datetime'
     ];
-} 
+}
