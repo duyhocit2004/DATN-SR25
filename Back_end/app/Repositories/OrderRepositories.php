@@ -2,20 +2,22 @@
 
 namespace App\Repositories;
 
-use App\Helpers\BaseResponse;
 use App\Models\Cart;
-use App\Models\ImageProduct;
 use App\Models\Order;
-use App\Models\OrderDetail;
+use Firebase\JWT\JWT;
 use App\Models\Product;
-use App\Models\ProductVariant;
 use App\Models\Voucher;
+
 use App\Models\OrderStatusHistory;
 use App\Models\PaymentStatusHistory;
+
 use Illuminate\Http\Request;
+use App\Helpers\BaseResponse;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+
 
 class OrderRepositories
 {
@@ -242,11 +244,28 @@ class OrderRepositories
     public function updateOrder(Request $request)
     {
         $order = Order::where('id', $request->input('id'))->first();
-
+        $user = auth()->user();
         if (!empty($order)) {
+            //get value in data
+            $oldStatus = $order->status;
+
+            //get value in request
             $status = $request->input('status', $order->status);
             $paymentStatus = $request->input('paymentStatus', $order->payment_status);
 
+            // Check if new data matches old data
+          
+            $data = [];
+            if($oldStatus !== $status){
+                $data['order_id'] = $order->id;
+                $data['old_status'] = $oldStatus;
+                $data['new_status'] = $status;
+                $data['name_change'] = $user->name;
+                $data['role_change'] = $user->role;
+                $data['change_at'] = now();
+                $data['created_at'] = now();
+                $data['updated_at'] = null;
+            }
             // Check if status is delivered and payment method is COD
             if ($status === 'Delivered' && $order->payment_method === 'COD') {
                 $paymentStatus = 'PAID';
@@ -283,6 +302,19 @@ class OrderRepositories
                 'payment_status' => $paymentStatus,
                 'payment_method' => $request->input('paymentMethod', $order->payment_method),
             ]);
+            if($data !== []){
+                orderStatusHistories::create([
+                    'order_id' => $order->id,
+                    'old_status' => $data['old_status'],
+                    'new_status' => $data['new_status'],
+                    'name_change' => $user->name,
+                    'role_change' => $user->role,
+                    'change_at' => now(),
+                ]);
+            }else{
+                return $order;
+            }
+           
             return $order;
         } else {
             BaseResponse::failure(400, '', 'order.item.not.found', []);

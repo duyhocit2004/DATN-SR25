@@ -160,13 +160,13 @@ class MoMoService implements IMoMoService
                     ]);
                 }
             } else {
-                return response()->json(['message' => 'Received'], 200);
+                return 'http://localhost:5173/MoMo-return?signature=' . $request->input('signature') . '&transId=' . $request->input('transId');
             }
 
-            return response()->json(['message' => 'Received'], 200);
+            return 'http://localhost:5173/MoMo-return?signature=' . $request->input('signature') . '&transId=' . $request->input('transId');
         }
 
-        return response()->json(['message' => 'Invalid signature'], 400);
+        return 'http://localhost:5173/MoMo-return?signature=' . $request->input('signature') . '&transId=' . $request->input('transId');
 
     }
 }
