@@ -61,29 +61,54 @@ class AuthRepositories
         return $user;
     }
 
-    public function updateUser($request, $imageLink, $userId)
+    public function updateUser($request, $imageUrl = null)
     {
-        $user = User::find($userId);
+        try {
+            $user = User::findOrFail($request->input('id'));
+            
+            $updateData = [
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'phone_number' => $request->input('phoneNumber'),
+                'gender' => $request->input('gender'),
+            ];
 
-        if (!$user) {
-            BaseResponse::failure('400', 'user not found', 'user.not.found', []);
+            // Add image URL if provided
+            if ($imageUrl) {
+                $updateData['user_image'] = $imageUrl;
+            }
+
+            // Handle password change if oldPassword and newPassword are provided
+            if ($request->has('oldPassword') && $request->has('newPassword')) {
+                if (!Hash::check($request->input('oldPassword'), $user->password)) {
+                    return BaseResponse::failure(400, 'Mật khẩu cũ không đúng', 'old.password.incorrect', []);
+                }
+                $updateData['password'] = Hash::make($request->input('newPassword'));
+            }
+
+            $user->update($updateData);
+
+            // Get updated user data
+            $updatedUser = [
+                "id" => $user->id,
+                "name" => $user->name,
+                "email" => $user->email,
+                "phone_number" => $user->phone_number,
+                "role" => $user->role,
+                "email_verified_at" => $user->email_verified_at,
+                "gender" => $user->gender,
+                "userImage" => $user->user_image,
+                "createdAt" => $user->created_at,
+                "updatedAt" => $user->updated_at,
+                "deletedAt" => $user->deleted_at,
+                "status" => $user->status,
+                "password" => $user->password
+            ];
+
+            return BaseResponse::success($updatedUser);
+        } catch (Exception $e) {
+            return BaseResponse::failure(500, $e->getMessage(), 'error', []);
         }
-
-        $updateData = [
-            'name' => $request->input('name', $user->name),
-            'phone_number' => $request->input('phoneNumber', $user->phone_number),
-            'gender' => $request->input('gender', $user->gender),
-            'image' => empty($imageLink) ? $user->image : $imageLink,
-        ];
-
-        // Only update password if it's provided in the request
-        if ($request->has('newPassword')) {
-            $updateData['password'] = Hash::make($request->input('newPassword'));
-        }
-
-        $user->update($updateData);
-
-        return $user;
     }
 
     public function createUser($data)

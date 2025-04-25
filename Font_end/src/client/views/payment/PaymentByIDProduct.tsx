@@ -222,18 +222,7 @@ const PaymentByIDProduct = () => {
         totalAmount: totalAmount,
       };
       const response = await orderApi.getVoucher(payload);
-      if (
-        response?.status === HttpCodeString.SUCCESS &&
-        response.data.status === "ACTIVE"
-      ) {
-        if (response.data.minOrderValue && totalAmount < response.data.minOrderValue) {
-          showToast({
-            content: `Đơn hàng chưa đạt giá trị tối thiểu ${response.data.minOrderValue.toLocaleString()} đ để áp dụng voucher!`,
-            duration: 5,
-            type: "error",
-          });
-          return;
-        }
+      if (response?.status === HttpCodeString.SUCCESS && response.data.status === "ACTIVE") {
         setVoucher(response.data);
         showToast({
           content: "Áp dụng voucher thành công!",
@@ -247,6 +236,26 @@ const PaymentByIDProduct = () => {
           type: "error",
         });
       }
+    } catch (error: any) {
+      let errorMessage = "Có lỗi xảy ra khi áp dụng voucher";
+      
+      if (error.response?.data?.code === 'voucher.expired') {
+        errorMessage = "Voucher đã hết hạn sử dụng";
+      } else if (error.response?.data?.code === 'order.not.meet.min.value') {
+        errorMessage = error.response?.data?.message || "Đơn hàng chưa đạt giá trị tối thiểu để áp dụng voucher";
+      } else if (error.response?.data?.code === 'voucher.usage.limit.reached') {
+        errorMessage = error.response?.data?.message || "Voucher đã hết lượt sử dụng";
+      } else if (error.response?.data?.code === 'voucher.not.active') {
+        errorMessage = "Voucher không còn hoạt động";
+      } else if (error.response?.data?.code === 'voucher.not.found') {
+        errorMessage = "Voucher không tồn tại hoặc không hợp lệ";
+      }
+
+      showToast({
+        content: errorMessage,
+        duration: 5,
+        type: "error",
+      });
     } finally {
       setLoadingApplyVoucher(false);
     }

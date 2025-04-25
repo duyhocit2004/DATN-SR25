@@ -25,6 +25,8 @@ interface IProductService
     public function getRelatedProducts(Request $request);
     public function getAllSizes(Request $request);
 
+    public function getSizesByType(Request $request);
+
     public function getAllColors(Request $request);
 
     public function getWishList(Request $request);

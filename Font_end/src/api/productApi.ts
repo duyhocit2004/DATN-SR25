@@ -100,6 +100,33 @@ class ProductApi extends BaseApi<IProduct> {
       .post(`${this.uri}/getAllSizes`, payload)
       .then((res) => res.data);
   };
+
+  getSizesByType = (
+    type: 'numeric' | 'text'
+  ): Promise<IResponseData<ISize[]>> => {
+    return axiosClient
+      .post(`${this.uri}/getSizesByType`, { type })
+      .then((res) => res.data);
+  };
+
+  addSize = (payload: any): Promise<IResponseData<ISize>> => {
+    return axiosClient
+      .post(`/admin/sizes/addSize`, payload)
+      .then((res) => res.data);
+  };
+
+  updateSize = (payload: any): Promise<IResponseData<ISize>> => {
+    return axiosClient
+      .post(`/admin/sizes/updateSize`, payload)
+      .then((res) => res.data);
+  };
+
+  deleteSize = (id: number): Promise<IResponseData<ISize>> => {
+    return axiosClient
+      .post(`/admin/sizes/deleteSize`, { id })
+      .then((res) => res.data);
+  };
+
   getAllColors = (
     payload?: any
   ): Promise<IResponseData<IDataPaging<IColor[]> | IColor[]>> => {

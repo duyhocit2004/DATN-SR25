@@ -16,13 +16,19 @@ class ColorRepositories
 
     public function getColorsPaging(Request $request)
     {
-        $color = $request->get('color', null);
+        $name = $request->get('name', null);
+        $code = $request->get('code', null);
         $page = $request->get('pageNum', 1);
         $perPage = $request->get('pageSize', 10);
 
         $query = Color::query();
-        if (!empty($color)) {
-            $query->where('code', '=', $color);
+        
+        if (!empty($name)) {
+            $query->where('name', 'like', '%' . $name . '%');
+        }
+        
+        if (!empty($code)) {
+            $query->where('code', '=', $code);
         }
 
         $colors = $query->paginate($perPage, ['*'], 'page', $page);
@@ -32,21 +38,23 @@ class ColorRepositories
     public function addColor(Request $request)
     {
         $color = Color::create([
-            'code' => $request->input('color'),
+            'name' => $request->input('name'),
+            'code' => $request->input('code'),
         ]);
         return $color;
     }
 
     public function updateColor(Request $request)
     {
-        $color= Color::find($request->input('id'));
+        $color = Color::find($request->input('id'));
 
         if (!$color) {
-            BaseResponse::failure('400', 'color not found', 'color.not.found', []);
+            return BaseResponse::failure('400', 'Màu sắc không tồn tại', 'color.not.found', []);
         }
 
         $color->update([
-            'code' => $request->input('color', $color->code),
+            'name' => $request->input('name', $color->name),
+            'code' => $request->input('code', $color->code),
         ]);
 
         return $color;
@@ -54,15 +62,14 @@ class ColorRepositories
 
     public function deleteColor(Request $request)
     {
-        $color= Color::find($request->input('id'));
+        $color = Color::find($request->input('id'));
 
         if (!$color) {
-            BaseResponse::failure('400', 'color not found', 'color.not.found', []);
+            return BaseResponse::failure('400', 'Màu sắc không tồn tại', 'color.not.found', []);
         }
 
         $color->delete();
 
         return $color;
     }
-
 }
