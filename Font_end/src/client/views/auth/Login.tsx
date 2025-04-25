@@ -15,16 +15,24 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await accountApi.login(values);
-      login(response.data.accessToken, response.data.user);
-      showToast({
-        content: "Đăng nhập thành công!",
-        duration: 5,
-        type: "success",
-      });
-      navigate("/");
+      if (response.status === HttpCodeString.SUCCESS) {
+        login(response.data.accessToken, response.data.user);
+        showToast({
+          content: "Đăng nhập thành công!",
+          duration: 5,
+          type: "success",
+        });
+        navigate("/");
+      } else {
+        showToast({
+          content: "Tài khoản hoặc mật khẩu không đúng!",
+          duration: 5,
+          type: "error",
+        });
+      }
     } catch (error: any) {
       const errorMessage = error.response?.data?.messageKey === "email.or.password.is.wrong" 
-        ? "Email hoặc mật khẩu không đúng!"
+        ? "Tài khoản hoặc mật khẩu không đúng!"
         : "Đã có lỗi xảy ra. Vui lòng thử lại sau.";
       
       showToast({

@@ -112,10 +112,10 @@ const OrderTable = () => {
     dispatch(setSelectedOrder(order));
   };
 
-  // Sort orders by orderTime in descending order
+  // Sort orders by created_at in descending order
   const sortedOrders = [...orders].sort((a, b) => {
-    const dateA = new Date(a.orderTime).getTime();
-    const dateB = new Date(b.orderTime).getTime();
+    const dateA = new Date(a.createdAt).getTime();
+    const dateB = new Date(b.createdAt).getTime();
     return dateB - dateA;
   });
 

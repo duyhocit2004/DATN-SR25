@@ -43,9 +43,14 @@ class OrderApi extends BaseApi<IOrder> {
       })
       .then((res) => res.data);
   };
-  refundOrder = (payload: { orderId: number }): Promise<IResponseData<IOrder>> => {
+  refundOrder = (payload: { 
+    orderId: number, 
+    refundMethod?: string,
+    adminName?: string,
+    adminEmail?: string
+  }): Promise<IResponseData<IOrder>> => {
     return axiosClient
-      .post(`${this.uri}/refundOrder`, payload, {
+      .post(`/admin/orders/refundOrder`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`, 
         },

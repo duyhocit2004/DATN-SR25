@@ -152,13 +152,10 @@ class AdminApi extends BaseApi<{ data: any }> {
       .post(`${this.uri}/orders/updateOrder`, payload)
       .then((res) => res.data);
   };
-  refundOrder = (payload: { orderId: number }): Promise<IResponseData<IOrder>> => {
+  
+  refundOrder = (data: { orderId: number; refund_reason: string }): Promise<IResponseData<IOrder>> => {
     return axiosClient
-      .post(`${this.uri}/orders/refundOrder`, payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`, 
-        },
-      })
+      .post(`${this.uri}/orders/refundOrder`, data)
       .then((res) => res.data);
   };
   getReviewDetail = (payload: any): Promise<IResponseData<IReview[]>> => {

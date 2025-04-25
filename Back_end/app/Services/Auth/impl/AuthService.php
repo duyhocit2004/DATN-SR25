@@ -43,16 +43,16 @@ class AuthService implements IAuthService
 
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
-                return BaseResponse::failure(401, '', 'email.or.password.is.wrong', []);
+                return BaseResponse::failure(401, 'Tài khoản hoặc mật khẩu không đúng', 'email.or.password.is.wrong', []);
             }
 
             $user = auth()->user();
             if (!$user) {
-                return BaseResponse::failure(401, '', 'email.or.password.is.wrong', []);
+                return BaseResponse::failure(401, 'Tài khoản hoặc mật khẩu không đúng', 'email.or.password.is.wrong', []);
             }
 
             if ($user->status !== config('constants.STATUS_ACTIVE')) {
-                return BaseResponse::failure(400, 'User does not active', 'user.does.not.active', []);
+                return BaseResponse::failure(400, 'Tài khoản chưa được kích hoạt', 'user.does.not.active', []);
             }
 
             $payload = JWTAuth::setToken($token)->getPayload();
@@ -75,7 +75,7 @@ class AuthService implements IAuthService
                 ]
             ];
         } catch (JWTException $e) {
-            return BaseResponse::failure(500, '', 'Could not create token', []);
+            return BaseResponse::failure(500, 'Lỗi hệ thống', 'Could not create token', []);
         }
     }
 
