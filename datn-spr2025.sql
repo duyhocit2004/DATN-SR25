@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Apr 15, 2025 at 02:45 PM
--- Server version: 8.0.30
--- PHP Version: 8.1.10
+-- Generation Time: Apr 25, 2025 at 09:10 AM
+-- Server version: 8.4.3
+-- PHP Version: 8.2.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `banners` (
   `id` bigint UNSIGNED NOT NULL,
   `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `link` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `link` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
   `type` enum('main','intro','advertisement') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'advertisement',
   `product_id` bigint UNSIGNED DEFAULT NULL,
@@ -72,7 +72,9 @@ CREATE TABLE `carts` (
 --
 
 INSERT INTO `carts` (`id`, `product_id`, `quantity`, `color`, `size`, `user_id`, `created_at`, `updated_at`) VALUES
-(1, 38, 1, 'black', 'L', 17, '2025-04-14 07:32:57', '2025-04-14 07:32:57');
+(1, 41, 2, 'black', 'L', 19, '2025-04-24 04:26:18', '2025-04-24 04:26:56'),
+(2, 42, 1, 'black', 'M', 19, '2025-04-24 04:26:28', '2025-04-24 04:26:28'),
+(3, 41, 1, 'black', 'XL', 19, '2025-04-24 04:26:51', '2025-04-24 04:26:51');
 
 -- --------------------------------------------------------
 
@@ -390,7 +392,9 @@ INSERT INTO `image_product` (`id`, `products_id`, `image_link`, `created_at`, `u
 (252, 39, 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262114/products/ma5hhalay4ln7hyeho75.webp', '2025-03-29 15:28:33', '2025-03-29 15:28:33'),
 (253, 41, 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262141/products/m2acyrkz8nrymxk7kzpj.webp', '2025-03-29 15:29:06', '2025-03-29 15:29:06'),
 (254, 41, 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262143/products/jhuo2l3htub60d1gbst9.webp', '2025-03-29 15:29:06', '2025-03-29 15:29:06'),
-(255, 41, 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262146/products/pln2dk8ixogqwmr1cyov.webp', '2025-03-29 15:29:06', '2025-03-29 15:29:06');
+(255, 41, 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262146/products/pln2dk8ixogqwmr1cyov.webp', '2025-03-29 15:29:06', '2025-03-29 15:29:06'),
+(279, 100, 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1745466192/products/jf930lsymgccp7ogmnmr.png', '2025-04-24 03:43:20', '2025-04-24 03:43:20'),
+(280, 100, 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1745466198/products/xguxlbfrsr08hivsjm0i.png', '2025-04-24 03:43:20', '2025-04-24 03:43:20');
 
 -- --------------------------------------------------------
 
@@ -437,7 +441,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (8, '2025_04_10_134801_add_link_to_banners_table', 8),
 (9, '2025_04_10_141408_add_product_id_to_banners_table', 9),
 (10, '2025_04_11_111329_create_order_table', 10),
-(11, '2014_10_12_000000_create_users_table', 1);
+(11, '2014_10_12_000000_create_users_table', 1),
+(12, '2025_04_22_012550_add_refund_completed_to_orders_table', 11),
+(13, '2024_03_20_create_payment_status_histories_table', 12),
+(14, '2025_04_25_000003_update_order_status_histories_table', 13);
 
 -- --------------------------------------------------------
 
@@ -461,26 +468,34 @@ CREATE TABLE `orders` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `payment_status` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `refundCompleted` tinyint(1) NOT NULL DEFAULT '0',
   `payment_method` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `users_id` int DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
-  `receiver_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `receiver_phone_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `receiver_address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `transaction_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `receiver_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `receiver_phone_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `receiver_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `transaction_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`id`, `code`, `customer_name`, `email`, `phone_number`, `total_price`, `voucher`, `voucher_price`, `shipping_address`, `note`, `status`, `date`, `created_at`, `updated_at`, `payment_status`, `payment_method`, `users_id`, `deleted_at`, `receiver_name`, `receiver_phone_number`, `receiver_address`, `transaction_id`) VALUES
-(124, 'OdfM2K', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 112500, 'DATN2025', 100000, 'gggg, Phường Điện Biên, Quận Ba Đình, Thành phố Hà Nội', NULL, 'Delivered', '2025-04-11', '2025-04-11 07:27:57', '2025-04-13 15:19:24', 'PAID', 'COD', NULL, NULL, NULL, NULL, NULL, NULL),
-(125, 'OdO9vX', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 99500, NULL, 0, 'gg, Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội', NULL, 'Unconfirmed', '2025-04-11', '2025-04-11 07:35:08', '2025-04-11 07:35:08', 'UNPAID', 'COD', NULL, NULL, NULL, NULL, NULL, NULL),
-(126, 'Odhh4b', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 212500, NULL, 0, 'gg, Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội', NULL, 'Unconfirmed', '2025-04-11', '2025-04-11 07:43:56', '2025-04-11 07:43:56', 'UNPAID', 'COD', NULL, NULL, NULL, NULL, NULL, NULL),
-(127, 'OdhFKz', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 212500, NULL, 0, 'gg, Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội', NULL, 'Unconfirmed', '2025-04-11', '2025-04-11 08:00:27', '2025-04-11 08:00:27', 'UNPAID', 'COD', NULL, NULL, NULL, NULL, NULL, NULL),
-(128, 'OdEBdY', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 212500, NULL, 0, 'gg, Phường Ngọc Hà, Quận Ba Đình, Thành phố Hà Nội', NULL, 'Unconfirmed', '2025-04-11', '2025-04-11 08:02:13', '2025-04-11 08:02:13', 'UNPAID', 'COD', NULL, NULL, NULL, NULL, NULL, NULL),
-(129, 'OdMXJQ', 'Nguyen Cuong', 'cuonggau251125@gmail.com', '0335313203', 596500, 'DATN2025', 100000, 'Số 18 , ngõ 54 Ngũ Nhạc, Phường Thanh Trì, Quận Hoàng Mai, Thành phố Hà Nội', NULL, 'Delivered', '2025-04-14', '2025-04-14 04:27:58', '2025-04-14 04:28:33', 'PAID', 'COD', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `orders` (`id`, `code`, `customer_name`, `email`, `phone_number`, `total_price`, `voucher`, `voucher_price`, `shipping_address`, `note`, `status`, `date`, `created_at`, `updated_at`, `payment_status`, `refundCompleted`, `payment_method`, `users_id`, `deleted_at`, `receiver_name`, `receiver_phone_number`, `receiver_address`, `transaction_id`) VALUES
+(124, 'OdfM2K', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 112500, 'DATN2025', 100000, 'gggg, Phường Điện Biên, Quận Ba Đình, Thành phố Hà Nội', NULL, 'Delivered', '2025-04-11', '2025-04-11 07:27:57', '2025-04-13 15:19:24', 'PAID', 0, 'COD', NULL, NULL, NULL, NULL, NULL, NULL),
+(125, 'OdO9vX', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 99500, NULL, 0, 'gg, Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội', NULL, 'Unconfirmed', '2025-04-11', '2025-04-11 07:35:08', '2025-04-11 07:35:08', 'UNPAID', 0, 'COD', NULL, NULL, NULL, NULL, NULL, NULL),
+(126, 'Odhh4b', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 212500, NULL, 0, 'gg, Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội', NULL, 'Unconfirmed', '2025-04-11', '2025-04-11 07:43:56', '2025-04-11 07:43:56', 'UNPAID', 0, 'COD', NULL, NULL, NULL, NULL, NULL, NULL),
+(127, 'OdhFKz', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 212500, NULL, 0, 'gg, Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội', NULL, 'Unconfirmed', '2025-04-11', '2025-04-11 08:00:27', '2025-04-11 08:00:27', 'UNPAID', 0, 'COD', NULL, NULL, NULL, NULL, NULL, NULL),
+(128, 'OdEBdY', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 212500, NULL, 0, 'gg, Phường Ngọc Hà, Quận Ba Đình, Thành phố Hà Nội', NULL, 'Unconfirmed', '2025-04-11', '2025-04-11 08:02:13', '2025-04-11 08:02:13', 'UNPAID', 0, 'COD', NULL, NULL, NULL, NULL, NULL, NULL),
+(129, 'OdMXJQ', 'Nguyen Cuong', 'cuonggau251125@gmail.com', '0335313203', 596500, 'DATN2025', 100000, 'Số 18 , ngõ 54 Ngũ Nhạc, Phường Thanh Trì, Quận Hoàng Mai, Thành phố Hà Nội', NULL, 'Delivered', '2025-04-14', '2025-04-14 04:27:58', '2025-04-14 04:28:33', 'PAID', 0, 'COD', NULL, NULL, NULL, NULL, NULL, NULL),
+(130, 'Od5UdF', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 99500, NULL, 0, 'gg, Phường Lê Đại Hành, Quận Hai Bà Trưng, Thành phố Hà Nội', NULL, 'Unconfirmed', '2025-04-23', '2025-04-23 03:41:43', '2025-04-23 03:41:43', 'UNPAID', 0, 'COD', NULL, NULL, NULL, NULL, NULL, NULL),
+(131, 'OdhwbG', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 212500, NULL, 0, 'gg, Phường Tân Mai, Quận Hoàng Mai, Thành phố Hà Nội', NULL, 'Cancel', '2025-04-23', '2025-04-23 06:03:16', '2025-04-25 09:06:01', 'REFUNDED', 1, 'ONLINE', NULL, NULL, NULL, NULL, NULL, NULL),
+(132, 'Odv2Ow', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 212500, NULL, 0, 'gg, Phường Tân Mai, Quận Hoàng Mai, Thành phố Hà Nội', NULL, 'Cancel', '2025-04-23', '2025-04-23 06:03:24', '2025-04-25 09:06:17', 'REFUNDED', 1, 'ONLINE', NULL, NULL, NULL, NULL, NULL, NULL),
+(133, 'OdZYys', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 212500, NULL, 0, '123123, Xã Má Lé, Huyện Đồng Văn, Tỉnh Hà Giang', NULL, 'Cancel', '2025-04-23', '2025-04-23 06:04:35', '2025-04-25 09:04:26', 'PAID', 1, 'ONLINE', NULL, NULL, NULL, NULL, NULL, NULL),
+(134, 'OdCsBI', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 212500, NULL, 0, '123123, Xã Má Lé, Huyện Đồng Văn, Tỉnh Hà Giang', NULL, 'Cancel', '2025-04-23', '2025-04-23 06:04:44', '2025-04-25 09:09:17', 'REFUNDED', 1, 'ONLINE', NULL, NULL, NULL, NULL, NULL, NULL),
+(135, 'Odcfgl', 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 212500, NULL, 0, '123123, Xã Má Lé, Huyện Đồng Văn, Tỉnh Hà Giang', NULL, 'Cancel', '2025-04-23', '2025-04-23 06:06:10', '2025-04-25 09:01:41', 'PAID', 1, 'ONLINE', NULL, NULL, NULL, NULL, NULL, '14922011'),
+(136, 'OdGTVD', 'Nguyễn Quốc Cường', 'cuonghocfpt@gmail.com', '0335313203', 55800, NULL, 0, 'gg, Phường Vĩnh Phúc, Quận Ba Đình, Thành phố Hà Nội', NULL, 'Cancel', '2025-04-23', '2025-04-23 07:42:14', '2025-04-25 09:04:09', 'PAID', 1, 'ONLINE', NULL, NULL, NULL, NULL, NULL, '14922229');
 
 -- --------------------------------------------------------
 
@@ -514,7 +529,14 @@ INSERT INTO `order_detail` (`id`, `order_id`, `name`, `image`, `price_regular`, 
 (140, 126, 'Quần âu nam đẹp kiểu tây công sở hàn quốc', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262138/products/p18naslrdzqhbnotsryd.webp', 250000, 212500, 15, 'black', 'XL', 1, 41, '2025-04-11 07:43:56', '2025-04-11 07:43:56'),
 (141, 127, 'Quần âu nam đẹp kiểu tây công sở hàn quốc', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262138/products/p18naslrdzqhbnotsryd.webp', 250000, 212500, 15, 'black', 'XL', 1, 41, '2025-04-11 08:00:27', '2025-04-11 08:00:27'),
 (142, 128, 'Quần âu nam đẹp kiểu tây công sở hàn quốc', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262138/products/p18naslrdzqhbnotsryd.webp', 250000, 212500, 15, 'black', 'XL', 1, 41, '2025-04-11 08:02:13', '2025-04-11 08:02:13'),
-(143, 129, 'Áo sơ mi nam kiểu dáng basic TOPMEN', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743104337/products/kixckv93jcnlrttrwf1e.webp', 199000, 99500, 50, 'black', 'XXL', 7, 38, '2025-04-14 04:27:58', '2025-04-14 04:27:58');
+(143, 129, 'Áo sơ mi nam kiểu dáng basic TOPMEN', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743104337/products/kixckv93jcnlrttrwf1e.webp', 199000, 99500, 50, 'black', 'XXL', 7, 38, '2025-04-14 04:27:58', '2025-04-14 04:27:58'),
+(144, 130, 'Áo sơ mi nam kiểu dáng basic TOPMEN', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743104337/products/kixckv93jcnlrttrwf1e.webp', 199000, 99500, 50, 'black', 'L', 1, 38, '2025-04-23 03:41:43', '2025-04-23 03:41:43'),
+(145, 131, 'Quần âu nam đẹp kiểu tây công sở hàn quốc', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262138/products/p18naslrdzqhbnotsryd.webp', 250000, 212500, 15, 'white', 'L', 1, 41, '2025-04-23 06:03:16', '2025-04-23 06:03:16'),
+(146, 132, 'Quần âu nam đẹp kiểu tây công sở hàn quốc', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262138/products/p18naslrdzqhbnotsryd.webp', 250000, 212500, 15, 'white', 'L', 1, 41, '2025-04-23 06:03:24', '2025-04-23 06:03:24'),
+(147, 133, 'Quần âu nam đẹp kiểu tây công sở hàn quốc', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262138/products/p18naslrdzqhbnotsryd.webp', 250000, 212500, 15, 'white', 'L', 1, 41, '2025-04-23 06:04:35', '2025-04-23 06:04:35'),
+(148, 134, 'Quần âu nam đẹp kiểu tây công sở hàn quốc', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262138/products/p18naslrdzqhbnotsryd.webp', 250000, 212500, 15, 'white', 'L', 1, 41, '2025-04-23 06:04:44', '2025-04-23 06:04:44'),
+(149, 135, 'Quần âu nam đẹp kiểu tây công sở hàn quốc', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743262138/products/p18naslrdzqhbnotsryd.webp', 250000, 212500, 15, 'white', 'L', 1, 41, '2025-04-23 06:06:10', '2025-04-23 06:06:10'),
+(150, 136, 'Áo thun nam', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743130905/products/i6ytt5gzpro4fcczoe3a.webp', 60000, 55800, 7, 'black', 'L', 1, 43, '2025-04-23 07:42:14', '2025-04-23 07:42:14');
 
 -- --------------------------------------------------------
 
@@ -525,12 +547,25 @@ INSERT INTO `order_detail` (`id`, `order_id`, `name`, `image`, `price_regular`, 
 CREATE TABLE `order_status_histories` (
   `id` bigint UNSIGNED NOT NULL,
   `order_id` bigint UNSIGNED NOT NULL,
-  `old_status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `new_status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `note` text COLLATE utf8mb4_unicode_ci,
-  `updated_by` bigint UNSIGNED NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `old_status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `new_status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `updated_by` bigint UNSIGNED DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `name_change` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `role_change` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `change_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `order_status_histories`
+--
+
+INSERT INTO `order_status_histories` (`id`, `order_id`, `old_status`, `new_status`, `note`, `updated_by`, `updated_at`, `name_change`, `role_change`, `change_at`) VALUES
+(1, 133, 'Unconfirmed', 'Cancel', 'hhhh', NULL, '2025-04-25 08:52:08', 'Cuong Admin', 'admin', '2025-04-25 08:52:08'),
+(2, 134, 'Unconfirmed', 'Cancel', 'hhhhh', NULL, '2025-04-25 08:56:29', 'Cuong Admin', 'admin', '2025-04-25 08:56:29'),
+(3, 131, 'Unconfirmed', 'Cancel', 'hhhh', NULL, '2025-04-25 08:58:04', 'Cuong Admin', 'admin', '2025-04-25 08:58:04'),
+(4, 135, 'Unconfirmed', 'Cancel', 'hhhh', NULL, '2025-04-25 09:01:32', 'Cuong Admin', 'admin', '2025-04-25 09:01:32');
 
 -- --------------------------------------------------------
 
@@ -543,6 +578,34 @@ CREATE TABLE `password_reset_tokens` (
   `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment_status_histories`
+--
+
+CREATE TABLE `payment_status_histories` (
+  `id` bigint UNSIGNED NOT NULL,
+  `order_id` bigint UNSIGNED NOT NULL,
+  `old_status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `new_status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_change` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role_change` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `note` text COLLATE utf8mb4_unicode_ci,
+  `change_at` timestamp NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `payment_status_histories`
+--
+
+INSERT INTO `payment_status_histories` (`id`, `order_id`, `old_status`, `new_status`, `name_change`, `role_change`, `note`, `change_at`, `created_at`, `updated_at`) VALUES
+(10, 131, 'PAID', 'REFUNDED', 'Cuong Admin', 'admin', 'hhh', '2025-04-25 09:06:01', '2025-04-25 09:06:01', '2025-04-25 09:06:01'),
+(11, 132, 'PAID', 'REFUNDED', 'Cuong Admin', 'admin', 'hhhh', '2025-04-25 09:06:17', '2025-04-25 09:06:17', '2025-04-25 09:06:17'),
+(12, 134, 'PAID', 'REFUNDED', 'Cuong Admin', 'admin', 'hhhh', '2025-04-25 09:09:17', '2025-04-25 09:09:17', '2025-04-25 09:09:17');
 
 -- --------------------------------------------------------
 
@@ -659,7 +722,8 @@ INSERT INTO `products` (`id`, `categories_id`, `name`, `image`, `price_regular`,
 (90, 137, 'Lắc tay bạc', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743183131/products/kjoz44lg1t1syp5hsu4b.webp', 723000, 506100, 'Lắc tay bạc mặt bông hoa đính đá - Vòng tay bạc ta cao cấp', 0, '<p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">THÔNG TIN SẢN PHẨM VÒNG TAY BẠC VÀNG BẠC TRỊNH GIA</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Chất liệu: Bạc ta.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Kiểu cách: Thiết kế thanh lịch, trẻ trung, tinh tế, sắc sảo</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Sản xuất: được thiết kế bởi VÀNG BẠC TRỊNH GIA</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Vòng tay bạc VÀNG BẠC TRỊNH GIA được thiết kế thanh lịch, trẻ trung theo xu hướng mới nhất của ngành phụ kiện trang sức</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Vòng tay được gia công vô cùng kĩ lưỡng, tỉ mỉ tạo nên một sản phẩm trang sức hoàn hảo</span></p><p><br></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">HƯỚNG DẪN SỬ DỤNG VÀ BẢO QUẢN VÒNG TAY BẠC VÀNG BẠC TRỊNH GIA</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Tránh để trang sức tiếp xúc với hoá chất, chất tẩy rửa mạnh, có thể làm sáng trang sức bằng cách chà kem đánh răng, nước rửa bát, nước chanh...</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Thường xuyên vệ sinh trang sức bằng khăn làm sáng, que làm sáng (phụ kiện vệ sinh sản phẩm của shop) nên vệ sinh nhẫn bạc thường xuyên bằng nước rửa bạc 1-3 tháng/lần để đảm bảo sản phẩm luôn được sáng bóng.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Khi không đeo, bảo quản trang sức nơi khô ráo, tránh ánh nắng trực tiếp, nơi có nhiệt độ cao hoặc ẩm thấp.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Nên để trang sức trong túi zip, thêm 1 miếng bông gòn nhỏ để hút ẩm giúp bảo quản tốt hơn.</span></p><p><br></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">VBTG CAM KẾT TRANG SỨC VÀNG BẠC TRỊNH GIA</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Sản phẩm giống ảnh, giống mô tả 100%.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Hình ảnh, video đều là ảnh thật, video quay lại những góc độ chân thật nhất của sản phẩm.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Tư vấn hỗ trợ khách hàng nhiệt tình 24/24.</span></p><p><br></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">QUYỀN LỢI CỦA KHÁCH KHI MUA SẢN PHẨM VÒNG TAY BẠC VÀNG BẠC TRỊNH GIA</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Bảo hành làm sáng đánh bóng trọn đời sản phẩm.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Hỗ trợ đổi trả miễn phí trong vòng 15ngày (theo chính sách của Shopee).</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Sản phẩm Quý khách nhận sau khi mua sắm nếu có bất cứ vấn đề gì cần giải đáp, hỗ trợ hãy chat ngay cho shop để được nhân viên chăm sóc nhanh nhất.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">*Lưu ý: Quý khách vui lòng quay lại video mở sản phẩm để làm cơ sở giải quyết khiếu nại đổi/trả khi có vấn đề phát sinh liên quan đến sản phẩm.</span></p><p><br></p>', 0, NULL, 0, '2025-03-28 17:32:11', '2025-03-28 17:32:11', 30),
 (92, 138, 'Khăn Quàng Cổ Nữ Hai Mặt', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743184323/products/xfyughw62yjmd0mm4te8.webp', 120000, 120000, 'Khăn Quàng Cổ Nữ Hai Mặt - Khăn Choàng Dài 2 Mét - Khăn Quàng Cổ Len Giữ Ấm', 0, '<p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">THÔNG TIN SẢN PHẨM:</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Thương hiệu: YoungStyle</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Đóng gói: 1 sản phẩm/gói</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Phân loại, Màu sắc: Như hình phân loại</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Chất liệu: Len</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Chiều dài: 200cm</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Bảo hành: Không</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">ĐẶC TRƯNG SẢN PHẨM:</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Cho dù bạn đang đi dạo hay tham dự một sự kiện xã hội, chiếc khăn quàng cổ đa năng này chính là phụ kiện hoàn hảo giúp nâng tầm vẻ ngoài của bạn.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Giữ ấm và phong cách với chiếc khăn choàng hai mặt có họa tiết kẻ caro và sọc độc đáo dành cho mùa thu, đông và xuân.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Được làm từ chất liệu tuyệt vời, chiếc khăn choàng này mềm mại, thoải mái và giữ ấm trong những tháng lạnh.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Là món đồ không thể thiếu trong bất kỳ tủ đồ nào, chiếc khăn quàng cổ này có thể đeo theo nhiều cách, phù hợp cho nhiều dịp như mua sắm, du lịch hoặc thậm chí chỉ để thư giãn ở nhà.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Phù hợp với phụ nữ ở mọi lứa tuổi, dù là sinh viên, chuyên gia hay nội trợ, những người muốn vừa thời trang vừa giữ ấm.</span></p><p><br></p>', 0, NULL, 0, '2025-03-28 17:52:04', '2025-03-28 17:52:04', 0),
 (93, 138, 'Khăn choàng len cashmere', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743184548/products/g0pagn9ws3j4hqhcnr2b.webp', 180000, 174600, 'Khăn choàng len cashmere phối tua rua màu trơn đa năng phong cách Hàn Quốc', 0, '<p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">Tính năng:</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">1.Khăn quàng cổ có thể ngăn chặn hiệu quả sự xâm nhập của không khí lạnh vào cổ, mang lại sự ấm áp, đặc biệt là trong mùa đông lạnh giá hoặc những vùng lạnh giá.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">2.Khăn quàng cổ có thể quấn quanh cổ, cổ họng và mặt, cản gió và giảm sự kích thích, khó chịu của gió lạnh.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">3.Là một phụ kiện hợp thời trang, khăn quàng cổ có thể nâng cao phong cách thời trang tổng thể của thiết kế, thêm phong cách cá nhân và cá tính.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">4.Khăn quàng cổ có thể được sử dụng làm tấm che nắng, khăn trùm đầu, khăn choàng,... với nhiều phương pháp và mục đích mặc khác nhau, có thể đáp ứng các dịp và nhu cầu khác nhau.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">5.Khi cảm thấy lạnh hoặc lạnh, cổ dễ bị khó chịu, đau nhức. Một chiếc khăn có thể hỗ trợ và bảo vệ nhẹ nhàng, giảm khó chịu ở cổ.</span></p><p><br></p><p><br></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">Chất liệu: cashmere</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">Gói bao gồm: một chiếc khăn quàng cổ</span></p><p><br></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">Kích thước: xin vui lòng cho phép 1-2 cm khác biệt do đo lường thủ công, cảm ơn.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">Lưu ý: Do sự khác biệt giữa các màn hình khác nhau, hình ảnh có thể không phản ánh màu sắc thực tế của mặt hàng.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">Chúng tôi đảm bảo phong cách giống như trong hình, nhưng không giống biểu diễn trên các cơ thể khác nhau như trên người mẫu. Cảm ơn bạn!</span></p><p><br></p>', 0, NULL, 0, '2025-03-28 17:55:49', '2025-03-28 17:55:49', 3),
-(94, 137, 'Dây chuyền bạc nữ', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743184713/products/chcrqsknhodahit46kw0.webp', 576000, 368640, 'Dây chuyền bạc nữ hình bông hoa đính đá cá tính - Vòng cổ bạc ta cao cấp', 0, '<p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">THÔNG TIN SẢN PHẨM DÂY CHUYỀN </span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Chất liệu: Bạc ta.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Kiểu cách: Thiết kế thanh lịch, trẻ trung, tinh tế, sắc sảo</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Dây chuyền bạc được thiết kế thanh lịch, trẻ trung theo xu hướng mới nhất của ngành phụ kiện trang sức</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Dây chuyền được gia công vô cùng kĩ lưỡng, tỉ mỉ tạo nên một sản phẩm trang sức hoàn hảo</span></p><p><br></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">HƯỚNG DẪN SỬ DỤNG VÀ BẢO QUẢN </span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Tránh để trang sức tiếp xúc với hoá chất, chất tẩy rửa mạnh, có thể làm sáng trang sức bằng cách chà kem đánh răng, nước rửa bát, nước chanh...</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Thường xuyên vệ sinh trang sức bằng khăn làm sáng, que làm sáng (phụ kiện vệ sinh sản phẩm của shop) nên vệ sinh nhẫn bạc thường xuyên bằng nước rửa bạc 1-3 tháng/lần để đảm bảo sản phẩm luôn được sáng bóng.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Khi không đeo, bảo quản trang sức nơi khô ráo, tránh ánh nắng trực tiếp, nơi có nhiệt độ cao hoặc ẩm thấp.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Nên để trang sức trong túi zip, thêm 1 miếng bông gòn nhỏ để hút ẩm giúp bảo quản tốt hơn.</span></p><p><br></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">VBTG CAM KẾT TRANG SỨC</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Sản phẩm giống ảnh, giống mô tả 100%.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Hình ảnh, video đều là ảnh thật, video quay lại những góc độ chân thật nhất của sản phẩm.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Tư vấn hỗ trợ khách hàng nhiệt tình 24/24.</span></p><p><br></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">QUYỀN LỢI CỦA KHÁCH KHI MUA SẢN PHẨM </span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Bảo hành làm sáng đánh bóng trọn đời sản phẩm.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Hỗ trợ đổi trả miễn phí trong vòng 15ngày (theo chính sách của Shopee).</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Sản phẩm Quý khách nhận sau khi mua sắm nếu có bất cứ vấn đề gì cần giải đáp, hỗ trợ hãy chat ngay cho shop để được nhân viên chăm sóc nhanh nhất.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">*Lưu ý: Quý khách vui lòng quay lại video mở sản phẩm để làm cơ sở giải quyết khiếu nại đổi/trả khi có vấn đề phát sinh liên quan đến sản phẩm.</span></p><p><br></p>', 0, NULL, 0, '2025-03-28 17:58:34', '2025-03-28 17:58:34', 36);
+(94, 137, 'Dây chuyền bạc nữ', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1743184713/products/chcrqsknhodahit46kw0.webp', 576000, 368640, 'Dây chuyền bạc nữ hình bông hoa đính đá cá tính - Vòng cổ bạc ta cao cấp', 0, '<p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">THÔNG TIN SẢN PHẨM DÂY CHUYỀN </span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Chất liệu: Bạc ta.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Kiểu cách: Thiết kế thanh lịch, trẻ trung, tinh tế, sắc sảo</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Dây chuyền bạc được thiết kế thanh lịch, trẻ trung theo xu hướng mới nhất của ngành phụ kiện trang sức</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Dây chuyền được gia công vô cùng kĩ lưỡng, tỉ mỉ tạo nên một sản phẩm trang sức hoàn hảo</span></p><p><br></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">HƯỚNG DẪN SỬ DỤNG VÀ BẢO QUẢN </span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Tránh để trang sức tiếp xúc với hoá chất, chất tẩy rửa mạnh, có thể làm sáng trang sức bằng cách chà kem đánh răng, nước rửa bát, nước chanh...</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Thường xuyên vệ sinh trang sức bằng khăn làm sáng, que làm sáng (phụ kiện vệ sinh sản phẩm của shop) nên vệ sinh nhẫn bạc thường xuyên bằng nước rửa bạc 1-3 tháng/lần để đảm bảo sản phẩm luôn được sáng bóng.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Khi không đeo, bảo quản trang sức nơi khô ráo, tránh ánh nắng trực tiếp, nơi có nhiệt độ cao hoặc ẩm thấp.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Nên để trang sức trong túi zip, thêm 1 miếng bông gòn nhỏ để hút ẩm giúp bảo quản tốt hơn.</span></p><p><br></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">VBTG CAM KẾT TRANG SỨC</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Sản phẩm giống ảnh, giống mô tả 100%.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Hình ảnh, video đều là ảnh thật, video quay lại những góc độ chân thật nhất của sản phẩm.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Tư vấn hỗ trợ khách hàng nhiệt tình 24/24.</span></p><p><br></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">QUYỀN LỢI CỦA KHÁCH KHI MUA SẢN PHẨM </span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Bảo hành làm sáng đánh bóng trọn đời sản phẩm.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Hỗ trợ đổi trả miễn phí trong vòng 15ngày (theo chính sách của Shopee).</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">- Sản phẩm Quý khách nhận sau khi mua sắm nếu có bất cứ vấn đề gì cần giải đáp, hỗ trợ hãy chat ngay cho shop để được nhân viên chăm sóc nhanh nhất.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgba(0, 0, 0, 0.8);\">*Lưu ý: Quý khách vui lòng quay lại video mở sản phẩm để làm cơ sở giải quyết khiếu nại đổi/trả khi có vấn đề phát sinh liên quan đến sản phẩm.</span></p><p><br></p>', 0, NULL, 0, '2025-03-28 17:58:34', '2025-03-28 17:58:34', 36),
+(100, 115, 'Áo thun nam32', 'https://res.cloudinary.com/dfcwk3b1b/image/upload/v1745466186/products/rrstiivilvg6rqfhonpi.png', 111111, 98888.79, '11111111111111111111111111111', 0, '<p>11111111111111111111111111111</p>', 25, NULL, 0, '2025-04-23 07:57:23', '2025-04-24 03:43:08', 11);
 
 -- --------------------------------------------------------
 
@@ -929,7 +993,10 @@ INSERT INTO `product_variants` (`id`, `product_id`, `color_id`, `size_id`, `quan
 (308, 87, 6, 3, '10', '2025-03-28 17:09:37', '2025-03-28 17:09:37', NULL),
 (309, 87, 5, 1, '10', '2025-03-28 17:09:37', '2025-03-28 17:09:37', NULL),
 (310, 87, 5, 2, '10', '2025-03-28 17:09:37', '2025-03-28 17:09:37', NULL),
-(311, 87, 5, 3, '10', '2025-03-28 17:09:37', '2025-03-28 17:09:37', NULL);
+(311, 87, 5, 3, '10', '2025-03-28 17:09:37', '2025-03-28 17:09:37', NULL),
+(324, 100, 1, 1, '4', '2025-04-23 07:57:40', '2025-04-23 07:57:40', NULL),
+(325, 100, 1, 2, '3', '2025-04-23 07:57:40', '2025-04-23 07:57:40', NULL),
+(326, 100, 2, 3, '3', '2025-04-23 07:57:40', '2025-04-23 07:57:40', NULL);
 
 -- --------------------------------------------------------
 
@@ -1013,8 +1080,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `role`, `email_verified_at`, `gender`, `user_image`, `password`, `remember_token`, `created_at`, `updated_at`, `deleted_at`, `status`) VALUES
 (2, 'Cuong Admin', 'cuongnq2@gmail.com', '0335313203', 'admin', NULL, 'men', NULL, '$2y$10$8b/Oc8ouzp6fqlFNFXWXvO9OGKaiXgv/204ezLzRCfvVPqIXasuFu', NULL, '2025-03-31 03:08:17', '2025-04-09 08:06:17', NULL, 'ACTIVE'),
-(17, 'Nguyễn Quốc Cường 3', 'cuonghocfpt@gmail.com', '0335312222', 'customer', NULL, 'women', NULL, '$2y$10$q04UMUPzqhwhnZ9XgQoeXuI4LsB8V4k/qiOAduCe.AU2ncNjiRT9a', NULL, '2025-04-01 10:51:25', '2025-04-15 14:27:07', NULL, 'ACTIVE'),
-(18, 'Nguyen Cuong', 'cuonggau251125@gmail.com', '0335313203', 'customer', NULL, 'men', NULL, '$2y$10$pesRRkNbKgS6hVOT2DT84ORXz22VJoLNB2qlhjzMFzikdk7oKF1K2', NULL, '2025-04-14 03:21:48', '2025-04-14 03:21:48', NULL, 'ACTIVE');
+(18, 'Nguyen Cuong', 'cuonggau251125@gmail.com', '0335313203', 'customer', NULL, 'men', NULL, '$2y$10$pesRRkNbKgS6hVOT2DT84ORXz22VJoLNB2qlhjzMFzikdk7oKF1K2', NULL, '2025-04-14 03:21:48', '2025-04-14 03:21:48', NULL, 'ACTIVE'),
+(19, 'Nguyễn Quốc Cường', 'cuonghocfpt@gmail.com', '0335313203', 'customer', NULL, 'men', NULL, '$2y$10$fNKQQXWzGndPHXFWEo2XauFbb6ZAX.AN5iQwqrRF9O5CQE3iWCdSm', NULL, '2025-04-23 07:40:38', '2025-04-23 07:40:38', NULL, 'ACTIVE');
 
 -- --------------------------------------------------------
 
@@ -1041,9 +1108,9 @@ CREATE TABLE `vouchers` (
 --
 
 INSERT INTO `vouchers` (`id`, `code`, `quantity`, `used`, `voucher_price`, `start_date`, `end_date`, `status`, `created_at`, `updated_at`, `min_order_value`) VALUES
-(22, 'DATN2025', 101, 0, 100000, '2025-04-17 17:00:00', '2025-04-18 10:00:00', 'ACTIVE', '2025-04-09 06:19:48', '2025-04-11 07:25:42', 200000),
-(25, 'DATN2', 1111, 0, 100000, '2025-04-10 04:00:00', '2025-04-13 05:00:00', 'ACTIVE', '2025-04-10 02:31:42', '2025-04-10 02:40:05', 200000),
-(27, 'DATN22', 111, 0, 100000, '2025-04-11 00:00:00', '2025-04-25 00:00:00', 'ACTIVE', '2025-04-10 02:47:23', '2025-04-10 08:49:37', 200000);
+(22, 'DATN2025', 101, 0, 100000, '2025-04-17 17:00:00', '2025-04-18 10:00:00', 'LOCKED', '2025-04-09 06:19:48', '2025-04-23 03:51:50', 200000),
+(25, 'DATN2', 1111, 0, 100000, '2025-04-10 04:00:00', '2025-04-13 05:00:00', 'LOCKED', '2025-04-10 02:31:42', '2025-04-23 03:51:50', 200000),
+(27, 'DATN22', 111, 0, 100000, '2025-04-11 00:00:00', '2025-04-25 00:00:00', 'LOCKED', '2025-04-10 02:47:23', '2025-04-25 08:51:50', 200000);
 
 -- --------------------------------------------------------
 
@@ -1151,6 +1218,13 @@ ALTER TABLE `password_reset_tokens`
   ADD PRIMARY KEY (`email`);
 
 --
+-- Indexes for table `payment_status_histories`
+--
+ALTER TABLE `payment_status_histories`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `payment_status_histories_order_id_foreign` (`order_id`);
+
+--
 -- Indexes for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
@@ -1229,13 +1303,13 @@ ALTER TABLE `wishlist`
 -- AUTO_INCREMENT for table `banners`
 --
 ALTER TABLE `banners`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -1247,7 +1321,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `colors`
 --
 ALTER TABLE `colors`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `comment`
@@ -1265,7 +1339,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `image_product`
 --
 ALTER TABLE `image_product`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=270;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=281;
 
 --
 -- AUTO_INCREMENT for table `location`
@@ -1277,25 +1351,31 @@ ALTER TABLE `location`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=130;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
 
 --
 -- AUTO_INCREMENT for table `order_detail`
 --
 ALTER TABLE `order_detail`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=144;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
 
 --
 -- AUTO_INCREMENT for table `order_status_histories`
 --
 ALTER TABLE `order_status_histories`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `payment_status_histories`
+--
+ALTER TABLE `payment_status_histories`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -1313,13 +1393,13 @@ ALTER TABLE `post`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- AUTO_INCREMENT for table `product_variants`
 --
 ALTER TABLE `product_variants`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=317;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=327;
 
 --
 -- AUTO_INCREMENT for table `shipper`
@@ -1343,7 +1423,7 @@ ALTER TABLE `status_orders`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `vouchers`
@@ -1398,6 +1478,12 @@ ALTER TABLE `order_detail`
 ALTER TABLE `order_status_histories`
   ADD CONSTRAINT `order_status_histories_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `order_status_histories_updated_by_foreign` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `payment_status_histories`
+--
+ALTER TABLE `payment_status_histories`
+  ADD CONSTRAINT `payment_status_histories_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `products`
