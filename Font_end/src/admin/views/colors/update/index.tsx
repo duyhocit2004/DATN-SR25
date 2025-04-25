@@ -4,12 +4,13 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setSelectedColor } from "@/store/reducers/adminColorSlice";
 import { IColor } from "@/types/interface";
 import { HttpCodeString } from "@/utils/constants";
-import { Modal, ColorPicker, Button, Form } from "antd";
+import { Modal, Input, Button, Form, ColorPicker } from "antd";
 import { useEffect, useState } from "react";
 
 interface IColorForm {
   id: number | null;
-  color: string;
+  name: string;
+  code: string;
 }
 
 interface IProps {
@@ -19,10 +20,11 @@ interface IProps {
 const UpdateColorModal: React.FC<IProps> = ({ refreshData }) => {
   const dispatch = useAppDispatch();
   const { selectedColor } = useAppSelector((state) => state.adminColor);
-  const [form] = Form.useForm(); // Khởi tạo form
+  const [form] = Form.useForm();
   const [formData, setFormData] = useState<IColorForm>({
     id: null,
-    color: "",
+    name: "",
+    code: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -35,39 +37,44 @@ const UpdateColorModal: React.FC<IProps> = ({ refreshData }) => {
   }, [selectedColor]);
 
   const resetForm = () => {
-    setFormData({ id: null, color: ""}); // Reset state
-    form.resetFields(); // Reset form
-    selectedColor && dispatch(setSelectedColor(null)); // Reset selected color in store
-    form.setFieldsValue({ color: "" }); // Reset form value
+    setFormData({ id: null, name: "", code: "" });
+    form.resetFields();
+    selectedColor && dispatch(setSelectedColor(null));
+    form.setFieldsValue({ name: "", code: "" });
   };
+
   const setFormValue = (currentColor: IColor) => {
     setFormData({
       id: currentColor.id,
-      color: currentColor.code,
+      name: currentColor.name || "",
+      code: currentColor.code || "",
     });
     form.setFieldsValue({
-      color: currentColor.code,
+      name: currentColor.name || "",
+      code: currentColor.code || "",
     });
   };
 
-  // Hàm cập nhật state & form
   const onChangeFormData = (key: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
     form.setFieldsValue({ [key]: value });
   };
 
-  // Lưu dữ liệu
   const handleSave = () => {
     form
       .validateFields()
       .then(() => {
         onSave();
       })
-      .catch(() => console.log("Validation failed!"));
+      .catch(() => console.log("Lỗi xác thực!"));
   };
 
   const onSave = async () => {
-    const payload = { ...formData };
+    const payload = {
+      id: formData.id,
+      name: formData.name,
+      code: formData.code
+    };
     setLoading(true);
     try {
       const response = await adminApi.updateColor(payload);
@@ -91,35 +98,47 @@ const UpdateColorModal: React.FC<IProps> = ({ refreshData }) => {
       setLoading(false);
     }
   };
+
   const onClose = () => {
     dispatch(setSelectedColor(null));
   };
 
   return (
     <Modal
-      title="Cập nhât"
+      title="Cập nhật màu"
       open={true}
       maskClosable={false}
       onCancel={onClose}
       footer={null}
     >
       <Form form={form} layout="vertical">
-        {/* Chọn màu */}
         <Form.Item
-          label="Chọn màu"
-          name="color"
-          rules={[{ required: true, message: "Vui lòng chọn màu!" }]}
+          label="Tên màu"
+          name="name"
+          rules={[{ required: true, message: "Vui lòng nhập tên màu!" }]}
+        >
+          <Input 
+            placeholder="Nhập tên màu (ví dụ: Đỏ, Xanh, Vàng...)"
+            value={formData.name}
+            onChange={(e) => onChangeFormData("name", e.target.value)}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Mã màu"
+          name="code"
+          rules={[{ required: true, message: "Vui lòng chọn mã màu!" }]}
         >
           <ColorPicker
-            value={formData.color}
-            onChange={(color) => onChangeFormData("color", color.toHexString())}
+            format="hex"
+            value={formData.code}
+            onChange={(color) => onChangeFormData("code", color.toHexString())}
             showText
           />
         </Form.Item>
 
-        {/* Nút hành động */}
         <div className="flex justify-end gap-2">
-          <Button onClick={onClose}>HỦY</Button>
+          <Button onClick={onClose}>Hủy</Button>
           <Button type="primary" loading={loading} onClick={handleSave}>
             Lưu
           </Button>

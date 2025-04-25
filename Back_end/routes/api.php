@@ -35,6 +35,7 @@ Route::prefix('products')->group(function () {
     Route::post('/getTopBestSellingProducts', [ProductController::class, 'getTopBestSellingProducts']);
     Route::post('/getRelatedProducts', [ProductController::class, 'getRelatedProducts']);
     Route::post('/getAllSizes', [ProductController::class, 'getAllSizes']);
+    Route::post('/getSizesByType', [ProductController::class, 'getSizesByType']);
     Route::post('/getAllColors', [ProductController::class, 'getAllColors']);
     Route::post('/getComment', [ProductController::class, 'getComment']);
     Route::post('/getWishListStorage', [ProductController::class, 'getWishListStorage']);
