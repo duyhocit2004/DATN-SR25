@@ -15,10 +15,10 @@ class ProductRepositories
 {
     public function getDataStats(Request $request   )
     {
-        // $filterType = $request->input('time', 'year');
-        // $selectedDate = $request->input('date')
-        //     ? Carbon::parse($request->input('date'))->startOfDay()
-        //     : Carbon::today()->startOfDay();
+        $filterType = $request->input('time', 'year');
+        $selectedDate = $request->input('date')
+            ? Carbon::parse($request->input('date'))->startOfDay()
+            : Carbon::today()->startOfDay();
         $fromDate = null;
         $toDate = null;
         switch ($filterType) {
@@ -114,16 +114,14 @@ class ProductRepositories
         ]);
 
         return [
-
             'order' => $orderStats->total_orders ?? 0,
             'unconfirmed_orders' => $unconfirmedOrders ?? 0,
             'confirmed_orders' => $confirmedOrders ?? 0,
             'cancelled_orders' => $cancelledOrders ?? 0,
             'product' => $totalProducts ?? 0,
             'revenue' => $revenue ?? 0,
-
             'user' => $totalUsers ?? 0,
-            'revenue' => $Delivered ?? 0,
+            'delivered_orders' => $Delivered ?? 0
         ];
     }
 

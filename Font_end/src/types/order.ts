@@ -1,0 +1,29 @@
+export interface IOrder {
+  id: number;
+  code: string;
+  customer_name: string;
+  email: string;
+  phone_number: string;
+  receiver_name: string;
+  receiver_phone_number: string;
+  receiver_address: string;
+  shipping_address: string;
+  total_price: number;
+  voucher?: string;
+  voucher_price?: number;
+  status: string;
+  payment_status: string;
+  payment_method: string;
+  transaction_id?: string;
+  note?: string;
+  refundCompleted: boolean;
+  refund_status?: string;
+  refund_reason?: string;
+  refunded_by?: number;
+  refunded_at?: string;
+  date?: string;
+  created_at: string;
+  updated_at: string;
+  order_details?: IOrderDetail[];
+  user?: IUser;
+} 

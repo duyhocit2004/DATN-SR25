@@ -13,12 +13,12 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id'); // ID đơn hàng
             $table->string('old_status')->nullable(); // Trạng thái cũ
             $table->string('new_status'); // Trạng thái mới
+            $table->string('name_change'); // Tên người thay đổi
+            $table->string('role_change'); // Vai trò người thay đổi
             $table->text('note')->nullable(); // Ghi chú
-            $table->unsignedBigInteger('updated_by'); // Người cập nhật
-            $table->timestamp('updated_at')->useCurrent(); // Thời gian cập nhật
+            $table->timestamp('change_at')->useCurrent(); // Thời gian thay đổi
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-            $table->foreign('updated_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

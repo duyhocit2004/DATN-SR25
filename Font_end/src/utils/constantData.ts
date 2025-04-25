@@ -82,6 +82,10 @@ export const PaymentStatusData = [
     value: PaymentStatus.PAID,
     label: "Đã thanh toán",
   },
+  {
+    value: PaymentStatus.REFUNDED,
+    label: "Đã hoàn tiền",
+  },
 ];
 export const PaymentMethodData = [
   {

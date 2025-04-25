@@ -244,26 +244,44 @@ export interface IReply {
 }
 
 export interface IOrder {
-  users_id: string | number | null;
+  id: number;
+  code: string;
+  users_id: number;
   customerName: string;
   email: string;
   phoneNumber: string;
   receiverName?: string;
   receiverPhoneNumber?: string;
   receiverAddress?: string;
-  totalAmount: number;
+  totalPrice: number;
+  priceSale?: number;
   voucher?: string;
-  voucherPrice: number;
+  voucherPrice?: number;
   shippingAddress: string;
-  note?: string;
-  products: Array<{
-    productId: string | number;
-    quantity: number;
-    size: string;
-    color: string;
-  }>;
+  paymentStatus: string;
   paymentMethod: string;
-  onlinePaymentMethod?: string;
+  refund_status?: string;
+  refund_reason?: string;
+  refunded_by?: number;
+  refunded_at?: string;
+  note?: string | null;
+  status: string;
+  orderTime: string;
+  products: IProductOrder[];
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
+  statusHistories?: {
+    id: number;
+    order_id: number;
+    old_status: string;
+    new_status: string;
+    name_change: string;
+    role_change: string;
+    note?: string;
+    change_at: string;
+  }[];
+  paymentStatusHistories?: IPaymentStatusHistory[];
 }
 
 export interface IProductOrder {
@@ -353,4 +371,15 @@ export interface IUser {
   name: string;
   email: string;
   phoneNumber: string;
+}
+
+export interface IPaymentStatusHistory {
+  id: number;
+  order_id: number;
+  old_status: string;
+  new_status: string;
+  name_change: string;
+  role_change: string;
+  note?: string;
+  change_at: string;
 }

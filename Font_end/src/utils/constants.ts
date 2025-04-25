@@ -48,6 +48,7 @@ export const OrderStatus = {
 export const PaymentStatus = {
   UNPAID: "UNPAID",
   PAID: "PAID",
+  REFUNDED: "REFUNDED",
 };
 export const PaymentMethod = {
   COD: "COD",

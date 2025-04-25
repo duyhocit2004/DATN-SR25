@@ -128,9 +128,28 @@ class VnpayService implements IVnpayService{
     public function refund($transactionId, $amount)
     {
         try {
+            \Log::info('Bắt đầu hoàn tiền VNPay', [
+                'transaction_id' => $transactionId,
+                'amount' => $amount
+            ]);
+
             $vnp_TmnCode = env('VNP_TMN_CODE');
             $vnp_HashSecret = env('VNP_HASH_SECRET');
             $vnp_Url = env('VNP_URL');
+
+            if (empty($vnp_TmnCode) || empty($vnp_HashSecret) || empty($vnp_Url)) {
+                \Log::error('Thiếu cấu hình VNPay', [
+                    'vnp_TmnCode' => $vnp_TmnCode,
+                    'vnp_HashSecret' => $vnp_HashSecret ? 'Đã cấu hình' : 'Chưa cấu hình',
+                    'vnp_Url' => $vnp_Url
+                ]);
+                return [
+                    'success' => false,
+                    'message' => 'Thiếu cấu hình VNPay',
+                    'transaction_id' => $transactionId,
+                    'response' => null
+                ];
+            }
 
             $inputData = [
                 "vnp_Version" => "2.1.0",
@@ -144,6 +163,10 @@ class VnpayService implements IVnpayService{
                 "vnp_CreateDate" => date('YmdHis'),
                 "vnp_CreateBy" => "admin",
             ];
+
+            \Log::info('Dữ liệu hoàn tiền VNPay', [
+                'inputData' => $inputData
+            ]);
 
             ksort($inputData);
             $query = "";
@@ -165,46 +188,70 @@ class VnpayService implements IVnpayService{
                 $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
             }
 
-            // Thực hiện gọi API VNPay
-            $client = new Client();
-            $response = $client->post($vnp_Url, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                ],
-                'verify' => false // Bỏ qua SSL verification trong môi trường development
+            \Log::info('URL hoàn tiền VNPay', [
+                'url' => $vnp_Url
             ]);
 
-            $responseData = json_decode($response->getBody(), true);
+            // Thực hiện gọi API VNPay
+            $client = new Client();
+            try {
+                $response = $client->post($vnp_Url, [
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                    ],
+                    'verify' => false // Bỏ qua SSL verification trong môi trường development
+                ]);
 
-            // Kiểm tra kết quả từ VNPay
-            if ($responseData && isset($responseData['vnp_ResponseCode']) && $responseData['vnp_ResponseCode'] === '00') {
-                return [
-                    'success' => true,
-                    'message' => 'Hoàn tiền thành công',
-                    'transaction_id' => $transactionId,
+                $responseData = json_decode($response->getBody(), true);
+
+                \Log::info('Phản hồi từ VNPay', [
                     'response' => $responseData
-                ];
-            } else {
-                \Log::error('Lỗi hoàn tiền VNPay:', [
+                ]);
+
+                // Kiểm tra kết quả từ VNPay
+                if ($responseData && isset($responseData['vnp_ResponseCode']) && $responseData['vnp_ResponseCode'] === '00') {
+                    return [
+                        'success' => true,
+                        'message' => 'Hoàn tiền thành công',
+                        'transaction_id' => $transactionId,
+                        'response' => $responseData
+                    ];
+                } else {
+                    \Log::error('Lỗi hoàn tiền VNPay:', [
+                        'transaction_id' => $transactionId,
+                        'response' => $responseData
+                    ]);
+                    return [
+                        'success' => false,
+                        'message' => 'Hoàn tiền thất bại: ' . ($responseData['vnp_Message'] ?? 'Không xác định'),
+                        'transaction_id' => $transactionId,
+                        'response' => $responseData
+                    ];
+                }
+            } catch (\GuzzleHttp\Exception\RequestException $e) {
+                \Log::error('Lỗi khi gọi API VNPay:', [
                     'transaction_id' => $transactionId,
-                    'response' => $responseData
+                    'error' => $e->getMessage(),
+                    'response' => $e->hasResponse() ? $e->getResponse()->getBody()->getContents() : null
                 ]);
                 return [
                     'success' => false,
-                    'message' => 'Hoàn tiền thất bại: ' . ($responseData['vnp_Message'] ?? 'Không xác định'),
+                    'message' => 'Lỗi kết nối đến VNPay: ' . $e->getMessage(),
                     'transaction_id' => $transactionId,
-                    'response' => $responseData
+                    'response' => null
                 ];
             }
         } catch (\Exception $e) {
-            \Log::error('Lỗi khi gọi API hoàn tiền VNPay:', [
+            \Log::error('Lỗi không xác định khi hoàn tiền VNPay:', [
                 'transaction_id' => $transactionId,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
             return [
                 'success' => false,
-                'message' => 'Lỗi khi gọi API hoàn tiền: ' . $e->getMessage(),
-                'transaction_id' => $transactionId
+                'message' => 'Lỗi không xác định: ' . $e->getMessage(),
+                'transaction_id' => $transactionId,
+                'response' => null
             ];
         }
     }
