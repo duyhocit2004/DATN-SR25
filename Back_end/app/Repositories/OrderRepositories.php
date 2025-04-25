@@ -297,32 +297,25 @@ class OrderRepositories
             $status = $request->input('status', $order->status);
             $paymentStatus = $request->input('paymentStatus', $order->payment_status);
 
-            // Check if new data matches old data
-          
-            $data = [];
-            if($oldStatus !== $status){
-                $data['order_id'] = $order->id;
-                $data['old_status'] = $oldStatus;
-                $data['new_status'] = $status;
-                $data['name_change'] = $user->name;
-                $data['role_change'] = $user->role;
-                $data['change_at'] = now();
-                $data['created_at'] = now();
-                $data['updated_at'] = null;
-            }
             // Check if status is delivered and payment method is COD
             if ($status === 'Delivered' && $order->payment_method === 'COD') {
                 $paymentStatus = 'PAID';
             }
 
+            // Update order status
+            $order->status = $status;
+            $order->payment_status = $paymentStatus;
+            $order->note = $request->input('note');
+            $order->save();
+
             // Lưu lịch sử thay đổi trạng thái đơn hàng
-            if ($status !== $order->status) {
+            if ($oldStatus !== $status) {
                 OrderStatusHistory::create([
                     'order_id' => $order->id,
-                    'old_status' => $order->status,
+                    'old_status' => $oldStatus,
                     'new_status' => $status,
-                    'name_change' => $request->user()->name ?? 'System',
-                    'role_change' => $request->user()->role ?? 'System',
+                    'name_change' => $user->name ?? 'System',
+                    'role_change' => $user->role ?? 'System',
                     'note' => $request->input('note'),
                     'change_at' => now()
                 ]);
@@ -341,24 +334,6 @@ class OrderRepositories
                 ]);
             }
 
-            $order->update([
-                'status' => $status,
-                'payment_status' => $paymentStatus,
-                'payment_method' => $request->input('paymentMethod', $order->payment_method),
-            ]);
-            if($data !== []){
-                \App\Models\OrderStatusHistory::create([
-                    'order_id' => $order->id,
-                    'old_status' => $data['old_status'],
-                    'new_status' => $data['new_status'],
-                    'name_change' => $user->name,
-                    'role_change' => $user->role,
-                    'change_at' => now(),
-                ]);
-            }else{
-                return $order;
-            }
-           
             return $order;
         } else {
             BaseResponse::failure(400, '', 'order.item.not.found', []);
