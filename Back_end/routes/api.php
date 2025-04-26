@@ -120,7 +120,6 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/updateOrder', [OrderController::class, 'updateOrder']);
             Route::post('/deleteOrder', [OrderController::class, 'deleteOrder']);
             Route::post('/refundOrder', [OrderController::class, 'refundOrder']);
-
         });
 
         Route::prefix('colors')->group(function () {

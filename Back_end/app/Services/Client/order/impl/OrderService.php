@@ -148,47 +148,72 @@ class OrderService implements IOrderService
     public function getOrderDetail(Request $request)
     {
         $order = $this->orderRepositories->getOrderDetail($request);
-        $products = $order->order_details ? $order->order_details->map(function ($product) {
+        if ($order) {
             return [
-                'id' => $product->id,
-                'orderId' => $product->order_id,
-                'name' => $product->name,
-                'image' => $product->image,
-                'priceRegular' => $product->price_regular,
-                'priceSale' => $product->price_sale,
-                'discount' => $product->discount,
-                'color' => $product->color,
-                'size' => $product->size,
-                'quantity' => $product->quantity_order,
+                'id' => $order->id,
+                'code' => $order->code,
+                'users_id' => $order->users_id,
+                'customerName' => $order->customer_name,
+                'email' => $order->email,
+                "phoneNumber" => $order->phone_number,
+                'receiverName' => $order->receiver_name ?? null,
+                'receiverPhoneNumber' => $order->receiver_phone_number ?? null,
+                'receiverAddress' => $order->receiver_address ?? null,
+                'totalPrice' => $order->total_price,
+                'priceSale' => $order->price_sale,
+                'voucher' => $order->voucher,
+                'voucherPrice' => $order->voucher_price,
+                'shippingAddress' => $order->shipping_address,
+                'paymentStatus' => $order->payment_status,
+                'paymentMethod' => $order->payment_method,
+                'note' => $order->note,
+                'status' => $order->status,
+                'orderTime' => $order->date,
+                'products' => $order->order_details ? $order->order_details->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'orderId' => $product->order_id,
+                        'product_id' => $product->product_id,
+                        'name' => $product->name,
+                        'image' => $product->image,
+                        'priceRegular' => $product->price_regular,
+                        'priceSale' => $product->price_sale,
+                        'discount' => $product->discount,
+                        'color' => $product->color,
+                        'size' => $product->size,
+                        'quantity' => $product->quantity_order,
+                    ];
+                }) : [],
+                'statusHistories' => $order->statusHistories ? $order->statusHistories->map(function ($history) {
+                    return [
+                        'id' => $history->id,
+                        'order_id' => $history->order_id,
+                        'old_status' => $history->old_status,
+                        'new_status' => $history->new_status,
+                        'name_change' => $history->name_change,
+                        'role_change' => $history->role_change,
+                        'note' => $history->note,
+                        'change_at' => $history->change_at,
+                    ];
+                }) : [],
+                'paymentStatusHistories' => $order->paymentStatusHistories ? $order->paymentStatusHistories->map(function ($history) {
+                    return [
+                        'id' => $history->id,
+                        'order_id' => $history->order_id,
+                        'old_status' => $history->old_status,
+                        'new_status' => $history->new_status,
+                        'name_change' => $history->name_change,
+                        'role_change' => $history->role_change,
+                        'note' => $history->note,
+                        'change_at' => $history->change_at,
+                    ];
+                }) : [],
+                'createdAt' => $order->created_at,
+                'updatedAt' => $order->updated_at,
+                'deletedAt' => $order->deleted_at,
             ];
-        }) : [];
-
-        $list = [
-            'id' => $order->id,
-            'code' => $order->code,
-            'users_id' => $order->users_id,
-            'customerName' => $order->customer_name,
-            'email' => $order->email,
-            "phoneNumber" => $order->phone_number,
-            'receiverName' => $order->receiver_name, // Trả về thông tin người nhận
-            'receiverPhoneNumber' => $order->receiver_phone_number, // Trả về thông tin người nhận
-            'receiverAddress' => $order->receiver_address, // Trả về thông tin người nhận
-            'totalPrice' => $order->total_price,
-            'priceSale' => $order->price_sale,
-            'voucher' => $order->voucher,
-            'voucherPrice' => $order->voucher_price,
-            'shippingAddress' => $order->shipping_address,
-            'paymentStatus' => $order->payment_status,
-            'paymentMethod' => $order->payment_method,
-            'note' => $order->note,
-            'status' => $order->status,
-            'orderTime' => $order->date,
-            'products' => $products,
-            'createdAt' => $order->created_at,
-            'updatedAt' => $order->updated_at,
-            'deletedAt' => $order->deleted_at,
-        ];
-        return $list;
+        }
+        return null;
     }
 
     public function getVoucher(Request $request)
