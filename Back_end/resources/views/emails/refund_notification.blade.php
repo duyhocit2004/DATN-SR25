@@ -80,13 +80,13 @@
                     <p><strong>Phương thức thanh toán:</strong> {{ $order->payment_method }}</p>
                     <p><strong>Ngày tạo mã QR:</strong> {{ date('d/m/Y H:i:s') }}</p>
                 </div>
-                <p>Vui lòng sử dụng mã QR dưới đây để nhận tiền hoàn trả:</p>
+                <!-- <p>Vui lòng sử dụng mã QR dưới đây để nhận tiền hoàn trả:</p> -->
                 <div class="qr-code">
                     {!! $qrCode !!}
                 </div>
             @endif
             
-            <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email hoặc số điện thoại hỗ trợ.</p>
+            <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email hoặc số điện thoại hỗ trợ: 0335 313 203.</p>
         </div>
         
         <div class="footer">

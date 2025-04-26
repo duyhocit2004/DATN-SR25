@@ -281,7 +281,7 @@ class OrderRepositories
     public function getOrderDetail(Request $request)
     {
         $code = $request->input('orderCode');
-        $order = Order::with('order_details')->where('code', '=', $code)->first();
+        $order = Order::with(['order_details', 'paymentStatusHistories'])->where('code', '=', $code)->first();
         return $order;
     }
 
@@ -290,10 +290,11 @@ class OrderRepositories
         $order = Order::where('id', $request->input('id'))->first();
         $user = auth()->user();
         if (!empty($order)) {
-            //get value in data
+            // Lưu lại giá trị cũ
             $oldStatus = $order->status;
+            $oldPaymentStatus = $order->payment_status;
 
-            //get value in request
+            // Lấy giá trị mới từ request
             $status = $request->input('status', $order->status);
             $paymentStatus = $request->input('paymentStatus', $order->payment_status);
 
@@ -302,13 +303,20 @@ class OrderRepositories
                 $paymentStatus = 'PAID';
             }
 
-            // Update order status
-            $order->status = $status;
-            $order->payment_status = $paymentStatus;
-            $order->note = $request->input('note');
-            $order->save();
+            // Lưu lịch sử thay đổi trạng thái thanh toán trước khi cập nhật
+            if ($oldPaymentStatus !== $paymentStatus) {
+                PaymentStatusHistory::create([
+                    'order_id' => $order->id,
+                    'old_status' => $oldPaymentStatus,
+                    'new_status' => $paymentStatus,
+                    'name_change' => $user->name ?? 'System',
+                    'role_change' => $user->role ?? 'System',
+                    'note' => $request->input('note'),
+                    'change_at' => now()
+                ]);
+            }
 
-            // Lưu lịch sử thay đổi trạng thái đơn hàng
+            // Lưu lịch sử thay đổi trạng thái đơn hàng trước khi cập nhật
             if ($oldStatus !== $status) {
                 OrderStatusHistory::create([
                     'order_id' => $order->id,
@@ -321,18 +329,11 @@ class OrderRepositories
                 ]);
             }
 
-            // Lưu lịch sử thay đổi trạng thái thanh toán
-            if ($paymentStatus !== $order->payment_status) {
-                PaymentStatusHistory::create([
-                    'order_id' => $order->id,
-                    'old_status' => $order->payment_status,
-                    'new_status' => $paymentStatus,
-                    'name_change' => $request->user()->name ?? 'System',
-                    'role_change' => $request->user()->role ?? 'System',
-                    'note' => $request->input('note'),
-                    'change_at' => now()
-                ]);
-            }
+            // Cập nhật order
+            $order->status = $status;
+            $order->payment_status = $paymentStatus;
+            $order->note = $request->input('note');
+            $order->save();
 
             return $order;
         } else {
@@ -371,16 +372,15 @@ class OrderRepositories
     public function refundOrder($orderId, $adminId, $refundReason)
     {
         try {
-            \Log::info('Starting refund process', [
+            \Log::info('Bắt đầu refundOrder', [
                 'orderId' => $orderId,
                 'adminId' => $adminId,
                 'refundReason' => $refundReason
             ]);
 
             $order = Order::find($orderId);
-            
             if (!$order) {
-                \Log::error('Order not found', ['orderId' => $orderId]);
+                \Log::error('Không tìm thấy đơn hàng', ['orderId' => $orderId]);
                 return [
                     'status' => 'error',
                     'message' => 'Không tìm thấy đơn hàng',
@@ -389,14 +389,14 @@ class OrderRepositories
                 ];
             }
 
-            \Log::info('Order found', [
+            \Log::info('Đơn hàng tìm thấy', [
                 'order' => $order->toArray(),
                 'payment_status' => $order->payment_status,
                 'refund_status' => $order->refund_status
             ]);
 
             if ($order->payment_status !== 'PAID') {
-                \Log::error('Order not paid', ['order' => $order->toArray()]);
+                \Log::error('Đơn hàng chưa thanh toán', ['order' => $order->toArray()]);
                 return [
                     'status' => 'error',
                     'message' => 'Đơn hàng chưa thanh toán',
@@ -406,7 +406,7 @@ class OrderRepositories
             }
 
             if ($order->refund_status === 'REFUNDED') {
-                \Log::error('Order already refunded', ['order' => $order->toArray()]);
+                \Log::error('Đơn hàng đã hoàn tiền', ['order' => $order->toArray()]);
                 return [
                     'status' => 'error',
                     'message' => 'Đơn hàng đã được hoàn tiền trước đó',
@@ -416,10 +416,10 @@ class OrderRepositories
             }
 
             if (!Auth::check()) {
-                \Log::error('User not authenticated');
+                \Log::error('Quản trị viên chưa đăng nhập');
                 return [
                     'status' => 'error',
-                    'message' => 'Người dùng chưa đăng nhập',
+                    'message' => 'Quản trị viên chưa đăng nhập',
                     'code' => 401,
                     'data' => []
                 ];
@@ -428,11 +428,14 @@ class OrderRepositories
             DB::beginTransaction();
 
             try {
-                // Lưu trạng thái cũ
                 $oldStatus = $order->status;
                 $oldPaymentStatus = $order->payment_status;
 
-                // Update order status
+                \Log::info('Cập nhật trạng thái đơn hàng', [
+                    'oldStatus' => $oldStatus,
+                    'oldPaymentStatus' => $oldPaymentStatus
+                ]);
+
                 $updateResult = $order->update([
                     'status' => 'Cancel',
                     'refund_status' => 'REFUNDED',
@@ -442,13 +445,12 @@ class OrderRepositories
                     'payment_status' => 'REFUNDED'
                 ]);
 
+                \Log::info('Kết quả cập nhật đơn hàng', ['updateResult' => $updateResult]);
+
                 if (!$updateResult) {
                     throw new \Exception('Không thể cập nhật trạng thái đơn hàng');
                 }
 
-                \Log::info('Order updated successfully', ['order' => $order->toArray()]);
-
-                // Add order status history
                 $orderHistoryResult = OrderStatusHistory::create([
                     'order_id' => $order->id,
                     'old_status' => $oldStatus,
@@ -459,11 +461,12 @@ class OrderRepositories
                     'change_at' => now()
                 ]);
 
+                \Log::info('Tạo lịch sử trạng thái đơn hàng', ['orderHistoryResult' => $orderHistoryResult]);
+
                 if (!$orderHistoryResult) {
                     throw new \Exception('Không thể tạo lịch sử trạng thái đơn hàng');
                 }
 
-                // Add payment status history
                 $paymentHistoryResult = PaymentStatusHistory::create([
                     'order_id' => $order->id,
                     'old_status' => $oldPaymentStatus,
@@ -474,15 +477,16 @@ class OrderRepositories
                     'change_at' => now()
                 ]);
 
+                \Log::info('Tạo lịch sử trạng thái thanh toán', ['paymentHistoryResult' => $paymentHistoryResult]);
+
                 if (!$paymentHistoryResult) {
                     throw new \Exception('Không thể tạo lịch sử trạng thái thanh toán');
                 }
 
-                \Log::info('Status histories created successfully');
+                \Log::info('Tạo lịch sử thành công, commit transaction');
 
                 DB::commit();
 
-                // Refresh order with relationships
                 $order = Order::with(['order_details', 'statusHistories', 'paymentStatusHistories'])
                     ->find($orderId);
 
@@ -494,7 +498,7 @@ class OrderRepositories
                 ];
             } catch (\Exception $e) {
                 DB::rollBack();
-                \Log::error('Refund transaction error', [
+                \Log::error('Lỗi transaction refund', [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                     'orderId' => $orderId,
@@ -508,7 +512,7 @@ class OrderRepositories
                 ];
             }
         } catch (\Exception $e) {
-            \Log::error('Refund error', [
+            \Log::error('Lỗi refundOrder', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'orderId' => $orderId,
