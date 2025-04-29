@@ -86,7 +86,7 @@
                 </div>
             @endif
             
-            <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email hoặc số điện thoại hỗ trợ: 0335 313 203.</p>
+            <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email hoặc hotline: 0335 313 203.</p>
         </div>
         
         <div class="footer">

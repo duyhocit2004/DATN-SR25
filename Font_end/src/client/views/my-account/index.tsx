@@ -181,7 +181,9 @@ const MyAccount: React.FC = () => {
       }
 
       const response = await adminApi.updateUser(formData);
-      if (response.status === HttpCodeString.SUCCESS) {
+      
+      // Kiểm tra nếu response có status là 200 nhưng có messageKey (lỗi)
+      if (response.status === HttpCodeString.SUCCESS && !response.messageKey) {
         showToast({
           content: "Cập nhật thông tin thành công!",
           type: "success",
@@ -199,15 +201,19 @@ const MyAccount: React.FC = () => {
         setFormData(prev => ({ ...prev, ...values }));
         await refreshUserInfo();
       } else {
+        // Hiển thị thông báo lỗi cụ thể từ backend
+        const errorMessage = response.message || "Cập nhật thất bại! Vui lòng thử lại.";
         showToast({
-          content: "Cập nhật thất bại! Vui lòng thử lại.",
+          content: errorMessage,
           type: "error",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Lỗi khi cập nhật:", error);
+      // Hiển thị thông báo lỗi từ response nếu có
+      const errorMessage = error.response?.data?.message || "Có lỗi xảy ra khi cập nhật!";
       showToast({
-        content: "Có lỗi xảy ra khi cập nhật!",
+        content: errorMessage,
         type: "error",
       });
     } finally {
@@ -278,7 +284,7 @@ const MyAccount: React.FC = () => {
                 <ShoppingOutlined />
                 <span>Đơn mua</span>
               </div>
-              <div 
+              {/* <div 
                 className={`flex items-center space-x-2 px-4 py-3 cursor-pointer ${
                   activeSection === 'notifications' 
                     ? 'text-orange-500 bg-gray-100' 
@@ -288,7 +294,7 @@ const MyAccount: React.FC = () => {
               >
                 <NotificationOutlined />
                 <span>Thông báo</span>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -397,10 +403,19 @@ const MyAccount: React.FC = () => {
                       layout="horizontal"
                       labelCol={{ span: 6 }}
                       wrapperCol={{ span: 14 }}
+                      onFinish={onUpdate}
+                      onValuesChange={(changedValues) => {
+                        if ("oldPassword" in changedValues) {
+                          setShowPasswordFields(!!changedValues.oldPassword);
+                        }
+                      }}
                     >
                       <Form.Item
                         label="Mật khẩu hiện tại"
                         name="oldPassword"
+                        rules={[
+                          { required: true, message: "Vui lòng nhập mật khẩu hiện tại" },
+                        ]}
                       >
                         <Input.Password placeholder="Nhập mật khẩu hiện tại" className="h-10" />
                       </Form.Item>
@@ -412,7 +427,19 @@ const MyAccount: React.FC = () => {
                             name="newPassword"
                             rules={[
                               { required: true, message: "Vui lòng nhập mật khẩu mới" },
-                              { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự" },
+                              { min: 8, message: "Mật khẩu phải có ít nhất 8 ký tự" },
+                              {
+                                pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+                                message: "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và có thể chứa ký tự đặc biệt"
+                              },
+                              ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                  if (!value || getFieldValue('oldPassword') !== value) {
+                                    return Promise.resolve();
+                                  }
+                                  return Promise.reject(new Error('Mật khẩu mới không được trùng với mật khẩu cũ'));
+                                },
+                              }),
                             ]}
                           >
                             <Input.Password placeholder="Nhập mật khẩu mới" className="h-10" />
@@ -423,16 +450,13 @@ const MyAccount: React.FC = () => {
                             name="confirmPassword"
                             dependencies={["newPassword"]}
                             rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng xác nhận mật khẩu mới",
-                              },
+                              { required: true, message: "Vui lòng xác nhận mật khẩu mới" },
                               ({ getFieldValue }) => ({
                                 validator(_, value) {
                                   if (!value || getFieldValue("newPassword") === value) {
                                     return Promise.resolve();
                                   }
-                                  return Promise.reject(new Error("Mật khẩu không khớp"));
+                                  return Promise.reject(new Error("Xác nhận mật khẩu không khớp"));
                                 },
                               }),
                             ]}
@@ -446,6 +470,7 @@ const MyAccount: React.FC = () => {
                         <Button
                           type="primary"
                           htmlType="submit"
+                          loading={loading}
                           className="bg-orange-500 hover:bg-orange-600 h-10 px-8"
                         >
                           Xác nhận

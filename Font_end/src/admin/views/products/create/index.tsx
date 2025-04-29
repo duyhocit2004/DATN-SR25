@@ -465,7 +465,7 @@ const AddProduct: React.FC = () => {
                     >
                       {getAvailableColors(variant.size, index)?.map((color) => (
                         <Option key={color.id} value={color.id}>
-                          {color.code}
+                          {color.name}
                         </Option>
                       ))}
                     </Select>

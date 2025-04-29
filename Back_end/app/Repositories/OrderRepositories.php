@@ -332,7 +332,10 @@ class OrderRepositories
             // Cập nhật order
             $order->status = $status;
             $order->payment_status = $paymentStatus;
-            $order->note = $request->input('note');
+            // Chỉ cập nhật note nếu không phải hoàn tiền
+            if ($status !== 'Cancel' && $paymentStatus !== 'REFUNDED') {
+                $order->note = $request->input('note');
+            }
             $order->save();
 
             return $order;
