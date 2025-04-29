@@ -40,8 +40,12 @@ class AuthController extends Controller
 
     public function updateUser(Request $request): JsonResponse
     {
-        $dataResponse = $this->authService->updateUser($request);
-        return BaseResponse::success($dataResponse);
+        try {
+            $dataResponse = $this->authService->updateUser($request);
+            return $dataResponse;
+        } catch (\Exception $e) {
+            return BaseResponse::failure(500, $e->getMessage(), 'error', []);
+        }
     }
 
     public function register(Request $request)

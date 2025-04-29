@@ -543,7 +543,7 @@ const UpdateProduct: React.FC = () => {
                     >
                       {getAvailableColors(variant.size, index)?.map((color) => (
                         <Option key={color.id} value={color.id}>
-                          {color.code}
+                          {color.name}
                         </Option>
                       ))}
                     </Select>
@@ -560,7 +560,7 @@ const UpdateProduct: React.FC = () => {
                     >
                       {getAvailableSizes(variant.color, index)?.map((size) => (
                         <Option key={size.id} value={size.id}>
-                          {size.name}
+                          {size.size}
                         </Option>
                       ))}
                     </Select>

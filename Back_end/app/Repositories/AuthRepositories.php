@@ -80,10 +80,41 @@ class AuthRepositories
 
             // Handle password change if oldPassword and newPassword are provided
             if ($request->has('oldPassword') && $request->has('newPassword')) {
+                // Validate old password
                 if (!Hash::check($request->input('oldPassword'), $user->password)) {
-                    return BaseResponse::failure(400, 'Mật khẩu cũ không đúng', 'old.password.incorrect', []);
+                    return BaseResponse::failure(400, 'Mật khẩu cũ không chính xác', 'old.password.incorrect', []);
                 }
-                $updateData['password'] = Hash::make($request->input('newPassword'));
+
+                // Validate new password
+                $newPassword = $request->input('newPassword');
+                if (strlen($newPassword) < 8) {
+                    return BaseResponse::failure(400, 'Mật khẩu mới phải có ít nhất 8 ký tự', 'new.password.too.short', []);
+                }
+
+                // Validate password complexity
+                if (!preg_match('/[A-Z]/', $newPassword)) {
+                    return BaseResponse::failure(400, 'Mật khẩu mới phải chứa ít nhất 1 chữ hoa', 'new.password.no.uppercase', []);
+                }
+
+                if (!preg_match('/[a-z]/', $newPassword)) {
+                    return BaseResponse::failure(400, 'Mật khẩu mới phải chứa ít nhất 1 chữ thường', 'new.password.no.lowercase', []);
+                }
+
+                if (!preg_match('/[0-9]/', $newPassword)) {
+                    return BaseResponse::failure(400, 'Mật khẩu mới phải chứa ít nhất 1 số', 'new.password.no.number', []);
+                }
+
+                // Check if new password matches confirmation
+                if ($request->input('newPassword') !== $request->input('confirmPassword')) {
+                    return BaseResponse::failure(400, 'Xác nhận mật khẩu không khớp', 'password.confirmation.mismatch', []);
+                }
+
+                // Check if new password is same as old password
+                if (Hash::check($newPassword, $user->password)) {
+                    return BaseResponse::failure(400, 'Mật khẩu mới không được trùng với mật khẩu cũ', 'new.password.same.as.old', []);
+                }
+
+                $updateData['password'] = Hash::make($newPassword);
             }
 
             $user->update($updateData);
@@ -101,8 +132,7 @@ class AuthRepositories
                 "createdAt" => $user->created_at,
                 "updatedAt" => $user->updated_at,
                 "deletedAt" => $user->deleted_at,
-                "status" => $user->status,
-                "password" => $user->password
+                "status" => $user->status
             ];
 
             return BaseResponse::success($updatedUser);
