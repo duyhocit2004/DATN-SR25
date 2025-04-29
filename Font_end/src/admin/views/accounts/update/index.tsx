@@ -78,10 +78,10 @@ const UpdateAccountForm: React.FC = () => {
   const onFinish = async (values: any) => {
     setLoading(true);
 
-  const payload = {
-    ...formData,  
-    ...values,    
-  };
+    const payload = {
+      ...formData,  
+      ...values,    
+    };
     const payloadFormData = objectToFormData(payload);
 
     try {
@@ -94,8 +94,19 @@ const UpdateAccountForm: React.FC = () => {
         });
         navigate("/admin/accounts");
       } else {
+        let errorMessage = "Cập nhật tài khoản thất bại!";
+        
+        // Handle specific error messages
+        if (response?.messageKey === "cannot.lock.current.account") {
+          errorMessage = "Không thể khóa tài khoản đang đăng nhập!";
+        } else if (response?.messageKey === "cannot.lock.last.admin") {
+          errorMessage = "Không thể khóa tài khoản admin cuối cùng!";
+        } else if (response?.message) {
+          errorMessage = response.message;
+        }
+
         showToast({
-          content: "Cập nhật tài khoản thất bại!",
+          content: errorMessage,
           duration: 5,
           type: "error",
         });
