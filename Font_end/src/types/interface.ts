@@ -56,6 +56,7 @@ export interface ISize {
 export interface IColor {
   id: number;
   code: string;
+  name : string;
   description: string;
   createdAt?: Dayjs;
   updatedAt?: Dayjs;
