@@ -205,29 +205,31 @@ class AuthService implements IAuthService
     public function updateUser(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        $userId = $user->id;
-
-        if ($userId != $request->input('id')) {
-            BaseResponse::failure(401, 'unauthorized', 'unauthorized', []);
+        if (empty($user)) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
+        // Handle image upload to Cloudinary if present
         $uploadedFile = null;
         if ($request->hasFile('image')) {
-            $uploadedFile = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath(), ['folder' => 'products', 'verify' => false]);
+            try {
+                $uploadedFile = $this->cloudinary->uploadApi()->upload(
+                    $request->file('image')->getRealPath(), 
+                    ['folder' => 'avatars', 'verify' => false]
+                );
+            } catch (Exception $e) {
+                return BaseResponse::failure(500, 'Error uploading image', $e->getMessage(), []);
+            }
         }
+
+        // Get secure URL from Cloudinary response
         $secureUrl = (isset($uploadedFile['secure_url']) && !empty($uploadedFile['secure_url']))
             ? $uploadedFile['secure_url']
             : null;
 
-        // Handle password change if oldPassword and newPassword are provided
-        if ($request->has('oldPassword') && $request->has('newPassword')) {
-            if (!Hash::check($request->input('oldPassword'), $user->password)) {
-                BaseResponse::failure(400, 'Mật khẩu cũ không đúng', 'old.password.incorrect', []);
-            }
-            $user->password = Hash::make($request->input('newPassword'));
-        }
-
-        $user = $this->authRepositories->updateUser($request, $secureUrl, $userId);
+        // Update user with image URL
+        $user = $this->authRepositories->updateUser($request, $secureUrl);
         return $user;
     }
 

@@ -104,9 +104,15 @@ class ProductController extends Controller
         });
     }
 
-    public function getAllSizes(Request $request)
+    public function getAllSizes(Request $request): JsonResponse
     {
         $sizes = $this->productService->getAllSizes($request);
+        return BaseResponse::success($sizes);
+    }
+
+    public function getSizesByType(Request $request): JsonResponse
+    {
+        $sizes = $this->productService->getSizesByType($request);
         return BaseResponse::success($sizes);
     }
 

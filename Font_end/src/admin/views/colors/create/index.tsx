@@ -3,46 +3,51 @@ import { showToast } from "@/components/toast";
 import { useAppDispatch } from "@/store/hooks";
 import { setShowAddModal } from "@/store/reducers/adminColorSlice";
 import { HttpCodeString } from "@/utils/constants";
-import { Modal, ColorPicker, Button, Form } from "antd";
+import { Modal, Input, Button, Form, ColorPicker } from "antd";
 import { useState } from "react";
 
 interface IColorForm {
-  color: string;
+  name: string;
+  code: string;
 }
+
 interface IProps {
   refreshData: () => void;
 }
+
 const AddColorModal: React.FC<IProps> = ({ refreshData }) => {
   const dispatch = useAppDispatch();
-  const [form] = Form.useForm(); // Khởi tạo form
+  const [form] = Form.useForm();
   const [formData, setFormData] = useState<IColorForm>({
-    color: "",
+    name: "",
+    code: "",
   });
   const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
-    setFormData({ color: "" }); // Reset state
-    form.resetFields(); // Reset form
+    setFormData({ name: "", code: "" });
+    form.resetFields();
   };
 
-  // Hàm cập nhật state & form
   const onChangeFormData = (key: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
     form.setFieldsValue({ [key]: value });
   };
 
-  // Lưu dữ liệu
   const handleSave = () => {
     form
       .validateFields()
       .then(() => {
         onSave();
       })
-      .catch(() => console.log("Validation failed!"));
+      .catch(() => console.log("Lỗi xác thực!"));
   };
 
   const onSave = async () => {
-    const payload = { ...formData };
+    const payload = {
+      name: formData.name,
+      code: formData.code
+    };
     setLoading(true);
     try {
       const response = await adminApi.addColor(payload);
@@ -66,33 +71,45 @@ const AddColorModal: React.FC<IProps> = ({ refreshData }) => {
       setLoading(false);
     }
   };
+
   const onClose = () => {
     dispatch(setShowAddModal(false));
   };
 
   return (
     <Modal
-      title="Thêm mới màu"
+      title="Thêm màu mới"
       open={true}
       maskClosable={false}
       onCancel={onClose}
       footer={null}
     >
       <Form form={form} layout="vertical">
-        {/* Chọn màu */}
         <Form.Item
-          label="Chọn màu"
-          name="color"
-          rules={[{ required: true, message: "Vui lòng chọn màu!" }]}
+          label="Tên màu"
+          name="name"
+          rules={[{ required: true, message: "Vui lòng nhập tên màu!" }]}
+        >
+          <Input 
+            placeholder="Nhập tên màu (ví dụ: Đỏ, Xanh, Vàng...)"
+            value={formData.name}
+            onChange={(e) => onChangeFormData("name", e.target.value)}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Mã màu"
+          name="code"
+          rules={[{ required: true, message: "Vui lòng chọn mã màu!" }]}
         >
           <ColorPicker
-            value={formData.color}
-            onChange={(color) => onChangeFormData("color", color.toHexString())}
+            format="hex"
+            value={formData.code}
+            onChange={(color) => onChangeFormData("code", color.toHexString())}
             showText
           />
         </Form.Item>
 
-        {/* Nút hành động */}
         <div className="flex justify-end gap-2">
           <Button onClick={onClose}>Hủy</Button>
           <Button type="primary" loading={loading} onClick={handleSave}>

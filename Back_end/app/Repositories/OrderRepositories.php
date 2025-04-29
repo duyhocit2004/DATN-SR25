@@ -7,6 +7,7 @@ use App\Models\Order;
 use Firebase\JWT\JWT;
 use App\Models\Product;
 use App\Models\Voucher;
+use App\Models\OrderDetail;
 
 use App\Models\OrderStatusHistory;
 use App\Models\PaymentStatusHistory;
@@ -52,15 +53,32 @@ class OrderRepositories
                 $voucher = Voucher::where('code', $data['voucher'])->first();
                 if ($voucher) {
                     if ($voucher->end_date && $voucher->end_date < now()) {
-                        return BaseResponse::failure('400', 'Voucher expired', 'voucher.expired', []);
+                        return BaseResponse::failure('400', 'Voucher đã hết hạn sử dụng', 'voucher.expired', []);
                     }
                     if ($voucher->min_order_value && $totalAmount < $voucher->min_order_value) {
-                        return BaseResponse::failure('400', 'Order does not meet minimum value for voucher', 'order.not.meet.min.value', []);
+                        return BaseResponse::failure('400', 'Đơn hàng chưa đạt giá trị tối thiểu ' . number_format($voucher->min_order_value) . ' VNĐ để áp dụng voucher', 'order.not.meet.min.value', []);
+                    }
+                    if ($voucher->used >= $voucher->quantity) {
+                        // Update voucher status to INACTIVE when usage limit is reached
+                        $voucher->update([
+                            'status' => 'INACTIVE'
+                        ]);
+                        return BaseResponse::failure('400', 'Voucher đã hết lượt sử dụng. Số lượt đã sử dụng: ' . $voucher->used . '/' . $voucher->quantity, 'voucher.usage.limit.reached', []);
+                    }
+                    if ($voucher->status !== 'ACTIVE') {
+                        return BaseResponse::failure('400', 'Voucher không còn hoạt động', 'voucher.not.active', []);
                     }
                     $voucherAmount = $voucher->voucher_price;
                     $totalAmount -= $voucherAmount;
+                    
+                    // Update voucher usage count
+                    $voucher->update([
+                        'used' => $voucher->used + 1,
+                        // If this is the last usage, set status to INACTIVE
+                        'status' => ($voucher->used + 1 >= $voucher->quantity) ? 'INACTIVE' : $voucher->status
+                    ]);
                 } else {
-                    return BaseResponse::failure('400', 'Voucher not found', 'voucher.not.found', []);
+                    return BaseResponse::failure('400', 'Voucher không tồn tại hoặc không hợp lệ', 'voucher.not.found', []);
                 }
             }
 
@@ -121,6 +139,32 @@ class OrderRepositories
                     'quantity_order' => $product['quantity'],
                     'product_id' => $product['productId'],
                 ]);
+
+                // Update product variant quantity
+                $productVariant = ProductVariant::where('product_id', $product['productId'])
+                    ->where('color_id', function($query) use ($product) {
+                        $query->select('id')
+                            ->from('colors')
+                            ->where('code', $product['color'])
+                            ->first();
+                    })
+                    ->where('size_id', function($query) use ($product) {
+                        $query->select('id')
+                            ->from('sizes')
+                            ->where('size', $product['size'])
+                            ->first();
+                    })
+                    ->first();
+
+                if ($productVariant) {
+                    $productVariant->quantity -= $product['quantity'];
+                    $productVariant->save();
+                }
+
+                // Update product total quantity
+                $productReal->quantity -= $product['quantity'];
+                $productReal->quantity_sold += $product['quantity'];
+                $productReal->save();
             }
 
             DB::commit();
@@ -253,32 +297,25 @@ class OrderRepositories
             $status = $request->input('status', $order->status);
             $paymentStatus = $request->input('paymentStatus', $order->payment_status);
 
-            // Check if new data matches old data
-          
-            $data = [];
-            if($oldStatus !== $status){
-                $data['order_id'] = $order->id;
-                $data['old_status'] = $oldStatus;
-                $data['new_status'] = $status;
-                $data['name_change'] = $user->name;
-                $data['role_change'] = $user->role;
-                $data['change_at'] = now();
-                $data['created_at'] = now();
-                $data['updated_at'] = null;
-            }
             // Check if status is delivered and payment method is COD
             if ($status === 'Delivered' && $order->payment_method === 'COD') {
                 $paymentStatus = 'PAID';
             }
 
+            // Update order status
+            $order->status = $status;
+            $order->payment_status = $paymentStatus;
+            $order->note = $request->input('note');
+            $order->save();
+
             // Lưu lịch sử thay đổi trạng thái đơn hàng
-            if ($status !== $order->status) {
+            if ($oldStatus !== $status) {
                 OrderStatusHistory::create([
                     'order_id' => $order->id,
-                    'old_status' => $order->status,
+                    'old_status' => $oldStatus,
                     'new_status' => $status,
-                    'name_change' => $request->user()->name ?? 'System',
-                    'role_change' => $request->user()->role ?? 'System',
+                    'name_change' => $user->name ?? 'System',
+                    'role_change' => $user->role ?? 'System',
                     'note' => $request->input('note'),
                     'change_at' => now()
                 ]);
@@ -297,24 +334,6 @@ class OrderRepositories
                 ]);
             }
 
-            $order->update([
-                'status' => $status,
-                'payment_status' => $paymentStatus,
-                'payment_method' => $request->input('paymentMethod', $order->payment_method),
-            ]);
-            // if($data !== []){
-            //     orderStatusHistories::create([
-            //         'order_id' => $order->id,
-            //         'old_status' => $data['old_status'],
-            //         'new_status' => $data['new_status'],
-            //         'name_change' => $user->name,
-            //         'role_change' => $user->role,
-            //         'change_at' => now(),
-            //     ]);
-            // }else{
-            //     return $order;
-            // }
-           
             return $order;
         } else {
             BaseResponse::failure(400, '', 'order.item.not.found', []);
@@ -409,8 +428,13 @@ class OrderRepositories
             DB::beginTransaction();
 
             try {
+                // Lưu trạng thái cũ
+                $oldStatus = $order->status;
+                $oldPaymentStatus = $order->payment_status;
+
                 // Update order status
                 $updateResult = $order->update([
+                    'status' => 'Cancel',
                     'refund_status' => 'REFUNDED',
                     'refund_reason' => $refundReason,
                     'refunded_by' => $adminId,
@@ -424,23 +448,43 @@ class OrderRepositories
 
                 \Log::info('Order updated successfully', ['order' => $order->toArray()]);
 
-                // Add status history
-                $historyResult = OrderStatusHistory::create([
+                // Add order status history
+                $orderHistoryResult = OrderStatusHistory::create([
                     'order_id' => $order->id,
-                    'old_status' => $order->status,
+                    'old_status' => $oldStatus,
+                    'new_status' => 'Cancel',
+                    'name_change' => Auth::user()->name ?? 'System',
+                    'role_change' => Auth::user()->role ?? 'System',
+                    'note' => $refundReason,
+                    'change_at' => now()
+                ]);
+
+                if (!$orderHistoryResult) {
+                    throw new \Exception('Không thể tạo lịch sử trạng thái đơn hàng');
+                }
+
+                // Add payment status history
+                $paymentHistoryResult = PaymentStatusHistory::create([
+                    'order_id' => $order->id,
+                    'old_status' => $oldPaymentStatus,
                     'new_status' => 'REFUNDED',
                     'name_change' => Auth::user()->name ?? 'System',
                     'role_change' => Auth::user()->role ?? 'System',
-                    'note' => $refundReason
+                    'note' => $refundReason,
+                    'change_at' => now()
                 ]);
 
-                if (!$historyResult) {
-                    throw new \Exception('Không thể tạo lịch sử trạng thái');
+                if (!$paymentHistoryResult) {
+                    throw new \Exception('Không thể tạo lịch sử trạng thái thanh toán');
                 }
 
-                \Log::info('Status history created');
+                \Log::info('Status histories created successfully');
 
                 DB::commit();
+
+                // Refresh order with relationships
+                $order = Order::with(['order_details', 'statusHistories', 'paymentStatusHistories'])
+                    ->find($orderId);
 
                 return [
                     'status' => 'success',

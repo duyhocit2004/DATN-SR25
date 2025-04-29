@@ -6,7 +6,7 @@ import {
   setPagination,
   setSelectedColor,
 } from "@/store/reducers/adminColorSlice";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { IColor } from "@/types/interface";
 import { DeleteOutlined } from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
@@ -31,16 +31,16 @@ const ColorTable: React.FC = () => {
       minWidth: 70,
     },
     {
-      title: "Mã màu",
-      dataIndex: "code",
-      key: "code",
+      title: "Tên màu",
+      dataIndex: "name",
+      key: "name",
       minWidth: 150,
     },
     {
       title: "Màu",
       dataIndex: "code",
       key: "color",
-      minWidth: 150,
+      minWidth: 100,
       render: (color: string) => {
         return (
           <div
@@ -53,11 +53,19 @@ const ColorTable: React.FC = () => {
         );
       },
     },
-  
+    {
+      title: "Ngày tạo",
+      dataIndex: "created_at",
+      key: "created_at",
+      minWidth: 150,
+      render: (date: string) => {
+        return dayjs(date).format("DD/MM/YYYY");
+      },
+    },
     {
       title: "Hành động",
       key: "action",
-      minWidth: 150,
+      minWidth: 100,
       fixed: 'right',
       render: (_, record) => (
         <div className="actions">

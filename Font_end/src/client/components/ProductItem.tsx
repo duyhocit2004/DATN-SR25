@@ -123,11 +123,11 @@ const ProductItem = ({ product }: ProductItemProps) => {
   return (
     <Card
       hoverable
-      className="relative rounded-lg overflow-hidden group transition-all border-none shadow-lg"
-      styles={{ body: { padding: 0 } }}
+      className="relative rounded-lg overflow-hidden group transition-all border-none shadow-lg h-[500px] flex flex-col"
+      styles={{ body: { padding: 0, height: '100%', display: 'flex', flexDirection: 'column' } }}
     >
       {/* Wrapper chứa ảnh và badge giảm giá */}
-      <div className="relative cursor-pointer" onClick={goToDetail}>
+      <div className="relative cursor-pointer flex-1" onClick={goToDetail}>
         {/* Badge giảm giá */}
         {discountValue > 0 && (
           <div className="absolute top-2 right-2 z-10 transition-transform duration-300 group-hover:scale-110">
@@ -138,11 +138,11 @@ const ProductItem = ({ product }: ProductItemProps) => {
         )}
 
         {/* Ảnh sản phẩm */}
-        <div className="overflow-hidden">
+        <div className="h-[300px] overflow-hidden">
           <img
             src={product?.image}
             alt={product?.name}
-            className="w-full h-64 object-contain transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 
@@ -174,37 +174,38 @@ const ProductItem = ({ product }: ProductItemProps) => {
       </div>
 
       {/* Thông tin sản phẩm */}
-      <div className="p-4 text-center">
+      <div className="p-4 text-center flex flex-col h-[180px]">
         <h3
-          className="font-medium text-lg cursor-pointer transition-colors duration-300 hover:text-blue-500"
+          className="font-medium text-lg cursor-pointer transition-colors duration-300 hover:text-blue-500 line-clamp-2 text-center min-h-[56px]"
           onClick={goToDetail}
         >
           {product?.name}
         </h3>
-        <Rate
-          style={{ marginTop: 8 }}
-          disabled
-          allowHalf
-          value={product?.rate}
-        />
-        <div className="mt-2">
-          <div>
-            <span
-              className={`${!product?.priceSale
-                ? "text-red-600 text-lg font-bold ml-2"
-                : "text-gray-400 line-through text-sm"
-                }`}
-            >
-              {product?.priceRegular?.toLocaleString()} VND
-            </span>
-          </div>
-          {product?.priceSale && (
-            <div>
-              <span className="text-red-600 text-lg font-bold ml-2">
-                {product?.priceSale?.toLocaleString()} VND
+        <div className="flex flex-col items-center mt-auto">
+          <Rate
+            disabled
+            allowHalf
+            value={product?.rate}
+          />
+          <div className="mt-2 flex flex-col items-center">
+            <div className="h-[24px]">
+              <span
+                className={`${!product?.priceSale
+                  ? "text-red-600 text-lg font-bold"
+                  : "text-gray-400 line-through text-sm"
+                  }`}
+              >
+                {product?.priceRegular?.toLocaleString()} VND
               </span>
             </div>
-          )}
+            {product?.priceSale && (
+              <div className="h-[24px]">
+                <span className="text-red-600 text-lg font-bold">
+                  {product?.priceSale?.toLocaleString()} VND
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </Card>

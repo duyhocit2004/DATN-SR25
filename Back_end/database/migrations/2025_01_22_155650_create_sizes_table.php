@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sizes', function (Blueprint $table) {
             $table->id();
             $table->string('name',255)->unique();
+            $table->enum('type', ['numeric', 'text'])->default('numeric');
             $table->timestamps();
         });
     }

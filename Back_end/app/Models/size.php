@@ -27,7 +27,12 @@ class Size extends Model
 	protected $table = 'sizes';
 
 	protected $fillable = [
-		'size'
+		'size',
+		'type'
+	];
+
+	protected $casts = [
+		'type' => 'string'
 	];
 
 	public function product_variants()

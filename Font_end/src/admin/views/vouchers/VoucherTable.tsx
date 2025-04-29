@@ -89,13 +89,13 @@ const VoucherTable: React.FC = () => {
       title: "Số lượng",
       dataIndex: "quantity",
       key: "quantity",
-      minWidth: 100,
+      minWidth: 90,
     },
     {
       title: "Đã dùng",
       dataIndex: "used",
       key: "used",
-      minWidth: 100,
+      minWidth: 90,
     },
     {
       title: "Ngày bắt đầu",
@@ -113,12 +113,12 @@ const VoucherTable: React.FC = () => {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
-      minWidth: 300,
+      minWidth: 200,
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
-      minWidth: 100,
+      minWidth: 90,
       key: "status",
       render: (status: string) => (
         <span className={status === "ACTIVE" ? "text-green-500" : "text-red-500"}>
@@ -129,7 +129,7 @@ const VoucherTable: React.FC = () => {
     {
       title: "Hành động",
       key: "action",
-      minWidth: 150,
+      minWidth: 90,
       fixed: 'right',
       render: (_, record) => (
         <div className="actions">

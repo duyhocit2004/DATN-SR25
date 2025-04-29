@@ -368,6 +368,9 @@ class ProductRepositories
             $query->orderByRaw('IFNULL(price_sale, price_regular) ' . $sortType);
         }
 
+        // Only show products with quantity greater than 0
+        $query->where('quantity', '>', 0);
+
         $products = $query->orderby('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
         return $products;
     }
@@ -434,6 +437,7 @@ class ProductRepositories
     public function getTopDiscountedProducts($number)
     {
         $topDiscountedProducts = Product::orderBy('discount', 'desc')
+            ->where('quantity', '>', 0)
             ->distinct('products.id')
             ->take($number)
             ->with('image_products')
@@ -444,6 +448,7 @@ class ProductRepositories
     public function getTopNewestProducts($number)
     {
         $topNewestProducts = Product::orderBy('created_at', 'desc')
+            ->where('quantity', '>', 0)
             ->distinct('products.id')
             ->take($number)
             ->with('image_products')
@@ -454,6 +459,7 @@ class ProductRepositories
     public function getTopBestSellingProducts($number)
     {
         $topBestSellingProducts = Product::select('products.*', DB::raw('SUM(quantity_sold) as quantity_sold'))
+            ->where('quantity', '>', 0)
             ->groupBy('products.id')
             ->orderByDesc('quantity_sold')
             ->distinct('products.id')
@@ -466,7 +472,9 @@ class ProductRepositories
 
     public function getRelatedProducts($number, $categoryId)
     {
-        $topReleatedProducts = Product::query()->where('categories_id', '=', $categoryId)
+        $topReleatedProducts = Product::query()
+            ->where('categories_id', '=', $categoryId)
+            ->where('quantity', '>', 0)
             ->groupBy('products.id')
             ->distinct('products.id')
             ->take($number)

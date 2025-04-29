@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Color
  * 
  * @property int $id
+ * @property string $name
  * @property string $code
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -27,6 +28,7 @@ class Color extends Model
 	protected $table = 'colors';
 
 	protected $fillable = [
+		'name',
 		'code'
 	];
 
