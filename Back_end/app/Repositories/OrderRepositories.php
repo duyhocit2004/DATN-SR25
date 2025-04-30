@@ -18,7 +18,8 @@ use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use App\Models\OrderDetail;
+
+// use App\Models\OrderDetail as OrderDetailModel;
 
 class OrderRepositories
 {

@@ -17,16 +17,7 @@ class AdminController extends Controller
         $this->adminService = $adminService;
     }
 
-    public function getDataStats(Request $request)
-    {
-        $products = $this->adminService->getDataStats($request);
-        return BaseResponse::success($products);
-    }
-    public function getDashboardChart(Request $request)
-    {
-        $products = $this->adminService->getDashboardChart($request);
-        return BaseResponse::success($products);
-    }
+    
 
     
     public function addVoucher(Request $request)

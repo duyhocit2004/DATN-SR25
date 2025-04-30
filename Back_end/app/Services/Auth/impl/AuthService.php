@@ -52,6 +52,7 @@ class AuthService implements IAuthService
             }
 
             if ($user->status !== config('constants.STATUS_ACTIVE')) {
+                JWTAuth::invalidate(JWTAuth::getToken());
                 return BaseResponse::failure(400, 'Tài khoản chưa được kích hoạt', 'user.does.not.active', []);
             }
 
@@ -99,6 +100,7 @@ class AuthService implements IAuthService
             }
 
             if (!empty($user) && $user->status !== config('constants.STATUS_ACTIVE')) {
+                JWTAuth::invalidate(JWTAuth::getToken());
                 BaseResponse::failure(400, 'User does not active', 'user.does.not.active', []);
             }
 
