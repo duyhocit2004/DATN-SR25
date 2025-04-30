@@ -1,7 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\admin\BannerController;
+use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\ProductAdminController;
+use App\Http\Controllers\admin\SizeController;
+use App\Http\Controllers\admin\VoucherController;
 use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\HomeController;
@@ -132,14 +137,14 @@ Route::middleware('jwt.auth')->group(function () {
         });
 
         Route::prefix('colors')->group(function () {
-            Route::post('/addColor', [AdminController::class, 'addColor']);
-            Route::post('/updateColor', [AdminController::class, 'updateColor']);
-            Route::post('/deleteColor', [AdminController::class, 'deleteColor']);
+            Route::post('/addColor', [ColorController::class, 'addColor']);
+            Route::post('/updateColor', [ColorController::class, 'updateColor']);
+            Route::post('/deleteColor', [ColorController::class, 'deleteColor']);
         });
         Route::prefix('sizes')->group(function () {
-            Route::post('/addSize', [AdminController::class, 'addSize']);
-            Route::post('/updateSize', [AdminController::class, 'updateSize']);
-            Route::post('/deleteSize', [AdminController::class, 'deleteSize']);
+            Route::post('/addSize', [SizeController::class, 'addSize']);
+            Route::post('/updateSize', [SizeController::class, 'updateSize']);
+            Route::post('/deleteSize', [SizeController::class, 'deleteSize']);
         });
 
 
@@ -150,23 +155,23 @@ Route::middleware('jwt.auth')->group(function () {
         });
 
         Route::prefix('categories')->group(function () {
-            Route::post('/addCategory', [AdminController::class, 'addCategory']);
-            Route::post('/updateCategory', [AdminController::class, 'updateCategory']);
-            Route::post('/deleteCategory', [AdminController::class, 'deleteCategory']);
+            Route::post('/addCategory', [CategoryController::class, 'addCategory']);
+            Route::post('/updateCategory', [CategoryController::class, 'updateCategory']);
+            Route::post('/deleteCategory', [CategoryController::class, 'deleteCategory']);
         });
 
         Route::prefix('vouchers')->group(function () {
-            Route::post('/getAllVoucher', [AdminController::class, 'getAllVoucher']);
-            Route::post('/addVoucher', [AdminController::class, 'addVoucher']);
-            Route::post('/updateVoucher', [AdminController::class, 'updateVoucher']);
-            Route::post('/deleteVoucher', [AdminController::class, 'deleteVoucher']);
-            Route::post('/toggleStatus', [AdminController::class, 'toggleStatus']);
+            Route::post('/getAllVoucher', [VoucherController::class, 'getAllVoucher']);
+            Route::post('/addVoucher', [VoucherController::class, 'addVoucher']);
+            Route::post('/updateVoucher', [VoucherController::class, 'updateVoucher']);
+            Route::post('/deleteVoucher', [VoucherController::class, 'deleteVoucher']);
+            Route::post('/toggleStatus', [VoucherController::class, 'toggleStatus']);
         });
 
         Route::prefix('banners')->group(function () {
-            Route::post('/addBanner', [AdminController::class, 'addBanner']);
-            Route::post('/updateBanner', [AdminController::class, 'updateBanner']);
-            Route::post('/deleteBanner', [AdminController::class, 'deleteBanner']);
+            Route::post('/addBanner', [BannerController::class, 'addBanner']);
+            Route::post('/updateBanner', [BannerController::class, 'updateBanner']);
+            Route::post('/deleteBanner', [BannerController::class, 'deleteBanner']);
         });
     });
 });

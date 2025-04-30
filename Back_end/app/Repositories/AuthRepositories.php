@@ -10,6 +10,7 @@ use App\Helpers\BaseResponse;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 
@@ -45,12 +46,35 @@ class AuthRepositories
     public function updateUserAdmin(Request $request, $imageLink)
     {
         $user = User::find($request->input('id'));
-
         if (!$user) {
             BaseResponse::failure('400', 'user not found', 'user.not.found', []);
         }
 
-        
+        // Get the currently logged in admin
+        $currentAdmin = JWTAuth::parseToken()->authenticate();
+        if (!$currentAdmin) {
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        // If trying to change status to INACTIVE (lock account)
+        if ($request->input('status') === 'INACTIVE') {
+            // Don't allow locking the currently logged in admin
+            if ($user->id === $currentAdmin->id) {
+                BaseResponse::failure(400, 'Không thể khóa tài khoản đang đăng nhập', 'cannot.lock.current.account', []);
+            }
+
+            // If the account is an admin, check if it's the last admin
+            if ($user->role === config('constants.USER_TYPE_ADMIN')) {
+                $adminCount = User::where('role', config('constants.USER_TYPE_ADMIN'))
+                    ->where('status', 'ACTIVE')
+                    ->count();
+                
+                if ($adminCount <= 1) {
+                    BaseResponse::failure(400, 'Không thể khóa tài khoản admin cuối cùng', 'cannot.lock.last.admin', []);
+                }
+            }
+        }
+
         $user->update([
             'status' => $request->input('status', $user->status),
         ]);
