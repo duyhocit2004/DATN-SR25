@@ -4,8 +4,10 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\admin\BannerController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\admin\DashboarhController;
 use App\Http\Controllers\Admin\ProductAdminController;
 use App\Http\Controllers\admin\SizeController;
+use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\VoucherController;
 use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\CartController;
@@ -117,16 +119,16 @@ Route::middleware('jwt.auth')->group(function () {
     // các api màn admin
     Route::prefix('admin')->group(function () {
         Route::prefix('dashboard')->group(function () {
-            Route::post('/getDataStats', [AdminController::class, 'getDataStats']);
-            Route::post('/getDashboardChart', [AdminController::class, 'getDashboardChart']);
+            Route::post('/getDataStats', [DashboarhController::class, 'getDataStats']);
+            Route::post('/getDashboardChart', [DashboarhController::class, 'getDashboardChart']);
         });
 
         Route::prefix('users')->group(function () {
             Route::post('/getUserInfoByEmail', [AuthController::class, 'getUser']);
-            Route::post('/updateUserAdmin', [AuthController::class, 'updateUserAdmin']);
+            Route::post('/updateUserAdmin', [UserController::class, 'updateUserAdmin']);
             Route::post('/updateUser', [AuthController::class, 'updateUser']);
-            Route::post('/getAllUser', [AdminController::class, 'getAllUser']);
-            Route::post('/deleteUser', [AdminController::class, 'deleteUser']);
+            Route::post('/getAllUser', [UserController::class, 'getAllUser']);
+            Route::post('/deleteUser', [UserController::class, 'deleteUser']);
         });
 
         Route::prefix('orders')->group(function () {
