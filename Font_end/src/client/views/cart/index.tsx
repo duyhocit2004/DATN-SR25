@@ -312,7 +312,12 @@ const Cart = () => {
         key: "listImage",
         render: (_: string, record: ICart) =>
           record?.product?.image ? (
-            <img src={record?.product?.image} alt="product" className="w-12" />
+            <img
+              src={record?.product?.image}
+              alt="product"
+              className="w-12 cursor-pointer"
+              onClick={() => navigate(`/products/${record.product?.id}`)}
+            />
           ) : null,
       });
     }
@@ -324,7 +329,10 @@ const Cart = () => {
         responsive: ["xs", "sm", "md", "lg"],
         render: (_: any, record: ICart) => (
           <div className="name-are">
-            <div className="name mb-1 font-semibold text-xl">
+            <div
+              className="name mb-1 font-semibold text-xl cursor-pointer text-blue-600 hover:underline"
+              onClick={() => navigate(`/products/${record.product?.id}`)}
+            >
               {record?.product?.name}
             </div>
             <div className="size mb-1 text-gray-500">
@@ -426,7 +434,7 @@ const Cart = () => {
       },
     ]);
     return result;
-  }, [isMobile, selectedItems, cartList]);
+  }, [isMobile, selectedItems, cartList, navigate]);
 
   const handleBuySelected = () => {
     if (selectedItems.length === 0) {
