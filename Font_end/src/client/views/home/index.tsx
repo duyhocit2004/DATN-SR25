@@ -227,7 +227,7 @@ const Home = () => {
         <h2 className="text-2xl font-bold text-center mb-6">
           Danh Mục Sản Phẩm
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {categories.map((cat) => (
             <div
               key={cat.id}
