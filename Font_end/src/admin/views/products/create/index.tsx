@@ -35,6 +35,7 @@ interface Variant {
   id: number;
   color?: number;
   size?: number;
+  sizeType?: 'numeric' | 'text';
   quantity: number;
 }
 
@@ -94,6 +95,7 @@ const AddProduct: React.FC = () => {
   const [album, setAlbum] = useState<UploadFile[]>([]);
   const [colors, setColors] = useState<IColor[]>([]);
   const [sizes, setSizes] = useState<ISize[]>([]);
+  const [sizeType, setSizeType] = useState<'numeric' | 'text'>('numeric');
   const [categories, setCategories] = useState<IListCategory[]>([]);
   const [formData, setFormData] = useState<IFormData>({
     name: "",
@@ -108,7 +110,7 @@ const AddProduct: React.FC = () => {
     getCategories();
     getColors();
     getSizes();
-  }, []);
+  }, [sizeType]);
 
   const getColors = async () => {
     try {
@@ -124,7 +126,7 @@ const AddProduct: React.FC = () => {
   };
   const getSizes = async () => {
     try {
-      const response = await productApi.getAllSizes();
+      const response = await productApi.getSizesByType(sizeType);
       if (response?.status === HttpCodeString.SUCCESS) {
         setSizes(response.data as ISize[]);
       } else {
@@ -430,98 +432,100 @@ const AddProduct: React.FC = () => {
               </Form.Item>
 
               {/* Biến thể sản phẩm */}
-              <h3 className="text-lg font-semibold mt-6 mb-4">
-                Biến thể sản phẩm
-              </h3>
-              {variants.map((variant, index) => (
-                <div
-                  key={variant.id}
-                  className="w-full grid grid-cols-5 gap-4 mb-4"
-                >
-                  <Select
-                    placeholder="Chọn màu"
-                    value={variant.color}
-                    allowClear
+              <div className="variants-section">
+                <h3 className="text-lg font-semibold mt-6 mb-4">Biến thể sản phẩm</h3>
+                
+                <Form.Item label="Loại size" required>
+                  <Select 
+                    value={sizeType} 
                     onChange={(value) => {
-                      const updatedVariants = [...variants];
-                      updatedVariants[index].color = value;
-                      setVariants(updatedVariants);
+                      setSizeType(value);
+                      setVariants([]); // Reset variants when changing size type
                     }}
                   >
-                    {getAvailableColors(variant.size, index)?.map((color) => (
-                      <Option key={color.id} value={color.id}>
-                        {color.code}
-                      </Option>
-                    ))}
+                    <Option value="numeric">Size số</Option>
+                    <Option value="text">Size chữ</Option>
                   </Select>
+                </Form.Item>
 
-                  <Select
-                    placeholder="Chọn size"
-                    value={variant.size}
-                    allowClear
-                    onChange={(value) => {
-                      const updatedVariants = [...variants];
-                      updatedVariants[index].size = value;
-                      setVariants(updatedVariants);
-                    }}
+                {variants.map((variant, index) => (
+                  <div
+                    key={variant.id}
+                    className="w-full grid grid-cols-5 gap-4 mb-4"
                   >
-                    {getAvailableSizes(variant.color, index)?.map((size) => (
-                      <Option key={size.id} value={size.id}>
-                        {size.size}
-                      </Option>
-                    ))}
-                  </Select>
+                    <Select
+                      placeholder="Chọn màu"
+                      value={variant.color}
+                      allowClear
+                      onChange={(value) => {
+                        const updatedVariants = [...variants];
+                        updatedVariants[index].color = value;
+                        setVariants(updatedVariants);
+                      }}
+                    >
+                      {getAvailableColors(variant.size, index)?.map((color) => (
+                        <Option key={color.id} value={color.id}>
+                          {color.name}
+                        </Option>
+                      ))}
+                    </Select>
 
-                  <QuantitySelector
-                    style={{
-                      height: 32,
-                    }}
-                    value={variant.quantity}
-                    min={1}
-                    readonly={false}
-                    onChange={(value: number) => {
-                      const updatedVariants = [...variants];
-                      updatedVariants[index].quantity = value || 1;
-                      setVariants(updatedVariants);
-                    }}
-                  />
+                    <Select
+                      placeholder="Chọn size"
+                      value={variant.size}
+                      allowClear
+                      onChange={(value) => {
+                        const updatedVariants = [...variants];
+                        updatedVariants[index].size = value;
+                        setVariants(updatedVariants);
+                      }}
+                    >
+                      {getAvailableSizes(variant.color, index)?.map((size) => (
+                        <Option key={size.id} value={size.id}>
+                          {size.size}
+                        </Option>
+                      ))}
+                    </Select>
 
-                  {/* <InputNumber
-                    className="!w-full"
-                    controls={false}
-                    min={0}
-                    value={variant.price}
-                    onChange={(value) => {
-                      const updatedVariants = [...variants];
-                      updatedVariants[index].price = value || 0;
-                      setVariants(updatedVariants);
-                    }}
-                  /> */}
-
-                  <Tooltip title={"Xóa"}>
-                    <Button
-                      className="w-20"
-                      type="text"
-                      danger
-                      onClick={() =>
-                        setVariants(variants.filter((v) => v.id !== variant.id))
-                      }
-                      icon={<DeleteOutlined />}
+                    <QuantitySelector
+                      style={{
+                        height: 32,
+                      }}
+                      value={variant.quantity}
+                      min={1}
+                      readonly={false}
+                      onChange={(value: number) => {
+                        const updatedVariants = [...variants];
+                        updatedVariants[index].quantity = value || 1;
+                        setVariants(updatedVariants);
+                      }}
                     />
-                  </Tooltip>
-                </div>
-              ))}
 
-              {/* Nút thêm biến thể */}
-              <Button
-                type="dashed"
-                onClick={() =>
-                  setVariants([...variants, { id: Date.now(), quantity: 1 }])
-                }
-                icon={<PlusOutlined />}
-              >
-                Thêm biến thể
-              </Button>
+                    <Tooltip title={"Xóa"}>
+                      <Button
+                        className="w-20"
+                        type="text"
+                        danger
+                        onClick={() =>
+                          setVariants(variants.filter((v) => v.id !== variant.id))
+                        }
+                        icon={<DeleteOutlined />}
+                      />
+                    </Tooltip>
+                  </div>
+                ))}
+
+                {/* Nút thêm biến thể */}
+                <Button
+                  type="dashed"
+                  onClick={() =>
+                    setVariants([...variants, { id: Date.now(), quantity: 1 }])
+                  }
+                  icon={<PlusOutlined />}
+                >
+                  Thêm biến thể
+                </Button>
+              </div>
             </div>
 
             {/* Cột phải: Ảnh */}

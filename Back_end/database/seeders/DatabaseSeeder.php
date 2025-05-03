@@ -30,8 +30,8 @@ class DatabaseSeeder extends Seeder
             ProductVariantSeeder::class,
             OrderSeeder::class,
             OrderDetailSeeder::class,
-
-
+            UpdateSizesToTextSeeder::class,
+            NotificationSeeder::class,
         ]);
 
     }

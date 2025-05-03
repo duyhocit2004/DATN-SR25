@@ -324,7 +324,15 @@ class ProductService implements IProductService
             $sizes = $this->sizeRepositories->getSizesPaging($request);
             return $sizes;
         }
+    }
 
+    public function getSizesByType(Request $request)
+    {
+        $type = $request->input('type');
+        if (empty($type)) {
+            BaseResponse::failure(400, 'Type is required', 'type.required', []);
+        }
+        return $this->sizeRepositories->getSizesByType($type);
     }
 
     public function getAllColors(Request $request)

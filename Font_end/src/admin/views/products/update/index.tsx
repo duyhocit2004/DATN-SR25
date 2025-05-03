@@ -97,6 +97,7 @@ const UpdateProduct: React.FC = () => {
   const [thumbnailError, setThumbnailError] = useState(false);
   const [colors, setColors] = useState<IColor[]>([]);
   const [sizes, setSizes] = useState<ISize[]>([]);
+  const [sizeType, setSizeType] = useState<'numeric' | 'text'>('numeric');
   const [categories, setCategories] = useState<IListCategory[]>([]);
   const [loadingSave, setLoadingSave] = useState(false);
   const [loadingGet, setLoadingGet] = useState(false);
@@ -117,7 +118,7 @@ const UpdateProduct: React.FC = () => {
     if (productId) {
       fetchProductDetails();
     }
-  }, [productId]);
+  }, [productId, sizeType]);
 
   const getColors = async () => {
     try {
@@ -509,98 +510,100 @@ const UpdateProduct: React.FC = () => {
               </Form.Item>
 
               {/* Biến thể sản phẩm */}
-              <h3 className="text-lg font-semibold mt-6 mb-4">
-                Biến thể sản phẩm
-              </h3>
-              {variants?.map((variant, index) => (
-                <div
-                  key={variant.id}
-                  className="w-full grid grid-cols-5 gap-4 mb-4"
-                >
-                  <Select
-                    placeholder="Chọn màu"
-                    value={variant.color}
-                    allowClear
+              <div className="variants-section">
+                <h3 className="text-lg font-semibold mt-6 mb-4">Biến thể sản phẩm</h3>
+                
+                <Form.Item label="Loại size" required>
+                  <Select 
+                    value={sizeType} 
                     onChange={(value) => {
-                      const updatedVariants = [...variants];
-                      updatedVariants[index].color = value;
-                      setVariants(updatedVariants);
+                      setSizeType(value);
+                      setVariants([]); // Reset variants when changing size type
                     }}
                   >
-                    {getAvailableColors(variant.size, index)?.map((color) => (
-                      <Option key={color.id} value={color.id}>
-                        {color.code}
-                      </Option>
-                    ))}
+                    <Option value="numeric">Size số</Option>
+                    <Option value="text">Size chữ</Option>
                   </Select>
+                </Form.Item>
 
-                  <Select
-                    placeholder="Chọn size"
-                    value={variant.size}
-                    allowClear
-                    onChange={(value) => {
-                      const updatedVariants = [...variants];
-                      updatedVariants[index].size = value;
-                      setVariants(updatedVariants);
-                    }}
+                {variants?.map((variant, index) => (
+                  <div
+                    key={variant.id}
+                    className="w-full grid grid-cols-5 gap-4 mb-4"
                   >
-                    {getAvailableSizes(variant.color, index)?.map((size) => (
-                      <Option key={size.id} value={size.id}>
-                        {size.size}
-                      </Option>
-                    ))}
-                  </Select>
+                    <Select
+                      placeholder="Chọn màu"
+                      value={variant.color}
+                      allowClear
+                      onChange={(value) => {
+                        const updatedVariants = [...variants];
+                        updatedVariants[index].color = value;
+                        setVariants(updatedVariants);
+                      }}
+                    >
+                      {getAvailableColors(variant.size, index)?.map((color) => (
+                        <Option key={color.id} value={color.id}>
+                          {color.name}
+                        </Option>
+                      ))}
+                    </Select>
 
-                  <QuantitySelector
-                    style={{
-                      height: 32,
-                    }}
-                    value={variant.quantity}
-                    min={1}
-                    readonly={false}
-                    onChange={(value: number) => {
-                      const updatedVariants = [...variants];
-                      updatedVariants[index].quantity = value || 1;
-                      setVariants(updatedVariants);
-                    }}
-                  />
+                    <Select
+                      placeholder="Chọn size"
+                      value={variant.size}
+                      allowClear
+                      onChange={(value) => {
+                        const updatedVariants = [...variants];
+                        updatedVariants[index].size = value;
+                        setVariants(updatedVariants);
+                      }}
+                    >
+                      {getAvailableSizes(variant.color, index)?.map((size) => (
+                        <Option key={size.id} value={size.id}>
+                          {size.size}
+                        </Option>
+                      ))}
+                    </Select>
 
-                  {/* <InputNumber
-                    className="!w-full"
-                    controls={false}
-                    min={0}
-                    value={variant.price}
-                    onChange={(value) => {
-                      const updatedVariants = [...variants];
-                      updatedVariants[index].price = value || 0;
-                      setVariants(updatedVariants);
-                    }}
-                  /> */}
-
-                  <Tooltip title={"Xóa"}>
-                    <Button
-                      className="w-20"
-                      type="text"
-                      danger
-                      onClick={() =>
-                        setVariants(variants.filter((v) => v.id !== variant.id))
-                      }
-                      icon={<DeleteOutlined />}
+                    <QuantitySelector
+                      style={{
+                        height: 32,
+                      }}
+                      value={variant.quantity}
+                      min={1}
+                      readonly={false}
+                      onChange={(value: number) => {
+                        const updatedVariants = [...variants];
+                        updatedVariants[index].quantity = value || 1;
+                        setVariants(updatedVariants);
+                      }}
                     />
-                  </Tooltip>
-                </div>
-              ))}
 
-              {/* Nút thêm biến thể */}
-              <Button
-                type="dashed"
-                onClick={() =>
-                  setVariants([...variants, { id: Date.now(), quantity: 1 }])
-                }
-                icon={<PlusOutlined />}
-              >
-                Thêm biến thể
-              </Button>
+                    <Tooltip title={"Xóa"}>
+                      <Button
+                        className="w-20"
+                        type="text"
+                        danger
+                        onClick={() =>
+                          setVariants(variants.filter((v) => v.id !== variant.id))
+                        }
+                        icon={<DeleteOutlined />}
+                      />
+                    </Tooltip>
+                  </div>
+                ))}
+
+                {/* Nút thêm biến thể */}
+                <Button
+                  type="dashed"
+                  onClick={() =>
+                    setVariants([...variants, { id: Date.now(), quantity: 1 }])
+                  }
+                  icon={<PlusOutlined />}
+                >
+                  Thêm biến thể
+                </Button>
+              </div>
             </div>
 
             {/* Cột phải: Ảnh */}

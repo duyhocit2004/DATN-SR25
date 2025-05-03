@@ -47,7 +47,7 @@ export interface IProductNew {
 export interface ISize {
   id: number;
   size: string;
-  description: string;
+  type: 'numeric' | 'text';
   createdAt?: Dayjs;
   updatedAt?: Dayjs;
   deletedAt?: Dayjs;
@@ -55,6 +55,7 @@ export interface ISize {
 
 export interface IColor {
   id: number;
+  name: string;
   code: string;
   description: string;
   createdAt?: Dayjs;
@@ -193,6 +194,10 @@ export interface IVoucher {
 }
 
 export interface IAccount {
+  [x: string]: string | undefined;
+  [x: string]: string;
+  [x: string]: SetStateAction<string | undefined>;
+  [x: string]: any;
   id: number;
   name: string;
   image: string;

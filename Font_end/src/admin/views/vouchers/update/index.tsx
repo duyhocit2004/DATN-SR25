@@ -79,6 +79,7 @@ const UpdateVoucherModal: React.FC<IProps> = ({ refreshData }) => {
       endDate: currentVoucher.endDate ? moment(currentVoucher.endDate) : null,
       voucherPrice: currentVoucher.voucherPrice,
       description: currentVoucher.description || "",
+      minOrderValue: currentVoucher.minOrderValue,
     });
   };
   // Hàm cập nhật state & form
@@ -102,6 +103,7 @@ const UpdateVoucherModal: React.FC<IProps> = ({ refreshData }) => {
       ...formData,
       startDate: formData.startDate ? dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss") : null,
       endDate: formData.endDate ? dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss") : null,
+      minOrderValue: form.getFieldValue('minOrderValue'),
     };
     setLoading(true);
     try {

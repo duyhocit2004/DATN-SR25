@@ -52,7 +52,7 @@ class VoucherRepositories
             'start_date' => $request->input('startDate', $voucher->start_date),
             'end_date' => $request->input('endDate', $voucher->end_date),
             'status' => $request->input('status', $voucher->status),
-            'min_order_value' => $request->input('min_order_value', 0),
+            'min_order_value' => $request->input('minOrderValue', $voucher->min_order_value),
         ]);
 
         return $voucher;
