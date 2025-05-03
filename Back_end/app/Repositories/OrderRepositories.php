@@ -32,19 +32,73 @@ class OrderRepositories
 
             // Validate products
             foreach ($products as $product) {
+                \Log::info('Processing product for order', [
+                    'product' => $product,
+                    'productId' => $product['productId'],
+                    'color' => $product['color'],
+                    'size' => $product['size']
+                ]);
+
                 $productReal = Product::where('id', $product['productId'])->first();
-                $productVariant = ProductVariant::where('product_id', $product['productId'])->first();
-                if (!empty($productReal) && !empty($productVariant)) {
-                    if ($productVariant['quantity'] < $product['quantity']) {
-                        return BaseResponse::failure('400', 'quantity is less than order quantity', 'quantity.is.less.than.order.quantity', []);
-                    }
-                    if (!empty($productReal['price_sale'])) {
-                        $totalAmount += $productReal['price_sale'] * $product['quantity'];
-                    } else {
-                        $totalAmount += $productReal['price_regular'] * $product['quantity'];
-                    }
-                } else {
+                if (!$productReal) {
+                    \Log::error('Product not found', ['productId' => $product['productId']]);
                     return BaseResponse::failure('400', 'Product not found', 'product.not.found', []);
+                }
+
+                $color = \App\Models\Color::where('code', $product['color'])
+                    ->orWhere('name', $product['color'])
+                    ->first();
+                if (!$color) {
+                    \Log::error('Color not found', [
+                        'colorCode' => $product['color'],
+                        'product' => $product
+                    ]);
+                    return BaseResponse::failure('400', 'Color not found', 'color.not.found', []);
+                }
+
+                $size = \App\Models\Size::where('size', $product['size'])->first();
+                if (!$size) {
+                    \Log::error('Size not found', ['size' => $product['size']]);
+                    return BaseResponse::failure('400', 'Size not found', 'size.not.found', []);
+                }
+
+                $productVariant = ProductVariant::where('product_id', $product['productId'])
+                    ->where('color_id', $color->id)
+                    ->where('size_id', $size->id)
+                    ->first();
+
+                \Log::info('Product variant search result', [
+                    'productVariant' => $productVariant,
+                    'colorId' => $color->id,
+                    'sizeId' => $size->id
+                ]);
+
+                if (!$productVariant) {
+                    \Log::error('Product variant not found', [
+                        'productId' => $product['productId'],
+                        'colorId' => $color->id,
+                        'sizeId' => $size->id
+                    ]);
+                    return BaseResponse::failure('400', 'Product variant not found', 'product.variant.not.found', []);
+                }
+
+                if ($productVariant['quantity'] < $product['quantity']) {
+                    return BaseResponse::failure('400', 
+                        'Sản phẩm ' . $productReal->name . ' (Màu: ' . $color->name . ', Size: ' . $size->size . ') đã hết hàng hoặc không đủ số lượng. Số lượng còn lại: ' . $productVariant['quantity'], 
+                        'product.out.of.stock', 
+                        [
+                            'productName' => $productReal->name,
+                            'color' => $color->name,
+                            'size' => $size->size,
+                            'availableQuantity' => $productVariant['quantity']
+                        ]
+                    );
+                }
+
+                if (!empty($productReal['price_sale'])) {
+                    $totalAmount += $productReal['price_sale'] * $product['quantity'];
+                } else {
+                    $totalAmount += $productReal['price_regular'] * $product['quantity'];
                 }
             }
 
@@ -127,6 +181,15 @@ class OrderRepositories
             // Process order details
             foreach ($data['products'] as $product) {
                 $productReal = Product::where('id', $product['productId'])->first();
+                // Kiểm tra tồn kho tổng sản phẩm
+                if ($productReal->quantity < $product['quantity']) {
+                    return BaseResponse::failure(
+                        '400',
+                        'Sản phẩm ' . $productReal->name . ' đã hết số lượng!',
+                        'product.out.of.stock',
+                        []
+                    );
+                }
                 OrderDetail::create([
                     'order_id' => $order->id,
                     'name' => $productReal['name'],
@@ -146,6 +209,7 @@ class OrderRepositories
                         $query->select('id')
                             ->from('colors')
                             ->where('code', $product['color'])
+                            ->orWhere('name', $product['color'])
                             ->first();
                     })
                     ->where('size_id', function($query) use ($product) {
@@ -155,6 +219,21 @@ class OrderRepositories
                             ->first();
                     })
                     ->first();
+
+                // Kiểm tra tồn kho biến thể
+                if ($productVariant && $productVariant->quantity < $product['quantity']) {
+                    return BaseResponse::failure(
+                        '400',
+                        'Sản phẩm ' . $productReal->name . ' (Màu: ' . ($productVariant->color->name ?? $product['color']) . ', Size: ' . ($productVariant->size->size ?? $product['size']) . ') đã hết hàng hoặc không đủ số lượng. Số lượng còn lại: ' . $productVariant->quantity,
+                        'product.out.of.stock',
+                        [
+                            'productName' => $productReal->name,
+                            'color' => $productVariant->color->name ?? $product['color'],
+                            'size' => $productVariant->size->size ?? $product['size'],
+                            'availableQuantity' => $productVariant->quantity
+                        ]
+                    );
+                }
 
                 if ($productVariant) {
                     $productVariant->quantity -= $product['quantity'];

@@ -362,11 +362,11 @@ const Payment = () => {
         setSelectedItems([]);
         dispatch(dispatchAction("cart/setCartCount", updatedCart.length));
         
-        showToast({
-          content: "Đã xóa các sản phẩm được chọn khỏi giỏ hàng!",
-          duration: 5,
-          type: "success",
-        });
+        // showToast({
+        //   content: "Đã xóa các sản phẩm được chọn khỏi giỏ hàng!",
+        //   duration: 5,
+        //   type: "success",
+        // });
       } else {
         // Xóa các sản phẩm được chọn từ localStorage
         const cartStorage: ICartStorage[] = JSON.parse(
@@ -385,11 +385,11 @@ const Payment = () => {
         setSelectedItems([]);
         dispatch(dispatchAction("cart/setCartCount", updatedCart.length));
         
-        showToast({
-          content: "Đã xóa các sản phẩm được chọn khỏi giỏ hàng!",
-          duration: 5,
-          type: "success",
-        });
+        // showToast({
+        //   content: "Đã xóa các sản phẩm được chọn khỏi giỏ hàng!",
+        //   duration: 5,
+        //   type: "success",
+        // });
       }
     } catch (error) {
       console.error("Error clearing cart:", error);
@@ -906,7 +906,7 @@ const Payment = () => {
                         </div>
                       </div>
                     </div>
-                    <div 
+                    {/* <div 
                       className={`payment-method-option ${onlinePaymentMethod === 'MOMO' ? 'selected' : ''}`}
                       onClick={() => {
                         setOnlinePaymentMethod('MOMO');
@@ -920,7 +920,7 @@ const Payment = () => {
                           <p className="text-sm text-gray-500 mt-1">Thanh toán qua ví điện tử Momo</p>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </Form.Item>
                 <style jsx>{`
