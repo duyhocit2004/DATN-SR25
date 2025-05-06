@@ -28,7 +28,7 @@ class OrderService implements IOrderService
     public function addOrder(Request $request)
     {
         $validatedData = $request->validate([
-            'user_id'=> 'nullable| integer|exists:users,id',
+            'user_id' => 'nullable| integer|exists:users,id',
             'customerName' => 'required|string',
             'email' => 'required|email',
             'phoneNumber' => 'required|string',
@@ -288,5 +288,48 @@ class OrderService implements IOrderService
             throw new \Exception('Hoàn tiền thất bại.');
         }
     }
+
+
+    public function cancelOrderByClient(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (!$user) {
+            return BaseResponse::failure(401, 'Unauthorized', 'unauthorized', []);
+        }
+
+        $orderId = $request->input('orderId');
+
+        // Lấy đơn hàng
+        $order = $this->orderRepositories->cancelOrderByClient($orderId);
+
+        // Kiểm tra đơn hàng có tồn tại và thuộc về user
+        if (!$order || $order->users_id !== $user->id) {
+            return BaseResponse::failure(404, 'Không tìm thấy đơn hàng hoặc không thuộc quyền sở hữu.', 'order.not.found', []);
+        }
+
+        // Chỉ cho phép hủy nếu đơn hàng đang ở trạng thái có thể hủy (ví dụ: PENDING)
+        if (!in_array($order->status, ['PENDING', 'PROCESSING'])) {
+            return BaseResponse::failure(400, 'Không thể hủy đơn hàng ở trạng thái hiện tại.', 'order.cannot.cancel', []);
+        }
+
+        // Cập nhật trạng thái đơn hàng
+        $order->status = 'CANCELLED';
+        $order->save();
+
+        // Lưu lịch sử trạng thái nếu có
+        $order->statusHistories()->create([
+            'order_id' => $order->id,
+            'old_status' => $order->getOriginal('status'),
+            'new_status' => 'CANCELLED',
+            'name_change' => $user->name,
+            'role_change' => $user->role,
+            'note' => 'Khách hàng hủy đơn hàng',
+            'change_at' => now(),
+        ]);
+
+        return BaseResponse::success(['message' => 'Đơn hàng đã được hủy thành công']);
+    }
+
+
 
 }
