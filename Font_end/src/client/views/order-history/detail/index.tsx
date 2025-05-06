@@ -1,9 +1,10 @@
 
+import orderApi from "@/api/orderApi";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setSelectedOrder } from "@/store/reducers/orderSlice";
 import { OrderStatusDataClient } from "@/utils/constantData";
 import { getColorOrderStatus, getLabelByValue } from "@/utils/functions";
-import { Modal, Tag } from "antd";
+import { Button, message, Modal, Tag } from "antd";
 import dayjs from "dayjs";
 
 const OrderDetail = () => {
@@ -12,13 +13,52 @@ const OrderDetail = () => {
   const handleClose = () => {
     dispatch(setSelectedOrder(null));
   };
+  const handleCancelOrder = async () => {
+    Modal.confirm({
+      title: "Xác nhận hủy đơn hàng",
+      content: "Bạn có chắc chắn muốn hủy đơn hàng này?",
+      okText: "Xác nhận",
+      cancelText: "Hủy",
+      onOk: async () => {
+        try {
+          if (!selectedOrder?.id) {
+            message.error("Không tìm thấy thông tin đơn hàng.");
+            return;
+          }
+  
+          const response = await orderApi.cancelOrderByClient({
+            orderId: selectedOrder.id,
+          });
+  
+          message.success(response.message || "Đơn hàng đã được hủy thành công");
+          dispatch(setSelectedOrder(null)); // Đóng modal
+  
+          // TODO: Gọi lại API để load danh sách đơn hàng nếu cần
+        } catch (error: any) {
+          message.error(
+            error.response?.data?.message || "Hủy đơn hàng thất bại"
+          );
+        }
+      },
+    });
+  };
+  
   return (
     <Modal
       className="order-history-detail !w-4/5 lg:!w-[900px]"
       title={`Chi tiết đơn hàng`}
       open={!!selectedOrder}
       onCancel={handleClose}
-      footer={false}
+      // footer={false}
+      footer={
+        selectedOrder &&
+        ["Unconfirmed", "Confirmed"].includes(selectedOrder.status) && (
+          <Button danger onClick={handleCancelOrder}>
+            Hủy đơn hàng
+          </Button>
+        )
+      }
+      
     >
       {selectedOrder && (
         <div>
@@ -99,7 +139,7 @@ const OrderDetail = () => {
                 </div>
                 <div className="min-w-24">
                   <p className="text-black-500 font-semibold">
-                    Giá :  {product.priceRegular?.toLocaleString()} đ
+                    Giá Gốc :  {product.priceRegular?.toLocaleString()} đ
                   </p>
                   <p className="text-red-500 font-semibold">
                     Giá Sale :  {product.priceSale?.toLocaleString()} đ
@@ -109,13 +149,13 @@ const OrderDetail = () => {
             ))}
           </div>
           <div className="discount text-end mt-10">
-            <span>Giảm: </span>
+            <span>Voucher Giảm : </span>
             <span className="text-red-500 font-semibold">
               {selectedOrder?.voucherPrice?.toLocaleString()} đ
             </span>
           </div>
           <div className="amount-total text-end mt-2">
-            <span>Tổng tiền: </span>
+            <span>Tổng tiền : </span>
             <span className="text-red-500 font-semibold">
               {selectedOrder?.totalPrice?.toLocaleString()} đ
             </span>

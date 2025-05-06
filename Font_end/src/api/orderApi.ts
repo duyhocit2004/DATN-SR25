@@ -62,7 +62,16 @@ class OrderApi extends BaseApi<IOrder> {
       .post(`${this.uri}/getVoucher`, payload)
       .then((res) => res.data);
   };
- 
+  cancelOrderByClient = (payload: { orderId: number }): Promise<IResponseData<IOrder>> => {
+    return axiosClient
+      .post(`${this.uri}/cancelOrderByClient`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => res.data);
+  };
+  
 }
 
 const orderApi = new OrderApi();
