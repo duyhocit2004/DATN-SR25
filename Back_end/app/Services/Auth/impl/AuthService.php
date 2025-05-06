@@ -187,7 +187,7 @@ class AuthService implements IAuthService
     public function updateUserAdmin(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE') || $user->status == config('constants.STATUS_INACTIVE')) {
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('constants.STATUS_INACTIVE') ) {
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
