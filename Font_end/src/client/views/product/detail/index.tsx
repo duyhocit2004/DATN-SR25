@@ -371,7 +371,7 @@ const ProductDetail = () => {
                       disabled={sizesLoading}
                     >
                       {sizes?.map((sizeData) => (
-                        <Radio.Button key={sizeData.size} value={sizeData.size}>
+                        <Radio.Button key={sizeData.size} value={sizeData.size}> 
                           {sizeData.size}
                         </Radio.Button>
                       ))}

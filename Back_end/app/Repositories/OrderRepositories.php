@@ -83,9 +83,10 @@ class OrderRepositories
                 }
 
                 if ($productVariant['quantity'] < $product['quantity']) {
-                    return BaseResponse::failure('400', 
-                        'Sản phẩm ' . $productReal->name . ' (Màu: ' . $color->name . ', Size: ' . $size->size . ') đã hết hàng hoặc không đủ số lượng. Số lượng còn lại: ' . $productVariant['quantity'], 
-                        'product.out.of.stock', 
+                    return BaseResponse::failure(
+                        '400',
+                        'Sản phẩm ' . $productReal->name . ' (Màu: ' . $color->name . ', Size: ' . $size->size . ') đã hết hàng hoặc không đủ số lượng.',
+                        'product.out.of.stock',
                         [
                             'productName' => $productReal->name,
                             'color' => $color->name,
@@ -102,7 +103,7 @@ class OrderRepositories
                 }
             }
 
-            // Validate voucher
+            // Validate voucher                 
             if (!empty($data['voucher'])) {
                 $voucher = Voucher::where('code', $data['voucher'])->first();
                 if ($voucher) {
@@ -124,7 +125,7 @@ class OrderRepositories
                     }
                     $voucherAmount = $voucher->voucher_price;
                     $totalAmount -= $voucherAmount;
-                    
+
                     // Update voucher usage count
                     $voucher->update([
                         'used' => $voucher->used + 1,
@@ -205,14 +206,14 @@ class OrderRepositories
 
                 // Update product variant quantity
                 $productVariant = ProductVariant::where('product_id', $product['productId'])
-                    ->where('color_id', function($query) use ($product) {
+                    ->where('color_id', function ($query) use ($product) {
                         $query->select('id')
                             ->from('colors')
                             ->where('code', $product['color'])
                             ->orWhere('name', $product['color'])
                             ->first();
                     })
-                    ->where('size_id', function($query) use ($product) {
+                    ->where('size_id', function ($query) use ($product) {
                         $query->select('id')
                             ->from('sizes')
                             ->where('size', $product['size'])
@@ -352,7 +353,7 @@ class OrderRepositories
         if (!empty($sortType)) {
             $query->orderByRaw('IFNULL(date, status) ' . $sortType);
         }
-        $orders = $query->orderBy('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
+        $orders = $query->orderBy('created_at', 'desc')->paginate($perPage, ['*'], 'page', $page);
         return $orders;
 
     }
@@ -608,4 +609,51 @@ class OrderRepositories
             ];
         }
     }
+    public function cancelOrderByClient(Request $request)
+    {
+        $orderCode = $request->input('orderCode');
+        $user = auth()->user();
+
+        // Tìm đơn hàng theo mã và user_id (đảm bảo người dùng chỉ được hủy đơn của mình)
+        $order = Order::where('code', $orderCode)
+            ->where('users_id', $user->id)
+            ->first();
+
+        if (!$order) {
+            return BaseResponse::failure('404', 'Đơn hàng không tồn tại hoặc không thuộc quyền sở hữu của bạn', 'order.not.found', []);
+        }
+
+        if ($order->status === 'Cancelled') {
+            return BaseResponse::failure('400', 'Đơn hàng đã được hủy trước đó', 'order.already.cancelled', []);
+        }
+
+        if (!in_array($order->status, ['Unconfirmed', 'Confirmed'])) {
+            return BaseResponse::failure('400', 'Không thể hủy đơn hàng ở trạng thái hiện tại', 'order.cannot.cancel', []);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Cập nhật trạng thái đơn hàng
+            $order->status = 'Cancelled';
+            $order->updated_at = now();
+            $order->save();
+
+            // Lưu lịch sử trạng thái đơn hàng (nếu có bảng `order_status_histories`)
+            OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'status' => 'Cancelled',
+                'changed_by' => $user->id,
+                'changed_at' => now()
+            ]);
+
+            DB::commit();
+            return BaseResponse::success('Hủy đơn hàng thành công', 'order.cancelled.success', $order);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Cancel order failed', ['error' => $e->getMessage()]);
+            return BaseResponse::failure('500', 'Đã xảy ra lỗi khi hủy đơn hàng', 'order.cancel.error', []);
+        }
+    }
+
 }

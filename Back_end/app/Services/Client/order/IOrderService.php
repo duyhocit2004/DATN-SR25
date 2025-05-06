@@ -10,6 +10,7 @@ interface IOrderService
     public function getOrders(Request $request);
     public function getOrdersPaging(Request $request);
     public function getOrderDetail(Request $request);
+    public function cancelOrderByClient(Request $request);
     public function updateOrder(Request $request);
     public function deleteOrder(Request $request);
     public function refundOrder(Request $request);

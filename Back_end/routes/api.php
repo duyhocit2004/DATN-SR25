@@ -72,6 +72,7 @@ Route::prefix('orders')->group(function () {
     Route::post('/addOrder', [OrderController::class, 'addOrder']);
     Route::post('/getOrders', [OrderController::class, 'getOrders']);
     Route::post('/getOrderDetail', [OrderController::class, 'getOrderDetail']);
+    Route::post('/cancelOrderByClient', [OrderController::class, 'cancelOrderByClient']);
     Route::post('/getVoucher', [OrderController::class, 'getVoucher']);
 });
 
