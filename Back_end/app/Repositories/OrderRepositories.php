@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
+// use App\Models\OrderDetail as OrderDetailModel;
 
 class OrderRepositories
 {
@@ -166,8 +167,9 @@ class OrderRepositories
 
             DB::beginTransaction();
 
+            $userid = auth()->user() ? auth()->user()->id : null;
             $order = Order::create([
-                'users_id' => $data['users_id'] ?? null,
+                'users_id' => $userid ?? null,
                 'code' => 'Od' . Str::random(4),
                 'customer_name' => $data['customerName'],
                 'email' => $data['email'] ?? 'default@email.com',
@@ -728,6 +730,7 @@ class OrderRepositories
     }
     public function cancelOrderByClient(Request $request)
     {
+
         \Log::info('Bắt đầu xử lý hủy đơn hàng', [
             'orderCode' => $request->input('orderCode'),
             'userId' => auth()->id()
@@ -735,7 +738,6 @@ class OrderRepositories
 
         $orderCode = $request->input('orderCode');
         $user = auth()->user();
-
         $order = Order::where('code', $orderCode)
             ->where('users_id', $user->id)
             ->first();
@@ -752,11 +754,10 @@ class OrderRepositories
 
         try {
             DB::beginTransaction();
-
+            // Cập nhật trạng thái đơn hàng
             $order->status = 'Cancelled';
             $order->updated_at = now();
             $order->save();
-
             \Log::info('Đã cập nhật trạng thái đơn hàng thành công');
 
             DB::commit();
@@ -770,4 +771,5 @@ class OrderRepositories
             return BaseResponse::failure('500', 'Đã xảy ra lỗi khi hủy đơn hàng', 'order.cancel.error', []);
         }
     }
+
 }

@@ -52,6 +52,7 @@ class AuthService implements IAuthService
             }
 
             if ($user->status !== config('constants.STATUS_ACTIVE')) {
+                JWTAuth::invalidate(JWTAuth::getToken());
                 return BaseResponse::failure(400, 'Tài khoản chưa được kích hoạt', 'user.does.not.active', []);
             }
 
@@ -99,6 +100,7 @@ class AuthService implements IAuthService
             }
 
             if (!empty($user) && $user->status !== config('constants.STATUS_ACTIVE')) {
+                JWTAuth::invalidate(JWTAuth::getToken());
                 BaseResponse::failure(400, 'User does not active', 'user.does.not.active', []);
             }
 
@@ -185,7 +187,7 @@ class AuthService implements IAuthService
     public function updateUserAdmin(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('constants.STATUS_INACTIVE') ) {
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }

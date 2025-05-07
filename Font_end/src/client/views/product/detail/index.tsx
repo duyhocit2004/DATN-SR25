@@ -142,28 +142,28 @@ const ProductDetail = () => {
 
     if (token) {
       // 🟢 Nếu user đã login → Gọi API cập nhật giỏ hàng
-      try {
+    try {
         const payload = {
-          productId: productDetail?.id,
-          quantity: quantity,
-          color: selectedColor,
+        productId: productDetail?.id,
+        quantity: quantity,
+        color: selectedColor,
           size: selectedSize,
         };
         const response = await cartApi.addToCart(payload);
-        if (response.status === HttpCodeString.SUCCESS) {
+      if (response.status === HttpCodeString.SUCCESS) {
           dispatch({ type: "cart/addToCart" });
-          showToast({
+        showToast({
             content: "Thêm giỏ hàng thành công!",
-            duration: 5,
-            type: "success",
-          });
-        } else {
-          showToast({
+          duration: 5,
+          type: "success",
+        });
+      } else {
+        showToast({
             content: "Thêm giỏ hàng thất bại!",
-            duration: 5,
-            type: "error",
-          });
-        }
+          duration: 5,
+          type: "error",
+        });
+      }
       } catch { }
     } else {
       addToCart(

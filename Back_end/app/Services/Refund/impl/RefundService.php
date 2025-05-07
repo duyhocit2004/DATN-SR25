@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace App\Services\Refund\impl;
 
 use App\Mail\RefundNotification;
@@ -75,7 +77,7 @@ class RefundService implements IRefundService
                 ]);
 
                 // Process direct refund through VNPay
-                $refundResponse = $this->vnpayService->refund($order->transaction_id, $order->total_price);
+$refundResponse = $this->vnpayService->refund($order->transaction_id, $order->total_price);
                 
                 \Log::info('Kết quả hoàn tiền VNPay', [
                     'orderId' => $order->id,
@@ -137,7 +139,7 @@ class RefundService implements IRefundService
                     'refundCompleted' => true,
                     'refund_date' => now(),
                     'updated_at' => now()
-                ]);
+]);
 
                 if (!$updateResult) {
                     \Log::error('Không thể cập nhật trạng thái đơn hàng sau khi tạo mã QR', [
@@ -217,11 +219,10 @@ class RefundService implements IRefundService
                 ->format('svg')
                 ->generate(json_encode($refundData));
         } catch (\Exception $e) {
-            Log::error('Lỗi khi tạo mã QR:', [
-                'orderId' => $order->id,
+            Log::error('Lỗi khi tạo mã QR:', ['orderId' => $order->id,
                 'error' => $e->getMessage()
             ]);
             throw new \Exception('Không thể tạo mã QR: ' . $e->getMessage());
         }
     }
-} 
+}

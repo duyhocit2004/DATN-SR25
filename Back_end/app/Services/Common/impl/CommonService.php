@@ -24,7 +24,7 @@ class CommonService implements ICommonService
 
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
             JWTAuth::invalidate(JWTAuth::getToken());
             return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
