@@ -180,3 +180,21 @@ Route::middleware('jwt.auth')->group(function () {
 });
 
 
+Route::get('/test-broadcast', function () {
+    $testOrder = [
+        'id' => 1,
+        'code' => 'TEST001',
+        'customer_name' => 'Test Customer',
+        'email' => 'test@example.com',
+        'phone_number' => '0123456789',
+        'total_price' => 100000,
+        'status' => 'PENDING'
+    ];
+    
+    event(new \App\Events\NewOrderCreated($testOrder));
+    
+    return response()->json([
+        'message' => 'Test broadcast sent successfully',
+        'order' => $testOrder
+    ]);
+});

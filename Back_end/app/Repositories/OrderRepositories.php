@@ -157,8 +157,9 @@ class OrderRepositories
 
             DB::beginTransaction();
 
+            $userid = auth()->user() ? auth()->user()->id : null;
             $order = Order::create([
-                'users_id' => $data['users_id'] ?? null,
+                'users_id' => $userid ?? null,
                 'code' => 'Od' . Str::random(4),
                 'customer_name' => $data['customerName'],
                 'email' => $data['email'] ?? 'default@email.com',
@@ -609,48 +610,50 @@ class OrderRepositories
             ];
         }
     }
-    public function cancelOrderByClient(Request $request) 
-{
-    \Log::info('Bắt đầu xử lý hủy đơn hàng', [
-        'orderCode' => $request->input('orderCode'),
-        'userId' => auth()->id()
-    ]);
+    public function cancelOrderByClient(Request $request)
+    {
+        $orderCode = $request->input('orderCode');
+        $user = auth()->user();
 
-    $orderCode = $request->input('orderCode');
-    $user = auth()->user();
+        // Tìm đơn hàng theo mã và user_id (đảm bảo người dùng chỉ được hủy đơn của mình)
+        $order = Order::where('code', $orderCode)
+            ->where('users_id', $user->id)
+            ->first();
 
-    $order = Order::where('code', $orderCode)
-        ->where('users_id', $user->id)
-        ->first();
+        if (!$order) {
+            return BaseResponse::failure('404', 'Đơn hàng không tồn tại hoặc không thuộc quyền sở hữu của bạn', 'order.not.found', []);
+        }
 
-    if (!$order) {
-        \Log::warning('Đơn hàng không tồn tại hoặc không thuộc về user', [
-            'orderCode' => $orderCode,
-            'userId' => $user->id
-        ]);
-        return BaseResponse::failure('404', 'Đơn hàng không tồn tại hoặc không thuộc quyền sở hữu của bạn', 'order.not.found', []);
-    }
+        if ($order->status === 'Cancelled') {
+            return BaseResponse::failure('400', 'Đơn hàng đã được hủy trước đó', 'order.already.cancelled', []);
+        }
 
-    \Log::info('Tìm thấy đơn hàng', ['order' => $order->toArray()]);
+        if (!in_array($order->status, ['Unconfirmed', 'Confirmed'])) {
+            return BaseResponse::failure('400', 'Không thể hủy đơn hàng ở trạng thái hiện tại', 'order.cannot.cancel', []);
+        }
 
-    try {
-        DB::beginTransaction();
-        
-        $order->status = 'Cancelled';
-        $order->updated_at = now();
-        $order->save();
-        
-        \Log::info('Đã cập nhật trạng thái đơn hàng thành công');
-        
-        DB::commit();
-        return BaseResponse::success('Hủy đơn hàng thành công', 'order.cancelled.success', $order);
-    } catch (\Exception $e) {
-        DB::rollBack();
-        \Log::error('Lỗi khi hủy đơn hàng', [
-            'error' => $e->getMessage(),
-            'orderCode' => $orderCode
-        ]);
-        return BaseResponse::failure('500', 'Đã xảy ra lỗi khi hủy đơn hàng', 'order.cancel.error', []);
-    }
+        try {
+            DB::beginTransaction();
+
+            // Cập nhật trạng thái đơn hàng
+            $order->status = 'Cancelled';
+            $order->updated_at = now();
+            $order->save();
+
+            // Lưu lịch sử trạng thái đơn hàng (nếu có bảng `order_status_histories`)
+            OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'status' => 'Cancelled',
+                'changed_by' => $user->id,
+                'changed_at' => now()
+            ]);
+
+            DB::commit();
+            return $order;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Cancel order failed', ['error' => $e->getMessage()]);
+            return BaseResponse::failure('500', 'Đã xảy ra lỗi khi hủy đơn hàng', 'order.cancel.error', []);
+        }
 }
 }

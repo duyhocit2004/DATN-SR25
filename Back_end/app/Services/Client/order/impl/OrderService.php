@@ -2,6 +2,7 @@
 
 namespace App\Services\Client\order\impl;
 
+use App\Events\NewOrderCreated;
 use App\Helpers\BaseResponse;
 use App\Repositories\OrderRepositories;
 use App\Repositories\VoucherRepositories;
@@ -48,6 +49,12 @@ class OrderService implements IOrderService
 
         // Gửi dữ liệu đến repository
         $order = $this->orderRepositories->addOrder($validatedData);
+        
+        // Broadcast new order event
+        if ($order) {
+            event(new NewOrderCreated($order));
+        }
+        
         return $order;
     }
 
@@ -332,16 +339,25 @@ class OrderService implements IOrderService
 
     public function cancelOrderByClient(Request $request)
     {
-        try {
-            $user = JWTAuth::parseToken()->authenticate();
-            if (!$user) {
-                return BaseResponse::failure(401, 'Unauthorized', 'unauthorized', []);
-            }
-    
-            $orderId = $request->input('orderId');
-            if (!$orderId) {
-                return BaseResponse::failure(400, 'Mã đơn hàng không được để trống', 'order.code.required', []);
-            }
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if (!$user) {
+            return BaseResponse::failure(401, 'Unauthorized', 'unauthorized', []);
+        }
+
+        $orderId = $request->input('orderId');
+
+        // Lấy đơn hàng
+        $order = $this->orderRepositories->cancelOrderByClient($orderId);
+
+        // Kiểm tra đơn hàng có tồn tại và thuộc về user
+        if (!$order || $order->user_id !== $user->id) {
+            return BaseResponse::failure(404, 'Không tìm thấy đơn hàng hoặc không thuộc quyền sở hữu.', 'order.not.found', []);
+        }
+
+        // Chỉ cho phép hủy nếu đơn hàng đang ở trạng thái có thể hủy (ví dụ: PENDING)
+        if (!in_array($order->status, ['PENDING', 'PROCESSING'])) {
+            return BaseResponse::failure(400, 'Không thể hủy đơn hàng ở trạng thái hiện tại.', 'order.cannot.cancel', []);
     
             // Lấy đơn hàng - Truyền toàn bộ $request vào repository
             $order = $this->orderRepositories->cancelOrderByClient($request);
@@ -376,6 +392,7 @@ class OrderService implements IOrderService
         } catch (\Exception $e) {
             \Log::error('Lỗi hủy đơn hàng: ' . $e->getMessage());
             return BaseResponse::failure(500, $e->getMessage(), 'order.cancel.error', []);
+
         }
     }
 
