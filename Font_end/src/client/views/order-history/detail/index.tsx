@@ -14,35 +14,31 @@ const OrderDetail = () => {
     dispatch(setSelectedOrder(null));
   };
   const handleCancelOrder = async () => {
-    Modal.confirm({
-      title: "Xác nhận hủy đơn hàng",
-      content: "Bạn có chắc chắn muốn hủy đơn hàng này?",
-      okText: "Xác nhận",
-      cancelText: "Hủy",
-      onOk: async () => {
-        try {
-          if (!selectedOrder?.id) {
-            message.error("Không tìm thấy thông tin đơn hàng.");
-            return;
-          }
+    console.log("Bắt đầu hủy đơn hàng");
+    console.log("Selected order:", selectedOrder);
   
-          const response = await orderApi.cancelOrderByClient({
-            orderId: selectedOrder.id,
-          });
+    try {
+      if (!selectedOrder?.code) {
+        message.error("Không tìm thấy mã đơn hàng.");
+        return;
+      }
   
-          message.success(response.message || "Đơn hàng đã được hủy thành công");
-          dispatch(setSelectedOrder(null)); // Đóng modal
+      // Gọi API trực tiếp không qua Modal.confirm
+      const response = await orderApi.cancelOrderByClient({
+        orderCode: selectedOrder.code
+      });
+      
+      console.log("Phản hồi từ API:", response);
+      message.success(response.message || "Đơn hàng đã được hủy thành công");
+      dispatch(setSelectedOrder(null));
+      window.location.reload();
   
-          // TODO: Gọi lại API để load danh sách đơn hàng nếu cần
-        } catch (error: any) {
-          message.error(
-            error.response?.data?.message || "Hủy đơn hàng thất bại"
-          );
-        }
-      },
-    });
+    } catch (error: any) {
+      console.error("Lỗi khi hủy đơn hàng:", error);
+      message.error(error.response?.data?.message || "Hủy đơn hàng thất bại");
+    }
   };
-  
+
   return (
     <Modal
       className="order-history-detail !w-4/5 lg:!w-[900px]"
@@ -52,13 +48,12 @@ const OrderDetail = () => {
       // footer={false}
       footer={
         selectedOrder &&
-        ["Unconfirmed", "Confirmed"].includes(selectedOrder.status) && (
-          <Button danger onClick={handleCancelOrder}>
+        ["Unconfirmed", "Confirmed"].includes(selectedOrder.status) ? (
+          <Button danger onClick={() => handleCancelOrder()}>
             Hủy đơn hàng
           </Button>
-        )
+        ) : null
       }
-      
     >
       {selectedOrder && (
         <div>
