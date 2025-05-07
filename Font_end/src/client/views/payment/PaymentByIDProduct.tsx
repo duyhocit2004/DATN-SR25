@@ -290,11 +290,11 @@ const PaymentByIDProduct = () => {
         );
         localStorage.setItem("cart", JSON.stringify(updatedCart));
         setCartItem(null);
-        showToast({
-          content: "Sản phẩm đã được xóa khỏi giỏ hàng!",
-          duration: 5,
-          type: "success",
-        });
+        // showToast({
+        //   content: "Sản phẩm đã được xóa khỏi giỏ hàng!",
+        //   duration: 5,
+        //   type: "success",
+        // });
       }
     } catch (error) {
       console.error("Error clearing cart item:", error);
@@ -418,19 +418,40 @@ const PaymentByIDProduct = () => {
           navigate("/order-history");
         }
       } else {
+        // Xử lý lỗi business (400) rõ ràng, không show lỗi 500 ở đây nữa
+        const res = error?.response?.data;
+        if (res?.messageKey === "product.out.of.stock" || (res?.message && res?.message.includes("đã hết hàng"))) {
+          showToast({
+            content: res?.message || "Sản phẩm đã hết số lượng mà bạn đang đặt!",
+            duration: 5,
+            type: "error",
+          });
+        } else if (res?.message) {
+          showToast({
+            content: res?.message,
+            duration: 5,
+            type: "error",
+          });
+        }
+      }
+    } catch (error: any) {
+      // Xử lý lỗi business (400) rõ ràng, không show lỗi 500 ở đây nữa
+      const res = error?.response?.data;
+      if (res?.messageKey === "product.out.of.stock" || (res?.message && res?.message.includes("đã hết hàng"))) {
         showToast({
-          content: response?.message || "Đặt hàng thất bại!",
+          content: res?.message || "Sản phẩm đã hết số lượng mà bạn đang đặt!",
+          duration: 5,
+          type: "error",
+        });
+      } else if (res?.message) {
+        showToast({
+          content: res?.message,
           duration: 5,
           type: "error",
         });
       }
-    } catch (error) {
+      // Không showToast cho lỗi 500 ở đây nữa, để interceptor xử lý
       console.error("Payment error:", error);
-      showToast({
-        content: "Đã xảy ra lỗi khi đặt hàng!",
-        duration: 5,
-        type: "error",
-      });
     } finally {
       setLoading(false);
     }

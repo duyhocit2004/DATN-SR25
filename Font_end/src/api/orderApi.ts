@@ -43,6 +43,8 @@ class OrderApi extends BaseApi<IOrder> {
       })
       .then((res) => res.data);
   };
+
+
   refundOrder = (payload: { 
     orderId: number, 
     refundMethod?: string,
@@ -57,12 +59,33 @@ class OrderApi extends BaseApi<IOrder> {
       })
       .then((res) => res.data);
   };
+
+
   getVoucher = (payload: any): Promise<IResponseData<IVoucher>> => {
     return axiosClient
       .post(`${this.uri}/getVoucher`, payload)
       .then((res) => res.data);
   };
- 
+
+
+   cancelOrderByClient = (payload: any): Promise<IResponseData<IResponseOrder>> => {
+    console.log("Gọi API cancelOrderByClient với payload:", payload);
+    return axiosClient
+      .post(`${this.uri}/cancelOrderByClient`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        console.log("API response:", res.data);
+        return res.data;
+      })
+      .catch((error) => {
+        console.error("API error:", error);
+        throw error;
+      });
+  };
+  
 }
 
 const orderApi = new OrderApi();

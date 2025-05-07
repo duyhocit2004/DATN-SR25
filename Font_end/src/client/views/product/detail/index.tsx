@@ -43,6 +43,8 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [sizesLoading, setSizesLoading] = useState(false);
+  const [selectedSizeLoading, setSelectedSizeLoading] = useState(false);
 
   const handleQuantityChange = (value: number) => {
     setQuantity(value);
@@ -58,14 +60,13 @@ const ProductDetail = () => {
       setIsWishlisted(false);
     }
   }, [listWishlist, productDetail]);
+
   useEffect(() => {
-    getSizeByProductIdAndColor();
-    setQuantity(0);
+    if (selectedColor) {
+      getSizeByProductIdAndColor();
+    }
   }, [params.productId, selectedColor]);
-  useEffect(() => {
-    setMaxQuantity(sizes?.find((e) => e.size === selectedSize)?.quantity || 0);
-    setQuantity(0);
-  }, [selectedSize]);
+
   useEffect(() => {
     const productId = params.productId;
     //call api get danh sách product
@@ -80,6 +81,10 @@ const ProductDetail = () => {
   const getSizeByProductIdAndColor = async () => {
     try {
       if (!productDetail?.id || !selectedColor) return;
+      setSizesLoading(true);
+      setSelectedSize(null); // Reset selected size when color changes
+      setMaxQuantity(0);
+      setQuantity(0);
       const response = await productApi.getSizeByProductIdAndColor({
         productId: productDetail?.id,
         color: selectedColor,
@@ -91,6 +96,8 @@ const ProductDetail = () => {
       }
     } catch {
       setSizes([]);
+    } finally {
+      setSizesLoading(false);
     }
   };
   const getProductDetail = async (id: number) => {
@@ -126,28 +133,28 @@ const ProductDetail = () => {
 
     if (token) {
       // 🟢 Nếu user đã login → Gọi API cập nhật giỏ hàng
-      try {
+    try {
         const payload = {
-          productId: productDetail?.id,
-          quantity: quantity,
-          color: selectedColor,
+        productId: productDetail?.id,
+        quantity: quantity,
+        color: selectedColor,
           size: selectedSize,
         };
         const response = await cartApi.addToCart(payload);
-        if (response.status === HttpCodeString.SUCCESS) {
+      if (response.status === HttpCodeString.SUCCESS) {
           dispatch({ type: "cart/addToCart" });
-          showToast({
+        showToast({
             content: "Thêm giỏ hàng thành công!",
-            duration: 5,
-            type: "success",
-          });
-        } else {
-          showToast({
+          duration: 5,
+          type: "success",
+        });
+      } else {
+        showToast({
             content: "Thêm giỏ hàng thất bại!",
-            duration: 5,
-            type: "error",
-          });
-        }
+          duration: 5,
+          type: "error",
+        });
+      }
       } catch { }
     } else {
       addToCart(
@@ -238,9 +245,21 @@ const ProductDetail = () => {
     setSelectedColor(color);
     //call api getSizes
   };
-  const handleChangeSize = (e: RadioChangeEvent) => {
+  const handleChangeSize = async (e: RadioChangeEvent) => {
+    setSelectedSizeLoading(true);
     setSelectedSize(e.target.value);
-    //call api getColors
+    try {
+      const variant = sizes?.find((size) => size.size === e.target.value);
+      if (variant) {
+        setMaxQuantity(variant.quantity);
+        setQuantity(variant.quantity > 0 ? 1 : 0);
+      } else {
+        setMaxQuantity(0);
+        setQuantity(0);
+      }
+    } finally {
+      setSelectedSizeLoading(false);
+    }
   };
 
   return (
@@ -347,11 +366,12 @@ const ProductDetail = () => {
                     <h3 className="text-lg font-medium mb-3">Kích thước</h3>
                     <Radio.Group
                       value={selectedSize}
-                      onChange={(e) => handleChangeSize(e)}
+                      onChange={handleChangeSize}
                       buttonStyle="solid"
+                      disabled={sizesLoading}
                     >
                       {sizes?.map((sizeData) => (
-                        <Radio.Button key={sizeData.size} value={sizeData.size}>
+                        <Radio.Button key={sizeData.size} value={sizeData.size}> 
                           {sizeData.size}
                         </Radio.Button>
                       ))}
@@ -365,29 +385,30 @@ const ProductDetail = () => {
                     max={maxQuantity || 1}
                     value={quantity}
                     onChange={handleQuantityChange}
+                    disabled={selectedSizeLoading || sizesLoading}
                   />
                   <div className="flex items-center gap-2 mt-6 mb-6">
                     <button
-                      className={`bg-red-500 border-none text-white px-3 py-2 rounded-[20px] font-semibold ${maxQuantity > 0 && quantity > 0
+                      className={`bg-red-500 border-none text-white px-3 py-2 rounded-[20px] font-semibold ${maxQuantity > 0 && quantity > 0 && !selectedSizeLoading
                         ? "hover:bg-amber-400 hover:text-black cursor-pointer"
                         : "cursor-not-allowed !bg-gray-300"
                         }`}
-                      disabled={maxQuantity === 0 || quantity === 0}
+                      disabled={maxQuantity === 0 || quantity === 0 || selectedSizeLoading}
                       onClick={handleAddToCart}
                     >
                       Thêm vào giỏ
                     </button>
                     <button
-                      className={`bg-blue-500 border-none text-white px-3 py-2 rounded-[20px] font-semibold ${maxQuantity > 0 && quantity > 0
+                      className={`bg-blue-500 border-none text-white px-3 py-2 rounded-[20px] font-semibold ${maxQuantity > 0 && quantity > 0 && !selectedSizeLoading
                         ? "hover:bg-blue-600 cursor-pointer"
                         : "cursor-not-allowed !bg-gray-300"
                         }`}
-                      disabled={maxQuantity === 0 || quantity === 0}
+                      disabled={maxQuantity === 0 || quantity === 0 || selectedSizeLoading}
                       onClick={handleBuyNow}
                     >
                       Mua ngay
                     </button>
-                    {maxQuantity === 0 && selectedColor && selectedSize && (
+                    {!sizesLoading && !selectedSizeLoading && maxQuantity === 0 && selectedColor && selectedSize && (
                       <div className="out-of-stock bg-black text-white h-10 flex justify-center items-center p-3">
                         Hết hàng
                       </div>

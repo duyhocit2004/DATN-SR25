@@ -75,14 +75,6 @@ Route::prefix('users')->group(function () {
     Route::post('/forgotPassword', [PasswordResetController::class, 'forgotPassword']);
 });
 
-Route::prefix('orders')->group(function () {
-    Route::post('/addOrder', [OrderController::class, 'addOrder']);
-    Route::post('/getOrders', [OrderController::class, 'getOrders']);
-    Route::post('/getOrderDetail', [OrderController::class, 'getOrderDetail']);
-    Route::post('/getVoucher', [OrderController::class, 'getVoucher']);
-});
-
-
 Route::post('/vnpay/create', [VNPayController::class, 'createPayment']);
 Route::get('/vnpay/return', [VNPayController::class, 'returnPayment']);
 
@@ -114,6 +106,15 @@ Route::middleware('jwt.auth')->group(function () {
         Route::post('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
         Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
         Route::post('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+    });
+
+    // Orders routes
+    Route::prefix('orders')->group(function () {
+        Route::post('/addOrder', [OrderController::class, 'addOrder']);
+        Route::post('/getOrders', [OrderController::class, 'getOrders']);
+        Route::post('/getOrderDetail', [OrderController::class, 'getOrderDetail']);
+        Route::post('/cancelOrderByClient', [OrderController::class, 'cancelOrderByClient']);
+        Route::post('/getVoucher', [OrderController::class, 'getVoucher']);
     });
 
     // các api màn admin
@@ -179,3 +180,21 @@ Route::middleware('jwt.auth')->group(function () {
 });
 
 
+Route::get('/test-broadcast', function () {
+    $testOrder = [
+        'id' => 1,
+        'code' => 'TEST001',
+        'customer_name' => 'Test Customer',
+        'email' => 'test@example.com',
+        'phone_number' => '0123456789',
+        'total_price' => 100000,
+        'status' => 'PENDING'
+    ];
+    
+    event(new \App\Events\NewOrderCreated($testOrder));
+    
+    return response()->json([
+        'message' => 'Test broadcast sent successfully',
+        'order' => $testOrder
+    ]);
+});

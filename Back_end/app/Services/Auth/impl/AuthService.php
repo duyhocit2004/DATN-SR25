@@ -92,9 +92,9 @@ class AuthService implements IAuthService
             JWTAuth::setToken($token);
             $user = auth()->user();
 
-            // Kiểm tra xem người dùng có phải là admin không
-            if (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) {
-                // Hủy token nếu không phải admin
+            // Kiểm tra xem người dùng có phải là admin hoặc manager không
+            if (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== 'Quản lý') {
+                // Hủy token nếu không phải admin hoặc manager
                 JWTAuth::invalidate(JWTAuth::getToken());
                 BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
             }
@@ -149,7 +149,7 @@ class AuthService implements IAuthService
             'name' => $request->name,
             'email' => $request->email,
             'phone_number' => $request->phoneNumber,
-            'role' => 'customer',
+            'role' => 'Khách hàng',
             'email_verified_at' => null,
             'gender' => $request->gender,
             'user_image' => null,
@@ -187,7 +187,7 @@ class AuthService implements IAuthService
     public function updateUserAdmin(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE') || $user->status == config('constants.STATUS_INACTIVE')) {
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('constants.STATUS_INACTIVE') ) {
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }

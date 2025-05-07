@@ -2,12 +2,18 @@
 
 namespace App\Services\Client\order\impl;
 
+use App\Events\NewOrderCreated;
 use App\Helpers\BaseResponse;
+use App\Models\Order;
+use App\Models\OrderStatusHistory;
 use App\Repositories\OrderRepositories;
 use App\Repositories\VoucherRepositories;
 use App\Services\Client\order\IOrderService;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 
 class OrderService implements IOrderService
@@ -28,7 +34,7 @@ class OrderService implements IOrderService
     public function addOrder(Request $request)
     {
         $validatedData = $request->validate([
-            'user_id'=> 'nullable| integer|exists:users,id',
+            'user_id' => 'nullable| integer|exists:users,id',
             'customerName' => 'required|string',
             'email' => 'required|email',
             'phoneNumber' => 'required|string',
@@ -48,6 +54,12 @@ class OrderService implements IOrderService
 
         // Gửi dữ liệu đến repository
         $order = $this->orderRepositories->addOrder($validatedData);
+        
+        // Broadcast new order event
+        if ($order) {
+            event(new NewOrderCreated($order));
+        }
+        
         return $order;
     }
 
@@ -229,7 +241,7 @@ class OrderService implements IOrderService
     public function updateOrder(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
@@ -242,7 +254,7 @@ class OrderService implements IOrderService
     {
         // Xác thực người dùng
         $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
             JWTAuth::invalidate(JWTAuth::getToken());
             return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
@@ -286,6 +298,85 @@ class OrderService implements IOrderService
         } else {
             \Log::error('Hoàn tiền thất bại:', ['response' => $refundResponse]);
             throw new \Exception('Hoàn tiền thất bại.');
+        }
+    }
+
+
+
+
+    public function cancelOrderByClient(Request $request)
+    {
+
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user) {
+                return BaseResponse::failure(401, 'Unauthorized', 'auth.unauthorized', []);
+            }
+
+            $orderId = $request->input('orderId');
+            if (!$orderId) {
+                return BaseResponse::failure(400, 'Mã đơn hàng không được để trống', 'order.id.required', []);
+            }
+
+            Log::info('Attempting to cancel order:', ['orderId' => $orderId, 'userId' => $user->id]);
+
+            $order = Order::where('id', $orderId)
+                ->where('phone_number', $user->phone_number)
+                ->first();
+
+            if (!$order) {
+                Log::warning('Order not found or not owned by user:', ['orderId' => $orderId, 'userId' => $user->id]);
+                return BaseResponse::failure(404, 'Không tìm thấy đơn hàng', 'order.not_found', []);
+            }
+
+            Log::info('Current order status:', ['orderId' => $orderId, 'status' => $order->status]);
+
+            if (!in_array($order->status, ['Unconfirmed', 'Confirmed'])) {
+                Log::warning('Invalid order status for cancellation:', ['orderId' => $orderId, 'status' => $order->status]);
+                return BaseResponse::failure(400, 'Không thể hủy đơn hàng ở trạng thái này', 'order.cancel.invalid_status', []);
+            }
+
+            DB::beginTransaction();
+            try {
+                $oldStatus = $order->status;
+                $order->status = 'Cancel';
+                $order->save();
+
+                Log::info('Order status updated:', ['orderId' => $orderId, 'oldStatus' => $oldStatus, 'newStatus' => 'Cancel']);
+
+                OrderStatusHistory::create([
+                    'order_id' => $order->id,
+                    'old_status' => $oldStatus,
+                    'new_status' => 'Cancel',
+                    'name_change' => $user->name,
+                    'role_change' => $user->role,
+                    'note' => 'Khách hàng hủy đơn hàng',
+                    'change_at' => now()
+                ]);
+
+                DB::commit();
+                Log::info('Order cancelled successfully:', ['orderId' => $orderId]);
+                
+                return BaseResponse::success([
+                    'message' => 'Hủy đơn hàng thành công',
+                    'order' => $order
+                ]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Error during order cancellation transaction:', [
+                    'error' => $e->getMessage(),
+                    'orderId' => $orderId,
+                    'trace' => $e->getTraceAsString()
+                ]);
+                return BaseResponse::failure(500, 'Có lỗi xảy ra khi hủy đơn hàng', 'order.cancel.error', []);
+            }
+        } catch (\Exception $e) {
+            Log::error('Unexpected error during order cancellation:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return BaseResponse::failure(500, 'Có lỗi xảy ra khi hủy đơn hàng', 'order.cancel.error', []);
+
         }
     }
 

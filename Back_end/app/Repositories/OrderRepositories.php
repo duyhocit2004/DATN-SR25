@@ -33,23 +33,78 @@ class OrderRepositories
 
             // Validate products
             foreach ($products as $product) {
+                \Log::info('Processing product for order', [
+                    'product' => $product,
+                    'productId' => $product['productId'],
+                    'color' => $product['color'],
+                    'size' => $product['size']
+                ]);
+
                 $productReal = Product::where('id', $product['productId'])->first();
-                $productVariant = ProductVariant::where('product_id', $product['productId'])->first();
-                if (!empty($productReal) && !empty($productVariant)) {
-                    if ($productVariant['quantity'] < $product['quantity']) {
-                        return BaseResponse::failure('400', 'quantity is less than order quantity', 'quantity.is.less.than.order.quantity', []);
-                    }
-                    if (!empty($productReal['price_sale'])) {
-                        $totalAmount += $productReal['price_sale'] * $product['quantity'];
-                    } else {
-                        $totalAmount += $productReal['price_regular'] * $product['quantity'];
-                    }
-                } else {
+                if (!$productReal) {
+                    \Log::error('Product not found', ['productId' => $product['productId']]);
                     return BaseResponse::failure('400', 'Product not found', 'product.not.found', []);
+                }
+
+                $color = \App\Models\Color::where('code', $product['color'])
+                    ->orWhere('name', $product['color'])
+                    ->first();
+                if (!$color) {
+                    \Log::error('Color not found', [
+                        'colorCode' => $product['color'],
+                        'product' => $product
+                    ]);
+                    return BaseResponse::failure('400', 'Color not found', 'color.not.found', []);
+                }
+
+                $size = \App\Models\Size::where('size', $product['size'])->first();
+                if (!$size) {
+                    \Log::error('Size not found', ['size' => $product['size']]);
+                    return BaseResponse::failure('400', 'Size not found', 'size.not.found', []);
+                }
+
+                $productVariant = ProductVariant::where('product_id', $product['productId'])
+                    ->where('color_id', $color->id)
+                    ->where('size_id', $size->id)
+                    ->first();
+
+                \Log::info('Product variant search result', [
+                    'productVariant' => $productVariant,
+                    'colorId' => $color->id,
+                    'sizeId' => $size->id
+                ]);
+
+                if (!$productVariant) {
+                    \Log::error('Product variant not found', [
+                        'productId' => $product['productId'],
+                        'colorId' => $color->id,
+                        'sizeId' => $size->id
+                    ]);
+                    return BaseResponse::failure('400', 'Product variant not found', 'product.variant.not.found', []);
+                }
+
+                if ($productVariant['quantity'] < $product['quantity']) {
+                    return BaseResponse::failure(
+                        '400',
+                        'Sản phẩm ' . $productReal->name . ' (Màu: ' . $color->name . ', Size: ' . $size->size . ') đã hết hàng hoặc không đủ số lượng.',
+                        'product.out.of.stock',
+                        [
+                            'productName' => $productReal->name,
+                            'color' => $color->name,
+                            'size' => $size->size,
+                            'availableQuantity' => $productVariant['quantity']
+                        ]
+                    );
+                }
+
+                if (!empty($productReal['price_sale'])) {
+                    $totalAmount += $productReal['price_sale'] * $product['quantity'];
+                } else {
+                    $totalAmount += $productReal['price_regular'] * $product['quantity'];
                 }
             }
 
-            // Validate voucher
+            // Validate voucher                 
             if (!empty($data['voucher'])) {
                 $voucher = Voucher::where('code', $data['voucher'])->first();
                 if ($voucher) {
@@ -71,7 +126,7 @@ class OrderRepositories
                     }
                     $voucherAmount = $voucher->voucher_price;
                     $totalAmount -= $voucherAmount;
-                    
+
                     // Update voucher usage count
                     $voucher->update([
                         'used' => $voucher->used + 1,
@@ -103,8 +158,9 @@ class OrderRepositories
 
             DB::beginTransaction();
 
+            $userid = auth()->user() ? auth()->user()->id : null;
             $order = Order::create([
-                'users_id' => $data['users_id'] ?? null,
+                'users_id' => $userid ?? null,
                 'code' => 'Od' . Str::random(4),
                 'customer_name' => $data['customerName'],
                 'email' => $data['email'] ?? 'default@email.com',
@@ -128,6 +184,15 @@ class OrderRepositories
             // Process order details
             foreach ($data['products'] as $product) {
                 $productReal = Product::where('id', $product['productId'])->first();
+                // Kiểm tra tồn kho tổng sản phẩm
+                if ($productReal->quantity < $product['quantity']) {
+                    return BaseResponse::failure(
+                        '400',
+                        'Sản phẩm ' . $productReal->name . ' đã hết số lượng!',
+                        'product.out.of.stock',
+                        []
+                    );
+                }
                 OrderDetail::create([
                     'order_id' => $order->id,
                     'name' => $productReal['name'],
@@ -143,19 +208,35 @@ class OrderRepositories
 
                 // Update product variant quantity
                 $productVariant = ProductVariant::where('product_id', $product['productId'])
-                    ->where('color_id', function($query) use ($product) {
+                    ->where('color_id', function ($query) use ($product) {
                         $query->select('id')
                             ->from('colors')
                             ->where('code', $product['color'])
+                            ->orWhere('name', $product['color'])
                             ->first();
                     })
-                    ->where('size_id', function($query) use ($product) {
+                    ->where('size_id', function ($query) use ($product) {
                         $query->select('id')
                             ->from('sizes')
                             ->where('size', $product['size'])
                             ->first();
                     })
                     ->first();
+
+                // Kiểm tra tồn kho biến thể
+                if ($productVariant && $productVariant->quantity < $product['quantity']) {
+                    return BaseResponse::failure(
+                        '400',
+                        'Sản phẩm ' . $productReal->name . ' (Màu: ' . ($productVariant->color->name ?? $product['color']) . ', Size: ' . ($productVariant->size->size ?? $product['size']) . ') đã hết hàng hoặc không đủ số lượng. Số lượng còn lại: ' . $productVariant->quantity,
+                        'product.out.of.stock',
+                        [
+                            'productName' => $productReal->name,
+                            'color' => $productVariant->color->name ?? $product['color'],
+                            'size' => $productVariant->size->size ?? $product['size'],
+                            'availableQuantity' => $productVariant->quantity
+                        ]
+                    );
+                }
 
                 if ($productVariant) {
                     $productVariant->quantity -= $product['quantity'];
@@ -274,7 +355,7 @@ class OrderRepositories
         if (!empty($sortType)) {
             $query->orderByRaw('IFNULL(date, status) ' . $sortType);
         }
-        $orders = $query->orderBy('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
+        $orders = $query->orderBy('created_at', 'desc')->paginate($perPage, ['*'], 'page', $page);
         return $orders;
 
     }
@@ -286,62 +367,170 @@ class OrderRepositories
         return $order;
     }
 
+    // public function updateOrder(Request $request)
+    // {
+    //     $order = Order::where('id', $request->input('id'))->first();
+    //     $user = auth()->user();
+    //     if (!empty($order)) {
+    //         // Lưu lại giá trị cũ
+    //         $oldStatus = $order->status;
+    //         $oldPaymentStatus = $order->payment_status;
+
+    //         // Lấy giá trị mới từ request
+    //         $status = $request->input('status', $order->status);
+    //         $paymentStatus = $request->input('paymentStatus', $order->payment_status);
+
+    //         // Check if status is delivered and payment method is COD
+    //         if ($status === 'Delivered' && $order->payment_method === 'COD') {
+    //             $paymentStatus = 'PAID';
+    //         }
+
+    //         // Lưu lịch sử thay đổi trạng thái thanh toán trước khi cập nhật
+    //         if ($oldPaymentStatus !== $paymentStatus) {
+    //             PaymentStatusHistory::create([
+    //                 'order_id' => $order->id,
+    //                 'old_status' => $oldPaymentStatus,
+    //                 'new_status' => $paymentStatus,
+    //                 'name_change' => $user->name ?? 'System',
+    //                 'role_change' => $user->role ?? 'System',
+    //                 'note' => $request->input('note'),
+    //                 'change_at' => now()
+    //             ]);
+    //         }
+
+    //         // Lưu lịch sử thay đổi trạng thái đơn hàng trước khi cập nhật
+    //         if ($oldStatus !== $status) {
+    //             OrderStatusHistory::create([
+    //                 'order_id' => $order->id,
+    //                 'old_status' => $oldStatus,
+    //                 'new_status' => $status,
+    //                 'name_change' => $user->name ?? 'System',
+    //                 'role_change' => $user->role ?? 'System',
+    //                 'note' => $request->input('note'),
+    //                 'change_at' => now()
+    //             ]);
+    //         }
+
+    //         // Cập nhật order
+    //         $order->status = $status;
+    //         $order->payment_status = $paymentStatus;
+    //         // Chỉ cập nhật note nếu không phải hoàn tiền
+    //         if ($status !== 'Cancel' && $paymentStatus !== 'REFUNDED') {
+    //             $order->note = $request->input('note');
+    //         }
+    //         $order->save();
+
+    //         return $order;
+    //     } else {
+    //         BaseResponse::failure(400, '', 'order.item.not.found', []);
+    //     }
+    // }
+    private $orderStatusSequence = [
+        'Unconfirmed',       // Chưa xác nhận
+        'Confirmed',         // Đã xác nhận
+        'Processing',        // Đang chuẩn bị hàng
+        'Shipping',          // Đang giao hàng 
+        'Delivered',         // Đã giao hàng
+        'Cancel Confirm',    // Xác nhận hủy
+        'Cancel'             // Đã hủy
+    ];
+
+    private function validateStatusTransition($currentStatus, $newStatus)
+    {
+        // Xử lý đặc biệt cho trạng thái hủy
+        if ($newStatus === 'Cancel') {
+            // Cho phép hủy trực tiếp từ Unconfirmed hoặc từ Cancel Confirm
+            if ($currentStatus === 'Unconfirmed' || $currentStatus === 'Cancel Confirm') {
+                return true;
+            }
+        }
+
+        // Đặc biệt xử lý cho Cancel Confirm
+        if ($newStatus === 'Cancel Confirm') {
+            // Cho phép chuyển sang Cancel Confirm từ Unconfirmed hoặc Confirmed
+            return in_array($currentStatus, ['Unconfirmed', 'Confirmed']);
+        }
+
+        // Xử lý các trạng thái thông thường
+        $currentIndex = array_search($currentStatus, $this->orderStatusSequence);
+        $newIndex = array_search($newStatus, $this->orderStatusSequence);
+
+        // Kiểm tra tồn tại của trạng thái
+        if ($currentIndex === false || $newIndex === false) {
+            return false;
+        }
+
+        // Các trường hợp đặc biệt
+        switch ($currentStatus) {
+            case 'Delivered':
+                // Từ Delivered không thể chuyển sang trạng thái khác
+                return false;
+
+            case 'Cancel':
+                // Từ Cancel không thể chuyển sang trạng thái khác
+                return false;
+
+            case 'Unconfirmed':
+                // Từ Unconfirmed có thể chuyển sang Confirmed hoặc Cancel Confirm
+                return in_array($newStatus, ['Confirmed', 'Cancel Confirm']);
+
+            case 'Confirmed':
+                // Từ Confirmed có thể chuyển sang Processing hoặc Cancel Confirm
+                return in_array($newStatus, ['Processing', 'Cancel Confirm']);
+
+            default:
+                // Các trường hợp còn lại chỉ được chuyển sang trạng thái kế tiếp
+                $nextStatus = $this->orderStatusSequence[$currentIndex + 1] ?? null;
+                return $newStatus === $nextStatus;
+        }
+    }
     public function updateOrder(Request $request)
     {
-        $order = Order::where('id', $request->input('id'))->first();
-        $user = auth()->user();
-        if (!empty($order)) {
-            // Lưu lại giá trị cũ
-            $oldStatus = $order->status;
+        $order = Order::find($request->input('id'));
+        if (!$order) {
+            return BaseResponse::failure(404, 'Đơn hàng không tồn tại', 'order.not.found', []);
+        }
+
+        $oldStatus = $order->status;
+        $newStatus = $request->input('status');
+
+        // Kiểm tra tính hợp lệ của việc chuyển trạng thái
+        if (!$this->validateStatusTransition($oldStatus, $newStatus)) {
+            return BaseResponse::failure(400, 'Không thể chuyển trạng thái đơn hàng theo thứ tự này', 'invalid.status.transition', []);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Lưu trạng thái cũ
             $oldPaymentStatus = $order->payment_status;
 
-            // Lấy giá trị mới từ request
-            $status = $request->input('status', $order->status);
-            $paymentStatus = $request->input('paymentStatus', $order->payment_status);
-
-            // Check if status is delivered and payment method is COD
-            if ($status === 'Delivered' && $order->payment_method === 'COD') {
-                $paymentStatus = 'PAID';
+            // Cập nhật payment status nếu đơn hàng được giao thành công và thanh toán COD
+            if ($newStatus === 'Delivered' && $order->payment_method === 'COD') {
+                $order->payment_status = 'PAID';
             }
 
-            // Lưu lịch sử thay đổi trạng thái thanh toán trước khi cập nhật
-            if ($oldPaymentStatus !== $paymentStatus) {
-                PaymentStatusHistory::create([
-                    'order_id' => $order->id,
-                    'old_status' => $oldPaymentStatus,
-                    'new_status' => $paymentStatus,
-                    'name_change' => $user->name ?? 'System',
-                    'role_change' => $user->role ?? 'System',
-                    'note' => $request->input('note'),
-                    'change_at' => now()
-                ]);
-            }
+            // Lưu lịch sử thay đổi trạng thái
+            OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'name_change' => auth()->user()->name ?? 'System',
+                'role_change' => auth()->user()->role ?? 'System',
+                'note' => $request->input('note'),
+                'change_at' => now()
+            ]);
 
-            // Lưu lịch sử thay đổi trạng thái đơn hàng trước khi cập nhật
-            if ($oldStatus !== $status) {
-                OrderStatusHistory::create([
-                    'order_id' => $order->id,
-                    'old_status' => $oldStatus,
-                    'new_status' => $status,
-                    'name_change' => $user->name ?? 'System',
-                    'role_change' => $user->role ?? 'System',
-                    'note' => $request->input('note'),
-                    'change_at' => now()
-                ]);
-            }
-
-            // Cập nhật order
-            $order->status = $status;
-            $order->payment_status = $paymentStatus;
-            // Chỉ cập nhật note nếu không phải hoàn tiền
-            if ($status !== 'Cancel' && $paymentStatus !== 'REFUNDED') {
-                $order->note = $request->input('note');
-            }
+            // Cập nhật đơn hàng
+            $order->status = $newStatus;
+            $order->note = $request->input('note');
             $order->save();
 
-            return $order;
-        } else {
-            BaseResponse::failure(400, '', 'order.item.not.found', []);
+            DB::commit();
+            return BaseResponse::success($order);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return BaseResponse::failure(500, $e->getMessage(), 'update.order.error', []);
         }
     }
 
@@ -530,4 +719,48 @@ class OrderRepositories
             ];
         }
     }
+    public function cancelOrderByClient(Request $request)
+    {
+
+        \Log::info('Bắt đầu xử lý hủy đơn hàng', [
+            'orderCode' => $request->input('orderCode'),
+            'userId' => auth()->id()
+        ]);
+
+        $orderCode = $request->input('orderCode');
+        $user = auth()->user();
+        $order = Order::where('code', $orderCode)
+            ->where('users_id', $user->id)
+            ->first();
+
+        if (!$order) {
+            \Log::warning('Đơn hàng không tồn tại hoặc không thuộc về user', [
+                'orderCode' => $orderCode,
+                'userId' => $user->id
+            ]);
+            return BaseResponse::failure('404', 'Đơn hàng không tồn tại hoặc không thuộc quyền sở hữu của bạn', 'order.not.found', []);
+        }
+
+        \Log::info('Tìm thấy đơn hàng', ['order' => $order->toArray()]);
+
+        try {
+            DB::beginTransaction();
+            // Cập nhật trạng thái đơn hàng
+            $order->status = 'Cancelled';
+            $order->updated_at = now();
+            $order->save();
+            \Log::info('Đã cập nhật trạng thái đơn hàng thành công');
+
+            DB::commit();
+            return BaseResponse::success('Hủy đơn hàng thành công', 'order.cancelled.success', $order);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Lỗi khi hủy đơn hàng', [
+                'error' => $e->getMessage(),
+                'orderCode' => $orderCode
+            ]);
+            return BaseResponse::failure('500', 'Đã xảy ra lỗi khi hủy đơn hàng', 'order.cancel.error', []);
+        }
+    }
+
 }

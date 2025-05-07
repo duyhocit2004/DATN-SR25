@@ -71,7 +71,15 @@ class OrderController extends Controller
         $products = $this->orderService->getOrderDetail($request);
         return BaseResponse::success($products);
     }
-
+   
+    public function cancelOrderByClient(Request $request)
+    {
+        try {
+            return $this->orderService->cancelOrderByClient($request);
+        } catch (\Exception $e) {
+            return BaseResponse::failure(500, $e->getMessage(), 'order.cancel.error', []);
+        }
+    }
     public function updateOrder(Request $request)
     {
         $products = $this->orderService->updateOrder($request);

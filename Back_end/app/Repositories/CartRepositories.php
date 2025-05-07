@@ -39,9 +39,9 @@ class CartRepositories
     public function getProductsInCartByUserId($userId)
     {
         $query = Cart::select('carts.*', 'carts.id as cartId', 'products.*', 'carts.quantity as cartQuantity', 'product_variants.quantity as variantQuantity')
-            ->join('colors', 'colors.code', '=', 'carts.color')
-            ->join('sizes', 'sizes.size', '=', 'carts.size')
             ->join('products', 'carts.product_id', '=', 'products.id')
+            ->join('colors', 'colors.name', '=', 'carts.color')
+            ->join('sizes', 'sizes.size', '=', 'carts.size')
             ->join('product_variants', function ($join) {
                 $join->on('product_variants.product_id', '=', 'carts.product_id')
                     ->on('product_variants.color_id', '=', 'colors.id')
@@ -55,29 +55,35 @@ class CartRepositories
 
     public function addCart(Request $request, $userId)
     {
-        $productVariant = ProductVariant::where('product_id', $request->input('productId'))->first();
-        if (!empty($productVariant)) {
-            if ($productVariant['quantity'] < $request->input('quantity')) {
-                BaseResponse::failure('400', 'quantity is less than cart quantity', 'quantity.is.less.than.cart.quantity', []);
-            }
-        } else {
-            BaseResponse::failure('400', 'Product Variant not found', 'product.variant.not.found', []);
+        // Kiểm tra sản phẩm có tồn tại không
+        $productReal = Product::where('id', $request->input('productId'))->first();
+        if (empty($productReal)) {
+            BaseResponse::failure('400', 'Product not found', 'product.not.found', []);
         }
 
+        // Lấy color name từ color code
+        $color = \App\Models\Color::where('code', $request->input('color'))->first();
+        if (!$color) {
+            BaseResponse::failure('400', 'Color not found', 'color.not.found', []);
+        }
+
+        // Kiểm tra xem sản phẩm đã có trong giỏ hàng của user này chưa
         $cart = Cart::where('product_id', $request->input('productId'))
-            ->where('color', $request->input('color'))
+            ->where('color', $color->name)
             ->where('size', $request->input('size'))
             ->where('user_id', $userId)
             ->first();
 
         if ($cart) {
+            // Nếu đã có thì cộng thêm số lượng
             $cart->quantity += $request->input('quantity');
             $cart->save();
         } else {
+            // Nếu chưa có thì tạo mới
             $cart = Cart::create([
                 'product_id' => $request->input('productId'),
                 'quantity' => $request->input('quantity'),
-                'color' => $request->input('color'),
+                'color' => $color->name,
                 'size' => $request->input('size'),
                 'user_id' => $userId,
             ]);
