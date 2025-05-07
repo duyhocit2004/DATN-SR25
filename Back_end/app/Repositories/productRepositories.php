@@ -326,7 +326,9 @@ class ProductRepositories
         $toPrice = $request->input('toPrice', null);
         $sortType = $request->input('sortType', null);
 
-        $query = Product::with(['category']);
+        $query = Product::with(['category'])
+            ->where('status', 'active');
+
         if (!empty($categories_id)) {
             $categoryIds = Category::where('id', $categories_id) // Tìm parent category
                 ->orWhere('parent_id', $categories_id) // Lấy tất cả child categories
@@ -337,9 +339,6 @@ class ProductRepositories
             $query->whereIn('categories_id', $categoryIds);
         }
 
-        // if (!empty($name)) {
-        //     $query->where('name', 'like', '%' . $name . '%');
-        // }
         if (!empty($name)) {
             $query->whereRaw("BINARY name LIKE ?", ['%' . $name . '%']);
         }
@@ -368,9 +367,6 @@ class ProductRepositories
             $query->orderByRaw('IFNULL(price_sale, price_regular) ' . $sortType);
         }
 
-        // Only show products with quantity greater than 0
-        $query->where('quantity', '>', 0);
-
         $products = $query->orderby('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
         return $products;
     }
@@ -380,7 +376,10 @@ class ProductRepositories
         $listProduct = collect();
 
         if (!empty($productIds)) {
-            $listProduct = Product::with(['category'])->whereIn('id', $productIds)->get();
+            $listProduct = Product::with(['category'])
+                ->whereIn('id', $productIds)
+                ->where('status', 'active')
+                ->get();
         }
 
         return $listProduct;
@@ -389,7 +388,9 @@ class ProductRepositories
     public function getProduct($productId)
     {
         \Log::info('Repository - Looking for product:', ['productId' => $productId]);
-        $product = Product::with(['image_products', 'sizes', 'colors', 'category'])->find($productId);
+        $product = Product::with(['image_products', 'sizes', 'colors', 'category'])
+            ->where('status', 'active')
+            ->find($productId);
         \Log::info('Repository - Found product:', ['product' => $product]);
         
         if ($product) {
@@ -429,8 +430,14 @@ class ProductRepositories
             ->join('sizes', 'sizes.id', '=', 'product_variants.size_id')
             ->join('products', 'product_variants.product_id', '=', 'products.id')
             ->where('product_id', '=', $productId)
+            ->where('products.status', '=', 'active')
             ->select('product_variants.*', 'products.*', 'product_variants.id as variantId', 'product_variants.quantity as variantQuantity')
             ->first();
+
+        if (!$products) {
+            BaseResponse::failure(400, '', 'product.not.found', []);
+        }
+
         return $products->product;
     }
 
@@ -438,6 +445,7 @@ class ProductRepositories
     {
         $topDiscountedProducts = Product::orderBy('discount', 'desc')
             ->where('quantity', '>', 0)
+            ->where('status', 'active')
             ->distinct('products.id')
             ->take($number)
             ->with('image_products')
@@ -449,6 +457,7 @@ class ProductRepositories
     {
         $topNewestProducts = Product::orderBy('created_at', 'desc')
             ->where('quantity', '>', 0)
+            ->where('status', 'active')
             ->distinct('products.id')
             ->take($number)
             ->with('image_products')
@@ -460,6 +469,7 @@ class ProductRepositories
     {
         $topBestSellingProducts = Product::select('products.*', DB::raw('SUM(quantity_sold) as quantity_sold'))
             ->where('quantity', '>', 0)
+            ->where('status', 'active')
             ->groupBy('products.id')
             ->orderByDesc('quantity_sold')
             ->distinct('products.id')
@@ -472,16 +482,14 @@ class ProductRepositories
 
     public function getRelatedProducts($number, $categoryId)
     {
-        $topReleatedProducts = Product::query()
-            ->where('categories_id', '=', $categoryId)
+        $relatedProducts = Product::where('categories_id', $categoryId)
+            ->where('status', 'active')
             ->where('quantity', '>', 0)
-            ->groupBy('products.id')
             ->distinct('products.id')
             ->take($number)
             ->with('image_products')
             ->get();
-
-        return $topReleatedProducts;
+        return $relatedProducts;
     }
 
     public function deleteProduct(Request $request)
@@ -492,13 +500,8 @@ class ProductRepositories
             BaseResponse::failure('400', 'product not found', 'product.not.found', []);
         }
 
-        //khi xoá category các bảng sau sẽ bị xoá theo
-        //product_variants;
-        //image_product;
-        //wishlist;
-        //carts;
-        //comment;
-        $product->delete();
+        // Thay vì xóa sản phẩm, cập nhật trạng thái thành out_of_stock
+        $product->update(['status' => 'out_of_stock']);
 
         return $product;
     }

@@ -222,8 +222,13 @@ const PaymentByIDProduct = () => {
         totalAmount: totalAmount,
       };
       const response = await orderApi.getVoucher(payload);
-      if (response?.status === HttpCodeString.SUCCESS && response.data.status === "ACTIVE") {
-        setVoucher(response.data);
+      // Lấy dữ liệu voucher đúng dù response có lồng nhiều lớp
+      let voucherData = response.data;
+      if (voucherData.original && voucherData.original.data) {
+        voucherData = voucherData.original.data;
+      }
+      if (voucherData && voucherData.voucherPrice) {
+        setVoucher(voucherData);
         showToast({
           content: "Áp dụng voucher thành công!",
           duration: 5,
@@ -238,17 +243,24 @@ const PaymentByIDProduct = () => {
       }
     } catch (error: any) {
       let errorMessage = "Có lỗi xảy ra khi áp dụng voucher";
+      let errorCode = error.response?.data?.code
+        || error.response?.data?.messageKey
+        || error.response?.data?.original?.code
+        || error.response?.data?.original?.messageKey;
+      console.log('errorCode:', errorCode, 'errorMessage:', error.response?.data?.message);
       
-      if (error.response?.data?.code === 'voucher.expired') {
+      if (errorCode === 'voucher.expired') {
         errorMessage = "Voucher đã hết hạn sử dụng";
-      } else if (error.response?.data?.code === 'order.not.meet.min.value') {
+      } else if (errorCode === 'order.not.meet.min.value') {
         errorMessage = error.response?.data?.message || "Đơn hàng chưa đạt giá trị tối thiểu để áp dụng voucher";
-      } else if (error.response?.data?.code === 'voucher.usage.limit.reached') {
+      } else if (errorCode === 'voucher.usage.limit.reached') {
         errorMessage = error.response?.data?.message || "Voucher đã hết lượt sử dụng";
-      } else if (error.response?.data?.code === 'voucher.not.active') {
+      } else if (errorCode === 'voucher.not.active') {
         errorMessage = "Voucher không còn hoạt động";
-      } else if (error.response?.data?.code === 'voucher.not.found') {
+      } else if (errorCode === 'voucher.not.found') {
         errorMessage = "Voucher không tồn tại hoặc không hợp lệ";
+      } else if (errorCode === 'voucher.already.used') {
+        errorMessage = error.response?.data?.message || "Bạn chỉ có thể sử dụng voucher này 1 lần!";
       }
 
       showToast({

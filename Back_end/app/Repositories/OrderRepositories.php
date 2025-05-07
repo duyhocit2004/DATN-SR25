@@ -47,6 +47,15 @@ class OrderRepositories
                     return BaseResponse::failure('400', 'Product not found', 'product.not.found', []);
                 }
 
+                // Kiểm tra status sản phẩm
+                if ($productReal->status !== 'active') {
+                    \Log::error('Product not available', [
+                        'productId' => $product['productId'],
+                        'status' => $productReal->status
+                    ]);
+                    return BaseResponse::failure('400', 'Sản phẩm ' . $productReal->name . ' hiện không khả dụng', 'product.not.available', []);
+                }
+
                 $color = \App\Models\Color::where('code', $product['color'])
                     ->orWhere('name', $product['color'])
                     ->first();

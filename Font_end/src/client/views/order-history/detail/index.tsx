@@ -129,8 +129,13 @@ const OrderDetail = () => {
               {selectedOrder.products.map((product, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between gap-4 border-b pb-2"
+                  className={`flex items-center justify-between gap-4 border-b pb-2 relative ${product.status === 'out_of_stock' ? 'opacity-50' : ''}`}
                 >
+                  {product.status === 'out_of_stock' && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="bg-gray-500 text-white px-4 py-2 rounded">Sản phẩm đã hết hàng</span>
+                    </div>
+                  )}
                   <div className="product-info flex items-center gap-4">
                     <img
                       src={product.image}

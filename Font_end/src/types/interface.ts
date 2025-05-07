@@ -20,6 +20,7 @@ export interface IProduct {
   createdAt?: Dayjs;
   updatedAt?: Dayjs;
   deletedAt?: Dayjs;
+  status?: 'active' | 'out_of_stock' | 'deleted';
 }
 
 export interface IProductNew {
@@ -187,6 +188,7 @@ export interface IVoucher {
   startDate: Date | string;
   endDate: Date | string;
   minOrderValue: number;
+  maxProductPrice: number;
   description?: string;
   status?: string;
   createdAt?: Dayjs;
@@ -302,6 +304,7 @@ export interface IProductOrder {
   discount: number | null;
   orderId: number;
   productId: number;
+  status?: 'active' | 'out_of_stock' | 'deleted';
 }
 
 export interface IResponseOrder {

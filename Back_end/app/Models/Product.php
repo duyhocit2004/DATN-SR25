@@ -67,7 +67,8 @@ class Product extends Model
 		'quantity',
 		'quantity_sold',
 		'rate',
-		'discount'
+		'discount',
+		'status'
 	];
 
 	public function category()

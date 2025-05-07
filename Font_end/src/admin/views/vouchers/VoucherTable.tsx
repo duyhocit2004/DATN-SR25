@@ -86,6 +86,13 @@ const VoucherTable: React.FC = () => {
       render: (value: number) => `${value?.toLocaleString()} VND`,
     },
     {
+      title: "Giá sản phẩm tối đa",
+      dataIndex: "maxProductPrice",
+      key: "maxProductPrice",
+      minWidth: 150,
+      render: (value: number) => `${value?.toLocaleString()} VND`,
+    },
+    {
       title: "Số lượng",
       dataIndex: "quantity",
       key: "quantity",

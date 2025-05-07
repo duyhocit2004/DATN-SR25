@@ -90,6 +90,14 @@ const OrderDetail: React.FC = () => {
       title: "Tên sản phẩm",
       dataIndex: "name",
       minWidth: 250,
+      render: (value, record) => (
+        <div className={`relative ${record.status === 'out_of_stock' ? 'opacity-50' : ''}`}>
+          {record.status === 'out_of_stock' && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="bg-gray-500 text-white px-4 py-2 rounded">Sản phẩm đã hết hàng</span>
+            </div>
+          )}
+          {value}
     },
     {
       title: "Biến thể",

@@ -283,21 +283,24 @@ const Payment = () => {
       const payload = {
         voucherCode: discountCode,
         totalAmount: totalAmount,
+        productPrice: Math.max(...selectedItems.map(item => item.priceRegular)) // Get highest product price
       };
       const response = await orderApi.getVoucher(payload);
-      if (
-        response?.status === HttpCodeString.SUCCESS &&
-        response.data.status === "ACTIVE"
-      ) {
-        if (response.data.minOrderValue && totalAmount < response.data.minOrderValue) {
+      // Lấy dữ liệu voucher đúng dù response có lồng nhiều lớp
+      let voucherData = response.data;
+      if (voucherData.original && voucherData.original.data) {
+        voucherData = voucherData.original.data;
+      }
+      if (voucherData && voucherData.voucherPrice) {
+        if (voucherData.minOrderValue && totalAmount < voucherData.minOrderValue) {
           showToast({
-            content: `Đơn hàng chưa đạt giá trị tối thiểu ${response.data.minOrderValue.toLocaleString()} đ để áp dụng voucher!`,
+            content: `Đơn hàng chưa đạt giá trị tối thiểu ${voucherData.minOrderValue.toLocaleString()} đ để áp dụng voucher!`,
             duration: 5,
             type: "error",
           });
           return;
         }
-        setVoucher(response.data);
+        setVoucher(voucherData);
         showToast({
           content: "Áp dụng voucher thành công!",
           duration: 5,
@@ -310,6 +313,35 @@ const Payment = () => {
           type: "error",
         });
       }
+    } catch (error: any) {
+      let errorMessage = "Có lỗi xảy ra khi áp dụng voucher";
+      let errorCode = error.response?.data?.code
+        || error.response?.data?.messageKey
+        || error.response?.data?.original?.code
+        || error.response?.data?.original?.messageKey;
+      console.log('errorCode:', errorCode, 'errorMessage:', error.response?.data?.message);
+      
+      if (errorCode === 'voucher.expired') {
+        errorMessage = "Voucher đã hết hạn sử dụng";
+      } else if (errorCode === 'order.not.meet.min.value') {
+        errorMessage = error.response?.data?.message || "Đơn hàng chưa đạt giá trị tối thiểu để áp dụng voucher";
+      } else if (errorCode === 'voucher.usage.limit.reached') {
+        errorMessage = error.response?.data?.message || "Voucher đã hết lượt sử dụng";
+      } else if (errorCode === 'voucher.not.active') {
+        errorMessage = "Voucher không còn hoạt động";
+      } else if (errorCode === 'voucher.not.found') {
+        errorMessage = "Voucher không tồn tại hoặc không hợp lệ";
+      } else if (errorCode === 'voucher.already.used') {
+        errorMessage = error.response?.data?.message || "Bạn chỉ có thể sử dụng voucher này 1 lần!";
+      } else if (errorCode === 'voucher.price.exceeded') {
+        errorMessage = "Giá sản phẩm vượt quá giới hạn của voucher";
+      }
+
+      showToast({
+        content: errorMessage,
+        duration: 5,
+        type: "error",
+      });
     } finally {
       setLoadingApplyVoucher(false);
     }

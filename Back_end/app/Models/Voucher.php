@@ -8,6 +8,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Voucher
@@ -34,7 +35,8 @@ class Voucher extends Model
 		'used' => 'int',
 		'voucher_price' => 'float',
 		'start_date' => 'datetime',
-		'end_date' => 'datetime'
+		'end_date' => 'datetime',
+		'max_product_price' => 'float'
 	];
 
 	protected $fillable = [
@@ -46,6 +48,7 @@ class Voucher extends Model
 		'end_date',
 		'status',
 		'min_order_value',
+		'max_product_price',
 	];
 	 // Thêm hàm kiểm tra hết hạn
 	 public function isExpired()
@@ -61,6 +64,16 @@ class Voucher extends Model
 		 }
  
 		 return false;
+	 }
+
+	 public function voucherUsages()
+	 {
+		 return $this->hasMany(VoucherUsage::class);
+	 }
+
+	 public function hasUserUsed($userId)
+	 {
+		 return $this->voucherUsages()->where('user_id', $userId)->exists();
 	 }
 
 }
