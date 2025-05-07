@@ -43,6 +43,8 @@ class OrderApi extends BaseApi<IOrder> {
       })
       .then((res) => res.data);
   };
+
+
   refundOrder = (payload: { 
     orderId: number, 
     refundMethod?: string,
@@ -57,18 +59,18 @@ class OrderApi extends BaseApi<IOrder> {
       })
       .then((res) => res.data);
   };
+
+
   getVoucher = (payload: any): Promise<IResponseData<IVoucher>> => {
     return axiosClient
       .post(`${this.uri}/getVoucher`, payload)
       .then((res) => res.data);
   };
-  cancelOrderByClient = (payload: { orderId: number }): Promise<IResponseData<IOrder>> => {
+
+
+   cancelOrderByClient = (payload: any): Promise<IResponseData<IResponseOrder>> => {
     return axiosClient
-      .post(`${this.uri}/cancelOrderByClient`, payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      })
+      .post(`${this.uri}/cancelOrderByClient`, payload)
       .then((res) => res.data);
   };
   
