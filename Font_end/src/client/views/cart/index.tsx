@@ -292,17 +292,21 @@ const Cart = () => {
       ),
       dataIndex: "select",
       key: "select",
+      width: 60,
+      fixed: 'left',
       render: (_: any, record: ICart) => (
-        <Checkbox
-          checked={selectedItems.includes(
-            record.id?.toString() || `${record.productId}-${record.size}-${record.color}`
-          )}
-          onChange={() =>
-            handleCheckboxChange(
+        <div style={{ position: 'relative', zIndex: 30 }}>
+          <Checkbox
+            checked={selectedItems.includes(
               record.id?.toString() || `${record.productId}-${record.size}-${record.color}`
-            )
-          }
-        />
+            )}
+            onChange={() =>
+              handleCheckboxChange(
+                record.id?.toString() || `${record.productId}-${record.size}-${record.color}`
+              )
+            }
+          />
+        </div>
       ),
     });
     if (!isMobile) {
@@ -328,27 +332,34 @@ const Cart = () => {
         key: "name",
         responsive: ["xs", "sm", "md", "lg"],
         render: (_: any, record: ICart) => (
-          <div className="name-are">
-            <div
-              className="name mb-1 font-semibold text-xl cursor-pointer text-blue-600 hover:underline"
-              onClick={() => navigate(`/products/${record.product?.id}`)}
-            >
-              {record?.product?.name}
-            </div>
-            <div className="size mb-1 text-gray-500">
-              Kích thước: {record?.size}
-            </div>
-            <div className="color flex gap-2 text-gray-500 ">
-              <span>Màu:</span>
+          <div className="relative" style={{ minHeight: 80 }}>
+            {record.product?.status === 'out_of_stock' && (
+              <div style={{position: 'absolute', inset: 0, zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none'}}>
+                <span className="bg-gray-500 text-white px-6 py-3 rounded text-lg font-semibold shadow">Sản phẩm đã hết hàng</span>
+              </div>
+            )}
+            <div className={`name-are ${record.product?.status === 'out_of_stock' ? 'opacity-50' : ''}`}> 
               <div
-                className="color w-5 h-5 shrink-0 rounded-[50%]"
-                style={{
-                  backgroundColor: record?.color,
-                  border: record?.color?.toLowerCase() === "#ffffff" || record?.color?.toLowerCase() === "white"
-                    ? "2px solid #ccc"
-                    : "none"
-                }}
-              ></div>
+                className={`name mb-1 font-semibold text-xl ${record.product?.status !== 'out_of_stock' ? 'cursor-pointer text-blue-600 hover:underline' : 'text-gray-400'}`}
+                onClick={() => record.product?.status !== 'out_of_stock' && navigate(`/products/${record.product?.id}`)}
+              >
+                {record?.product?.name}
+              </div>
+              <div className="size mb-1 text-gray-500">
+                Kích thước: {record?.size}
+              </div>
+              <div className="color flex gap-2 text-gray-500 ">
+                <span>Màu:</span>
+                <div
+                  className="color w-5 h-5 shrink-0 rounded-[50%]"
+                  style={{
+                    backgroundColor: record?.color,
+                    border: record?.color?.toLowerCase() === "#ffffff" || record?.color?.toLowerCase() === "white"
+                      ? "2px solid #ccc"
+                      : "none"
+                  }}
+                ></div>
+              </div>
             </div>
           </div>
         ),
@@ -382,7 +393,8 @@ const Cart = () => {
             min={1}
             max={record?.product?.quantity || 1}
             value={record?.quantity}
-            onChange={(value) => updateQuantity(record, value || 1)}
+            onChange={() => {}}
+            disabled={true}
           />
         ),
       },
@@ -401,7 +413,7 @@ const Cart = () => {
         key: "action",
         fixed: "right",
         render: (_: any, record: ICart) => (
-          <div className="flex gap-2">
+          <div className="flex gap-2" style={{ position: 'relative', zIndex: 30 }}>
             <Popconfirm
               title="Bạn có chắc muốn xóa sản phẩm này?"
               onConfirm={() => removeFromCart(record)}
@@ -412,23 +424,6 @@ const Cart = () => {
                 <Button danger icon={<DeleteOutlined />} />
               </Tooltip>
             </Popconfirm>
-            {/* <Tooltip title="Mua ngay">
-              <Button
-                type="primary"
-                onClick={() =>
-                  navigate("/payment", {
-                    state: {
-                      productId: record.product?.id,
-                      quantity: record.quantity,
-                      size: record.size,
-                      color: record.color,
-                    },
-                  })
-                }
-              >
-                Mua ngay
-              </Button>
-            </Tooltip> */}
           </div>
         ),
       },
@@ -440,6 +435,20 @@ const Cart = () => {
     if (selectedItems.length === 0) {
       showToast({
         content: "Vui lòng chọn ít nhất một sản phẩm để mua!",
+        duration: 5,
+        type: "error",
+      });
+      return;
+    }
+    // Không cho phép mua sản phẩm hết hàng
+    const hasOutOfStockItems = cartList.some(
+      (item) =>
+        selectedItems.includes(item.id?.toString() || `${item.productId}-${item.size}-${item.color}`) &&
+        item.product?.status === 'out_of_stock'
+    );
+    if (hasOutOfStockItems) {
+      showToast({
+        content: "Không thể mua sản phẩm đã hết hàng!",
         duration: 5,
         type: "error",
       });
@@ -470,6 +479,7 @@ const Cart = () => {
               rowKey={(record) => record.id?.toString() || `${record.productId}-${record.size}-${record.color}`}
               dataSource={cartList}
               pagination={false}
+              rowClassName={(record) => record.product?.status === 'out_of_stock' ? 'opacity-50' : ''}
             />
           </div>
 

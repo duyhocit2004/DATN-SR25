@@ -16,7 +16,8 @@ interface IVoucherForm {
   startDate: Date | null;
   endDate: Date | null;
   description: string;
-  minOrderValue: string| null;
+  minOrderValue: string | null;
+  maxProductPrice: string | null;
 }
 
 interface IProps {
@@ -32,7 +33,8 @@ const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
     endDate: null,
     voucherPrice: null,
     description: "",
-    minOrderValue : null,
+    minOrderValue: null,
+    maxProductPrice: null,
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -45,7 +47,8 @@ const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
       endDate: null,
       voucherPrice: null,
       description: "",
-      minOrderValue : null,
+      minOrderValue: null,
+      maxProductPrice: null,
     }); // Reset state
     form.resetFields(); // Reset form
   };
@@ -65,6 +68,7 @@ const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
       startDate: formData.startDate ? dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss") : null,
       endDate: formData.endDate ? dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss") : null,
       min_order_value: form.getFieldValue('minOrderValue'),
+      max_product_price: form.getFieldValue('maxProductPrice'),
       description: formData.description,
     };
 
@@ -146,6 +150,19 @@ const AddVoucherModal: React.FC<IProps> = ({ refreshData }) => {
           label="Giá trị đơn tối thiểu"
           name="minOrderValue"
           rules={[{ required: true, message: "Vui lòng nhập giá trị tối thiểu" }]}
+        >
+          <InputNumber
+            min={0}
+            className="!w-full"
+            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+            addonAfter="VND"
+          />
+        </Form.Item>
+        <Form.Item
+          label="Giá sản phẩm tối đa"
+          name="maxProductPrice"
+          rules={[{ required: true, message: "Vui lòng nhập giá sản phẩm tối đa" }]}
         >
           <InputNumber
             min={0}

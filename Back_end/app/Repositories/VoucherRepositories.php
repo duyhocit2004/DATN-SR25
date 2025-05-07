@@ -4,24 +4,94 @@ namespace App\Repositories;
 
 use App\Helpers\BaseResponse;
 use App\Models\Voucher;
+use App\Models\VoucherUsage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class VoucherRepositories
 {
     public function getVoucher(Request $request)
     {
         $voucherCode = $request->input('voucherCode');
-        $voucher = Voucher::query()->where('code', '=', $voucherCode)->orderBy('id','desc')->first();
+        $userId = $request->input('userId');
+        
+        $voucher = Voucher::query()
+            ->where('code', '=', $voucherCode)
+            ->where('status', '=', 'ACTIVE')
+            ->orderBy('id','desc')
+            ->first();
+
+        if (!$voucher) {
+            return BaseResponse::failure('404', 'Voucher not found', 'voucher.not.found', []);
+        }
+
+        // Check if user has already used this voucher
+        if ($voucher->hasUserUsed($userId)) {
+            return BaseResponse::failure('400', 'You have already used this voucher', 'voucher.already.used', []);
+        }
+
         return $voucher;
+    }
+
+    public function applyVoucher(Request $request)
+    {
+        $voucherCode = $request->input('voucherCode');
+        $userId = $request->input('userId');
+        $productPrice = $request->input('productPrice');
+
+        $voucher = Voucher::query()
+            ->where('code', '=', $voucherCode)
+            ->where('status', '=', 'ACTIVE')
+            ->first();
+
+        if (!$voucher) {
+            return BaseResponse::failure('404', 'Voucher not found', 'voucher.not.found', []);
+        }
+
+        // Kiểm tra user đã dùng voucher chưa, nếu rồi thì trả về lỗi business luôn, KHÔNG vào transaction
+        if ($voucher->hasUserUsed($userId)) {
+            return BaseResponse::failure('400', 'Bạn chỉ có thể sử dụng voucher này 1 lần!', 'voucher.already.used', []);
+        }
+
+        if ($voucher->max_product_price > 0 && $productPrice > $voucher->max_product_price) {
+            return BaseResponse::failure('400', 'Product price exceeds voucher limit', 'voucher.price.exceeded', []);
+        }
+
+        DB::beginTransaction();
+        try {
+            VoucherUsage::create([
+                'voucher_id' => $voucher->id,
+                'user_id' => $userId
+            ]);
+            $voucher->increment('used');
+            DB::commit();
+            $voucher = $voucher->fresh();
+            return BaseResponse::success([
+                'id' => $voucher->id,
+                'code' => $voucher->code,
+                'voucherPrice' => $voucher->voucher_price,
+                'quantity' => $voucher->quantity,
+                'used' => $voucher->used,
+                'startDate' => $voucher->start_date,
+                'endDate' => $voucher->end_date,
+                'minOrderValue' => $voucher->min_order_value,
+                'maxProductPrice' => $voucher->max_product_price,
+                'status' => $voucher->status,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Apply voucher failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return BaseResponse::failure('500', 'Failed to apply voucher', 'voucher.apply.failed', []);
+        }
     }
 
     public function addVoucher(Request $request)
     {
-
         $voucher = Voucher::query()->where('code', '=', $request->input('voucherCode'))->first();
         if ($voucher) {
             return BaseResponse::failure('400', 'voucher is exist', 'voucher.is.exist', []);
         }
+
         $voucher = Voucher::create([
             'quantity' => $request->input('quantity'),
             'code' => $request->input('voucherCode'),
@@ -29,6 +99,7 @@ class VoucherRepositories
             'start_date' => $request->input('startDate'),
             'end_date' => $request->input('endDate'),
             'min_order_value' => $request->input('min_order_value', 0),
+            'max_product_price' => $request->input('max_product_price', 0),
             'status' => 'INACTIVE',
             'used' => 0,
         ]);
@@ -53,6 +124,7 @@ class VoucherRepositories
             'end_date' => $request->input('endDate', $voucher->end_date),
             'status' => $request->input('status', $voucher->status),
             'min_order_value' => $request->input('minOrderValue', $voucher->min_order_value),
+            'max_product_price' => $request->input('maxProductPrice', $voucher->max_product_price),
         ]);
 
         return $voucher;
@@ -60,17 +132,17 @@ class VoucherRepositories
 
     public function deleteVoucher(Request $request)
     {
-
         $voucher = Voucher::find($request->input('id'));
 
         if (!$voucher) {
-            BaseResponse::failure('400', 'voucher not found', 'voucher.not.found', []);
+            return BaseResponse::failure('400', 'voucher not found', 'voucher.not.found', []);
         }
 
         $voucher->delete();
 
         return $voucher;
     }
+
     public function toggleStatus(Request $request)
     {
         $voucher = Voucher::find($request->input('id'));
@@ -100,7 +172,6 @@ class VoucherRepositories
         return count($expiredVouchers);
     }
 
-
     public function getAllVoucher(Request $request)
     {
         $status = $request->input('status');
@@ -108,7 +179,7 @@ class VoucherRepositories
         $quantity = $request->input('quantity');
         $used = $request->input('used');
         $voucherPrice = $request->input('voucherPrice');
-        $startDate = $request->input(key: 'startDate');
+        $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
         $perPage = $request->input('pageSize', 10);
         $page = $request->input('pageNum', 1);
@@ -136,8 +207,8 @@ class VoucherRepositories
             $query->whereDate('end_date', '<=', $endDate);
         }
 
-        $users = $query->paginate($perPage, ['*'], 'page', $page);
-        return $users;
+        $vouchers = $query->paginate($perPage, ['*'], 'page', $page);
+        return $vouchers;
     }
 
     public function findByCode(string $code)
@@ -145,4 +216,11 @@ class VoucherRepositories
         return Voucher::where('code', $code)->first();
     }
 
+    public function recordVoucherUsage($voucherId, $userId)
+    {
+        return VoucherUsage::create([
+            'voucher_id' => $voucherId,
+            'user_id' => $userId
+        ]);
+    }
 }

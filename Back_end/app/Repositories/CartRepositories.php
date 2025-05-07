@@ -19,7 +19,8 @@ class CartRepositories
                 $query = Product::select('products.*', DB::raw('CAST(product_variants.quantity AS UNSIGNED) as variantQuantity'))
                     ->join('product_variants', 'product_variants.product_id', '=', 'products.id')
                     ->join('colors', 'colors.id', '=', 'product_variants.color_id')
-                    ->join('sizes', 'sizes.id', '=', 'product_variants.size_id');
+                    ->join('sizes', 'sizes.id', '=', 'product_variants.size_id')
+                    ->where('products.status', 'active');
 
                 $result = $query->where('product_variants.product_id', $item['productId'])
                     ->where('colors.code', $item['color'])
@@ -59,6 +60,11 @@ class CartRepositories
         $productReal = Product::where('id', $request->input('productId'))->first();
         if (empty($productReal)) {
             BaseResponse::failure('400', 'Product not found', 'product.not.found', []);
+        }
+
+        // Kiểm tra status sản phẩm
+        if ($productReal->status !== 'active') {
+            BaseResponse::failure('400', 'Sản phẩm này hiện không khả dụng', 'product.not.available', []);
         }
 
         // Lấy color name từ color code

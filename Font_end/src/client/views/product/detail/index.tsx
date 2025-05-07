@@ -131,6 +131,15 @@ const ProductDetail = () => {
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
+    if (productDetail?.status === 'out_of_stock') {
+      showToast({
+        content: "Sản phẩm đã hết hàng!",
+        duration: 5,
+        type: "error",
+      });
+      return;
+    }
+
     if (token) {
       // 🟢 Nếu user đã login → Gọi API cập nhật giỏ hàng
       try {
@@ -169,6 +178,16 @@ const ProductDetail = () => {
 
   const handleBuyNow = async (e: React.MouseEvent) => {
     e.stopPropagation();
+
+    if (productDetail?.status === 'out_of_stock') {
+      showToast({
+        content: "Sản phẩm đã hết hàng!",
+        duration: 5,
+        type: "error",
+      });
+      return;
+    }
+
     if (!selectedColor || !selectedSize || quantity === 0) {
       showToast({
         content: "Vui lòng chọn đầy đủ thông tin sản phẩm!",
@@ -191,6 +210,7 @@ const ProductDetail = () => {
         priceRegular: productDetail?.priceRegular,
         priceSale: productDetail?.priceSale,
         discount: productDetail?.discount,
+        status: productDetail?.status
       }
     };
 
@@ -385,32 +405,34 @@ const ProductDetail = () => {
                     max={maxQuantity || 1}
                     value={quantity}
                     onChange={handleQuantityChange}
-                    disabled={selectedSizeLoading || sizesLoading}
+                    disabled={selectedSizeLoading || sizesLoading || productDetail?.status === 'out_of_stock'}
                   />
                   <div className="flex items-center gap-2 mt-6 mb-6">
                     <button
-                      className={`bg-red-500 border-none text-white px-3 py-2 rounded-[20px] font-semibold ${maxQuantity > 0 && quantity > 0 && !selectedSizeLoading
-                        ? "hover:bg-amber-400 hover:text-black cursor-pointer"
-                        : "cursor-not-allowed !bg-gray-300"
-                        }`}
-                      disabled={maxQuantity === 0 || quantity === 0 || selectedSizeLoading}
+                      className={`bg-red-500 border-none text-white px-3 py-2 rounded-[20px] font-semibold ${
+                        maxQuantity > 0 && quantity > 0 && !selectedSizeLoading && productDetail?.status !== 'out_of_stock'
+                          ? "hover:bg-amber-400 hover:text-black cursor-pointer"
+                          : "cursor-not-allowed !bg-gray-300"
+                      }`}
+                      disabled={maxQuantity === 0 || quantity === 0 || selectedSizeLoading || productDetail?.status === 'out_of_stock'}
                       onClick={handleAddToCart}
                     >
                       Thêm vào giỏ
                     </button>
                     <button
-                      className={`bg-blue-500 border-none text-white px-3 py-2 rounded-[20px] font-semibold ${maxQuantity > 0 && quantity > 0 && !selectedSizeLoading
-                        ? "hover:bg-blue-600 cursor-pointer"
-                        : "cursor-not-allowed !bg-gray-300"
-                        }`}
-                      disabled={maxQuantity === 0 || quantity === 0 || selectedSizeLoading}
+                      className={`bg-blue-500 border-none text-white px-3 py-2 rounded-[20px] font-semibold ${
+                        maxQuantity > 0 && quantity > 0 && !selectedSizeLoading && productDetail?.status !== 'out_of_stock'
+                          ? "hover:bg-blue-600 cursor-pointer"
+                          : "cursor-not-allowed !bg-gray-300"
+                      }`}
+                      disabled={maxQuantity === 0 || quantity === 0 || selectedSizeLoading || productDetail?.status === 'out_of_stock'}
                       onClick={handleBuyNow}
                     >
                       Mua ngay
                     </button>
-                    {!sizesLoading && !selectedSizeLoading && maxQuantity === 0 && selectedColor && selectedSize && (
-                      <div className="out-of-stock bg-black text-white h-10 flex justify-center items-center p-3">
-                        Hết hàng
+                    {productDetail?.status === 'out_of_stock' && (
+                      <div className="out-of-stock bg-gray-500 text-white h-10 flex justify-center items-center p-3 rounded-[20px]">
+                        Sản phẩm đã hết hàng
                       </div>
                     )}
                     <div

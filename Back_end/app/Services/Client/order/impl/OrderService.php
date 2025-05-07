@@ -93,6 +93,7 @@ class OrderService implements IOrderService
                             'color' => $product->color,
                             'size' => $product->size,
                             'quantity' => $product->quantity_order,
+                            'status' => $product->product ? $product->product->status : 'active',
                         ];
                     }) : [],
                 'createdAt' => $order->created_at,
@@ -140,6 +141,7 @@ class OrderService implements IOrderService
                             'color' => $product->color,
                             'size' => $product->size,
                             'quantity' => $product->quantity_order,
+                            'status' => $product->product ? $product->product->status : 'active',
                         ];
                     }) : [],
                 'createdAt' => $order->created_at,
@@ -187,6 +189,7 @@ class OrderService implements IOrderService
                         'color' => $product->color,
                         'size' => $product->size,
                         'quantity' => $product->quantity_order,
+                        'status' => $product->product ? $product->product->status : 'active',
                     ];
                 }) : [],
                 'statusHistories' => $order->statusHistories ? $order->statusHistories->map(function ($history) {
@@ -223,12 +226,20 @@ class OrderService implements IOrderService
 
     public function getVoucher(Request $request)
     {
-        $list = $this->voucherRepositories->getVoucher($request);
-        if (!empty($list)) {
-            return $list;
-        } else {
-            BaseResponse::failure(400, '', 'voucher.not.found', []);
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user)) {
+            return BaseResponse::failure(401, 'Unauthorized', 'unauthorized', []);
         }
+
+        $request->merge(['userId' => $user->id]);
+        // Lấy response từ repository
+        $response = $this->voucherRepositories->applyVoucher($request);
+        // Nếu là instance của Illuminate\Http\JsonResponse thì trả về luôn
+        if ($response instanceof \Illuminate\Http\JsonResponse) {
+            return $response;
+        }
+        // Nếu là array thì trả về dạng json
+        return response()->json($response);
     }
 
     public function updateOrder(Request $request)

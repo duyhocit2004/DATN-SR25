@@ -30,6 +30,30 @@ class ProductAdminController extends Controller
     public function deleteProduct(Request $request)
     {
         $products = $this->adminProductService->deleteProduct($request);
+        
+        // Clear all product-related cache
+        $cacheKeys = [
+            'products:all:*',
+            'product:*',
+            'product:detail:*',
+            'products:top:discounted',
+            'products:top:newest',
+            'products:top:best-selling',
+            'products:related:*'
+        ];
+        
+        foreach ($cacheKeys as $pattern) {
+            $keys = \Cache::getStore()->get($pattern);
+            if ($keys) {
+                foreach ($keys as $key) {
+                    \Cache::forget($key);
+                }
+            }
+        }
+        
+        // Clear all cache as fallback
+        \Cache::flush();
+        
         return BaseResponse::success($products);
     }
 

@@ -123,7 +123,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
   return (
     <Card
       hoverable
-      className="relative rounded-lg overflow-hidden group transition-all border-none shadow-lg h-[500px] flex flex-col"
+      className={`relative rounded-lg overflow-hidden group transition-all border-none shadow-lg h-[500px] flex flex-col ${product.status === 'out_of_stock' ? 'opacity-50' : ''}`}
       styles={{ body: { padding: 0, height: '100%', display: 'flex', flexDirection: 'column' } }}
     >
       {/* Wrapper chứa ảnh và badge giảm giá */}
@@ -133,6 +133,15 @@ const ProductItem = ({ product }: ProductItemProps) => {
           <div className="absolute top-2 right-2 z-10 transition-transform duration-300 group-hover:scale-110">
             <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded animate-bounce">
               -{discountValue}%
+            </span>
+          </div>
+        )}
+
+        {/* Badge hết hàng */}
+        {product.status === 'out_of_stock' && (
+          <div className="absolute top-2 left-2 z-10">
+            <span className="bg-gray-500 text-white text-xs font-bold px-2 py-1 rounded">
+              Hết hàng
             </span>
           </div>
         )}
