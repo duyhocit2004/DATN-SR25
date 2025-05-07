@@ -53,7 +53,7 @@ export const OrderStatusDataClient = [
   },
   {
     value: OrderStatus.CANCEL_CONFIRM,
-    label: "Đã hủy",
+    label: "Đã hủy xác nhận",
   },
   {
     value: OrderStatus.PROCESSING,
@@ -148,6 +148,10 @@ export const RoleData = [
   {
     value: Role.ADMIN,
     label: "Quản trị viên",
+  },
+  {
+    value: Role.MANAGER,
+    label: "Quản lý",
   },
   {
     value: Role.CLIENT,

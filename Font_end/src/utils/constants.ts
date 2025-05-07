@@ -77,6 +77,7 @@ export const Gender = {
 
 export const Role = {
   ADMIN: "admin",
+  MANAGER: "manager",
   CLIENT: "customer",
 };
 
