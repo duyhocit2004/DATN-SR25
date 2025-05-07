@@ -2,6 +2,7 @@
 
 namespace App\Services\Client\order\impl;
 
+use App\Events\NewOrderCreated;
 use App\Helpers\BaseResponse;
 use App\Repositories\OrderRepositories;
 use App\Repositories\VoucherRepositories;
@@ -48,6 +49,12 @@ class OrderService implements IOrderService
 
         // Gửi dữ liệu đến repository
         $order = $this->orderRepositories->addOrder($validatedData);
+        
+        // Broadcast new order event
+        if ($order) {
+            event(new NewOrderCreated($order));
+        }
+        
         return $order;
     }
 
@@ -303,7 +310,7 @@ class OrderService implements IOrderService
         $order = $this->orderRepositories->cancelOrderByClient($orderId);
 
         // Kiểm tra đơn hàng có tồn tại và thuộc về user
-        if (!$order || $order->users_id !== $user->id) {
+        if (!$order || $order->user_id !== $user->id) {
             return BaseResponse::failure(404, 'Không tìm thấy đơn hàng hoặc không thuộc quyền sở hữu.', 'order.not.found', []);
         }
 

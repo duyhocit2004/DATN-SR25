@@ -158,8 +158,9 @@ class OrderRepositories
 
             DB::beginTransaction();
 
+            $userid = auth()->user() ? auth()->user()->id : null;
             $order = Order::create([
-                'users_id' => $data['users_id'] ?? null,
+                'users_id' => $userid ?? null,
                 'code' => 'Od' . Str::random(4),
                 'customer_name' => $data['customerName'],
                 'email' => $data['email'] ?? 'default@email.com',
@@ -649,7 +650,7 @@ class OrderRepositories
             ]);
 
             DB::commit();
-            return BaseResponse::success('Hủy đơn hàng thành công', 'order.cancelled.success', $order);
+            return $order;
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Cancel order failed', ['error' => $e->getMessage()]);
