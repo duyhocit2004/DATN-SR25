@@ -84,10 +84,9 @@ class OrderRepositories
                 }
 
                 if ($productVariant['quantity'] < $product['quantity']) {
-                    return BaseResponse::failure(
-                        '400',
+                    return BaseResponse::failure('400', 
                         'Sản phẩm ' . $productReal->name . ' (Màu: ' . $color->name . ', Size: ' . $size->size . ') đã hết hàng hoặc không đủ số lượng.',
-                        'product.out.of.stock',
+                        'product.out.of.stock', 
                         [
                             'productName' => $productReal->name,
                             'color' => $color->name,
@@ -105,13 +104,13 @@ class OrderRepositories
             }
 
             // Validate voucher                 
-            if (!empty($data['voucher'])) {
+            if (!empty($data['voucher'])) { 
                 $voucher = Voucher::where('code', $data['voucher'])->first();
                 if ($voucher) {
                     if ($voucher->end_date && $voucher->end_date < now()) {
                         return BaseResponse::failure('400', 'Voucher đã hết hạn sử dụng', 'voucher.expired', []);
                     }
-                    if ($voucher->min_order_value && $totalAmount < $voucher->min_order_value) {
+                     if ($voucher->min_order_value && $totalAmount < $voucher->min_order_value) {
                         return BaseResponse::failure('400', 'Đơn hàng chưa đạt giá trị tối thiểu ' . number_format($voucher->min_order_value) . ' VNĐ để áp dụng voucher', 'order.not.meet.min.value', []);
                     }
                     if ($voucher->used >= $voucher->quantity) {
@@ -126,7 +125,7 @@ class OrderRepositories
                     }
                     $voucherAmount = $voucher->voucher_price;
                     $totalAmount -= $voucherAmount;
-
+                    
                     // Update voucher usage count
                     $voucher->update([
                         'used' => $voucher->used + 1,
@@ -208,14 +207,14 @@ class OrderRepositories
 
                 // Update product variant quantity
                 $productVariant = ProductVariant::where('product_id', $product['productId'])
-                    ->where('color_id', function ($query) use ($product) {
+                    ->where('color_id', function($query) use ($product) {
                         $query->select('id')
                             ->from('colors')
                             ->where('code', $product['color'])
                             ->orWhere('name', $product['color'])
                             ->first();
                     })
-                    ->where('size_id', function ($query) use ($product) {
+                    ->where('size_id', function($query) use ($product) {
                         $query->select('id')
                             ->from('sizes')
                             ->where('size', $product['size'])
@@ -355,7 +354,7 @@ class OrderRepositories
         if (!empty($sortType)) {
             $query->orderByRaw('IFNULL(date, status) ' . $sortType);
         }
-        $orders = $query->orderBy('created_at', 'desc')->paginate($perPage, ['*'], 'page', $page);
+        $orders = $query->orderBy('created_at','desc')->paginate($perPage, ['*'], 'page', $page);
         return $orders;
 
     }
@@ -656,6 +655,5 @@ class OrderRepositories
             \Log::error('Cancel order failed', ['error' => $e->getMessage()]);
             return BaseResponse::failure('500', 'Đã xảy ra lỗi khi hủy đơn hàng', 'order.cancel.error', []);
         }
-    }
-
+}
 }
