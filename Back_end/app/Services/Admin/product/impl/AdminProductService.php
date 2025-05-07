@@ -38,7 +38,7 @@ class AdminProductService implements IAdminProductService
 
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
@@ -152,7 +152,7 @@ class AdminProductService implements IAdminProductService
         try {
             $user = JWTAuth::parseToken()->authenticate();
             $userId = $user->id;
-            if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
                 JWTAuth::invalidate(JWTAuth::getToken());
                 return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
             }
@@ -360,7 +360,7 @@ class AdminProductService implements IAdminProductService
     public function deleteProduct(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }

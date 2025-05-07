@@ -33,7 +33,7 @@ class Comment extends Model
 		'parent_id' => 'int',
 		'product_id' => 'int',
 		'rate' => 'float',
-		'order_id' => 'int'
+		// 'order_id' => 'int'
 	];
 
 	protected $fillable = [
@@ -42,7 +42,7 @@ class Comment extends Model
 		'content',
 		'rate',
 		'phone_number',
-		'order_id',
+		// 'order_id',
 		// 'created_at' => 'datetime',
 		// 'updated_at' => 'datetime'
 		// 'created_at' => 'datetime:Y-m-d H:i:s',

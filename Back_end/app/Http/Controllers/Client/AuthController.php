@@ -32,11 +32,7 @@ class AuthController extends Controller
         return BaseResponse::success($dataResponse);
     }
 
-    public function updateUserAdmin(Request $request): JsonResponse
-    {
-        $dataResponse = $this->authService->updateUserAdmin($request);
-        return BaseResponse::success($dataResponse);
-    }
+    
 
     public function updateUser(Request $request): JsonResponse
     {

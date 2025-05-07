@@ -2,6 +2,7 @@
 
 namespace App\Services\Client\order\impl;
 
+use App\Events\NewOrderCreated;
 use App\Helpers\BaseResponse;
 use App\Models\Order;
 use App\Models\OrderStatusHistory;
@@ -53,6 +54,12 @@ class OrderService implements IOrderService
 
         // Gửi dữ liệu đến repository
         $order = $this->orderRepositories->addOrder($validatedData);
+        
+        // Broadcast new order event
+        if ($order) {
+            event(new NewOrderCreated($order));
+        }
+        
         return $order;
     }
 
@@ -299,6 +306,7 @@ class OrderService implements IOrderService
 
     public function cancelOrderByClient(Request $request)
     {
+
         try {
             $user = JWTAuth::parseToken()->authenticate();
             if (!$user) {
@@ -368,6 +376,7 @@ class OrderService implements IOrderService
                 'trace' => $e->getTraceAsString()
             ]);
             return BaseResponse::failure(500, 'Có lỗi xảy ra khi hủy đơn hàng', 'order.cancel.error', []);
+
         }
     }
 
