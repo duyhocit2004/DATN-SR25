@@ -106,7 +106,7 @@ const OrderTable = () => {
 
   useEffect(() => {
     dispatch(fetchOrders({ phoneNumber: phoneNumber }));
-  }, []);
+  }, [dispatch, phoneNumber, window.location.pathname]);
 
   const showOrderDetail = (order: IOrder) => {
     dispatch(setSelectedOrder(order));

@@ -1,8 +1,9 @@
 <?php
 
 return [
-    'USER_TYPE_ADMIN' => 'admin',
-    'USER_TYPE_CUSTOMER' => 'customer',
+    'USER_TYPE_ADMIN' => 'Quản trị viên',
+    'USER_TYPE_MANAGER' => 'Quản lý',
+    'USER_TYPE_CUSTOMER' => 'Khách hàng',
     'ORDER_STATS_UNCONFIRMED' => 'Unconfirmed',
     'ORDER_STATS_DELIVERED' => 'Delivered',
     'STATUS_ACTIVE' => 'ACTIVE',
