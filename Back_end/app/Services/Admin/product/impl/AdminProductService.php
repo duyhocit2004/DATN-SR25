@@ -369,4 +369,7 @@ class AdminProductService implements IAdminProductService
         return $category;
     }
 
+    public function getStatusProductFlase(){
+        return $this->productRepositories->getStatusProductFlase();
+    }
 }

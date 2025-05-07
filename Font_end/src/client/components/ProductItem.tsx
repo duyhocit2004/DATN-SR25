@@ -168,7 +168,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
             className={`cursor-pointer flex-1 h-[40px] border-l text-white uppercase bg-blue-800 hover:bg-gray-900 transition-all`}
             onClick={goToDetail}
           >
-            Select Options
+            Tùy Chọn
           </button>
         </div>
       </div>

@@ -69,9 +69,21 @@ class OrderApi extends BaseApi<IOrder> {
 
 
    cancelOrderByClient = (payload: any): Promise<IResponseData<IResponseOrder>> => {
+    console.log("Gọi API cancelOrderByClient với payload:", payload);
     return axiosClient
-      .post(`${this.uri}/cancelOrderByClient`, payload)
-      .then((res) => res.data);
+      .post(`${this.uri}/cancelOrderByClient`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        console.log("API response:", res.data);
+        return res.data;
+      })
+      .catch((error) => {
+        console.error("API error:", error);
+        throw error;
+      });
   };
   
 }

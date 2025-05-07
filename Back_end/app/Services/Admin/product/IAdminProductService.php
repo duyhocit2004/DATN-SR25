@@ -11,4 +11,5 @@ interface IAdminProductService
     public function updateProductWithVariant(Request $request);
     public function deleteProduct(Request $request);
 
+    public function getStatusProductFlase();
 }

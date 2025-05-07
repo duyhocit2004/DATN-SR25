@@ -502,5 +502,16 @@ class ProductRepositories
 
         return $product;
     }
+    public function getStatusProductFlase(){
+        $thirtyDaysAgo = now()->subDays(30);
+        $status = Product::query()->where('status', 'INACTIVE')
+        ->Where('updated_at', '<=', $thirtyDaysAgo)
+        ->get();
+        foreach ($status as $item) {
+            $item->delete();
+        }
+        
+        return $status;
+    }
 
 }
