@@ -8,6 +8,7 @@ use Firebase\JWT\JWT;
 use App\Models\Product;
 use App\Models\Voucher;
 use App\Models\OrderDetail;
+use App\Services\EmailService;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -24,6 +25,12 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderRepositories
 {
+    protected $emailService;
+
+    public function __construct(EmailService $emailService)
+    {
+        $this->emailService = $emailService;
+    }
 
     public function addOrder(array $data)
     {
@@ -260,6 +267,10 @@ class OrderRepositories
             }
 
             DB::commit();
+
+            // Send order confirmation email
+            $this->emailService->sendOrderConfirmation($order);
+
             return $order;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -304,7 +315,7 @@ class OrderRepositories
             $query->where('status', '=', $status);
         }
         if (!empty($phoneNumber)) {
-            $query->where('phone_number', '=', $phoneNumber);
+            $query->where('receiver_phone_number', '=', $phoneNumber);
         }
         if (!empty($orderCode)) {
             $query->where('code', 'like', '%' . $orderCode . '%');
@@ -345,7 +356,7 @@ class OrderRepositories
             $query->whereIn('status', $statuses);
         }
         if (!empty($phoneNumber)) {
-            $query->where('phone_number', '=', $phoneNumber);
+            $query->where('receiver_phone_number', '=', $phoneNumber);
         }
         if (!empty($orderCode)) {
             $query->where('code', 'like', '%' . $orderCode . '%');

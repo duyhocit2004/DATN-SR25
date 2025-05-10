@@ -1,13 +1,12 @@
-
-import axiosClient from "@/configs/axiosClient";
-
+import axiosClient from "../configs/axiosClient";
 
 const addressApi = {
-    getProvinces: () => axiosClient.get("/api/api/p/"),
+    getProvinces: () => axiosClient.get("provinces"),
     getDistricts: (provinceId: string) =>
-      axiosClient.get(`/api/api/d/?province_id=${provinceId}`),
+      axiosClient.get(`districts/${provinceId}`),
     getWards: (districtId: string) =>
-      axiosClient.get(`/api/api/w/?district_id=${districtId}`),
+      axiosClient.get(`wards/${districtId}`),
+    getUserLocations: () => axiosClient.get("locations"),
   };
   
 export default addressApi;

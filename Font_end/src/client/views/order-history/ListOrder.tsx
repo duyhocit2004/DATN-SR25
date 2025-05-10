@@ -1,4 +1,3 @@
-
 import useWindowSize from "@/hooks/useWindowSize";
 import orderApi from "@/api/orderApi"; // Import API gọi dữ liệu
 import { Button, Input, Popover, message, Spin } from "antd";
@@ -24,7 +23,7 @@ const ListOrder = () => {
       return;
     }
 
-    const payload = { phoneNumber: phone.trim() };
+    const payload = { receiverPhoneNumber: phone.trim() };
     setLoading(true);
     dispatch(setPhoneNumber(phone.trim()));
 

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Client\PasswordResetController;
 use App\Http\Controllers\MoMoController;
 use App\Http\Controllers\Client\NotificationController;
+use App\Http\Controllers\LocationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -179,6 +180,18 @@ Route::middleware('jwt.auth')->group(function () {
     });
 });
 
+// Location routes
+Route::middleware('jwt.auth')->group(function () {
+    Route::get('/locations', [LocationController::class, 'index']);
+    Route::post('/locations', [LocationController::class, 'store']);
+    Route::put('/locations/{id}', [LocationController::class, 'update']);
+    Route::delete('/locations/{id}', [LocationController::class, 'destroy']);
+});
+
+// Address routes
+Route::get('/provinces', [LocationController::class, 'getProvinces']);
+Route::get('/districts/{provinceId}', [LocationController::class, 'getDistricts']);
+Route::get('/wards/{districtId}', [LocationController::class, 'getWards']);
 
 Route::get('/test-broadcast', function () {
     $testOrder = [

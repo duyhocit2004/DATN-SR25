@@ -31,7 +31,8 @@ class Location extends Model
 	protected $table = 'location';
 
 	protected $casts = [
-		'user_id' => 'int'
+		'user_id' => 'int',
+		'is_default' => 'boolean'
 	];
 
 	protected $fillable = [
@@ -40,7 +41,14 @@ class Location extends Model
 		'user_name',
 		'phone_number',
 		'location_detail',
-		'status'
+		'province_code',
+		'province_name',
+		'district_code',
+		'district_name',
+		'ward_code',
+		'ward_name',
+		'status',
+		'is_default'
 	];
 
 	public function user()

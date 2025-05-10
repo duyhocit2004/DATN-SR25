@@ -5,7 +5,7 @@ import { setHasOrder, setIsSearched, setPhoneNumber } from "@/store/reducers/ord
 import { HttpCodeString } from "@/utils/constants";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Spin, message } from "antd";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 const CheckPhoneNumber = () => {
   const dispatch = useAppDispatch();
@@ -14,9 +14,10 @@ const CheckPhoneNumber = () => {
   const { token, user, logout } = useAuth();
 
   useEffect(() => {
-    if (user?.phoneNumber) {
-      checkPhoneNumber(user.phoneNumber);
+    if (user) {
+      checkOrderByUser(user.id);
     }
+    // eslint-disable-next-line
   }, [user]);
 
   const handleSearchOrders = () => {
@@ -24,14 +25,13 @@ const CheckPhoneNumber = () => {
       message.warning("Vui lòng nhập số điện thoại để tìm kiếm.");
       return;
     }
-    checkPhoneNumber(phone.trim());
+    checkOrderByPhone(phone.trim());
   };
 
-  const checkPhoneNumber = async (phoneNumber: string) => {
-    const payload = { phoneNumber };
+  const checkOrderByPhone = async (phoneNumber: string) => {
+    const payload = { receiverPhoneNumber: phoneNumber };
     setLoading(true);
-    dispatch(setPhoneNumber(phoneNumber));  // Ưu tiên số điện thoại truyền vào
-
+    dispatch(setPhoneNumber(phoneNumber));
     try {
       const response = await orderApi.getOrders(payload);
       if (
@@ -51,6 +51,32 @@ const CheckPhoneNumber = () => {
       setLoading(false);
     }
   };
+
+  const checkOrderByUser = async (userId: number) => {
+    const payload = { usersId: userId };
+    setLoading(true);
+    try {
+      const response = await orderApi.getOrders(payload);
+      if (
+        response?.status === HttpCodeString.SUCCESS &&
+        response.data?.length > 0
+      ) {
+        dispatch(setHasOrder(true));
+      } else {
+        dispatch(setHasOrder(false));
+      }
+    } catch (error) {
+      console.error("Lỗi khi gọi API:", error);
+      dispatch(setHasOrder(false));
+      message.error("Đã xảy ra lỗi khi tìm kiếm đơn hàng.");
+    } finally {
+      dispatch(setIsSearched(true));
+      setLoading(false);
+    }
+  };
+
+  // Nếu đã đăng nhập thì không hiển thị gì cả (chỉ tự động lấy đơn hàng)
+  if (user) return null;
 
   return (
     <div className="check-phone-number-container">
@@ -72,29 +98,26 @@ const CheckPhoneNumber = () => {
           <Spin size="large" />
         </div>
       )}
-
-      {(!user || !user?.phoneNumber) && (
-        <div className="text-center md:w-[500px] mx-auto">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">
-            Tra cứu đơn hàng
-          </h2>
-          <Input
-            placeholder="Nhập số điện thoại"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="mt-2 p-2 border rounded-md"
-            allowClear
-          />
-          <Button
-            type="primary"
-            icon={<SearchOutlined />}
-            className="mt-3 w-full"
-            onClick={handleSearchOrders}
-          >
-            Tìm kiếm
-          </Button>
-        </div>
-      )}
+      <div className="text-center md:w-[500px] mx-auto">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">
+          Tra cứu đơn hàng
+        </h2>
+        <Input
+          placeholder="Nhập số điện thoại người nhận"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="mt-2 p-2 border rounded-md"
+          allowClear
+        />
+        <Button
+          type="primary"
+          icon={<SearchOutlined />}
+          className="mt-3 w-full"
+          onClick={handleSearchOrders}
+        >
+          Tìm kiếm
+        </Button>
+      </div>
     </div>
   );
 };

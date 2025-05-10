@@ -20,6 +20,8 @@ import PaymentByIDProduct from "./PaymentByIDProduct";
 import { dispatchAction } from "@/store/actionHelper";
 import { useAppDispatch } from "@/store/hooks";
 import React from "react";
+import UserAddressSelector from "./components/UserAddressSelector";
+import emailjs from '@emailjs/browser';
 
 const { Option } = Select;
 
@@ -47,6 +49,7 @@ const Payment = () => {
   const [receiverWards, setReceiverWards] = useState<any[]>([]);
   const [selectedReceiverCity, setSelectedReceiverCity] = useState<string | null>(null);
   const [selectedReceiverDistrict, setSelectedReceiverDistrict] = useState<string | null>(null);
+  const [userLocations, setUserLocations] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -457,6 +460,36 @@ const Payment = () => {
     form.setFieldsValue({ onlinePaymentMethod: value });
   };
 
+  const sendOrderConfirmationEmail = async (orderData: any) => {
+    try {
+      const templateParams = {
+        to_email: orderData.email,
+        to_name: orderData.customerName,
+        order_code: orderData.code,
+        order_date: new Date().toLocaleString('vi-VN'),
+        customer_name: orderData.customerName,
+        phone_number: orderData.phoneNumber,
+        shipping_address: orderData.shippingAddress,
+        total_amount: orderData.totalAmount.toLocaleString('vi-VN') + ' VND',
+        payment_method: orderData.paymentMethod,
+        order_details: orderData.products.map((product: any) => 
+          `- ${product.name} (Màu: ${product.color}, Size: ${product.size}) x ${product.quantity} = ${(product.priceSale || product.priceRegular * product.quantity).toLocaleString('vi-VN')} VND`
+        ).join('\n')
+      };
+
+      await emailjs.send(
+        'service_4hdrbsz',
+        'template_2ogzr22',
+        templateParams,
+        'OhQzQb1tfiHVYmidF'
+      );
+
+      console.log('Order confirmation email sent successfully');
+    } catch (error) {
+      console.error('Error sending order confirmation email:', error);
+    }
+  };
+
   const handlePayment = async () => {
     try {
       const values = await form.validateFields();
@@ -483,30 +516,26 @@ const Payment = () => {
         return;
       }
 
-      const city = cities.find((c) => c.code === form.getFieldValue("city"));
-      const district = districts.find((d) => d.code === form.getFieldValue("district"));
-      const ward = wards.find((w) => w.code === form.getFieldValue("ward"));
-      const shippingAddress = `${form.getFieldValue("street") || ""}, ${ward?.name || ""}, ${district?.name || ""}, ${city?.name || ""}`;
-
-      const receiverCity = receiverCities.find((c) => c.code === form.getFieldValue("receiverCity"));
-      const receiverDistrict = receiverDistricts.find((d) => d.code === form.getFieldValue("receiverDistrict"));
-      const receiverWard = receiverWards.find((w) => w.code === form.getFieldValue("receiverWard"));
-      const receiverAddress = form.getFieldValue("receiverStreet")
-        ? `${form.getFieldValue("receiverStreet")}, ${receiverWard?.name || ""}, ${receiverDistrict?.name || ""}, ${receiverCity?.name || ""}`
-        : undefined;
+      const locationId = form.getFieldValue("locationId");
+      const selectedLocation = userLocations.find(loc => loc.id === locationId);
+      const receiverName = selectedLocation?.user_name || selectedLocation?.userName || "";
+      const receiverPhoneNumber = selectedLocation?.phone_number || selectedLocation?.phoneNumber || "";
+      const receiverEmail = selectedLocation?.email || "noemail@yourdomain.com";
+      const receiverAddress = selectedLocation
+        ? `${selectedLocation.location_detail || selectedLocation.locationDetail || ""}, ${selectedLocation.ward_name || selectedLocation.wardName || ""}, ${selectedLocation.district_name || selectedLocation.districtName || ""}, ${selectedLocation.province_name || selectedLocation.provinceName || ""}`
+        : "";
 
       const payload = {
-        users_id: user?.id || null,
-        customerName: form.getFieldValue("customerName"),
-        email: form.getFieldValue("email"),
-        phoneNumber: form.getFieldValue("phoneNumber"),
-        receiverName: form.getFieldValue("receiverName") || undefined,
-        receiverPhoneNumber: form.getFieldValue("receiverPhoneNumber") || undefined,
-        receiverAddress: receiverAddress,
+        customerName: receiverName,
+        phoneNumber: receiverPhoneNumber,
+        email: receiverEmail,
+        receiverName,
+        receiverPhoneNumber,
+        receiverAddress,
+        shippingAddress: receiverAddress,
         totalAmount: finalAmount,
         voucher: voucher?.code || undefined,
         voucherPrice: voucher?.voucherPrice || 0,
-        shippingAddress: shippingAddress,
         note: form.getFieldValue("note"),
         products: selectedProducts,
         paymentMethod: paymentMethod,
@@ -520,6 +549,13 @@ const Payment = () => {
       
       if (response?.status === HttpCodeString.SUCCESS) {
         await clearCart();
+        
+        // Send order confirmation email
+        await sendOrderConfirmationEmail({
+          ...payload,
+          code: response.data.code
+        });
+
         if (paymentMethod === PaymentMethod.ONLINE) {
           if (onlinePaymentMethod === "VNPAY" && response.data.vnpayUrl) {
             window.location.href = response.data.vnpayUrl;
@@ -587,216 +623,11 @@ const Payment = () => {
         <div className="grid gap-6 lg:grid-cols-2">
           {/* FORM BILL */}
           <Card
-            title="Thông Tin Thanh Toán"
+            title="Địa Chỉ"
             className="border-0 shadow-md rounded-xl hover:shadow-lg transition-shadow duration-300"
           >
             <Form form={form} layout="vertical" className="space-y-2">
-              <Form.Item
-                label="Họ và Tên (Người đặt)"
-                name="customerName"
-                rules={[{ required: true, message: "Vui lòng nhập họ tên!" }]}
-              >
-                <Input
-                  placeholder="Nhập họ và tên"
-                  className="rounded-lg border-gray-300 focus:border-blue-500"
-                />
-              </Form.Item>
-              <Form.Item
-                label="Số điện thoại (Người đặt)"
-                name="phoneNumber"
-                rules={[
-                  { required: true, message: "Vui lòng nhập số điện thoại!" },
-                  {
-                    pattern: /^(0[3|5|7|8|9])([0-9]{8})$/,
-                    message: "Số điện thoại không hợp lệ! Vui lòng nhập số điện thoại bắt đầu bằng 03, 05, 07, 08, 09 và có 10 số.",
-                  },
-                ]}
-                help={!user?.phoneNumber ? "Vui lòng cập nhật số điện thoại của bạn trong thông tin cá nhân" : undefined}
-              >
-                <Input
-                  placeholder="Nhập số điện thoại"
-                  className="rounded-lg border-gray-300 focus:border-blue-500"
-                  maxLength={10}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Email (Người đặt)"
-                name="email"
-                rules={[
-                  {
-                    required: true,
-                    type: "email",
-                    message: "Vui lòng nhập email!",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Nhập email"
-                  className="rounded-lg border-gray-300 focus:border-blue-500"
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Tỉnh/Thành phố (Người đặt)"
-                name="city"
-                rules={[{ required: true, message: "Vui lòng chọn tỉnh/thành phố!" }]}
-              >
-                <Select
-                  placeholder="Chọn tỉnh/thành phố"
-                  onChange={(value) => setSelectedCity(value)}
-                  showSearch
-                  filterOption={(input, option) =>
-                    option?.children?.toLowerCase().includes(input.toLowerCase())
-                  }
-                  className="rounded-lg"
-                >
-                  {cities.map((city) => (
-                    <Option key={city.code} value={city.code}>
-                      {city.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                label="Quận/Huyện (Người đặt)"
-                name="district"
-                rules={[{ required: true, message: "Vui lòng chọn quận/huyện!" }]}
-              >
-                <Select
-                  placeholder="Chọn quận/huyện"
-                  onChange={(value) => setSelectedDistrict(value)}
-                  showSearch
-                  filterOption={(input, option) =>
-                    option?.children?.toLowerCase().includes(input.toLowerCase())
-                  }
-                  disabled={!selectedCity}
-                  className="rounded-lg"
-                >
-                  {districts.map((district) => (
-                    <Option key={district.code} value={district.code}>
-                      {district.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                label="Phường/Xã (Người đặt)"
-                name="ward"
-                rules={[{ required: true, message: "Vui lòng chọn phường/xã!" }]}
-              >
-                <Select
-                  placeholder="Chọn phường/xã"
-                  showSearch
-                  filterOption={(input, option) =>
-                    option?.children?.toLowerCase().includes(input.toLowerCase())
-                  }
-                  disabled={!selectedDistrict}
-                  className="rounded-lg"
-                >
-                  {wards.map((ward) => (
-                    <Option key={ward.code} value={ward.code}>
-                      {ward.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                label="Số nhà, tên đường (Người đặt)"
-                name="street"
-                rules={[{ required: true, message: "Vui lòng nhập số nhà, tên đường!" }]}
-              >
-                <Input
-                  placeholder="Nhập số nhà, tên đường"
-                  className="rounded-lg border-gray-300 focus:border-blue-500"
-                />
-              </Form.Item>
-
-              <Form.Item label="Họ và Tên (Người nhận)" name="receiverName">
-                <Input
-                  placeholder="Nhập họ và tên người nhận"
-                  className="rounded-lg border-gray-300 focus:border-blue-500"
-                />
-              </Form.Item>
-              <Form.Item
-                label="Số điện thoại (Người nhận)"
-                name="receiverPhoneNumber"
-                rules={[
-                  {
-                    pattern: /^(0[3|5|7|8|9])([0-9]{8})$/,
-                    message: "Số điện thoại không hợp lệ!",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Nhập số điện thoại người nhận"
-                  className="rounded-lg border-gray-300 focus:border-blue-500"
-                />
-              </Form.Item>
-
-              <Form.Item label="Tỉnh/Thành phố (Người nhận)" name="receiverCity">
-                <Select
-                  placeholder="Chọn tỉnh/thành phố"
-                  onChange={(value) => setSelectedReceiverCity(value)}
-                  showSearch
-                  filterOption={(input, option) =>
-                    option?.children?.toLowerCase().includes(input.toLowerCase())
-                  }
-                  allowClear
-                  className="rounded-lg"
-                >
-                  {receiverCities.map((city) => (
-                    <Option key={city.code} value={city.code}>
-                      {city.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item label="Quận/Huyện (Người nhận)" name="receiverDistrict">
-                <Select
-                  placeholder="Chọn quận/huyện"
-                  onChange={(value) => setSelectedReceiverDistrict(value)}
-                  showSearch
-                  filterOption={(input, option) =>
-                    option?.children?.toLowerCase().includes(input.toLowerCase())
-                  }
-                  disabled={!selectedReceiverCity}
-                  allowClear
-                  className="rounded-lg"
-                >
-                  {receiverDistricts.map((district) => (
-                    <Option key={district.code} value={district.code}>
-                      {district.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item label="Phường/Xã (Người nhận)" name="receiverWard">
-                <Select
-                  placeholder="Chọn phường/xã"
-                  showSearch
-                  filterOption={(input, option) =>
-                    option?.children?.toLowerCase().includes(input.toLowerCase())
-                  }
-                  disabled={!selectedReceiverDistrict}
-                  allowClear
-                  className="rounded-lg"
-                >
-                  {receiverWards.map((ward) => (
-                    <Option key={ward.code} value={ward.code}>
-                      {ward.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                label="Số nhà, tên đường (Người nhận)"
-                name="receiverStreet"
-              >
-                <Input
-                  placeholder="Nhập số nhà, tên đường"
-                  className="rounded-lg border-gray-300 focus:border-blue-500"
-                />
-              </Form.Item>
+              <UserAddressSelector form={form} setUserLocations={setUserLocations} />
 
               <Form.Item label="Ghi chú" name="note">
                 <Input.TextArea

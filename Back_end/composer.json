@@ -9,7 +9,7 @@
         "beyondcode/laravel-websockets": "^1.14",
         "cloudinary-labs/cloudinary-laravel": "^2.2",
         "doctrine/dbal": "*",
-        "guzzlehttp/guzzle": "^7.2",
+        "guzzlehttp/guzzle": "^7.9",
         "illuminate/support": "*",
         "laravel/framework": "^10.0",
         "laravel/passport": "^12.4",
