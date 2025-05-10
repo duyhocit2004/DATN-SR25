@@ -44,7 +44,7 @@ class NewOrderCreated implements ShouldBroadcast
     {
         return [
             'data' => $this->order,
-            'message' => 'Có đơn hàng mới!'
+            'message' => 'Có đơn hàng mới!'.$this->order->code,
         ];
     }
 }

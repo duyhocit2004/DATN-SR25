@@ -13,11 +13,13 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
-});
-
+// Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+//     return (int) $user->id === (int) $id;
+// });
+$user = auth()->user();
 Broadcast::channel('admin.new-order', function ($user) {
-    $user = auth()->user();
     return $user->role === 'admin';
+});
+Broadcast::channel('user.{id}', function ($user, $id) {
+    return  $user->id ===  $id;
 });
