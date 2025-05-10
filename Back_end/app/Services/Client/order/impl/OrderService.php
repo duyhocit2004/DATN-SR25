@@ -65,6 +65,11 @@ class OrderService implements IOrderService
 
     public function getOrders(Request $request)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user)) {
+            return BaseResponse::failure(401, 'Unauthorized', 'unauthorized', []);
+        }
+        $request->merge(['userId' => $user->id]);
         $orders = $this->orderRepositories->getOrders($request);
 
         $list = $orders->map(function ($order) {
@@ -114,6 +119,11 @@ class OrderService implements IOrderService
 
     public function getOrdersPaging(Request $request)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user)) {
+            return BaseResponse::failure(401, 'Unauthorized', 'unauthorized', []);
+        }
+        $request->merge(['userId' => $user->id]);
         $orders = $this->orderRepositories->getOrdersPaging($request);
 
         $list = $orders->getCollection()->map(function ($order) {
@@ -317,7 +327,6 @@ class OrderService implements IOrderService
 
     public function cancelOrderByClient(Request $request)
     {
-
         try {
             $user = JWTAuth::parseToken()->authenticate();
             if (!$user) {
@@ -325,25 +334,31 @@ class OrderService implements IOrderService
             }
 
             $orderId = $request->input('orderId');
-            if (!$orderId) {
+            $orderCode = $request->input('orderCode');
+
+            if (!$orderId && !$orderCode) {
                 return BaseResponse::failure(400, 'Mã đơn hàng không được để trống', 'order.id.required', []);
             }
 
-            Log::info('Attempting to cancel order:', ['orderId' => $orderId, 'userId' => $user->id]);
+            Log::info('Attempting to cancel order:', ['orderId' => $orderId, 'orderCode' => $orderCode, 'userId' => $user->id]);
 
-            $order = Order::where('id', $orderId)
-                ->where('phone_number', $user->phone_number)
-                ->first();
+            $query = Order::where('users_id', $user->id);
+            if ($orderId) {
+                $query->where('id', $orderId);
+            } else {
+                $query->where('code', $orderCode);
+            }
+            $order = $query->first();
 
             if (!$order) {
-                Log::warning('Order not found or not owned by user:', ['orderId' => $orderId, 'userId' => $user->id]);
+                Log::warning('Order not found or not owned by user:', ['orderId' => $orderId, 'orderCode' => $orderCode, 'userId' => $user->id]);
                 return BaseResponse::failure(404, 'Không tìm thấy đơn hàng', 'order.not_found', []);
             }
 
-            Log::info('Current order status:', ['orderId' => $orderId, 'status' => $order->status]);
+            Log::info('Current order status:', ['orderId' => $order->id, 'status' => $order->status]);
 
             if (!in_array($order->status, ['Unconfirmed', 'Confirmed'])) {
-                Log::warning('Invalid order status for cancellation:', ['orderId' => $orderId, 'status' => $order->status]);
+                Log::warning('Invalid order status for cancellation:', ['orderId' => $order->id, 'status' => $order->status]);
                 return BaseResponse::failure(400, 'Không thể hủy đơn hàng ở trạng thái này', 'order.cancel.invalid_status', []);
             }
 
@@ -353,7 +368,7 @@ class OrderService implements IOrderService
                 $order->status = 'Cancel';
                 $order->save();
 
-                Log::info('Order status updated:', ['orderId' => $orderId, 'oldStatus' => $oldStatus, 'newStatus' => 'Cancel']);
+                Log::info('Order status updated:', ['orderId' => $order->id, 'oldStatus' => $oldStatus, 'newStatus' => 'Cancel']);
 
                 OrderStatusHistory::create([
                     'order_id' => $order->id,
@@ -366,7 +381,7 @@ class OrderService implements IOrderService
                 ]);
 
                 DB::commit();
-                Log::info('Order cancelled successfully:', ['orderId' => $orderId]);
+                Log::info('Order cancelled successfully:', ['orderId' => $order->id]);
                 
                 return BaseResponse::success([
                     'message' => 'Hủy đơn hàng thành công',
@@ -376,18 +391,17 @@ class OrderService implements IOrderService
                 DB::rollBack();
                 Log::error('Error during order cancellation transaction:', [
                     'error' => $e->getMessage(),
-                    'orderId' => $orderId,
+                    'orderId' => $order->id,
                     'trace' => $e->getTraceAsString()
                 ]);
-                return BaseResponse::failure(500, 'Có lỗi xảy ra khi hủy đơn hàng', 'order.cancel.error', []);
+                return BaseResponse::failure(500, 'Có lỗi xảy ra khi hủy đơn hàng: ' . $e->getMessage(), 'order.cancel.error', []);
             }
         } catch (\Exception $e) {
             Log::error('Unexpected error during order cancellation:', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return BaseResponse::failure(500, 'Có lỗi xảy ra khi hủy đơn hàng', 'order.cancel.error', []);
-
+            return BaseResponse::failure(500, 'Có lỗi xảy ra khi hủy đơn hàng: ' . $e->getMessage(), 'order.cancel.error', []);
         }
     }
 

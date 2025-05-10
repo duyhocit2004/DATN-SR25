@@ -16,7 +16,11 @@ class OrderApi extends BaseApi<IOrder> {
     payload: any
   ): Promise<IResponseData<IDataPaging<IOrder[]> | IOrder[]>> => {
     return axiosClient
-      .post(`${this.uri}/getOrders`, payload)
+      .post(`${this.uri}/getOrders`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
       .then((res) => res.data);
   };
   addOrder = (payload: any): Promise<IResponseData<IResponseOrder>> => {

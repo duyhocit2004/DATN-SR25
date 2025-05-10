@@ -34,22 +34,23 @@ const OrderDetail = () => {
 
       console.log("Gửi request hủy đơn hàng:", selectedOrder.id);
       const response = await orderApi.cancelOrderByClient({
-        orderId: selectedOrder.id
+        orderCode: selectedOrder.code
       });
       
       console.log("Response từ API:", response);
       
-      if (response.status === 200 || response.status === '200') {
-        message.success("Đơn hàng đã được hủy thành công");
+      if (response.status === 200 || response.status === '200' || response.status === 'success') {
+        message.success(response.data?.message || "Đơn hàng đã được hủy thành công");
         setIsConfirmModalOpen(false);
         dispatch(setSelectedOrder(null));
-        window.location.href = '/order-history';
+        navigate('/order-history');
       } else {
-        message.error(response.message || "Hủy đơn hàng thất bại");
+        message.error(response.message || response.data?.message || "Hủy đơn hàng thất bại");
       }
     } catch (error: any) {
       console.error("Lỗi khi hủy đơn hàng:", error);
-      message.error(error.response?.data?.message || "Hủy đơn hàng thất bại");
+      const errorMessage = error.response?.data?.message || error.message || "Hủy đơn hàng thất bại";
+      message.error(errorMessage);
     }
   };
 

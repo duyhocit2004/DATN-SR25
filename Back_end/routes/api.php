@@ -65,7 +65,7 @@ Route::prefix('carts')->group(function () {
 
 Route::prefix('admin')->group(function () {
     Route::post('/login', [AuthController::class, 'loginAdmin']);
-    Route::post('/getAllCategoriesNonTree', [AdminController::class, 'getAllCategoriesNonTree']);
+    Route::post('/getAllCategoriesNonTree', [CategoryController::class, 'getAllCategoriesNonTree']);
     Route::post('/getParentCommentPaging', [ProductController::class, 'getParentCommentPaging']);
     Route::post('/getCommentWithReply', [ProductController::class, 'getCommentWithReply']);
 });

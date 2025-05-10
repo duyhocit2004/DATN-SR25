@@ -1,4 +1,4 @@
-Hey, Cortana play. Second. <?php
+<?php
 
 namespace App\Repositories;
 
