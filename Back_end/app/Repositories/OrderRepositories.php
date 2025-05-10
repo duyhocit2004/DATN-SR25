@@ -289,8 +289,14 @@ class OrderRepositories
         $paymentMethod = $request->input('paymentMethod');
         $voucherCode = $request->input('voucherCode');
         $totalAmount = $request->input('totalAmount');
+        $userId = $request->input('userId');
 
         $query = Order::with(['order_details']);
+
+        // Filter by user_id if provided
+        if (!empty($userId)) {
+            $query->where('users_id', $userId);
+        }
 
         // Only validate voucher if voucherCode is provided
         if (!empty($voucherCode)) {
@@ -346,11 +352,19 @@ class OrderRepositories
         $toDate = $request->input('toDate');
         $perPage = $request->input('pageSize', 10);
         $page = $request->input('pageNum', 1);
+        $userId = $request->input('userId');
+        $isAdmin = $request->input('isAdmin', false);
 
         $paymentStatus = $request->input('paymentStatus');
         $paymentMethod = $request->input('paymentMethod');
 
         $query = Order::with(['order_details']);
+        
+        // Chỉ lọc theo user_id nếu không phải admin và có userId
+        if (!$isAdmin && !empty($userId)) {
+            $query->where('users_id', $userId);
+        }
+
         if (!empty($status)) {
             $statuses = is_array($status) ? $status : explode(',', $status);
             $query->whereIn('status', $statuses);
@@ -378,7 +392,6 @@ class OrderRepositories
         }
         $orders = $query->orderBy('created_at', 'desc')->paginate($perPage, ['*'], 'page', $page);
         return $orders;
-
     }
 
     public function getOrderDetail(Request $request)
@@ -741,48 +754,4 @@ class OrderRepositories
             ];
         }
     }
-    public function cancelOrderByClient(Request $request)
-    {
-
-        \Log::info('Bắt đầu xử lý hủy đơn hàng', [
-            'orderCode' => $request->input('orderCode'),
-            'userId' => auth()->id()
-        ]);
-
-        $orderCode = $request->input('orderCode');
-        $user = auth()->user();
-        $order = Order::where('code', $orderCode)
-            ->where('users_id', $user->id)
-            ->first();
-
-        if (!$order) {
-            \Log::warning('Đơn hàng không tồn tại hoặc không thuộc về user', [
-                'orderCode' => $orderCode,
-                'userId' => $user->id
-            ]);
-            return BaseResponse::failure('404', 'Đơn hàng không tồn tại hoặc không thuộc quyền sở hữu của bạn', 'order.not.found', []);
-        }
-
-        \Log::info('Tìm thấy đơn hàng', ['order' => $order->toArray()]);
-
-        try {
-            DB::beginTransaction();
-            // Cập nhật trạng thái đơn hàng
-            $order->status = 'Cancelled';
-            $order->updated_at = now();
-            $order->save();
-            \Log::info('Đã cập nhật trạng thái đơn hàng thành công');
-
-            DB::commit();
-            return BaseResponse::success('Hủy đơn hàng thành công', 'order.cancelled.success', $order);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            \Log::error('Lỗi khi hủy đơn hàng', [
-                'error' => $e->getMessage(),
-                'orderCode' => $orderCode
-            ]);
-            return BaseResponse::failure('500', 'Đã xảy ra lỗi khi hủy đơn hàng', 'order.cancel.error', []);
-        }
-    }
-
 }
