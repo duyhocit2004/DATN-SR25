@@ -10,14 +10,15 @@ use App\Models\Voucher;
 use App\Models\OrderDetail;
 use App\Services\EmailService;
 
-use App\Models\OrderStatusHistory;
-use App\Models\PaymentStatusHistory;
-
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+
 use App\Helpers\BaseResponse;
 use App\Models\ProductVariant;
+use App\Models\OrderStatusHistory;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Models\PaymentStatusHistory;
 use Illuminate\Support\Facades\Auth;
 
 // use App\Models\OrderDetail as OrderDetailModel;
@@ -174,9 +175,9 @@ class OrderRepositories
 
             DB::beginTransaction();
 
-            $userid = auth()->user() ? auth()->user()->id : null;
+            $user = JWTAuth::parseToken()->authenticate();
             $order = Order::create([
-                'users_id' => $userid ?? null,
+                'users_id' => $user->id ?? null,
                 'code' => 'Od' . Str::random(4),
                 'customer_name' => $data['customerName'],
                 'email' => $data['email'] ?? 'default@email.com',
@@ -545,6 +546,7 @@ class OrderRepositories
             $order->note = $request->input('note');
             $order->save();
 
+            event(new \App\Events\UserNotification($order));
             DB::commit();
             return BaseResponse::success($order);
 

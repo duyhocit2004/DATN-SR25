@@ -263,6 +263,7 @@ class OrderService implements IOrderService
 
     public function deleteOrder(Request $request)
     {
+        
         // Xác thực người dùng
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
