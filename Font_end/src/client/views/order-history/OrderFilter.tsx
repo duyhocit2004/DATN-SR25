@@ -39,7 +39,7 @@ const OrderFilter = () => {
 
   const handleFilter = (data = filterData) => {
     const payload = {
-      phoneNumber: phoneNumber,
+      receiverPhoneNumber: phoneNumber,
       orderCode: data.orderCode,
       status: data.status,
       fromDate: data.dateTime?.[0]

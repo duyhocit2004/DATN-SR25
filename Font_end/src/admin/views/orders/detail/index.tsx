@@ -98,6 +98,8 @@ const OrderDetail: React.FC = () => {
             </div>
           )}
           {value}
+        </div>
+      ),
     },
     {
       title: "Biến thể",
@@ -562,9 +564,20 @@ const OrderDetail: React.FC = () => {
                 </p>
               </div>
             </div>
-            <div className=" flex gap-4">
-              <Text strong>Địa chỉ :</Text>
-              <p>{order?.shippingAddress}</p>
+            <div className=" flex flex-col gap-2 mt-6">
+              <h3 className="font-bold mb-2">Thông tin người nhận hàng</h3>
+              <div className="flex gap-4">
+                <Text strong>Họ và tên:</Text>
+                <p>{order?.receiverName || "-"}</p>
+              </div>
+              <div className="flex gap-4">
+                <Text strong>Số điện thoại:</Text>
+                <p>{order?.receiverPhoneNumber || "-"}</p>
+              </div>
+              <div className="flex gap-4">
+                <Text strong>Địa chỉ nhận hàng:</Text>
+                <p>{order?.receiverAddress || order?.shippingAddress || order?.address || "-"}</p>
+              </div>
             </div>
 
             {/* Thêm thông tin hoàn tiền nếu đã hoàn tiền */}
