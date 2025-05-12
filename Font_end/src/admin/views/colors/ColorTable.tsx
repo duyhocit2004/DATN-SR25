@@ -28,24 +28,6 @@ const ColorTable: React.FC<ColorTableProps> = ({ colors, loading, onEdit, onDele
       minWidth: 150,
     },
     {
-      title: "Màu",
-      dataIndex: "code",
-      key: "color",
-      minWidth: 100,
-      render: (color: string) => (
-        <div
-          className={`color w-6 h-6 shrink-0 rounded-[50%]`}
-          style={{
-            backgroundColor: color,
-            border:
-              color.toLowerCase() === "#ffffff" || color.toLowerCase() === "white"
-                ? "1px solid #ccc"
-                : "none",
-          }}
-        ></div>
-      ),
-    },
-    {
       title: "Ngày tạo",
       dataIndex: "created_at",
       key: "created_at",

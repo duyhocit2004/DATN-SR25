@@ -5,7 +5,6 @@ import axiosClient from "@/configs/axiosClient";
 interface Color {
   id: string;
   name: string;
-  email: string;
 }
 
 class ColorApi extends BaseApi<Color> {

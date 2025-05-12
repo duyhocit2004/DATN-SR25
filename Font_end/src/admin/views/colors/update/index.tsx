@@ -4,13 +4,12 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setSelectedColor } from "@/store/reducers/adminColorSlice";
 import { IColor } from "@/types/interface";
 import { HttpCodeString } from "@/utils/constants";
-import { Modal, Input, Button, Form, ColorPicker } from "antd";
+import { Modal, Input, Button, Form } from "antd";
 import { useEffect, useState } from "react";
 
 interface IColorForm {
   id: number | null;
   name: string;
-  code: string;
 }
 
 interface IProps {
@@ -24,7 +23,6 @@ const UpdateColorModal: React.FC<IProps> = ({ refreshData }) => {
   const [formData, setFormData] = useState<IColorForm>({
     id: null,
     name: "",
-    code: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -37,21 +35,19 @@ const UpdateColorModal: React.FC<IProps> = ({ refreshData }) => {
   }, [selectedColor]);
 
   const resetForm = () => {
-    setFormData({ id: null, name: "", code: "" });
+    setFormData({ id: null, name: "" });
     form.resetFields();
     selectedColor && dispatch(setSelectedColor(null));
-    form.setFieldsValue({ name: "", code: "" });
+    form.setFieldsValue({ name: "" });
   };
 
   const setFormValue = (currentColor: IColor) => {
     setFormData({
       id: currentColor.id,
       name: currentColor.name || "",
-      code: currentColor.code || "",
     });
     form.setFieldsValue({
       name: currentColor.name || "",
-      code: currentColor.code || "",
     });
   };
 
@@ -72,8 +68,7 @@ const UpdateColorModal: React.FC<IProps> = ({ refreshData }) => {
   const onSave = async () => {
     const payload = {
       id: formData.id,
-      name: formData.name,
-      code: formData.code
+      name: formData.name
     };
     setLoading(true);
     try {
@@ -121,19 +116,6 @@ const UpdateColorModal: React.FC<IProps> = ({ refreshData }) => {
             placeholder="Nhập tên màu (ví dụ: Đỏ, Xanh, Vàng...)"
             value={formData.name}
             onChange={(e) => onChangeFormData("name", e.target.value)}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Mã màu"
-          name="code"
-          rules={[{ required: true, message: "Vui lòng chọn mã màu!" }]}
-        >
-          <ColorPicker
-            format="hex"
-            value={formData.code}
-            onChange={(color) => onChangeFormData("code", color.toHexString())}
-            showText
           />
         </Form.Item>
 
