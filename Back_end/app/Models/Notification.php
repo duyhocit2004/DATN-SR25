@@ -4,42 +4,46 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+/**
+ * Class Cart
+ * 
+ * @property int $id
+ * @property int $user_id
+ * @property int $order_id
+ * @property string|null $title
+ * @property string|null $message
+ * @property boolean $is_read
+ * @property string $recipient_type
+ *
+ * @package App\Models
+ */
 class Notification extends Model
 {
     use HasFactory;
 
+    protected $table = 'notification';
     protected $fillable = [
         'user_id',
+        'order_id',
+        'message',
         'title',
-        'content',
-        'status',
-        'read_at'
+        'is_read',
+        'recipient_type'
     ];
-
-    protected $casts = [
-        'read_at' => 'datetime'
-    ];
-
-    public function user(): BelongsTo
+    public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
-
-    public function markAsRead()
+    public function order()
     {
-        $this->update([
-            'status' => 'read',
-            'read_at' => now()
-        ]);
+        return $this->belongsTo(Order::class, 'order_id');
     }
-
-    public function markAsUnread()
+    public function scopeUnread($query)
     {
-        $this->update([
-            'status' => 'unread',
-            'read_at' => null
-        ]);
+        return $query->where('is_read', false);
     }
-} 
+    public function scopeRead($query)
+    {
+        return $query->where('is_read', true);
+    }
+}

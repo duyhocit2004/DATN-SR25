@@ -44,7 +44,7 @@ class UserNotification implements ShouldBroadcast
         }else if($this->order->status == 'Cancel Confirm'){
             return [
                 'data' => $this->order,
-                'message' => 'Đơn hàng'.$this->order->code. 'của bạn đã được hủy xác nhận'
+                'message' => 'Đơn hàng'.$this->order->code. 'của bạn đã hủy xác nhận'
             ];
         }else if($this->order->status == 'Processing'){
             return [
@@ -54,12 +54,12 @@ class UserNotification implements ShouldBroadcast
         }else if($this->order->status == 'Shipping'){
             return [
                 'data' => $this->order,
-                'message' => 'Đơn hàng'.$this->order->code. 'của bạn đang được giao hàng'
+                'message' => 'Đơn hàng'.$this->order->code. 'của bạn đang giao hàng'
             ];
         }else if($this->order->status == 'Delivered'){
             return [
                 'data' => $this->order,
-                'message' => 'Đơn hàng'.$this->order->code. 'của bạn đã được giao hàng'
+                'message' => 'Đơn hàng'.$this->order->code. 'của bạn đã được giao '
             ];
         }
         // return [

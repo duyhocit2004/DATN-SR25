@@ -4,6 +4,7 @@ namespace App\Services\Client\order\impl;
 
 use App\Events\NewOrderCreated;
 use App\Helpers\BaseResponse;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderStatusHistory;
 use App\Repositories\OrderRepositories;
@@ -60,6 +61,10 @@ class OrderService implements IOrderService
             event(new NewOrderCreated($order));
         }
         
+        if($order){
+            $this->AddNotificationToAdmin($order);
+            // Gửi thông báo đến admin
+        }
         return $order;
     }
 
@@ -366,6 +371,7 @@ class OrderService implements IOrderService
                     'change_at' => now()
                 ]);
 
+                $this->NotificationToUser($order);
                 DB::commit();
                 Log::info('Order cancelled successfully:', ['orderId' => $orderId]);
                 
@@ -391,5 +397,36 @@ class OrderService implements IOrderService
 
         }
     }
-
+    private function AddNotificationToAdmin($order){
+        // Gửi thông báo đến admin
+         Notification::create([
+            'user_id' => null,
+            'order_id' => $order->id,
+            'message' => 'Đơn hàng '.$order->code.' mới đã được đặt',
+            'title' => 'Thông báo đơn hàng mới',
+            'is_read' => false,
+            'recipient_type' => 'admin'
+        ]); 
+        // Gửi thông báo đến người dùng
+        Notification::create([
+            'user_id' => $order->users_id,
+            'order_id' => $order->id,
+            'message' => 'Đơn hàng '.$order->code.' của bạn đã được đặt thành công',
+            'title' => 'Thông báo đơn hàng mới',
+            'is_read' => false,
+            'recipient_type' => 'user'
+        ]);
+        return true;
+    }
+    public function NotificationToUser ($order){
+        Notification::create([
+            'user_id'=> null ,
+            'order_id'=> $order->id,
+            'recipient_type'=>'user',
+            'message' => 'Đơn hàng ' .$order->code .' đã được hủy',
+            'title'=>'Trạng thái đơn hàng',
+            'is_read'=>false,
+        ]);
+        return true;
+    }
 }

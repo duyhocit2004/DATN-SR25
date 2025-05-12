@@ -121,4 +121,8 @@ class User extends Authenticatable implements JWTSubject
             'deleted_at' => $this->deleted_at,
         ];
     }
+
+    public function notification(){
+        return $this->hasMany(Notification::class);
+    } 
 }
