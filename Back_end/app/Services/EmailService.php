@@ -12,20 +12,25 @@ class EmailService
         try {
             $templateParams = [
                 'to_email' => $order->email,
-                'to_name' => $order->customer_name,
+                'customer_name' => $order->customer_name,
                 'order_code' => $order->code,
                 'order_date' => $order->created_at->format('d/m/Y H:i'),
-                'customer_name' => $order->customer_name,
-                'phone_number' => $order->phone_number,
-                'shipping_address' => $order->shipping_address,
+                'order_details' => $this->formatOrderDetails($order),
                 'total_amount' => number_format($order->total_price) . ' VND',
                 'payment_method' => $order->payment_method,
-                'order_details' => $this->formatOrderDetails($order)
+                'phone_number' => $order->phone_number,
+                'shipping_address' => $order->shipping_address,
             ];
 
+            \Log::info('EMAILJS PAYLOAD', [
+                'service_id' => 'service_4hdrbsz',
+                'template_id' => 'template_b35lte4',
+                'user_id' => 'OhQzQb1tfiHVYmidF',
+                'template_params' => $templateParams
+            ]);
             $response = \Http::post('https://api.emailjs.com/api/v1.0/email/send', [
                 'service_id' => 'service_4hdrbsz',
-                'template_id' => 'template_2ogzr22',
+                'template_id' => 'template_b35lte4',
                 'user_id' => 'OhQzQb1tfiHVYmidF',
                 'template_params' => $templateParams
             ]);
@@ -59,13 +64,19 @@ class EmailService
     {
         $details = '';
         foreach ($order->order_details as $detail) {
+            $productName = $detail->product->name ?? $detail->name ?? 'Sản phẩm';
+            $color = $detail->color ?? '-';
+            $size = $detail->size ?? '-';
+            $quantity = $detail->quantity_order ?? $detail->quantity ?? 1;
+            $price = $detail->price_sale ?? $detail->price_regular ?? 0;
+            $total = number_format($price * $quantity);
             $details .= sprintf(
                 "- %s (Màu: %s, Size: %s) x %d = %s VND\n",
-                $detail->product->name,
-                $detail->color,
-                $detail->size,
-                $detail->quantity,
-                number_format($detail->price * $detail->quantity)
+                $productName,
+                $color,
+                $size,
+                $quantity,
+                $total
             );
         }
         return $details;

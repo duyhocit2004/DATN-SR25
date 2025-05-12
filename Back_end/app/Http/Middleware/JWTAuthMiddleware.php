@@ -17,8 +17,9 @@ class JWTAuthMiddleware
     public function handle($request, Closure $next)
     {
         try {
-            $user = JWTAuth::parseToken()->authenticate();
-        } catch (JWTException $e) {
+            $user = \Tymon\JWTAuth\Facades\JWTAuth::parseToken()->authenticate();
+            auth()->setUser($user);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
             return response()->json([
                 'status' => 401,
                 'messageKey' => 'Unauthorized',

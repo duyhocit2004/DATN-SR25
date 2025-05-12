@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Voucher;
 use App\Models\OrderDetail;
 use App\Services\EmailService;
+use App\Services\NotificationService;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -26,10 +27,12 @@ use Illuminate\Support\Facades\Auth;
 class OrderRepositories
 {
     protected $emailService;
+    protected $notificationService;
 
-    public function __construct(EmailService $emailService)
+    public function __construct(EmailService $emailService, NotificationService $notificationService)
     {
         $this->emailService = $emailService;
+        $this->notificationService = $notificationService;
     }
 
     public function addOrder(array $data)
@@ -176,11 +179,17 @@ class OrderRepositories
             DB::beginTransaction();
 
             $user = JWTAuth::parseToken()->authenticate();
+            \Log::info('EMAIL DEBUG', [
+                'user' => $user,
+                'data' => $data,
+                'user_email' => $user->email ?? null,
+                'data_email' => $data['email'] ?? null
+            ]);
             $order = Order::create([
                 'users_id' => $user->id ?? null,
                 'code' => 'Od' . Str::random(4),
                 'customer_name' => $data['customerName'],
-                'email' => $data['email'] ?? 'default@email.com',
+                'email' => ($user && $user->email) ? $user->email : ($data['email'] ?? 'default@email.com'),
                 'phone_number' => $data['phoneNumber'],
                 'receiver_name' => $data['receiverName'] ?? null,
                 'receiver_phone_number' => $data['receiverPhoneNumber'] ?? null,
@@ -559,7 +568,6 @@ class OrderRepositories
             $order->note = $request->input('note');
             $order->save();
 
-            event(new \App\Events\UserNotification($order));
             DB::commit();
             return BaseResponse::success($order);
 

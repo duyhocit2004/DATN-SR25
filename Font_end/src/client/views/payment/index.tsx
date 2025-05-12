@@ -464,10 +464,9 @@ const Payment = () => {
     try {
       const templateParams = {
         to_email: orderData.email,
-        to_name: orderData.customerName,
+        customer_name: orderData.customerName,
         order_code: orderData.code,
         order_date: new Date().toLocaleString('vi-VN'),
-        customer_name: orderData.customerName,
         phone_number: orderData.phoneNumber,
         shipping_address: orderData.shippingAddress,
         total_amount: orderData.totalAmount.toLocaleString('vi-VN') + ' VND',
@@ -478,10 +477,10 @@ const Payment = () => {
       };
 
       await emailjs.send(
-        'service_4hdrbsz',
-        'template_2ogzr22',
+        'service_2hg7tpr',
+        'template_6atj27d',
         templateParams,
-        'OhQzQb1tfiHVYmidF'
+        'ezx2iY573QCfjH3pt'
       );
 
       console.log('Order confirmation email sent successfully');
@@ -520,7 +519,7 @@ const Payment = () => {
       const selectedLocation = userLocations.find(loc => loc.id === locationId);
       const receiverName = selectedLocation?.user_name || selectedLocation?.userName || "";
       const receiverPhoneNumber = selectedLocation?.phone_number || selectedLocation?.phoneNumber || "";
-      const receiverEmail = selectedLocation?.email || "noemail@yourdomain.com";
+      const receiverEmail = user?.email?.trim() || selectedLocation?.email || "noemail@yourdomain.com";
       const receiverAddress = selectedLocation
         ? `${selectedLocation.location_detail || selectedLocation.locationDetail || ""}, ${selectedLocation.ward_name || selectedLocation.wardName || ""}, ${selectedLocation.district_name || selectedLocation.districtName || ""}, ${selectedLocation.province_name || selectedLocation.provinceName || ""}`
         : "";

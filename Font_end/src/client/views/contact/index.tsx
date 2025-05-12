@@ -17,10 +17,10 @@ const ContactUs: React.FC = () => {
     if (form.current) {
       emailjs
         .sendForm(
-          "service_4hdrbsz", // Thay bằng Service ID của bạn
-          "template_2ogzr22", // Thay bằng Template ID của bạn
+          "service_z8qreuh", // Thay bằng Service ID của bạn
+          "template_a3wcow8", // Thay bằng Template ID của bạn
           form.current,
-          "OhQzQb1tfiHVYmidF" // Thay bằng Public Key của bạn
+          "3aQUQJg7LQjr1oLT5" // Thay bằng Public Key của bạn
         )
         .then(
           () => {

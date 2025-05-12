@@ -42,7 +42,7 @@ class OrderController extends Controller
                 'updated_by' => auth()->id()
             ]);
 
-            // Create notification
+            // Create notification for status update
             $this->notificationService->createOrderStatusNotification($order, $oldStatus, $newStatus, $note);
 
             return response()->json([

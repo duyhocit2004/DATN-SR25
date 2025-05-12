@@ -203,8 +203,6 @@ Route::get('/test-broadcast', function () {
         'status' => 'PENDING'
     ];
     
-    event(new \App\Events\NewOrderCreated($testOrder));
-    
     return response()->json([
         'message' => 'Test broadcast sent successfully',
         'order' => $testOrder

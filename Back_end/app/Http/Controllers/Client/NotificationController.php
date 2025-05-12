@@ -10,7 +10,7 @@ use Exception;
 
 class NotificationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
@@ -21,9 +21,13 @@ class NotificationController extends Controller
                 ], 401);
             }
 
+            $limit = $request->input('limit', 10);
+            $order = $request->input('order', 'desc');
+
             $notifications = Notification::where('user_id', $user->id)
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->orderBy('created_at', $order)
+                ->take($limit)
+                ->get();
 
             return response()->json([
                 'status' => 200,
