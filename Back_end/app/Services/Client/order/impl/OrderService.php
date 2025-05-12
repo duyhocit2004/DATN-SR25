@@ -2,7 +2,6 @@
 
 namespace App\Services\Client\order\impl;
 
-use App\Events\NewOrderCreated;
 use App\Helpers\BaseResponse;
 use App\Models\Order;
 use App\Models\OrderStatusHistory;
@@ -14,6 +13,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Services\EmailService;
 
 
 class OrderService implements IOrderService
@@ -21,13 +21,16 @@ class OrderService implements IOrderService
 
     public OrderRepositories $orderRepositories;
     public VoucherRepositories $voucherRepositories;
+    protected $emailService;
 
     public function __construct(
         OrderRepositories $orderRepositories,
-        VoucherRepositories $voucherRepositories
+        VoucherRepositories $voucherRepositories,
+        EmailService $emailService
     ) {
         $this->orderRepositories = $orderRepositories;
         $this->voucherRepositories = $voucherRepositories;
+        $this->emailService = $emailService;
     }
 
 
@@ -56,9 +59,12 @@ class OrderService implements IOrderService
         // Gửi dữ liệu đến repository
         $order = $this->orderRepositories->addOrder($validatedData);
         
-        // Broadcast new order event
+        // Broadcast notification event
         if ($order) {
-            event(new NewOrderCreated($order));
+            app(\App\Services\NotificationService::class)->createNewOrderNotification($order);
+            
+            // Send order confirmation email
+            $this->emailService->sendOrderConfirmation($order);
         }
         
         return $order;

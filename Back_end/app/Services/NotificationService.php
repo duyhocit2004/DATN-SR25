@@ -5,27 +5,99 @@ namespace App\Services;
 use App\Models\Notification;
 use App\Models\Order;
 use App\Models\User;
+use App\Events\NotificationCreated;
 
 class NotificationService
 {
+    public function createNewOrderNotification(Order $order)
+    {
+        // Create notification for admin
+        $adminUsers = User::where('role', 'Admin')->get();
+        
+        foreach ($adminUsers as $admin) {
+            $notification = Notification::create([
+                'user_id' => $admin->id,
+                'title' => 'Đơn hàng mới',
+                'content' => "Có đơn hàng mới #{$order->code} từ khách hàng {$order->customer_name}",
+                'type' => 'new_order',
+                'status' => 'unread',
+                'data' => [
+                    'order_id' => $order->id,
+                    'order_code' => $order->code,
+                    'customer_name' => $order->customer_name,
+                    'total_amount' => $order->total_price
+                ]
+            ]);
+
+            // Broadcast notification event
+            event(new NotificationCreated($notification));
+        }
+
+        // Create notification for customer if they have an account
+        if ($order->users_id) {
+            $notification = Notification::create([
+                'user_id' => $order->users_id,
+                'title' => 'Đặt hàng thành công',
+                'content' => "Đơn hàng #{$order->code} của bạn đã được đặt thành công",
+                'type' => 'new_order',
+                'status' => 'unread',
+                'data' => [
+                    'order_id' => $order->id,
+                    'order_code' => $order->code,
+                    'total_amount' => $order->total_price
+                ]
+            ]);
+
+            // Broadcast notification event
+            event(new NotificationCreated($notification));
+        }
+    }
+
     public function createOrderStatusNotification(Order $order, string $oldStatus, string $newStatus, string $note = null)
     {
         $title = $this->getOrderStatusTitle($newStatus);
         $content = $this->getOrderStatusContent($order->code, $newStatus, $note);
 
-        Notification::create([
-            'user_id' => $order->user_id,
-            'title' => $title,
-            'content' => $content,
-            'type' => 'order_update',
-            'status' => 'unread',
-            'data' => [
-                'order_id' => $order->id,
-                'order_code' => $order->code,
-                'old_status' => $oldStatus,
-                'new_status' => $newStatus
-            ]
-        ]);
+        // Create notification for customer
+        if ($order->users_id) {
+            $notification = Notification::create([
+                'user_id' => $order->users_id,
+                'title' => $title,
+                'content' => $content,
+                'type' => 'order_update',
+                'status' => 'unread',
+                'data' => [
+                    'order_id' => $order->id,
+                    'order_code' => $order->code,
+                    'old_status' => $oldStatus,
+                    'new_status' => $newStatus
+                ]
+            ]);
+
+            // Broadcast notification event
+            event(new NotificationCreated($notification));
+        }
+
+        // Create notification for admin
+        $adminUsers = User::where('role', 'Admin')->get();
+        foreach ($adminUsers as $admin) {
+            $notification = Notification::create([
+                'user_id' => $admin->id,
+                'title' => "Cập nhật đơn hàng #{$order->code}",
+                'content' => "Đơn hàng #{$order->code} đã được cập nhật trạng thái từ {$oldStatus} thành {$newStatus}",
+                'type' => 'order_update',
+                'status' => 'unread',
+                'data' => [
+                    'order_id' => $order->id,
+                    'order_code' => $order->code,
+                    'old_status' => $oldStatus,
+                    'new_status' => $newStatus
+                ]
+            ]);
+
+            // Broadcast notification event
+            event(new NotificationCreated($notification));
+        }
     }
 
     private function getOrderStatusTitle(string $status): string

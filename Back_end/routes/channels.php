@@ -20,6 +20,14 @@ $user = auth()->user();
 Broadcast::channel('admin.new-order', function ($user) {
     return $user->role === 'admin';
 });
+\Log::info('Broadcasting auth', ['user' => auth()->user()]);
+
 Broadcast::channel('user.{id}', function ($user, $id) {
-    return  $user->id ===  $id;
+    \Log::info('Channel user.{id}', ['user' => $user, 'id' => $id]);
+    return (int) $user->id === (int) $id;
+});
+
+Broadcast::channel('admin.notifications', function ($user) {
+    \Log::info('Channel admin.notifications', ['user' => $user]);
+    return $user->role === 'Admin';
 });
