@@ -1,99 +1,92 @@
-
 import { useState, useEffect } from "react";
 import { Select, Form } from "antd";
-import addressApi from "@/api/addressApi";
+import { useAddress } from "@/hooks/useAddress";
 
 const AddressSelector = ({ form }: { form: any }) => {
-  const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [wards, setWards] = useState([]);
-
   const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
+  
+  const {
+    provinces,
+    districts,
+    wards,
+    loading,
+    fetchProvinces,
+    fetchDistricts,
+    fetchWards
+  } = useAddress();
 
   useEffect(() => {
-    const fetchProvinces = async () => {
-      const response = await addressApi.getProvinces();
-      setProvinces(response.data);
-    };
     fetchProvinces();
   }, []);
 
   useEffect(() => {
     if (selectedProvince) {
-      const fetchDistricts = async () => {
-        const response = await addressApi.getDistricts(selectedProvince);
-        setDistricts(response.data);
-      };
-      fetchDistricts();
-    } else {
-      setDistricts([]);
-      form.setFieldsValue({ district: null, ward: null });
+      fetchDistricts(selectedProvince);
+      setSelectedDistrict(null);
+      form.setFieldsValue({ district: undefined, ward: undefined });
     }
   }, [selectedProvince]);
 
   useEffect(() => {
     if (selectedDistrict) {
-      const fetchWards = async () => {
-        const response = await addressApi.getWards(selectedDistrict);
-        setWards(response.data);
-      };
-      fetchWards();
-    } else {
-      setWards([]);
-      form.setFieldsValue({ ward: null });
+      fetchWards(selectedDistrict);
+      form.setFieldsValue({ ward: undefined });
     }
   }, [selectedDistrict]);
 
   return (
     <>
       <Form.Item
-        label="Tỉnh/Thành phố"
         name="province"
-        rules={[{ required: true, message: "Vui lòng chọn tỉnh/thành phố!" }]}
+        label="Tỉnh/Thành phố"
+        rules={[{ required: true, message: "Vui lòng chọn tỉnh/thành phố" }]}
       >
         <Select
           placeholder="Chọn tỉnh/thành phố"
           onChange={(value) => setSelectedProvince(value)}
+          loading={loading}
         >
-          {provinces.map((item) => (
-            <Select.Option key={item.code} value={item.code}>
-              {item.name}
+          {provinces.map((province) => (
+            <Select.Option key={province.code} value={province.code}>
+              {province.name}
             </Select.Option>
           ))}
         </Select>
       </Form.Item>
 
       <Form.Item
-        label="Quận/Huyện"
         name="district"
-        rules={[{ required: true, message: "Vui lòng chọn quận/huyện!" }]}
+        label="Quận/Huyện"
+        rules={[{ required: true, message: "Vui lòng chọn quận/huyện" }]}
       >
         <Select
           placeholder="Chọn quận/huyện"
           onChange={(value) => setSelectedDistrict(value)}
+          loading={loading}
           disabled={!selectedProvince}
         >
-          {districts.map((item) => (
-            <Select.Option key={item.code} value={item.code}>
-              {item.name}
+          {districts.map((district) => (
+            <Select.Option key={district.code} value={district.code}>
+              {district.name}
             </Select.Option>
           ))}
         </Select>
       </Form.Item>
 
       <Form.Item
-        label="Phường/Xã"
         name="ward"
-        rules={[{ required: true, message: "Vui lòng chọn phường/xã!" }]}
+        label="Phường/Xã"
+        rules={[{ required: true, message: "Vui lòng chọn phường/xã" }]}
       >
         <Select
           placeholder="Chọn phường/xã"
+          loading={loading}
           disabled={!selectedDistrict}
         >
-          {wards.map((item) => (
-            <Select.Option key={item.code} value={item.code}>
-              {item.name}
+          {wards.map((ward) => (
+            <Select.Option key={ward.code} value={ward.code}>
+              {ward.name}
             </Select.Option>
           ))}
         </Select>

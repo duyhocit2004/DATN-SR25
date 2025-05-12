@@ -128,6 +128,7 @@ class OrderController extends Controller
                 // Cập nhật trạng thái đơn hàng
                 $order->status = $request->input('status', $order->status);
                 $order->payment_status = $request->input('paymentStatus', $order->payment_status);
+                $order->note = $request->input('note', $order->note);
                 
                 // Nếu đơn hàng được giao thành công và thanh toán COD, tự động cập nhật trạng thái thanh toán
                 if ($order->status === 'Delivered' && $order->payment_method === 'COD') {

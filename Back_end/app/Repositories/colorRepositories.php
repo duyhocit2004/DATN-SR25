@@ -31,8 +31,7 @@ class ColorRepositories
             $query->where('code', '=', $code);
         }
 
-        $colors = $query->paginate($perPage, ['*'], 'page', $page);
-        return $colors;
+        return $query->paginate($perPage, ['*'], 'page', $page);
     }
 
     public function addColor(Request $request)

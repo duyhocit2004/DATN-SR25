@@ -83,16 +83,16 @@ const items: MenuItem[] = [
   //   "/admin/posts",
   //   <ReadOutlined />
   // ),
-  getItem(
-    <Link to={"/admin/colors"}>Màu</Link>,
-    "/admin/colors",
-    <BgColorsOutlined />
-  ),
-  getItem(
-    <Link to={"/admin/sizes"}>Kích thước</Link>,
-    "/admin/sizes",
-    <ColumnWidthOutlined />
-  ),
+  // getItem(
+  //   <Link to={"/admin/colors"}>Màu</Link>,
+  //   "/admin/colors",
+  //   <BgColorsOutlined />
+  // ),
+  // getItem(
+  //   <Link to={"/admin/sizes"}>Kích thước</Link>,
+  //   "/admin/sizes",
+  //   <ColumnWidthOutlined />
+  // ),
   getItem(
     <Link to={"/admin/banners"}>Banner</Link>,
     "/admin/banners",

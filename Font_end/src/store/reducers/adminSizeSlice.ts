@@ -11,6 +11,7 @@ interface AdminSizeState {
   selectedSize: ISize | null;
   filter: {
     name: string;
+    type?: 'numeric' | 'text';
   };
   pagination: { page: number; pageSize: number };
   totalElements: number;
@@ -21,7 +22,7 @@ const initialState: AdminSizeState = {
   sizes: [],
   showAddModal: false,
   selectedSize: null,
-  filter: { name: "" },
+  filter: { name: "", type: 'numeric' },
   pagination: { page: 1, pageSize: 10 },
   totalElements: 0,
   loading: false,
@@ -36,6 +37,7 @@ export const fetchSizes = createAsyncThunk(
 
     const payload = {
       size: filter.name,
+      type: filter.type,
       pageNum: pagination.page,
       pageSize: pagination.pageSize,
     };
