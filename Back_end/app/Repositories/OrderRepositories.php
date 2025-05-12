@@ -217,7 +217,7 @@ class OrderRepositories
                     'price_regular' => $productReal['price_regular'],
                     'price_sale' => $productReal['price_sale'],
                     'discount' => $productReal['discount'],
-                    'color' => DB::table('colors')->where('code', $product['color'])->value('name'),
+                    'color' => $product['color'],
                     'size' => $product['size'],
                     'quantity_order' => $product['quantity'],
                     'product_id' => $product['productId'],
