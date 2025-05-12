@@ -1,6 +1,6 @@
 import orderApi from "@/api/orderApi";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setSelectedOrder } from "@/store/reducers/orderSlice";
+import { setSelectedOrder, setOrders } from "@/store/reducers/orderSlice";
 import { OrderStatusDataClient } from "@/utils/constantData";
 import { getColorOrderStatus, getLabelByValue } from "@/utils/functions";
 import { Button, message, Modal, Tag } from "antd";
@@ -11,7 +11,7 @@ import OrderHistoryForm from './OrderHistoryForm';
 
 const OrderDetail = () => {
   const dispatch = useAppDispatch();
-  const { selectedOrder } = useAppSelector((state) => state.order);
+  const { selectedOrder, orders } = useAppSelector((state) => state.order);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -39,17 +39,42 @@ const OrderDetail = () => {
       
       console.log("Response từ API:", response);
       
-      if (response.status === 200 || response.status === '200' || response.status === 'success') {
-        message.success(response.data?.message || "Đơn hàng đã được hủy thành công");
+      // Kiểm tra response có thành công không
+      if (response?.data?.status === 'success' || response?.status === 'success' || response?.data?.message?.includes('thành công')) {
+        // Đóng modal xác nhận
         setIsConfirmModalOpen(false);
-        dispatch(setSelectedOrder(null));
-        navigate('/order-history');
+        
+        // Cập nhật trạng thái đơn hàng trong danh sách
+        const updatedOrder = {
+          ...selectedOrder,
+          status: 'Cancel'
+        };
+        
+        // Cập nhật selectedOrder trước
+        dispatch(setSelectedOrder(updatedOrder));
+        
+        // Cập nhật danh sách đơn hàng
+        const updatedOrders = orders.map(order => 
+          order.id === selectedOrder.id ? updatedOrder : order
+        );
+        dispatch(setOrders(updatedOrders));
+        
+        // Hiển thị thông báo thành công
+        message.success("Đơn hàng đã được hủy thành công");
+        
+        // Đóng modal chi tiết và chuyển hướng
+        setTimeout(() => {
+          dispatch(setSelectedOrder(null));
+          navigate('/order-history');
+        }, 1000); // Đợi 1 giây để người dùng thấy thông báo thành công
       } else {
-        message.error(response.message || response.data?.message || "Hủy đơn hàng thất bại");
+        // Nếu response không thành công, hiển thị lỗi
+        const errorMessage = response?.data?.message || response?.message || "Hủy đơn hàng thất bại";
+        message.error(errorMessage);
       }
     } catch (error: any) {
       console.error("Lỗi khi hủy đơn hàng:", error);
-      const errorMessage = error.response?.data?.message || error.message || "Hủy đơn hàng thất bại";
+      const errorMessage = error?.response?.data?.message || error?.message || "Hủy đơn hàng thất bại";
       message.error(errorMessage);
     }
   };

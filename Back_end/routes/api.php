@@ -127,55 +127,54 @@ Route::middleware('jwt.auth')->group(function () {
 
         Route::prefix('users')->group(function () {
             Route::post('/getUserInfoByEmail', [AuthController::class, 'getUser']);
-            Route::post('/updateUserAdmin', [UserController::class, 'updateUserAdmin']);
-            Route::post('/updateUser', [AuthController::class, 'updateUser']);
             Route::post('/getAllUser', [UserController::class, 'getAllUser']);
-            Route::post('/deleteUser', [UserController::class, 'deleteUser']);
+            Route::post('/updateUserAdmin', [UserController::class, 'updateUserAdmin'])->middleware('manager');
+            Route::post('/updateUser', [AuthController::class, 'updateUser']);
+            Route::post('/deleteUser', [UserController::class, 'deleteUser'])->middleware('admin');
         });
 
         Route::prefix('orders')->group(function () {
             Route::post('/getOrdersPaging', [OrderController::class, 'getOrdersPaging']);
-            Route::post('/updateOrder', [OrderController::class, 'updateOrder']);
-            Route::post('/deleteOrder', [OrderController::class, 'deleteOrder']);
+            Route::post('/updateOrder', [OrderController::class, 'updateOrder'])->middleware('manager');
+            Route::post('/deleteOrder', [OrderController::class, 'deleteOrder'])->middleware('admin');
             Route::post('/refundOrder', [OrderController::class, 'refundOrder']);
         });
 
         Route::prefix('colors')->group(function () {
-            Route::post('/addColor', [ColorController::class, 'addColor']);
-            Route::post('/updateColor', [ColorController::class, 'updateColor']);
-            Route::post('/deleteColor', [ColorController::class, 'deleteColor']);
+            Route::post('/addColor', [ColorController::class, 'addColor'])->middleware('manager');
+            Route::post('/updateColor', [ColorController::class, 'updateColor'])->middleware('manager');
+            Route::post('/deleteColor', [ColorController::class, 'deleteColor'])->middleware('admin');
         });
         Route::prefix('sizes')->group(function () {
-            Route::post('/addSize', [SizeController::class, 'addSize']);
-            Route::post('/updateSize', [SizeController::class, 'updateSize']);
-            Route::post('/deleteSize', [SizeController::class, 'deleteSize']);
+            Route::post('/addSize', [SizeController::class, 'addSize'])->middleware('manager');
+            Route::post('/updateSize', [SizeController::class, 'updateSize'])->middleware('manager');
+            Route::post('/deleteSize', [SizeController::class, 'deleteSize'])->middleware('admin');
         });
 
-
         Route::prefix('products')->group(function () {
-            Route::post('/addProductWithVariant', [ProductAdminController::class, 'addProductWithVariant']);
-            Route::post('/updateProductWithVariant', [ProductAdminController::class, 'updateProductWithVariant']);
-            Route::post('/deleteProduct', [ProductAdminController::class, 'deleteProduct']);
+            Route::post('/addProductWithVariant', [ProductAdminController::class, 'addProductWithVariant'])->middleware('manager');
+            Route::post('/updateProductWithVariant', [ProductAdminController::class, 'updateProductWithVariant'])->middleware('manager');
+            Route::post('/deleteProduct', [ProductAdminController::class, 'deleteProduct'])->middleware('admin');
         });
 
         Route::prefix('categories')->group(function () {
-            Route::post('/addCategory', [CategoryController::class, 'addCategory']);
-            Route::post('/updateCategory', [CategoryController::class, 'updateCategory']);
-            Route::post('/deleteCategory', [CategoryController::class, 'deleteCategory']);
+            Route::post('/addCategory', [CategoryController::class, 'addCategory'])->middleware('manager');
+            Route::post('/updateCategory', [CategoryController::class, 'updateCategory'])->middleware('manager');
+            Route::post('/deleteCategory', [CategoryController::class, 'deleteCategory'])->middleware('admin');
         });
 
         Route::prefix('vouchers')->group(function () {
             Route::post('/getAllVoucher', [VoucherController::class, 'getAllVoucher']);
-            Route::post('/addVoucher', [VoucherController::class, 'addVoucher']);
-            Route::post('/updateVoucher', [VoucherController::class, 'updateVoucher']);
-            Route::post('/deleteVoucher', [VoucherController::class, 'deleteVoucher']);
+            Route::post('/addVoucher', [VoucherController::class, 'addVoucher'])->middleware('manager');
+            Route::post('/updateVoucher', [VoucherController::class, 'updateVoucher'])->middleware('manager');
+            Route::post('/deleteVoucher', [VoucherController::class, 'deleteVoucher'])->middleware('admin');
             Route::post('/toggleStatus', [VoucherController::class, 'toggleStatus']);
         });
 
         Route::prefix('banners')->group(function () {
-            Route::post('/addBanner', [BannerController::class, 'addBanner']);
-            Route::post('/updateBanner', [BannerController::class, 'updateBanner']);
-            Route::post('/deleteBanner', [BannerController::class, 'deleteBanner']);
+            Route::post('/addBanner', [BannerController::class, 'addBanner'])->middleware('manager');
+            Route::post('/updateBanner', [BannerController::class, 'updateBanner'])->middleware('manager');
+            Route::post('/deleteBanner', [BannerController::class, 'deleteBanner'])->middleware('admin');
         });
     });
 });

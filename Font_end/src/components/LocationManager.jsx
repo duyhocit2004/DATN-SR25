@@ -253,7 +253,32 @@ const LocationManager = () => {
     { title: '📞 SĐT', dataIndex: 'sdt' },
     { title: '📍 Chi tiết', dataIndex: 'chi_tiet' },
     { title: 'Loại', dataIndex: 'loai' },
-    { title: 'Mặc định', dataIndex: 'mac_dinh', render: val => val ? '✔️' : '-' },
+    { title: 'Mặc định', dataIndex: 'mac_dinh', render: (val, record) => (
+      <Switch
+        checked={val}
+        onChange={async (checked) => {
+          if (checked) {
+            await locationApi.update(record.id, {
+              location_name: record.ten_dia_chi,
+              user_name: record.nguoi_nhan,
+              phone_number: record.sdt,
+              location_detail: record.chi_tiet,
+              province_code: record.province_code,
+              province_name: record.province_name,
+              district_code: record.district_code,
+              district_name: record.district_name,
+              ward_code: record.ward_code,
+              ward_name: record.ward_name,
+              status: record.loai,
+              is_default: true
+            });
+            message.success('Đã đặt làm địa chỉ mặc định');
+            fetchLocations();
+          }
+        }}
+        disabled={val}
+      />
+    ) },
     {
       title: 'Hành động',
       render: (_, record) => (
@@ -283,8 +308,15 @@ const LocationManager = () => {
         width={600}
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="location_name" label="Tên địa chỉ" rules={[{ required: true, message: "Vui lòng nhập tên địa chỉ" }]}>
-            <Input />
+          <Form.Item
+            name="location_name"
+            label="Loại địa chỉ"
+            rules={[{ required: true, message: "Vui lòng chọn loại địa chỉ" }]}
+          >
+            <Select placeholder="Chọn loại địa chỉ">
+              <Select.Option value="Nhà Riêng">Nhà Riêng</Select.Option>
+              <Select.Option value="Công Ty">Công Ty</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item name="user_name" label="Người nhận" rules={[{ required: true, message: "Vui lòng nhập người nhận" }]}>
             <Input />
@@ -372,9 +404,6 @@ const LocationManager = () => {
               <Option value="Chính">Chính</Option>
               <Option value="Phụ">Phụ</Option>
             </Select>
-          </Form.Item>
-          <Form.Item name="is_default" label="Địa chỉ mặc định" valuePropName="checked">
-            <Switch />
           </Form.Item>
         </Form>
       </Modal>

@@ -47,6 +47,7 @@ class OrderService implements IOrderService
             'products' => 'required|array',
             'voucher' => 'nullable|string',
             'voucherPrice' => 'nullable|numeric',
+            'note' => 'nullable|string',
         ]);
 
         // Gán giá trị mặc định nếu không có voucher
@@ -138,7 +139,7 @@ class OrderService implements IOrderService
                 'priceSale' => $order->price_sale,
                 'voucher' => $order->voucher,
                 'voucherPrice' => $order->voucher_price,
-                'shippingAddress' => $order->address,
+                'shippingAddress' => $order->shipping_address,
                 'paymentStatus' => $order->payment_status,
                 'paymentMethod' => $order->payment_method,
                 'note' => $order->note,

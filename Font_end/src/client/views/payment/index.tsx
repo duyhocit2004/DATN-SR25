@@ -694,7 +694,7 @@ const Payment = () => {
                     <div>
                       <div className="font-semibold text-gray-800">{item.product?.name}</div>
                       <div className="text-sm text-gray-600">Size: {item.size}</div>
-                      <div className="text-sm text-gray-600">Color: {item.color}</div>
+                      <div className="text-sm text-gray-600">Color: {item.colorName || item.color}</div>
                     </div>
                     <div className="text-sm text-gray-600">× {item.quantity}</div>
                   </div>
