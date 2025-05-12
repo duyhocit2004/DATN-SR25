@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * @property int $id
  * @property string $name
- * @property string $code
+//  * @property string $code
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
@@ -29,7 +29,7 @@ class Color extends Model
 
 	protected $fillable = [
 		'name',
-		'code'
+		// 'code'
 	];
 
 	public function product_variants()

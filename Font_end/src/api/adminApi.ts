@@ -142,7 +142,7 @@ class AdminApi extends BaseApi<{ data: any }> {
     payload: any
   ): Promise<IResponseData<IDataPaging<IOrder[]>>> => {
     return axiosClient
-      .post(`${this.uri}/orders/getOrdersPaging`, payload)
+      .post(`${this.uri}/orders/getOrdersPaging`, { ...payload, isAdmin: true })
       .then((res) => res.data);
   };
   updateOrders = (

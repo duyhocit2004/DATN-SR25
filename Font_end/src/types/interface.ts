@@ -56,9 +56,7 @@ export interface ISize {
 
 export interface IColor {
   id: number;
-  code: string;
-  name : string;
-  description: string;
+  name: string;
   createdAt?: Dayjs;
   updatedAt?: Dayjs;
   deletedAt?: Dayjs;
@@ -196,11 +194,8 @@ export interface IVoucher {
 }
 
 export interface IAccount {
-  [x: string]: string | undefined;
-  [x: string]: string;
-  [x: string]: SetStateAction<string | undefined>;
   [x: string]: any;
-  id: number;
+  id: string | number;
   name: string;
   image: string;
   username: string;

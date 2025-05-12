@@ -297,20 +297,13 @@ class AdminService implements IAdminService
 
     public function getAllCategoriesNonTree(Request $request)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
         $categories = $this->categoriesRepositories->getAllCategoriesNonTree($request);
-        $categories->getCollection()->transform(function ($category) {
-            return [
-                'id' => $category->id,
-                'parentId' => $category->parent_id,
-                'name' => $category->name,
-                'image' => $category->image,
-                'gender' => $category->gender,
-                'createdAt' => $category->created_at,
-                'updatedAt' => $category->updated_at,
-                'description' => $category->description,
-                'parentName' => $category->parent ? $category->parent->name : '',
-            ];
-        });
         return $categories;
     }
     public function addBanner(Request $request)

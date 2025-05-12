@@ -3,12 +3,11 @@ import { showToast } from "@/components/toast";
 import { useAppDispatch } from "@/store/hooks";
 import { setShowAddModal } from "@/store/reducers/adminColorSlice";
 import { HttpCodeString } from "@/utils/constants";
-import { Modal, Input, Button, Form, ColorPicker } from "antd";
+import { Modal, Input, Button, Form } from "antd";
 import { useState } from "react";
 
 interface IColorForm {
   name: string;
-  code: string;
 }
 
 interface IProps {
@@ -20,12 +19,11 @@ const AddColorModal: React.FC<IProps> = ({ refreshData }) => {
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<IColorForm>({
     name: "",
-    code: "",
   });
   const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
-    setFormData({ name: "", code: "" });
+    setFormData({ name: "" });
     form.resetFields();
   };
 
@@ -45,8 +43,7 @@ const AddColorModal: React.FC<IProps> = ({ refreshData }) => {
 
   const onSave = async () => {
     const payload = {
-      name: formData.name,
-      code: formData.code
+      name: formData.name
     };
     setLoading(true);
     try {
@@ -94,19 +91,6 @@ const AddColorModal: React.FC<IProps> = ({ refreshData }) => {
             placeholder="Nhập tên màu (ví dụ: Đỏ, Xanh, Vàng...)"
             value={formData.name}
             onChange={(e) => onChangeFormData("name", e.target.value)}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Mã màu"
-          name="code"
-          rules={[{ required: true, message: "Vui lòng chọn mã màu!" }]}
-        >
-          <ColorPicker
-            format="hex"
-            value={formData.code}
-            onChange={(color) => onChangeFormData("code", color.toHexString())}
-            showText
           />
         </Form.Item>
 

@@ -18,6 +18,7 @@ import CategoryPopover, { IDataItem } from "@/components/category-popover";
 import { useAuth } from "@/context/AuthContext";
 import cartApi from "@/api/cartApi";
 import productApi from "@/api/productApi";
+import { useHeaderData } from "@/hooks/useHeaderData";
 
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -27,6 +28,8 @@ const Header: React.FC = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const navigate = useNavigate();
   const [categories, setCategories] = useState<IListCategory[]>([]);
+
+  const { loading } = useHeaderData(token);
 
   useEffect(() => {
     getCartInfo();

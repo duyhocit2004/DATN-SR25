@@ -1,16 +1,17 @@
 import orderApi from "@/api/orderApi";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setSelectedOrder } from "@/store/reducers/orderSlice";
+import { setSelectedOrder, setOrders } from "@/store/reducers/orderSlice";
 import { OrderStatusDataClient } from "@/utils/constantData";
 import { getColorOrderStatus, getLabelByValue } from "@/utils/functions";
 import { Button, message, Modal, Tag } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import OrderHistoryForm from './OrderHistoryForm';
 
 const OrderDetail = () => {
   const dispatch = useAppDispatch();
-  const { selectedOrder } = useAppSelector((state) => state.order);
+  const { selectedOrder, orders } = useAppSelector((state) => state.order);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -33,22 +34,48 @@ const OrderDetail = () => {
 
       console.log("Gửi request hủy đơn hàng:", selectedOrder.id);
       const response = await orderApi.cancelOrderByClient({
-        orderId: selectedOrder.id
+        orderCode: selectedOrder.code
       });
       
       console.log("Response từ API:", response);
       
-      if (response.status === 200 || response.status === '200') {
-        message.success("Đơn hàng đã được hủy thành công");
+      // Kiểm tra response có thành công không
+      if (response?.data?.status === 'success' || response?.status === 'success' || response?.data?.message?.includes('thành công')) {
+        // Đóng modal xác nhận
         setIsConfirmModalOpen(false);
-        dispatch(setSelectedOrder(null));
-        window.location.href = '/order-history';
+        
+        // Cập nhật trạng thái đơn hàng trong danh sách
+        const updatedOrder = {
+          ...selectedOrder,
+          status: 'Cancel'
+        };
+        
+        // Cập nhật selectedOrder trước
+        dispatch(setSelectedOrder(updatedOrder));
+        
+        // Cập nhật danh sách đơn hàng
+        const updatedOrders = orders.map(order => 
+          order.id === selectedOrder.id ? updatedOrder : order
+        );
+        dispatch(setOrders(updatedOrders));
+        
+        // Hiển thị thông báo thành công
+        message.success("Đơn hàng đã được hủy thành công");
+        
+        // Đóng modal chi tiết và chuyển hướng
+        setTimeout(() => {
+          dispatch(setSelectedOrder(null));
+          navigate('/order-history');
+        }, 1000); // Đợi 1 giây để người dùng thấy thông báo thành công
       } else {
-        message.error(response.message || "Hủy đơn hàng thất bại");
+        // Nếu response không thành công, hiển thị lỗi
+        const errorMessage = response?.data?.message || response?.message || "Hủy đơn hàng thất bại";
+        message.error(errorMessage);
       }
     } catch (error: any) {
       console.error("Lỗi khi hủy đơn hàng:", error);
-      message.error(error.response?.data?.message || "Hủy đơn hàng thất bại");
+      const errorMessage = error?.response?.data?.message || error?.message || "Hủy đơn hàng thất bại";
+      message.error(errorMessage);
     }
   };
 
@@ -88,39 +115,23 @@ const OrderDetail = () => {
               </p>
             </div>
 
-            {/* Thông tin người đặt hàng */}
-            <h3 className="font-bold mt-10 mb-4">Thông tin người đặt hàng</h3>
-            <div className="customer-info grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {/*Thông tin người nhận hàng */}
+            <h3 className="font-bold mt-10 mb-4">Thông tin người nhận hàng</h3>
+            <div className="receiver-info grid grid-cols-1 gap-4 sm:grid-cols-2">
               <p>
-                <strong>Họ và tên:</strong> {selectedOrder?.customerName || "-"}
+                <strong>Họ và tên:</strong> {selectedOrder?.receiverName || "-"}
               </p>
               <p>
-                <strong>Số điện thoại:</strong> {selectedOrder?.phoneNumber || "-"}
+                <strong>Số điện thoại:</strong> {selectedOrder?.receiverPhoneNumber || "-"}
               </p>
               <p>
-                <strong>Địa chỉ:</strong> {selectedOrder?.shippingAddress || "-"}
-              </p>
-              <p>
-                <strong>Email:</strong> {selectedOrder?.email || "-"}
+                <strong>Địa chỉ:</strong> {selectedOrder?.receiverAddress || selectedOrder?.shippingAddress || selectedOrder?.address || "Không có địa chỉ"}
               </p>
             </div>
 
-            {/*Thông tin người nhận hàng */}
-            {selectedOrder?.receiverName && (
-              <>
-                <h3 className="font-bold mt-10 mb-4">Thông tin người nhận hàng</h3>
-                <div className="receiver-info grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <p>
-                    <strong>Họ và tên:</strong> {selectedOrder?.receiverName || "-"}
-                  </p>
-                  <p>
-                    <strong>Số điện thoại:</strong> {selectedOrder?.receiverPhoneNumber || "-"}
-                  </p>
-                  <p>
-                    <strong>Địa chỉ:</strong> {selectedOrder?.receiverAddress || "-"}
-                  </p>
-                </div>
-              </>
+            {/* Thêm form lịch sử đơn hàng */}
+            {selectedOrder.statusHistories && selectedOrder.statusHistories.length > 0 && (
+              <OrderHistoryForm order={selectedOrder} />
             )}
 
             <h3 className="font-bold mt-10 mb-4">Danh sách sản phẩm:</h3>

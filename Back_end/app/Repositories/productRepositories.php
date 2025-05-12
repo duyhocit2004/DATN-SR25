@@ -395,7 +395,7 @@ class ProductRepositories
         
         if ($product) {
             $product->sizes = $product->sizes->unique('size')->pluck('size');
-            $product->colors = $product->colors->unique('code')->pluck('code');
+            $product->colors = $product->colors->unique('name')->pluck('name');
             return [
                 'id' => $product->id,
                 'categoriesId' => $product->categories_id,

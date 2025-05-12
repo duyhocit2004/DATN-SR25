@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Spin } from 'antd';
+import { Spin, message } from 'antd';
 import NotificationList from './NotificationList';
 import './NotificationList.css';
 import axiosClient from '@/configs/axiosClient';
+import echo from '@/configs/echo';
 
 interface NotificationData {
   id: string;
@@ -25,16 +26,78 @@ const NotificationContainer: React.FC = () => {
 
   useEffect(() => {
     fetchNotifications();
+    setupWebSocket();
+
+    return () => {
+      cleanupWebSocket();
+    };
   }, []);
+
+  const setupWebSocket = () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const userId = user.id;
+      const userRole = user.role;
+
+      if (!userId) {
+        console.error('User ID not found');
+        return;
+      }
+
+      // Subscribe to user's private channel
+      echo.private(`user.${userId}`)
+        .listen('NotificationCreated', (e: { notification: NotificationData }) => {
+          console.log('Received notification on user channel:', e);
+          setNotifications(prevNotifications => {
+            const newNotifications = [e.notification, ...prevNotifications];
+            return newNotifications.slice(0, 10); // Giới hạn 10 thông báo mới nhất
+          });
+          message.info('Bạn có thông báo mới!');
+        });
+
+      // If user is admin, also subscribe to admin channel
+      if (userRole === 'Admin') {
+        echo.private('admin.notifications')
+          .listen('NotificationCreated', (e: { notification: NotificationData }) => {
+            console.log('Received notification on admin channel:', e);
+            setNotifications(prevNotifications => {
+              const newNotifications = [e.notification, ...prevNotifications];
+              return newNotifications.slice(0, 10); // Giới hạn 10 thông báo mới nhất
+            });
+            message.info('Bạn có thông báo mới!');
+          });
+      }
+    } catch (error) {
+      console.error('Error setting up WebSocket:', error);
+    }
+  };
+
+  const cleanupWebSocket = () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const userId = user.id;
+      const userRole = user.role;
+
+      if (userId) {
+        echo.leave(`user.${userId}`);
+        if (userRole === 'Admin') {
+          echo.leave('admin.notifications');
+        }
+      }
+    } catch (error) {
+      console.error('Error cleaning up WebSocket:', error);
+    }
+  };
 
   const fetchNotifications = async () => {
     try {
-      const response = await axiosClient.get('/notifications');
+      const response = await axiosClient.get('/notifications?limit=10&order=desc');
       if (response.status === 200) {
         setNotifications(response.data.data);
       }
     } catch (error) {
       console.error('Error fetching notifications:', error);
+      message.error('Không thể tải thông báo');
     } finally {
       setLoading(false);
     }
@@ -42,7 +105,6 @@ const NotificationContainer: React.FC = () => {
 
   const handleViewDetail = (notification: NotificationData) => {
     if (notification.data.order_id) {
-      // Navigate to order detail page
       window.location.href = `/orders/${notification.data.order_id}`;
     }
   };
@@ -51,7 +113,6 @@ const NotificationContainer: React.FC = () => {
     try {
       const response = await axiosClient.post(`/notifications/${id}/mark-as-read`);
       if (response.status === 200) {
-        // Update the notification status in the local state
         setNotifications(prevNotifications =>
           prevNotifications.map(notification =>
             notification.id === id
@@ -59,9 +120,11 @@ const NotificationContainer: React.FC = () => {
               : notification
           )
         );
+        message.success('Đã đánh dấu đã đọc');
       }
     } catch (error) {
       console.error('Error marking notification as read:', error);
+      message.error('Không thể đánh dấu đã đọc');
     }
   };
 

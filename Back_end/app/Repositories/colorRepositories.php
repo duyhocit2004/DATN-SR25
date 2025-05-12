@@ -17,7 +17,7 @@ class ColorRepositories
     public function getColorsPaging(Request $request)
     {
         $name = $request->get('name', null);
-        $code = $request->get('code', null);
+        // $code = $request->get('code', null);
         $page = $request->get('pageNum', 1);
         $perPage = $request->get('pageSize', 10);
 
@@ -27,19 +27,18 @@ class ColorRepositories
             $query->where('name', 'like', '%' . $name . '%');
         }
         
-        if (!empty($code)) {
-            $query->where('code', '=', $code);
-        }
+        // if (!empty($code)) {
+        //     $query->where('code', '=', $code);
+        // }
 
-        $colors = $query->paginate($perPage, ['*'], 'page', $page);
-        return $colors;
+        return $query->paginate($perPage, ['*'], 'page', $page);
     }
 
     public function addColor(Request $request)
     {
         $color = Color::create([
             'name' => $request->input('name'),
-            'code' => $request->input('code'),
+            // 'code' => $request->input('code'),
         ]);
         return $color;
     }
@@ -54,7 +53,7 @@ class ColorRepositories
 
         $color->update([
             'name' => $request->input('name', $color->name),
-            'code' => $request->input('code', $color->code),
+            // 'code' => $request->input('code', $color->code),
         ]);
 
         return $color;

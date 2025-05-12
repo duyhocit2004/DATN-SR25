@@ -13,7 +13,7 @@
 
         <p><strong>Khách hàng:</strong> {{ $order->user_name }}</p>
         <p><strong>Email:</strong> {{ $order->email }}</p>
-        <p><strong>Địa chỉ:</strong> {{ $order->address }}</p>
+        <p><strong>Địa chỉ giao hàng:</strong> {{ $order->receiver_address ?? $order->shipping_address ?? $order->address }}</p>
         <p><strong>Tổng tiền:</strong> {{ number_format($order->total_price, 0, ',', '.') }} VNĐ</p>
         <p><strong>Trạng thái đơn hàng:</strong> {{ ucfirst($order->status) }}</p>
 

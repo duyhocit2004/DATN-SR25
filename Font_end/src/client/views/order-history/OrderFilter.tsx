@@ -39,7 +39,7 @@ const OrderFilter = () => {
 
   const handleFilter = (data = filterData) => {
     const payload = {
-      phoneNumber: phoneNumber,
+      receiverPhoneNumber: phoneNumber,
       orderCode: data.orderCode,
       status: data.status,
       fromDate: data.dateTime?.[0]
@@ -48,6 +48,7 @@ const OrderFilter = () => {
       toDate: data.dateTime?.[1]
         ? dayjs(data.dateTime?.[1]).format(ISO8601DateFormatDayjs)
         : null,
+      userId: localStorage.getItem('userId')
     };
     dispatch(fetchOrders(payload));
   };

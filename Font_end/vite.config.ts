@@ -53,7 +53,19 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,  // Bỏ kiểm tra SSL nếu cần (dành cho môi trường dev)
         rewrite: (path) => path.replace(/^\/api/, '') // Bỏ tiền tố '/api'
-      }
+      },
+      '/broadcasting': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, options) => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            if (req.headers['authorization']) {
+              proxyReq.setHeader('authorization', req.headers['authorization']);
+            }
+          });
+        }
+      },
     }
   }  
 });

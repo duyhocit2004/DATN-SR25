@@ -1,6 +1,5 @@
 import {
   IResponseData,
-  IResponseLogin,
   IResponseRegister,
 } from "@/types/interface";
 import BaseApi from "./baseApi";

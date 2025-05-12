@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Select, Form } from "antd";
-import axios from "axios";
+import addressApi from "@/api/addressApi";
 
 interface AddressItem {
   code: string;
@@ -19,7 +19,7 @@ const AddressSelector = ({ form }: { form: any }) => {
 
   useEffect(() => {
     const fetchProvinces = async () => {
-      const response = await axios.get("https://provinces.open-api.vn/api/p/");
+      const response = await addressApi.getProvinces();
       setProvinces(response.data);
     };
     fetchProvinces();
@@ -28,10 +28,8 @@ const AddressSelector = ({ form }: { form: any }) => {
   useEffect(() => {
     if (selectedProvince) {
       const fetchDistricts = async () => {
-        const response = await axios.get(
-          `https://provinces.open-api.vn/api/p/${selectedProvince}?depth=2`
-        );
-        setDistricts(response.data.districts);
+        const response = await addressApi.getDistricts(selectedProvince);
+        setDistricts(response.data);
         setWards([]);
         form.setFieldsValue({ district: undefined, ward: undefined });
       };
@@ -45,10 +43,8 @@ const AddressSelector = ({ form }: { form: any }) => {
   useEffect(() => {
     if (selectedDistrict) {
       const fetchWards = async () => {
-        const response = await axios.get(
-          `https://provinces.open-api.vn/api/d/${selectedDistrict}?depth=2`
-        );
-        setWards(response.data.wards);
+        const response = await addressApi.getWards(selectedDistrict);
+        setWards(response.data);
         form.setFieldsValue({ ward: undefined });
       };
       fetchWards();
@@ -56,6 +52,33 @@ const AddressSelector = ({ form }: { form: any }) => {
       setWards([]);
     }
   }, [selectedDistrict, form]);
+
+  useEffect(() => {
+    // Lấy địa chỉ user khi vào trang
+    const fetchUserLocations = async () => {
+      try {
+        const res = await addressApi.getUserLocations();
+        console.log("User locations:", res.data);
+        if (res.data && res.data.length > 0) {
+          const defaultLocation = res.data.find((loc: any) => loc.is_default) || res.data[0];
+          console.log("Default location:", defaultLocation);
+          // Đảm bảo provinces đã được load trước khi set giá trị
+          if (provinces.length > 0) {
+            form.setFieldsValue({
+              province: defaultLocation.province_code,
+              district: defaultLocation.district_code,
+              ward: defaultLocation.ward_code,
+            });
+            setSelectedProvince(defaultLocation.province_code);
+            setSelectedDistrict(defaultLocation.district_code);
+          }
+        }
+      } catch (e) {
+        console.error("Error fetching user locations:", e);
+      }
+    };
+    fetchUserLocations();
+  }, [form, provinces]);
 
   return (
     <>

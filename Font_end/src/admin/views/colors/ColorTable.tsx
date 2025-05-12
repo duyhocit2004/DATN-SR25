@@ -1,33 +1,24 @@
 import { Button, Table, Tooltip } from "antd";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  deleteColor,
-  fetchColors,
-  setPagination,
-  setSelectedColor,
-} from "@/store/reducers/adminColorSlice";
-import dayjs from "dayjs";
 import { IColor } from "@/types/interface";
 import { DeleteOutlined } from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
+import { TablePaginationConfig } from "antd/es/table";
 
-const ColorTable: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const { colors, pagination, totalElements, loading } = useAppSelector(
-    (state) => state.adminColor
-  );
+interface ColorTableProps {
+  colors: IColor[];
+  loading: boolean;
+  onEdit: (color: IColor) => void;
+  onDelete: (id: number) => void;
+  pagination?: TablePaginationConfig;
+  onChange?: (pagination: TablePaginationConfig) => void;
+}
 
+const ColorTable: React.FC<ColorTableProps> = ({ colors, loading, onEdit, onDelete, pagination, onChange }) => {
   const columns: ColumnsType<IColor> = [
     {
       title: "STT",
       dataIndex: "stt",
-      render: (value: any, record: any, index: number) => {
-        return (
-          <span>
-            {(pagination?.page - 1) * pagination?.pageSize + index + 1}
-          </span>
-        );
-      },
+      render: (_: any, __: any, index: number) => <span>{index + 1}</span>,
       minWidth: 70,
     },
     {
@@ -37,45 +28,28 @@ const ColorTable: React.FC = () => {
       minWidth: 150,
     },
     {
-      title: "Màu",
-      dataIndex: "code",
-      key: "color",
-      minWidth: 100,
-      render: (color: string) => {
-        return (
-          <div
-            className={`color w-6 h-6 shrink-0 rounded-[50%]`}
-            style={{
-              backgroundColor: color,
-              border: color.toLowerCase() === "#ffffff" || color.toLowerCase() === "white" ? "1px solid #ccc" : "none"
-            }}
-          ></div>
-        );
-      },
-    },
-    {
       title: "Ngày tạo",
       dataIndex: "created_at",
       key: "created_at",
       minWidth: 150,
       render: (date: string) => {
-        return dayjs(date).format("DD/MM/YYYY");
+        return date ? new Date(date).toLocaleDateString("vi-VN") : "";
       },
     },
     {
       title: "Hành động",
       key: "action",
       minWidth: 100,
-      fixed: 'right',
-      render: (_, record) => (
+      fixed: "right",
+      render: (_: any, record: IColor) => (
         <div className="actions">
           <Tooltip title={"Xóa"}>
             <Button
               danger
               icon={<DeleteOutlined />}
-              onClick={(e) => {
+              onClick={e => {
                 e.stopPropagation();
-                handleDeleteColor(record.id);
+                onDelete(record.id);
               }}
             />
           </Tooltip>
@@ -83,50 +57,21 @@ const ColorTable: React.FC = () => {
       ),
     },
   ];
-  const handleDeleteColor = async (colorId: number) => {
-    dispatch(deleteColor(colorId));
-  };
-
-  const handlePagingChange = (page: number, size: number) => {
-    dispatch(
-      setPagination({
-        page: page,
-        pageSize: size,
-      })
-    );
-    dispatch(fetchColors());
-  };
-
-  const onRowClick = (record: IColor) => {
-    dispatch(setSelectedColor(record));
-  };
 
   return (
     <Table<IColor>
       columns={columns}
-      rowKey={(record) => record.id}
+      rowKey={record => record.id}
       dataSource={colors}
-      pagination={{
-        pageSize: pagination?.pageSize,
-        current: pagination?.page,
-        showSizeChanger: true,
-        total: totalElements,
-        pageSizeOptions: [5, 10, 15, 20],
-        showTotal(total) {
-          return "Tổng: " + total;
-        },
-        onChange: handlePagingChange,
-      }}
-      onRow={(record) => {
-        return {
-          onClick: () => {
-            onRowClick(record);
-          }, // click row
-        };
-      }}
-      tableLayout="auto"
       loading={loading}
+      onRow={record => ({
+        onClick: () => onEdit(record),
+        style: { cursor: "pointer" },
+      })}
+      tableLayout="auto"
       scroll={{ x: "100%", y: "calc(100vh - 408px)" }}
+      pagination={pagination}
+      onChange={onChange}
     />
   );
 };

@@ -31,89 +31,60 @@ const Home = () => {
   const [email, setEmail] = useState("");
   const [categories, setCategories] = useState<IListCategory[]>([]);
   const [banners, setBanners] = useState<IAllBanner | null>(null);
-  const [topDiscountedProducts, setTopDiscountedProducts] = useState<
-    IProduct[]
-  >([]);
+  const [topDiscountedProducts, setTopDiscountedProducts] = useState<IProduct[]>([]);
   const [topNewestProducts, setTopNewestProducts] = useState<IProduct[]>([]);
-  const [topBestSellingProducts, setTopBestSellingProducts] = useState<
-    IProduct[]
-  >([]);
-
-
+  const [topBestSellingProducts, setTopBestSellingProducts] = useState<IProduct[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAllCategories();
-    getAllBanners();
-    getTopDiscountedProducts();
-    getTopNewestProducts();
-    getTopBestSellingProducts();
-  }, []);
+    const fetchAllData = async () => {
+      try {
+        setLoading(true);
+        const [
+          categoriesResponse,
+          bannersResponse,
+          discountedResponse,
+          newestResponse,
+          bestSellingResponse
+        ] = await Promise.all([
+          homeApi.getAllCategories(),
+          homeApi.getAllBanners(),
+          productApi.getTopDiscountedProducts({ topNumber: 8 }),
+          productApi.getTopNewestProducts({ topNumber: 8 }),
+          productApi.getTopBestSellingProducts({ topNumber: 8 })
+        ]);
 
-  const getAllCategories = async () => {
-    try {
-      const response = await homeApi.getAllCategories();
-      if (response?.status === HttpCodeString.SUCCESS) {
-        setCategories(response.data);
-      } else {
-        setCategories([]);
+        if (categoriesResponse?.status === HttpCodeString.SUCCESS) {
+          setCategories(categoriesResponse.data);
+        }
+
+        if (bannersResponse?.status === HttpCodeString.SUCCESS) {
+          setBanners(bannersResponse.data as IAllBanner);
+        }
+
+        if (discountedResponse?.status === HttpCodeString.SUCCESS) {
+          const sortedProducts = discountedResponse.data
+            .sort((a, b) => Number(b.discount) - Number(a.discount))
+            .slice(0, 8);
+          setTopDiscountedProducts(sortedProducts);
+        }
+
+        if (newestResponse?.status === HttpCodeString.SUCCESS) {
+          setTopNewestProducts(newestResponse.data);
+        }
+
+        if (bestSellingResponse?.status === HttpCodeString.SUCCESS) {
+          setTopBestSellingProducts(bestSellingResponse.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch {
-      setCategories([]);
-    }
-  };
-  const getAllBanners = async () => {
-    try {
-      const response = await homeApi.getAllBanners();
-      if (response?.status === HttpCodeString.SUCCESS) {
-        setBanners(response.data as IAllBanner);
-      } else {
-        setBanners(null);
-      }
-    } catch {
-      setBanners(null);
-    }
-  };
-  const getTopDiscountedProducts = async () => {
-    try {
-      const payload = { topNumber: 8 };
-      const response = await productApi.getTopDiscountedProducts(payload);
-      if (response?.status === HttpCodeString.SUCCESS) {
-        const sortedProducts = response.data
-          .sort((a, b) => Number(b.discount) - Number(a.discount))
-          .slice(0, 8);
-        console.log("Dữ liệu sau khi sắp xếp:", sortedProducts);
-        setTopDiscountedProducts(response.data);
-      } else {
-        setTopDiscountedProducts([]);
-      }
-    } catch {
-      setTopDiscountedProducts([]);
-    }
-  };
-  const getTopNewestProducts = async () => {
-    try {
-      const response = await productApi.getTopNewestProducts();
-      if (response?.status === HttpCodeString.SUCCESS) {
-        setTopNewestProducts(response.data);
-      } else {
-        setTopNewestProducts([]);
-      }
-    } catch {
-      setTopNewestProducts([]);
-    }
-  };
-  const getTopBestSellingProducts = async () => {
-    try {
-      const response = await productApi.getTopBestSellingProducts();
-      if (response?.status === HttpCodeString.SUCCESS) {
-        setTopBestSellingProducts(response.data);
-      } else {
-        setTopBestSellingProducts([]);
-      }
-    } catch {
-      setTopBestSellingProducts([]);
-    }
-  };
+    };
+
+    fetchAllData();
+  }, []);
 
   const handleViewProductByCategory = (catId: number) => {
     navigate("/products?categoryId=" + catId);

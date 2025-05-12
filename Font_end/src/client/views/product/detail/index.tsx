@@ -357,27 +357,17 @@ const ProductDetail = () => {
                   {/* Color Selection */}
                   <div className="mb-6">
                     <h3 className="text-lg font-medium mb-3">Màu</h3>
-                    <div className="color-area flex items-center gap-2">
-                      {colors?.map((color) => {
-                        const isWhite = color.toLowerCase() === "#ffffff" || color.toLowerCase() === "white";
-                        return (
-                          <div
-                            className={`color w-6 h-6 shrink-0 cursor-pointer hover:opacity-75 rounded-[50%] ${color === selectedColor
-                              ? "outline-2 outline-solid outline-neutral-400 border-[1px] border-solid border-white"
-                              : ""
-                              }`}
-                            style={{
-                              backgroundColor: color,
-                              border: isWhite ? "1px solid #ccc" : "",
-                              boxShadow: isWhite ? "0 0 2px 1px #ccc" : "",
-                            }}
-                            onClick={() => {
-                              handleChangeColor(color);
-                            }}
-                          ></div>
-                        );
-                      })}
-                    </div>
+                    <Radio.Group
+                      value={selectedColor}
+                      onChange={e => handleChangeColor(e.target.value)}
+                      buttonStyle="solid"
+                    >
+                      {colors?.map((color) => (
+                        <Radio.Button key={color} value={color}>
+                          {color}
+                        </Radio.Button>
+                      ))}
+                    </Radio.Group>
                   </div>
 
 

@@ -8,6 +8,8 @@ use Firebase\JWT\JWT;
 use App\Models\Product;
 use App\Models\Voucher;
 use App\Models\OrderDetail;
+use App\Services\EmailService;
+use App\Services\NotificationService;
 
 use Illuminate\Support\Str;
 use App\Models\Notification;
@@ -25,6 +27,14 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderRepositories
 {
+    protected $emailService;
+    protected $notificationService;
+
+    public function __construct(EmailService $emailService, NotificationService $notificationService)
+    {
+        $this->emailService = $emailService;
+        $this->notificationService = $notificationService;
+    }
 
     public function addOrder(array $data)
     {
@@ -170,11 +180,17 @@ class OrderRepositories
             DB::beginTransaction();
 
             $user = JWTAuth::parseToken()->authenticate();
+            \Log::info('EMAIL DEBUG', [
+                'user' => $user,
+                'data' => $data,
+                'user_email' => $user->email ?? null,
+                'data_email' => $data['email'] ?? null
+            ]);
             $order = Order::create([
                 'users_id' => $user->id ?? null,
                 'code' => 'Od' . Str::random(4),
                 'customer_name' => $data['customerName'],
-                'email' => $data['email'] ?? 'default@email.com',
+                'email' => ($user && $user->email) ? $user->email : ($data['email'] ?? 'default@email.com'),
                 'phone_number' => $data['phoneNumber'],
                 'receiver_name' => $data['receiverName'] ?? null,
                 'receiver_phone_number' => $data['receiverPhoneNumber'] ?? null,
@@ -211,7 +227,7 @@ class OrderRepositories
                     'price_regular' => $productReal['price_regular'],
                     'price_sale' => $productReal['price_sale'],
                     'discount' => $productReal['discount'],
-                    'color' => DB::table('colors')->where('code', $product['color'])->value('name'),
+                    'color' => $product['color'],
                     'size' => $product['size'],
                     'quantity_order' => $product['quantity'],
                     'product_id' => $product['productId'],
@@ -261,6 +277,10 @@ class OrderRepositories
             }
 
             DB::commit();
+
+            // Send order confirmation email
+            $this->emailService->sendOrderConfirmation($order);
+
             return $order;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -279,8 +299,14 @@ class OrderRepositories
         $paymentMethod = $request->input('paymentMethod');
         $voucherCode = $request->input('voucherCode');
         $totalAmount = $request->input('totalAmount');
+        $userId = $request->input('userId');
 
         $query = Order::with(['order_details']);
+
+        // Filter by user_id if provided
+        if (!empty($userId)) {
+            $query->where('users_id', $userId);
+        }
 
         // Only validate voucher if voucherCode is provided
         if (!empty($voucherCode)) {
@@ -305,7 +331,7 @@ class OrderRepositories
             $query->where('status', '=', $status);
         }
         if (!empty($phoneNumber)) {
-            $query->where('phone_number', '=', $phoneNumber);
+            $query->where('receiver_phone_number', '=', $phoneNumber);
         }
         if (!empty($orderCode)) {
             $query->where('code', 'like', '%' . $orderCode . '%');
@@ -336,17 +362,25 @@ class OrderRepositories
         $toDate = $request->input('toDate');
         $perPage = $request->input('pageSize', 10);
         $page = $request->input('pageNum', 1);
+        $userId = $request->input('userId');
+        $isAdmin = $request->input('isAdmin', false);
 
         $paymentStatus = $request->input('paymentStatus');
         $paymentMethod = $request->input('paymentMethod');
 
         $query = Order::with(['order_details']);
+        
+        // Chỉ lọc theo user_id nếu không phải admin và có userId
+        if (!$isAdmin && !empty($userId)) {
+            $query->where('users_id', $userId);
+        }
+
         if (!empty($status)) {
             $statuses = is_array($status) ? $status : explode(',', $status);
             $query->whereIn('status', $statuses);
         }
         if (!empty($phoneNumber)) {
-            $query->where('phone_number', '=', $phoneNumber);
+            $query->where('receiver_phone_number', '=', $phoneNumber);
         }
         if (!empty($orderCode)) {
             $query->where('code', 'like', '%' . $orderCode . '%');
@@ -368,7 +402,6 @@ class OrderRepositories
         }
         $orders = $query->orderBy('created_at', 'desc')->paginate($perPage, ['*'], 'page', $page);
         return $orders;
-
     }
 
     public function getOrderDetail(Request $request)
