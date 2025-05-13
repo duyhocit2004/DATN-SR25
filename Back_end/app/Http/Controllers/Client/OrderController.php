@@ -123,5 +123,41 @@ class OrderController extends Controller
         return BaseResponse::success($products);
     }
 
+    public function updateStatus(Request $request)
+    {
+        try {
+            $order = \App\Models\Order::findOrFail($request->id);
+            $oldStatus = $order->status;
+            $newStatus = $request->status;
+            $note = $request->note ?? null;
+
+            // Update order status
+            $order->update([
+                'status' => $newStatus
+            ]);
+
+            // Create order status history
+            \App\Models\OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'name_change' => auth()->user()->name,
+                'role_change' => auth()->user()->role,
+                'note' => $note,
+                'change_at' => now(),
+                'updated_by' => auth()->id()
+            ]);
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Cập nhật trạng thái đơn hàng thành công'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Có lỗi xảy ra khi cập nhật trạng thái đơn hàng'
+            ]);
+        }
+    }
 
 }

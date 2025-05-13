@@ -232,6 +232,8 @@ export const getColorOrderStatus = (status: string) => {
       return "orange"; // Đang vận chuyển
     case OrderStatus.DELIVERED:
       return "green"; // Đã giao hàng
+    case OrderStatus.RECEIVED:
+      return "green"; // Đã nhận được hàng
     case OrderStatus.CANCEL:
       return "red"; // Đã hủy
     default:

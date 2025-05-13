@@ -116,6 +116,7 @@ Route::middleware('jwt.auth')->group(function () {
         Route::post('/getOrderDetail', [OrderController::class, 'getOrderDetail']);
         Route::post('/cancelOrderByClient', [OrderController::class, 'cancelOrderByClient']);
         Route::post('/getVoucher', [OrderController::class, 'getVoucher']);
+        Route::post('/updateStatus', [OrderController::class, 'updateStatus']);
     });
 
     // các api màn admin
