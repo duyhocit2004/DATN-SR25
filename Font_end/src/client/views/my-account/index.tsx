@@ -219,22 +219,40 @@ const MyAccount: React.FC = () => {
       formData.append('newPassword', values.newPassword);
       formData.append('confirmPassword', values.confirmPassword);
 
-      // Gửi request và kiểm tra cả HTTP status lẫn status trong body
+      // Gửi request và kiểm tra response
       const response = await adminApi.updateUser(formData);
-      if (
-        response &&
-        (response.status === 200 || response.status === HttpCodeString.SUCCESS) &&
-        (response.data?.status === 200 || response.data?.status === HttpCodeString.SUCCESS)
-      ) {
+      
+      // Kiểm tra response status
+      if (response?.status === HttpCodeString.SUCCESS || response?.status === 200) {
         showToast({
-          content: "Đổi mật khẩu thành công!",
+          content: "Cập nhật mật khẩu thành công!",
           type: "success",
         });
         passwordForm.resetFields();
         setShowPasswordFields(false);
       } else {
+        // Xử lý các trường hợp lỗi cụ thể
+        let errorMessage = "Đổi mật khẩu thất bại!";
+        if (response?.data?.messageKey === "old.password.incorrect") {
+          errorMessage = "Mật khẩu cũ không chính xác!";
+        } else if (response?.data?.messageKey === "new.password.too.short") {
+          errorMessage = "Mật khẩu mới phải có ít nhất 8 ký tự!";
+        } else if (response?.data?.messageKey === "new.password.no.uppercase") {
+          errorMessage = "Mật khẩu mới phải chứa ít nhất 1 chữ hoa!";
+        } else if (response?.data?.messageKey === "new.password.no.lowercase") {
+          errorMessage = "Mật khẩu mới phải chứa ít nhất 1 chữ thường!";
+        } else if (response?.data?.messageKey === "new.password.no.number") {
+          errorMessage = "Mật khẩu mới phải chứa ít nhất 1 số!";
+        } else if (response?.data?.messageKey === "password.confirmation.mismatch") {
+          errorMessage = "Xác nhận mật khẩu không khớp!";
+        } else if (response?.data?.messageKey === "new.password.same.as.old") {
+          errorMessage = "Mật khẩu mới không được trùng với mật khẩu cũ!";
+        } else if (response?.data?.message) {
+          errorMessage = response.data.message;
+        }
+
         showToast({
-          content: response?.data?.message || response?.data?.messageKey || response?.message || "Đổi mật khẩu thất bại!",
+          content: errorMessage,
           type: "error",
         });
       }

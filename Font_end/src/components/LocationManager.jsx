@@ -6,7 +6,7 @@ import { showToast } from '@/components/toast';
 
 const { Option } = Select;
 
-const LocationManager = () => {
+const LocationManager = ({ onAddSuccess, onlyAddMode }) => {
   const [locations, setLocations] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -25,7 +25,6 @@ const LocationManager = () => {
     nguoi_nhan: loc.userName || loc.user_name || '-',
     sdt: loc.phoneNumber || loc.phone_number || '-',
     chi_tiet: loc.locationDetail || loc.location_detail || '-',
-    loai: loc.status || '-',
     mac_dinh: loc.isDefault !== undefined ? loc.isDefault : (loc.is_default !== undefined ? loc.is_default : false),
     province_code: loc.provinceCode || loc.province_code,
     province_name: loc.provinceName || loc.province_name,
@@ -161,7 +160,7 @@ const LocationManager = () => {
         user_name: pendingEdit.nguoi_nhan,
         phone_number: pendingEdit.sdt,
         street: pendingEdit.chi_tiet.split(',')[0].trim(),
-        status: pendingEdit.loai,
+     
         is_default: pendingEdit.mac_dinh,
         province: pendingEdit.province_code || '',
       });
@@ -242,6 +241,7 @@ const LocationManager = () => {
       }
       setModalVisible(false);
       fetchLocations();
+      if (onAddSuccess) onAddSuccess();
     } catch (error) {
       // Không làm gì, lỗi đã hiển thị trên form
     }
@@ -252,7 +252,6 @@ const LocationManager = () => {
     { title: '👤 Người nhận', dataIndex: 'nguoi_nhan' },
     { title: '📞 SĐT', dataIndex: 'sdt' },
     { title: '📍 Chi tiết', dataIndex: 'chi_tiet' },
-    { title: 'Loại', dataIndex: 'loai' },
     { title: 'Mặc định', dataIndex: 'mac_dinh', render: (val, record) => (
       <Switch
         checked={val}
@@ -269,7 +268,7 @@ const LocationManager = () => {
               district_name: record.district_name,
               ward_code: record.ward_code,
               ward_name: record.ward_name,
-              status: record.loai,
+              
               is_default: true
             });
             message.success('Đã đặt làm địa chỉ mặc định');
@@ -291,6 +290,116 @@ const LocationManager = () => {
       )
     }
   ];
+
+  // Nếu chỉ ở chế độ thêm địa chỉ, chỉ render form
+  if (onlyAddMode) {
+    return (
+      <div>
+        <h3>Thêm địa chỉ</h3>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={async (values) => {
+            try {
+              // Lấy tên tỉnh/huyện/xã từ code
+              const province = provinces.find(p => p.code === values.province);
+              const district = districts.find(d => d.code === values.district);
+              const ward = wards.find(w => w.code === values.ward);
+
+              const locationDetail = `${values.street}, ${ward?.name}, ${district?.name}, ${province?.name}`;
+
+              const payload = {
+                ...values,
+                location_detail: locationDetail,
+                province_code: values.province ? String(values.province) : '',
+                province_name: province?.name || '',
+                district_code: values.district ? String(values.district) : '',
+                district_name: district?.name || '',
+                ward_code: values.ward ? String(values.ward) : '',
+                ward_name: ward?.name || '',
+              };
+
+              await locationApi.create(payload);
+              showToast({ type: 'success', content: 'Thêm địa chỉ thành công!' });
+              if (onAddSuccess) onAddSuccess();
+              form.resetFields();
+            } catch (err) {
+              showToast({ type: 'error', content: 'Thêm địa chỉ thất bại!' });
+            }
+          }}
+        >
+          <Form.Item name="location_name" label="Loại địa chỉ" rules={[{ required: true, message: "Vui lòng chọn loại địa chỉ" }]}>
+            <Select placeholder="Chọn loại địa chỉ">
+              <Select.Option value="Nhà Riêng">Nhà Riêng</Select.Option>
+              <Select.Option value="Công Ty">Công Ty</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="user_name" label="Người nhận" rules={[{ required: true, message: "Vui lòng nhập người nhận" }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="phone_number" label="Số điện thoại" rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }, { pattern: /^[0-9]{10}$/, message: "Số điện thoại phải có 10 chữ số" }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="province" label="Tỉnh/Thành phố" rules={[{ required: true, message: "Vui lòng chọn tỉnh/thành phố" }]}>
+            <Select
+              placeholder="Chọn tỉnh/thành phố"
+              onChange={(value) => setSelectedProvince(value)}
+              showSearch
+              filterOption={(input, option) =>
+                option?.children?.toLowerCase().includes(input.toLowerCase())
+              }
+            >
+              {provinces.map((province) => (
+                <Option key={province.code} value={province.code}>
+                  {province.name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item name="district" label="Quận/Huyện" rules={[{ required: true, message: "Vui lòng chọn quận/huyện" }]}>
+            <Select
+              placeholder="Chọn quận/huyện"
+              onChange={(value) => setSelectedDistrict(value)}
+              disabled={!selectedProvince}
+              showSearch
+              filterOption={(input, option) =>
+                option?.children?.toLowerCase().includes(input.toLowerCase())
+              }
+            >
+              {districts.map((district) => (
+                <Option key={district.code} value={district.code}>
+                  {district.name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item name="ward" label="Phường/Xã" rules={[{ required: true, message: "Vui lòng chọn phường/xã" }]}>
+            <Select
+              placeholder="Chọn phường/xã"
+              disabled={!selectedDistrict}
+              showSearch
+              filterOption={(input, option) =>
+                option?.children?.toLowerCase().includes(input.toLowerCase())
+              }
+            >
+              {wards.map((ward) => (
+                <Option key={ward.code} value={ward.code}>
+                  {ward.name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item name="street" label="Số nhà, tên đường" rules={[{ required: true, message: "Vui lòng nhập số nhà, tên đường" }]}>
+            <Input />
+          </Form.Item>
+         
+          <Form.Item>
+            <Button type="primary" htmlType="submit">Thêm địa chỉ</Button>
+          </Form.Item>
+        </Form>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -399,12 +508,7 @@ const LocationManager = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="status" label="Loại địa chỉ" rules={[{ required: true, message: "Vui lòng chọn loại địa chỉ" }]}>
-            <Select>
-              <Option value="Chính">Chính</Option>
-              <Option value="Phụ">Phụ</Option>
-            </Select>
-          </Form.Item>
+
         </Form>
       </Modal>
     </div>
