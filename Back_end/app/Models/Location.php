@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $user_name
  * @property string $phone_number
  * @property string $location_detail
- * @property string $status
+
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
@@ -47,7 +47,6 @@ class Location extends Model
 		'district_name',
 		'ward_code',
 		'ward_name',
-		'status',
 		'is_default'
 	];
 

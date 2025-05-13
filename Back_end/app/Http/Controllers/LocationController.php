@@ -25,7 +25,7 @@ class LocationController extends Controller
             'province_code' => 'nullable|string|max:20',
             'district_code' => 'nullable|string|max:20',
             'ward_code' => 'nullable|string|max:20',
-            'status' => 'required|in:Chính,Phụ',
+          
             'is_default' => 'boolean'
         ]);
 
@@ -41,7 +41,7 @@ class LocationController extends Controller
         $location->district_name = $request->district_name;
         $location->ward_code = $request->ward_code;
         $location->ward_name = $request->ward_name;
-        $location->status = $request->status;
+
         $location->is_default = $request->is_default ?? false;
 
         if ($location->is_default) {
@@ -67,7 +67,7 @@ class LocationController extends Controller
             'province_code' => 'nullable|string|max:20',
             'district_code' => 'nullable|string|max:20',
             'ward_code' => 'nullable|string|max:20',
-            'status' => 'required|in:Chính,Phụ',
+        
             'is_default' => 'boolean'
         ]);
 
@@ -81,7 +81,7 @@ class LocationController extends Controller
         $location->district_name = $request->district_name;
         $location->ward_code = $request->ward_code;
         $location->ward_name = $request->ward_name;
-        $location->status = $request->status;
+    
         $location->is_default = $request->is_default ?? false;
 
         if ($location->is_default) {

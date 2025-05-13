@@ -493,7 +493,7 @@ const PaymentByIDProduct = () => {
         <div className="grid gap-6 lg:grid-cols-2">
           {/* FORM BILL */}
           <Card
-            title="Địa Chỉ"
+            title="Thông Tin Khách Hàng"
             className="border-0 shadow-md rounded-xl hover:shadow-lg transition-shadow duration-300"
           >
             <Form form={form} layout="vertical" className="space-y-2">
