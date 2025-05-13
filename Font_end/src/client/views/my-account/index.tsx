@@ -53,6 +53,7 @@ const beforeUpload = (file: RcFile) => {
 const MyAccount: React.FC = () => {
   const { user, refreshUserInfo } = useAuth();
   const [form] = Form.useForm();
+  const [passwordForm] = Form.useForm();
   const [formData, setFormData] = useState<IFormData>({
     id: 0,
     name: "",
@@ -106,7 +107,7 @@ const MyAccount: React.FC = () => {
           id: Number(account.id),
           name: account.name,
           image: thumbnailUploadFile,
-          oldPassword: account.password,
+          oldPassword: "",
           status: account.status,
           phoneNumber: account.phoneNumber,
           gender: account.gender,
@@ -166,53 +167,80 @@ const MyAccount: React.FC = () => {
       formData.append('phoneNumber', values.phoneNumber || currentUser.phoneNumber);
       formData.append('gender', values.gender || currentUser.gender || '');
       
-      // Handle password change
-      if (values.oldPassword) {
-        formData.append('oldPassword', values.oldPassword);
-      }
-      if (values.newPassword) {
-        formData.append('newPassword', values.newPassword);
-      }
-
       // If there's a temp image file, append it
       if (tempImageFile) {
         formData.append('image', tempImageFile);
       }
 
       const response = await adminApi.updateUser(formData);
-      
-      // Kiểm tra nếu response có status là 200 nhưng có messageKey (lỗi)
-      if (response.status === HttpCodeString.SUCCESS && !response.messageKey) {
+      if (response?.status === HttpCodeString.SUCCESS) {
         showToast({
           content: "Cập nhật thông tin thành công!",
           type: "success",
         });
-        
-        // Update the displayed image only after successful save
-        if (tempImageUrl) {
-          setImageUrl(tempImageUrl);
-          setTempImageUrl(null);
-        }
-        if (tempImageFile) {
-          setTempImageFile(null);
-        }
-        
-        setFormData(prev => ({ ...prev, ...values }));
-        await refreshUserInfo();
+        refreshUserInfo();
       } else {
-        // Hiển thị thông báo lỗi cụ thể từ backend
-        const errorMessage = response.message || "Cập nhật thất bại! Vui lòng thử lại.";
         showToast({
-          content: errorMessage,
+          content: response?.message || "Cập nhật thông tin thất bại!",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      showToast({
+        content: "Lỗi hệ thống. Vui lòng thử lại!",
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onUpdatePassword = async (values: { oldPassword: string; newPassword: string; confirmPassword: string }) => {
+    setLoading(true);
+    try {
+      // Get current user data first
+      const userResponse = await adminApi.getUserByEmail({ email: user?.email });
+      if (userResponse?.status !== HttpCodeString.SUCCESS) {
+        showToast({
+          content: "Không thể lấy thông tin người dùng!",
+          type: "error",
+        });
+        return;
+      }
+
+      const currentUser = userResponse.data;
+      const formData = new FormData();
+      
+      // Always include current user ID
+      formData.append('id', String(currentUser.id));
+      
+      // Add password fields
+      formData.append('oldPassword', values.oldPassword);
+      formData.append('newPassword', values.newPassword);
+      formData.append('confirmPassword', values.confirmPassword);
+
+      // Gửi request và kiểm tra cả HTTP status lẫn status trong body
+      const response = await adminApi.updateUser(formData);
+      if (
+        response &&
+        (response.status === 200 || response.status === HttpCodeString.SUCCESS) &&
+        (response.data?.status === 200 || response.data?.status === HttpCodeString.SUCCESS)
+      ) {
+        showToast({
+          content: "Đổi mật khẩu thành công!",
+          type: "success",
+        });
+        passwordForm.resetFields();
+        setShowPasswordFields(false);
+      } else {
+        showToast({
+          content: response?.data?.message || response?.data?.messageKey || response?.message || "Đổi mật khẩu thất bại!",
           type: "error",
         });
       }
     } catch (error: any) {
-      console.error("Lỗi khi cập nhật:", error);
-      // Hiển thị thông báo lỗi từ response nếu có
-      const errorMessage = error.response?.data?.message || "Có lỗi xảy ra khi cập nhật!";
       showToast({
-        content: errorMessage,
+        content: error?.response?.data?.message || error?.message || "Lỗi hệ thống. Vui lòng thử lại!",
         type: "error",
       });
     } finally {
@@ -392,10 +420,11 @@ const MyAccount: React.FC = () => {
 
                 <div className="p-8">
                   <Form
+                    form={passwordForm}
                     layout="horizontal"
                     labelCol={{ span: 6 }}
                     wrapperCol={{ span: 14 }}
-                    onFinish={onUpdate}
+                    onFinish={onUpdatePassword}
                     onValuesChange={(changedValues) => {
                       if ("oldPassword" in changedValues) {
                         setShowPasswordFields(!!changedValues.oldPassword);
@@ -409,7 +438,7 @@ const MyAccount: React.FC = () => {
                         { required: true, message: "Vui lòng nhập mật khẩu hiện tại" },
                       ]}
                     >
-                      <Input.Password placeholder="Nhập mật khẩu hiện tại" className="h-10" />
+                      <Input.Password placeholder="Nhập mật khẩu hiện tại" className="h-10" autoComplete="current-password" />
                     </Form.Item>
 
                     {showPasswordFields && (
@@ -434,7 +463,7 @@ const MyAccount: React.FC = () => {
                             }),
                           ]}
                         >
-                          <Input.Password placeholder="Nhập mật khẩu mới" className="h-10" />
+                          <Input.Password placeholder="Nhập mật khẩu mới" className="h-10" autoComplete="new-password" />
                         </Form.Item>
 
                         <Form.Item
@@ -453,7 +482,7 @@ const MyAccount: React.FC = () => {
                             }),
                           ]}
                         >
-                          <Input.Password placeholder="Nhập lại mật khẩu mới" className="h-10" />
+                          <Input.Password placeholder="Nhập lại mật khẩu mới" className="h-10" autoComplete="new-password" />
                         </Form.Item>
 
                         <Form.Item wrapperCol={{ offset: 6, span: 14 }}>

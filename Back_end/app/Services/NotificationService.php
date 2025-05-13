@@ -107,6 +107,7 @@ class NotificationService
             'processing' => 'Đơn hàng đang được xử lý',
             'shipping' => 'Đơn hàng đang được vận chuyển',
             'completed' => 'Đơn hàng đã hoàn thành',
+            'received' => 'Đơn hàng đã được nhận',
             'cancelled' => 'Đơn hàng đã bị hủy',
             'refunded' => 'Đơn hàng đã được hoàn tiền',
             default => 'Cập nhật trạng thái đơn hàng'
@@ -120,6 +121,7 @@ class NotificationService
             'processing' => "Đơn hàng #{$orderCode} của bạn đang được xử lý",
             'shipping' => "Đơn hàng #{$orderCode} của bạn đang được vận chuyển",
             'completed' => "Đơn hàng #{$orderCode} của bạn đã được giao thành công",
+            'received' => "Đơn hàng #{$orderCode} của bạn đã được xác nhận nhận hàng",
             'cancelled' => "Đơn hàng #{$orderCode} của bạn đã bị hủy",
             'refunded' => "Đơn hàng #{$orderCode} của bạn đã được hoàn tiền",
             default => "Đơn hàng #{$orderCode} của bạn đã được cập nhật trạng thái"

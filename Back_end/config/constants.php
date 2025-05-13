@@ -17,6 +17,7 @@ return [
         'PROCESSING' => 'Processing',
         'SHIPPING' => 'Shipping',
         'DELIVERED' => 'Delivered',
+        'RECEIVED' => 'Received',
         'CANCEL' => 'Cancel', 
         
     ],

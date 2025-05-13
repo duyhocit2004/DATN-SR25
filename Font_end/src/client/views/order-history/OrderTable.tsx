@@ -8,6 +8,8 @@ import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import orderApi from "@/api/orderApi";
+import { message } from "antd";
 
 const OrderTable = () => {
   const dispatch = useAppDispatch();
@@ -31,6 +33,16 @@ const OrderTable = () => {
   const handleProductReview = (productId: number) => {
     setIsReviewModalVisible(false);
     navigate(`/products/${productId}`);
+  };
+
+  const handleConfirmReceived = async (order: IOrder) => {
+    try {
+      await orderApi.updateOrderStatus({ id: order.id, status: "Received" });
+      dispatch(fetchOrders({ phoneNumber }));
+      message.success("Xác nhận đã nhận hàng thành công!");
+    } catch (error) {
+      message.error("Có lỗi khi xác nhận đã nhận hàng!");
+    }
   };
 
   const columns: ColumnsType<IOrder> = [
@@ -91,13 +103,23 @@ const OrderTable = () => {
       minWidth: 250,
       render: (_, record) => (
         <div className="flex gap-2">
-          {record.status === "Delivered" && (
-            <Button
-              type="primary"
-              onClick={() => handleReviewClick(record)}
-            >
-              Đánh giá
-            </Button>
+          {(record.status === "Delivered" || record.status === "Received") && (
+            <>
+              <Button
+                type="primary"
+                onClick={() => handleReviewClick(record)}
+              >
+                Đánh giá
+              </Button>
+              {record.status === "Delivered" && (
+                <Button
+                  type="default"
+                  onClick={() => handleConfirmReceived(record)}
+                >
+                  Đã nhận được hàng
+                </Button>
+              )}
+            </>
           )}
         </div>
       ),
