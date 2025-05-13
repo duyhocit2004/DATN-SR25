@@ -67,12 +67,10 @@ class OrderRepositories
                     return BaseResponse::failure('400', 'Sản phẩm ' . $productReal->name . ' hiện không khả dụng', 'product.not.available', []);
                 }
 
-                $color = \App\Models\Color::where('code', $product['color'])
-                    ->orWhere('name', $product['color'])
-                    ->first();
+             $color = \App\Models\Color::where('name', $product['color'])->first();
                 if (!$color) {
                     \Log::error('Color not found', [
-                        'colorCode' => $product['color'],
+                        'colorName' => $product['color'],
                         'product' => $product
                     ]);
                     return BaseResponse::failure('400', 'Color not found', 'color.not.found', []);
@@ -842,7 +840,7 @@ class OrderRepositories
                 'is_read' => false,
                 'recipient_type' => $order->user_id ? 'user' : 'admin'
                 ]);
-            }else($order->status == 'Delivered'){
+            }else if($order->status == 'Delivered'){
                 Notification::create([
                 'user_id' => $order->user_id,
                 'order_id' => $order->id,

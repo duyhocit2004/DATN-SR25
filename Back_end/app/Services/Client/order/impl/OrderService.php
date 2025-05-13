@@ -68,10 +68,10 @@ class OrderService implements IOrderService
             $this->emailService->sendOrderConfirmation($order);
         }
         
-        if($order){
-            $this->AddNotificationToAdmin($order);
-            // Gửi thông báo đến admin
-        }
+        // if($order){
+        //     $this->AddNotificationToAdmin($order);
+        //     // Gửi thông báo đến admin
+        // }
         return $order;
     }
 
@@ -393,7 +393,7 @@ class OrderService implements IOrderService
                     'change_at' => now()
                 ]);
 
-                $this->NotificationToUser($order);
+                // $this->NotificationToUser($order);
                 DB::commit();
                 Log::info('Order cancelled successfully:', ['orderId' => $order->id]);
                 

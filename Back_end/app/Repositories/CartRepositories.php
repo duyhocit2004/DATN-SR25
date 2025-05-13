@@ -68,7 +68,7 @@ class CartRepositories
         }
 
         // Lấy color name từ color code
-        $color = \App\Models\Color::where('code', $request->input('color'))->first();
+        $color = \App\Models\Color::where('name', $request->input('color'))->first();
         if (!$color) {
             BaseResponse::failure('400', 'Color not found', 'color.not.found', []);
         }

@@ -21,29 +21,20 @@ class Notification extends Model
 {
     use HasFactory;
 
-    protected $table = 'notification';
+    protected $table = 'notifications';
     protected $fillable = [
-        'user_id',
-        'order_id',
-        'message',
+       'user_id',
         'title',
-        'is_read',
-        'recipient_type'
+        'content',
+        'type',
+        'status',
+        'data',
+        'read_at'
     ];
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-    public function order()
-    {
-        return $this->belongsTo(Order::class, 'order_id');
-    }
-    public function scopeUnread($query)
-    {
-        return $query->where('is_read', false);
-    }
-    public function scopeRead($query)
-    {
-        return $query->where('is_read', true);
-    }
+    protected $casts = [
+        'data' => 'array',
+        'read_at' => 'datetime'
+    ];
+
+    
 }
