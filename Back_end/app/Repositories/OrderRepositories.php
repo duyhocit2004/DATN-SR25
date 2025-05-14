@@ -67,7 +67,7 @@ class OrderRepositories
                     return BaseResponse::failure('400', 'Sản phẩm ' . $productReal->name . ' hiện không khả dụng', 'product.not.available', []);
                 }
 
-             $color = \App\Models\Color::where('name', $product['color'])->first();
+                $color = \App\Models\Color::where('name', $product['color'])->first();
                 if (!$color) {
                     \Log::error('Color not found', [
                         'colorName' => $product['color'],
@@ -236,8 +236,7 @@ class OrderRepositories
                     ->where('color_id', function ($query) use ($product) {
                         $query->select('id')
                             ->from('colors')
-                            ->where('code', $product['color'])
-                            ->orWhere('name', $product['color'])
+                            ->where('name', $product['color'])
                             ->first();
                     })
                     ->where('size_id', function ($query) use ($product) {
@@ -473,39 +472,21 @@ class OrderRepositories
         'Processing',        // Đang chuẩn bị hàng
         'Shipping',          // Đang giao hàng 
         'Delivered',         // Đã giao hàng
+        'Received',          // Đã nhận được hàng
         'Cancel Confirm',    // Xác nhận hủy
         'Cancel'             // Đã hủy
     ];
 
     private function validateStatusTransition($currentStatus, $newStatus)
     {
-        // Xử lý đặc biệt cho trạng thái hủy
-        if ($newStatus === 'Cancel') {
-            // Cho phép hủy trực tiếp từ Unconfirmed hoặc từ Cancel Confirm
-            if ($currentStatus === 'Unconfirmed' || $currentStatus === 'Cancel Confirm') {
-                return true;
-            }
-        }
-
-        // Đặc biệt xử lý cho Cancel Confirm
-        if ($newStatus === 'Cancel Confirm') {
-            // Cho phép chuyển sang Cancel Confirm từ Unconfirmed hoặc Confirmed
-            return in_array($currentStatus, ['Unconfirmed', 'Confirmed']);
-        }
-
-        // Xử lý các trạng thái thông thường
         $currentIndex = array_search($currentStatus, $this->orderStatusSequence);
-        $newIndex = array_search($newStatus, $this->orderStatusSequence);
-
-        // Kiểm tra tồn tại của trạng thái
-        if ($currentIndex === false || $newIndex === false) {
+        if ($currentIndex === false) {
             return false;
         }
 
-        // Các trường hợp đặc biệt
         switch ($currentStatus) {
-            case 'Delivered':
-                // Từ Delivered không thể chuyển sang trạng thái khác
+            case 'Received':
+                // Từ Received không thể chuyển sang trạng thái khác
                 return false;
 
             case 'Cancel':
@@ -519,6 +500,10 @@ class OrderRepositories
             case 'Confirmed':
                 // Từ Confirmed có thể chuyển sang Processing hoặc Cancel Confirm
                 return in_array($newStatus, ['Processing', 'Cancel Confirm']);
+
+            case 'Delivered':
+                // Từ Delivered chỉ có thể chuyển sang Received
+                return $newStatus === 'Received';
 
             default:
                 // Các trường hợp còn lại chỉ được chuyển sang trạng thái kế tiếp

@@ -38,6 +38,10 @@ export const OrderStatusDataAdmin = [
     label: "Đã giao hàng",
   },
   {
+    value: OrderStatus.RECEIVED,
+    label: "Đã nhận được hàng",
+  },
+  {
     value: OrderStatus.CANCEL,
     label: "Đã hủy",
   },
@@ -66,6 +70,10 @@ export const OrderStatusDataClient = [
   {
     value: OrderStatus.DELIVERED,
     label: "Đã giao hàng",
+  },
+  {
+    value: OrderStatus.RECEIVED,
+    label: "Đã nhận được hàng",
   },
   {
     value: OrderStatus.CANCEL,

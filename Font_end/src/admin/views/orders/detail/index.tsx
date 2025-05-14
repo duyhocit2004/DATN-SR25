@@ -499,7 +499,7 @@ const OrderDetail: React.FC = () => {
           <Button onClick={() => navigate("/admin/orders")}>Quay lại</Button>
           <Button
             type="primary"
-            disabled={!isEdit}
+            disabled={!isEdit || order?.status === OrderStatus.RECEIVED}
             onClick={() => { handleUpdateOrder() }}
           >
             Lưu
@@ -629,8 +629,9 @@ const OrderDetail: React.FC = () => {
                       disabled: isStatusDisabled(
                         originOrder?.status || "",
                         status.value
-                      ),
+                      )
                     }))}
+                    disabled={order?.status === OrderStatus.RECEIVED}
                   />
                 </div>
                 {(order?.status === OrderStatus.CANCEL_CONFIRM || order?.status === OrderStatus.CANCEL) && (
@@ -642,6 +643,7 @@ const OrderDetail: React.FC = () => {
                       value={cancellationReason}
                       onChange={(e) => setCancellationReason(e.target.value)}
                       maxLength={255}
+                      disabled={order?.status === OrderStatus.RECEIVED}
                     />
                   </div>
                 )}
@@ -736,7 +738,7 @@ const OrderDetail: React.FC = () => {
           {renderPaymentStatusHistory()}
         </Card>
 
-        {canRefund && (
+        {canRefund && order?.status !== OrderStatus.RECEIVED && (
           <Button
             type="primary"
             danger
@@ -762,6 +764,8 @@ const OrderDetail: React.FC = () => {
           confirmLoading={refundLoading}
           okText="Xác nhận"
           cancelText="Hủy"
+          okButtonProps={{ disabled: order?.status === OrderStatus.RECEIVED }}
+          cancelButtonProps={{ disabled: order?.status === OrderStatus.RECEIVED }}
         >
           <div className="mb-4">
             <label className="block mb-2">Lý do hoàn tiền</label>
@@ -770,6 +774,7 @@ const OrderDetail: React.FC = () => {
               onChange={(e) => setRefundReason(e.target.value)}
               rows={4}
               placeholder="Nhập lý do hoàn tiền..."
+              disabled={order?.status === OrderStatus.RECEIVED}
             />
           </div>
         </Modal>

@@ -42,6 +42,7 @@ export const OrderStatus = {
   PROCESSING: "Processing",   
   SHIPPING: "Shipping",      
   DELIVERED: "Delivered",     
+  RECEIVED: "Received",
   CANCEL: "Cancel",         
 };
 

@@ -90,6 +90,15 @@ class OrderApi extends BaseApi<IOrder> {
       });
   };
   
+  updateOrderStatus = (payload: any): Promise<IResponseData<IOrder>> => {
+    return axiosClient
+      .post(`${this.uri}/updateStatus`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => res.data);
+  };
 }
 
 const orderApi = new OrderApi();

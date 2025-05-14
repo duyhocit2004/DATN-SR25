@@ -43,16 +43,17 @@ class BaseResponse
         ], 200));
     }
 
-    public static function error($message, $status = 500)
+    public static function error($message, $status = 500, $data = [], $messageKey = '')
     {
-        return response()->json([
+        throw new HttpResponseException(response()->json([
             'status' => $status,
             'timestamp' => time(),
             'message' => $message,
-            'messageKey' => null,
-            'data' => null
-        ], $status);
-    }   
+            'messageKey' => $messageKey,
+            'data' => $data
+        ], $status));
+    }
+
     public function setStatus($status)
     {
         $this->status = $status;

@@ -127,11 +127,18 @@ class AuthRepositories
         try {
             $user = User::findOrFail($request->input('id'));
             
-            $updateData = [
-                'name' => $request->input('name'),
-                'phone_number' => $request->input('phoneNumber'),
-                'gender' => $request->input('gender'),
-            ];
+            $updateData = [];
+
+            // Only update profile fields if they are provided
+            if ($request->has('name')) {
+                $updateData['name'] = $request->input('name');
+            }
+            if ($request->has('phoneNumber')) {
+                $updateData['phone_number'] = $request->input('phoneNumber');
+            }
+            if ($request->has('gender')) {
+                $updateData['gender'] = $request->input('gender');
+            }
 
             // Add image URL if provided
             if ($imageUrl) {
@@ -177,7 +184,10 @@ class AuthRepositories
                 $updateData['password'] = Hash::make($newPassword);
             }
 
-            $user->update($updateData);
+            // Only update if there are fields to update
+            if (!empty($updateData)) {
+                $user->update($updateData);
+            }
 
             // Get updated user data
             $updatedUser = [
