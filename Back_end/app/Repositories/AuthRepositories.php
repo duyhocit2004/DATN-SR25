@@ -261,6 +261,7 @@ class AuthRepositories
         $user = User::query()->where('email', '=', $request->input('email'))
         ->first();
 
+        \Log::info('User found: ', ['user' => $user]);
         if (!$user) {
             return ['success' => false, 'message' => 'Email không tồn tại trong hệ thống'];
         }

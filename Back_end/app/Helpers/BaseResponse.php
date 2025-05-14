@@ -43,7 +43,16 @@ class BaseResponse
         ], 200));
     }
 
-
+    public static function error($message, $status = 500)
+    {
+        return response()->json([
+            'status' => $status,
+            'timestamp' => time(),
+            'message' => $message,
+            'messageKey' => null,
+            'data' => null
+        ], $status);
+    }   
     public function setStatus($status)
     {
         $this->status = $status;
