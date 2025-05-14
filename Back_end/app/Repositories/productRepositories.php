@@ -517,4 +517,12 @@ class ProductRepositories
         return $status;
     }
 
+    public function getAllNotification($request){
+
+        $query = DB::table('notifications')
+            ->orderBy('created_at', 'desc')
+            ->Where('recipient_type', 'Quản trị viên')
+            ->paginate(5);
+        return $query;
+    }
 }
