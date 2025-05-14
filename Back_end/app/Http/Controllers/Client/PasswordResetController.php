@@ -30,7 +30,7 @@ class PasswordResetController extends Controller
                 'email.email' => 'Email không đúng định dạng',
                 'email.exists' => 'Email không tồn tại trong hệ thống',
             ]);
-
+            
             if ($validator->fails()) {
                 return BaseResponse::error($validator->errors()->first(), 422);
             }

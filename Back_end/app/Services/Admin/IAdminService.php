@@ -28,5 +28,6 @@ interface IAdminService
     public function addBanner(Request $request);
     public function updateBanner(Request $request);
     public function deleteBanner(Request $request);
+    public function getAllNotification(Request $request);
 
 }
