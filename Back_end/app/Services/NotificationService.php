@@ -6,9 +6,25 @@ use App\Models\Notification;
 use App\Models\Order;
 use App\Models\User;
 use App\Events\NotificationCreated;
+use Pusher\Pusher;
 
 class NotificationService
 {
+    private $pusher;
+
+    public function __construct()
+    {
+        $this->pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            [
+                'cluster' => env('PUSHER_APP_CLUSTER'),
+                'useTLS' => true
+            ]
+        );
+    }
+
     public function createNewOrderNotification(Order $order)
     {
         // Create notification for admin
@@ -18,15 +34,9 @@ class NotificationService
             $notification = Notification::create([
                 'user_id' => $admin->id,
                 'title' => 'Đơn hàng mới',
-                'content' => "Có đơn hàng mới #{$order->code} từ khách hàng {$order->customer_name}",
                 'type' => 'new_order',
-                'status' => 'unread',
-                'data' => [
-                    'order_id' => $order->id,
-                    'order_code' => $order->code,
-                    'customer_name' => $order->customer_name,
-                    'total_amount' => $order->total_price
-                ]
+                'message' => "Có đơn hàng mới #{$order->code} từ khách hàng {$order->customer_name}",
+                'is_read' => false
             ]);
 
             // Broadcast notification event
@@ -38,14 +48,9 @@ class NotificationService
             $notification = Notification::create([
                 'user_id' => $order->users_id,
                 'title' => 'Đặt hàng thành công',
-                'content' => "Đơn hàng #{$order->code} của bạn đã được đặt thành công",
                 'type' => 'new_order',
-                'status' => 'unread',
-                'data' => [
-                    'order_id' => $order->id,
-                    'order_code' => $order->code,
-                    'total_amount' => $order->total_price
-                ]
+                'message' => "Đơn hàng #{$order->code} của bạn đã được đặt thành công",
+                'is_read' => false
             ]);
 
             // Broadcast notification event
@@ -56,22 +61,16 @@ class NotificationService
     public function createOrderStatusNotification(Order $order, string $oldStatus, string $newStatus, string $note = null)
     {
         $title = $this->getOrderStatusTitle($newStatus);
-        $content = $this->getOrderStatusContent($order->code, $newStatus, $note);
+        $message = $this->getOrderStatusContent($order->code, $newStatus, $note);
 
         // Create notification for customer
         if ($order->users_id) {
             $notification = Notification::create([
                 'user_id' => $order->users_id,
                 'title' => $title,
-                'content' => $content,
                 'type' => 'order_update',
-                'status' => 'unread',
-                'data' => [
-                    'order_id' => $order->id,
-                    'order_code' => $order->code,
-                    'old_status' => $oldStatus,
-                    'new_status' => $newStatus
-                ]
+                'message' => $message,
+                'is_read' => false
             ]);
 
             // Broadcast notification event
@@ -84,15 +83,9 @@ class NotificationService
             $notification = Notification::create([
                 'user_id' => $admin->id,
                 'title' => "Cập nhật đơn hàng #{$order->code}",
-                'content' => "Đơn hàng #{$order->code} đã được cập nhật trạng thái từ {$oldStatus} thành {$newStatus}",
                 'type' => 'order_update',
-                'status' => 'unread',
-                'data' => [
-                    'order_id' => $order->id,
-                    'order_code' => $order->code,
-                    'old_status' => $oldStatus,
-                    'new_status' => $newStatus
-                ]
+                'message' => "Đơn hàng #{$order->code} đã được cập nhật trạng thái từ {$oldStatus} thành {$newStatus}",
+                'is_read' => false
             ]);
 
             // Broadcast notification event
@@ -128,5 +121,40 @@ class NotificationService
         };
 
         return $note ? $baseContent . ". Ghi chú: {$note}" : $baseContent;
+    }
+
+    public function sendToUser($userId, $type, $title, $message, $link = null)
+    {
+        $notification = Notification::create([
+            'user_id' => $userId,
+            'type' => $type,
+            'title' => $title,
+            'message' => $message,
+            'link' => $link,
+            'is_read' => false
+        ]);
+
+        $this->pusher->trigger('notifications.' . $userId, 'new-notification', [
+            'notification' => $notification
+        ]);
+
+        return $notification;
+    }
+
+    public function sendToMultipleUsers($userIds, $type, $title, $message, $link = null)
+    {
+        $notifications = [];
+        
+        foreach ($userIds as $userId) {
+            $notifications[] = $this->sendToUser($userId, $type, $title, $message, $link);
+        }
+
+        return $notifications;
+    }
+
+    public function sendToAllUsers($type, $title, $message, $link = null)
+    {
+        $userIds = User::pluck('id')->toArray();
+        return $this->sendToMultipleUsers($userIds, $type, $title, $message, $link);
     }
 } 

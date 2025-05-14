@@ -64,4 +64,7 @@ return [
 
     ],
 
+    // Bổ sung middleware xác thực cho broadcasting
+    'middleware' => ['auth:api'],
+
 ];

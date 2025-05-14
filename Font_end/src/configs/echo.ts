@@ -7,10 +7,10 @@ const echo = new Echo({
     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
     forceTLS: true,
     encrypted: true,
-    authEndpoint: 'http://localhost:8000/broadcasting/auth',
+    authEndpoint: '',//import.meta.env.VITE_PUSHER_APP_AUTH_ENDPOINT || 'http://localhost:8000/broadcasting/auth',
     auth: {
         headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
     },
 });

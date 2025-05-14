@@ -173,14 +173,13 @@ class AuthService implements IAuthService
 
     public function getUser(Request $request)
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = \Tymon\JWTAuth\Facades\JWTAuth::parseToken()->authenticate();
 
-        if (empty($user) ) {
-
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        if (empty($user)) {
+            \Tymon\JWTAuth\Facades\JWTAuth::invalidate(\Tymon\JWTAuth\Facades\JWTAuth::getToken());
+            return \App\Helpers\BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
-        $user = $this->authRepositories->getAccountByEmail($request->input('email'));
+        // Trả về user lấy từ JWT
         return $user;
     }
 

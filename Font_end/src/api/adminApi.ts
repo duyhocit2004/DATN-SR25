@@ -152,7 +152,7 @@ class AdminApi extends BaseApi<{ data: any }> {
       .post(`${this.uri}/orders/updateOrder`, payload)
       .then((res) => res.data);
   };
-  
+
   refundOrder = (data: { orderId: number; refund_reason: string }): Promise<IResponseData<IOrder>> => {
     return axiosClient
       .post(`${this.uri}/orders/refundOrder`, data)
@@ -241,6 +241,21 @@ class AdminApi extends BaseApi<{ data: any }> {
   getUserByEmail = (payload?: any): Promise<IResponseData<IAccount>> => {
     return axiosClient
       .post(`${this.uri}/users/getUserInfoByEmail`, payload)
+      .then((res) => res.data);
+  };
+  getLatestOrders = (): Promise<IResponseData<IOrder[]>> => {
+    return axiosClient
+      .get(`${this.uri}/dashboard/latest-orders`)
+      .then((res) => res.data);
+  };
+  getPopularProducts = (): Promise<IResponseData<IProduct[]>> => {
+    return axiosClient
+      .get(`${this.uri}/dashboard/popular-products`)
+      .then((res) => res.data);
+  };
+  getMostCancelledProducts = (): Promise<IResponseData<IProduct[]>> => {
+    return axiosClient
+      .get(`${this.uri}/dashboard/most-cancelled-products`)
       .then((res) => res.data);
   };
 }

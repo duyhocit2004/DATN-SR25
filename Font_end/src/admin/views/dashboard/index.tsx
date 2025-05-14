@@ -1,5 +1,6 @@
 import DashboardStats from "./DashboardStats";
 import DashboardChart from "./DashboardChart";
+import DashboardTables from "./DashboardTables";
 import { useState } from "react";
 
 enum FilterType {
@@ -21,6 +22,7 @@ const Dashboard = () => {
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
       />
+      <DashboardTables />
     </div>
   );
 };
