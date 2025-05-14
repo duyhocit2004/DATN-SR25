@@ -13,7 +13,7 @@ const axiosClient = axios.create({
 // Interceptor request: Gửi token nếu có
 axiosClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("token");
     console.log('Token from localStorage:', token);
     console.log('Token type:', typeof token);
     if (token) {

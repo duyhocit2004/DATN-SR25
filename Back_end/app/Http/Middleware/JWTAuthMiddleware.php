@@ -21,15 +21,44 @@ class JWTAuthMiddleware
             \Log::info('Received Authorization header:', ['header' => $token]);
             
             if (!$token) {
-                throw new JWTException('Token not provided');
+                return response()->json([
+                    'status' => 401,
+                    'messageKey' => 'token.not.provided',
+                    'message' => 'Token not provided',
+                    'data' => []
+                ], 401);
             }
             
             // Remove 'Bearer ' prefix if present
             $token = str_replace('Bearer ', '', $token);
             \Log::info('Token after processing:', ['token' => $token]);
             
-            $user = JWTAuth::parseToken()->authenticate();
-            auth()->setUser($user);
+            try {
+                $user = JWTAuth::parseToken()->authenticate();
+                if (!$user) {
+                    return response()->json([
+                        'status' => 401,
+                        'messageKey' => 'user.not.found',
+                        'message' => 'User not found',
+                        'data' => []
+                    ], 401);
+                }
+                auth()->setUser($user);
+            } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+                return response()->json([
+                    'status' => 401,
+                    'messageKey' => 'token.expired',
+                    'message' => 'Token has expired',
+                    'data' => []
+                ], 401);
+            } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+                return response()->json([
+                    'status' => 401,
+                    'messageKey' => 'token.invalid',
+                    'message' => 'Token is invalid',
+                    'data' => []
+                ], 401);
+            }
         } catch (JWTException $e) {
             \Log::error('JWT Authentication failed:', [
                 'error' => $e->getMessage(),
@@ -38,7 +67,7 @@ class JWTAuthMiddleware
             
             return response()->json([
                 'status' => 401,
-                'messageKey' => 'Unauthorized',
+                'messageKey' => 'unauthorized',
                 'message' => $e->getMessage(),
                 'data' => []
             ], 401);
