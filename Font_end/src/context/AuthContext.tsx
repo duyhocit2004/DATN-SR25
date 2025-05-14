@@ -76,9 +76,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         // Set token expiration
         const expiresIn = decoded.exp * 1000 - Date.now();
-        setTimeout(() => {
+        if (expiresIn <= 0) {
+          // Token is already expired
+          logout();
+          return;
+        }
+        
+        // Set timeout for token expiration
+        const timeoutId = setTimeout(() => {
           logout();
         }, expiresIn);
+
+        // Cleanup timeout on unmount
+        return () => clearTimeout(timeoutId);
       } catch (error) {
         console.error("Token không hợp lệ", error);
         logout();
