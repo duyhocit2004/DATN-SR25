@@ -7,29 +7,46 @@ import NotificationDropdown from '@/components/Notification/NotificationDropdown
 import Echo from 'laravel-echo';
 // @ts-ignore
 import Pusher from 'pusher-js';
+import { jwtDecode } from "jwt-decode";
 
 const HeaderAdmin = () => {
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    // Khởi tạo Echo
     window.Pusher = Pusher;
+    const token = localStorage.getItem('token');
     const echo = new Echo({
       broadcaster: 'pusher',
       key: '28fd8f5a2470ad573279',  
       cluster: 'ap1', 
       wsHost: window.location.hostname,
+      authEndpoint: import.meta.env.VITE_PUSHER_APP_AUTH_ENDPOINT || 'http://localhost:8000/broadcasting/auth',
       wsPort: 6001,
       forceTLS: false,
       disableStats: true,
+      auth: {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : '',
+        },
+      },
     });
 
-    // Lắng nghe channel admin.new-order
+    // Lấy userId từ token
+    type DecodedUser = { id: number };
+    const user = token ? jwtDecode(token) as DecodedUser : null;
+    const userId = user?.id;
+
+    // Lắng nghe channel notification cá nhân
+    if (userId) {
+      echo.private(`notifications.${userId}`)
+        .listen('new-notification', (data: any) => {
+          setNotifications(prev => [data.notification, ...prev]);
+          setUnreadCount(count => count + 1);
+        });
+    }
+
+    // Lắng nghe channel admin.new-order (nếu cần)
     echo.private('admin.new-order')
       .listen('NewOrderCreated', (e: any) => {
         setNotifications(prev => [

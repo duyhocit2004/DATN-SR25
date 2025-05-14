@@ -5,17 +5,18 @@ import {
   fetchCategories,
   setPagination,
   setSelectedCategory,
+  setFilter,
 } from "@/store/reducers/adminCategorySlice";
 import { IResponseCategory } from "./types";
 import dayjs, { Dayjs } from "dayjs";
 import { getLabelByValue } from "@/utils/functions";
 import { PersonTypeData } from "@/utils/constantData";
 import { ColumnsType } from "antd/es/table";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 const CategoryTable: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { categories, pagination, totalElements, loading } = useAppSelector(
+  const { categories, pagination, totalElements, loading, filter } = useAppSelector(
     (state) => state.adminCategory
   );
 
@@ -49,12 +50,12 @@ const CategoryTable: React.FC = () => {
         ) : null;
       },
     },
-    {
-      title: "Danh mục cha",
-      dataIndex: "parentName",
-      key: "parentName",
-      minWidth: 250,
-    },
+    // {
+    //   title: "Danh mục cha",
+    //   dataIndex: "parentName",
+    //   key: "parentName",
+    //   minWidth: 250,
+    // },
     {
       title: "Giới tính",
       dataIndex: "gender",
@@ -102,6 +103,7 @@ const CategoryTable: React.FC = () => {
       ),
     },
   ];
+
   const handleDeleteCategory = async (categoryId: number) => {
     dispatch(deleteCategory(categoryId));
   };
@@ -117,36 +119,59 @@ const CategoryTable: React.FC = () => {
   };
 
   const onRowClick = (record: IResponseCategory) => {
-    dispatch(setSelectedCategory(record));
+    if (!filter.parentId) {
+      // If we're viewing parent categories, clicking will show children
+      dispatch(setFilter({ ...filter, parentId: record.id }));
+      dispatch(fetchCategories());
+    } else {
+      // If we're viewing child categories, clicking will open edit modal
+      dispatch(setSelectedCategory(record));
+    }
+  };
+
+  const handleBackToParents = () => {
+    dispatch(setFilter({ ...filter, parentId: null }));
+    dispatch(fetchCategories());
   };
 
   return (
-    <Table<IResponseCategory>
-      columns={columns}
-      rowKey={(record) => record.id}
-      dataSource={categories}
-      pagination={{
-        pageSize: pagination?.pageSize,
-        current: pagination?.page,
-        showSizeChanger: true,
-        total: totalElements,
-        pageSizeOptions: [5, 10, 15, 20],
-        showTotal(total) {
-          return "Tổng: " + total;
-        },
-        onChange: handlePagingChange,
-      }}
-      onRow={(record) => {
-        return {
-          onClick: () => {
-            onRowClick(record);
-          }, // click row
-        };
-      }}
-      tableLayout="auto"
-      loading={loading}
-      scroll={{ x: "100%", y: "calc(100vh - 408px)" }}
-    />
+    <div>
+      {filter.parentId && (
+        <Button 
+          icon={<ArrowLeftOutlined />} 
+          onClick={handleBackToParents}
+          style={{ marginBottom: '16px' }}
+        >
+          Quay lại danh mục cha
+        </Button>
+      )}
+      <Table<IResponseCategory>
+        columns={columns}
+        rowKey={(record) => record.id}
+        dataSource={categories}
+        pagination={{
+          pageSize: pagination?.pageSize,
+          current: pagination?.page,
+          showSizeChanger: true,
+          total: totalElements,
+          pageSizeOptions: [5, 10, 15, 20],
+          showTotal(total) {
+            return "Tổng: " + total;
+          },
+          onChange: handlePagingChange,
+        }}
+        onRow={(record) => {
+          return {
+            onClick: () => {
+              onRowClick(record);
+            },
+          };
+        }}
+        tableLayout="auto"
+        loading={loading}
+        scroll={{ x: "100%", y: "calc(100vh - 408px)" }}
+      />
+    </div>
   );
 };
 

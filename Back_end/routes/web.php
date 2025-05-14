@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProductAdminController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\MomoController;
+use Illuminate\Support\Facades\Broadcast;
 
 
 /*
@@ -142,3 +143,5 @@ Route::prefix('momo')->group(function () {
     Route::get('return', [MomoController::class, 'returnPayment'])->name('momo.return');
     Route::post('notify', [MomoController::class, 'notifyPayment'])->name('momo.notify');
 });
+
+Broadcast::routes(['middleware' => ['auth:api']]);

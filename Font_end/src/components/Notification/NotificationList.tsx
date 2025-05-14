@@ -11,15 +11,10 @@ dayjs.locale('vi');
 interface NotificationItem {
   id: string;
   title: string;
-  content: string;
+  message: string;
   type: string;
-  status: 'read' | 'unread';
-  data: {
-    order_id?: string;
-    order_code?: string;
-    old_status?: string;
-    new_status?: string;
-  };
+  is_read: boolean;
+  link?: string;
   created_at: string;
 }
 
@@ -58,8 +53,8 @@ const NotificationList: React.FC<NotificationListProps> = ({
       renderItem={(item) => (
         <List.Item
           key={item.id}
-          className={`notification-item ${item.status === 'unread' ? 'unread' : ''}`}
-          onClick={() => onMarkAsRead(item.id)}
+          className={`notification-item ${!item.is_read ? 'unread' : ''}`}
+          onClick={() => onViewDetail(item)}
         >
           <div className="notification-content">
             <Space align="start">
@@ -69,12 +64,12 @@ const NotificationList: React.FC<NotificationListProps> = ({
                   {item.title}
                 </Typography.Title>
                 <Typography.Paragraph className="notification-message">
-                  {item.content}
+                  {item.message}
                 </Typography.Paragraph>
                 <Space className="notification-meta">
                   <ClockCircleOutlined />
                   <span>{formatTime(item.created_at)}</span>
-                  {item.data.order_code && (
+                  {item.link && (
                     <Button
                       type="link"
                       onClick={(e) => {

@@ -23,17 +23,15 @@ class Notification extends Model
 
     protected $table = 'notifications';
     protected $fillable = [
-       'user_id',
-        'title',
-        'content',
+        'user_id',
         'type',
-        'status',
-        'data',
-        'read_at'
+        'title',
+        'message',
+        'link',
+        'is_read'
     ];
     protected $casts = [
-        'data' => 'array',
-        'read_at' => 'datetime'
+        'is_read' => 'boolean',
     ];
 
     

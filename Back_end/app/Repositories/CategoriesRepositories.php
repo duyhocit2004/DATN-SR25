@@ -24,12 +24,16 @@ class CategoriesRepositories
         $parentId = $request->input('parentId', null);
 
         $query = Category::query()->with('parent:id,name');
-        if (!empty($categoriesId)) {
-            $query->where('id', '=', $categoriesId);
+        
+        // Nếu không có parentId, chỉ lấy danh mục cha
+        if (empty($parentId)) {
+            $query->whereNull('parent_id');
+        } else {
+            $query->where('parent_id', '=', $parentId);
         }
 
-        if (!empty($parentId)) {
-            $query->where('parent_id', '=', $parentId);
+        if (!empty($categoriesId)) {
+            $query->where('id', '=', $categoriesId);
         }
 
         if (!empty($name)) {

@@ -50,7 +50,7 @@ class Handler extends ExceptionHandler
 
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-        abort(response()->json('Unauthorized', 403));
+        return response()->json(['message' => 'Unauthenticated.'], 401);
     }
 
     public function render($request, Throwable $e) {

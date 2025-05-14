@@ -21,6 +21,7 @@ use App\Http\Controllers\Client\PasswordResetController;
 use App\Http\Controllers\MoMoController;
 use App\Http\Controllers\Client\NotificationController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\Admin\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +69,11 @@ Route::prefix('admin')->group(function () {
     Route::post('/getAllCategoriesNonTree', [CategoryController::class, 'getAllCategoriesNonTree']);
     Route::post('/getParentCommentPaging', [ProductController::class, 'getParentCommentPaging']);
     Route::post('/getCommentWithReply', [ProductController::class, 'getCommentWithReply']);
+
+    // Dashboard routes
+    Route::get('/dashboard/latest-orders', [DashboardController::class, 'getLatestOrders']);
+    Route::get('/dashboard/popular-products', [DashboardController::class, 'getPopularProducts']);
+    Route::get('/dashboard/most-cancelled-products', [DashboardController::class, 'getMostCancelledProducts']);
 });
 
 Route::prefix('users')->group(function () {
@@ -208,4 +214,11 @@ Route::get('/test-broadcast', function () {
         'message' => 'Test broadcast sent successfully',
         'order' => $testOrder
     ]);
+});
+
+// Notification Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
 });

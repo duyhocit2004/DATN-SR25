@@ -1,7 +1,7 @@
 import adminApi from "@/api/adminApi";
 import homeApi from "@/api/homeApi";
 import { showToast } from "@/components/toast";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setShowAddModal } from "@/store/reducers/adminCategorySlice";
 import { IListCategory } from "@/types/interface";
 import { PersonTypeData } from "@/utils/constantData";
@@ -36,6 +36,7 @@ interface IProps {
 
 const AddCategoryModal: React.FC<IProps> = ({ refreshData }) => {
   const dispatch = useAppDispatch();
+  const { filter } = useAppSelector((state) => state.adminCategory);
   const [form] = Form.useForm(); // Khởi tạo form
   const [categories, setCategories] = useState<IListCategory[]>([]);
   const [formData, setFormData] = useState<IFormData>({
@@ -176,8 +177,6 @@ const AddCategoryModal: React.FC<IProps> = ({ refreshData }) => {
               <Form.Item
                 label="Ảnh đại diện"
                 name="image"
-                // validateStatus={thumbnailError ? "error" : ""}
-                // help={thumbnailError ? "Vui lòng tải lên ảnh đại diện!" : ""}
                 rules={[
                   { required: true, message: "Vui lòng chọn ảnh đại diện!" },
                 ]}
@@ -188,7 +187,7 @@ const AddCategoryModal: React.FC<IProps> = ({ refreshData }) => {
                   fileList={formData.image ? [formData.image] : []}
                   onChange={handleThumbnailChange}
                   beforeUpload={() => false}
-                  showUploadList={{ showPreviewIcon: false }} // Ẩn icon preview
+                  showUploadList={{ showPreviewIcon: false }}
                 >
                   {!formData.image && (
                     <div>
@@ -217,16 +216,18 @@ const AddCategoryModal: React.FC<IProps> = ({ refreshData }) => {
                     }}
                   />
                 </Form.Item>
-                <Form.Item name="parentId" label="Danh mục cha">
-                  <Select
-                    placeholder="Chọn danh mục cha"
-                    options={categories}
-                    fieldNames={{ value: "id", label: "name" }}
-                    onChange={(value) => {
-                      onChangeFormData("parentId", value);
-                    }}
-                  />
-                </Form.Item>
+                {filter.parentId !== null && (
+                  <Form.Item name="parentId" label="Danh mục cha">
+                    <Select
+                      placeholder="Chọn danh mục cha"
+                      options={categories}
+                      fieldNames={{ value: "id", label: "name" }}
+                      onChange={(value) => {
+                        onChangeFormData("parentId", value);
+                      }}
+                    />
+                  </Form.Item>
+                )}
                 <Form.Item name="gender" label="Giới tính">
                   <Radio.Group
                     options={PersonTypeData}

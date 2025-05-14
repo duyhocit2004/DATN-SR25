@@ -26,7 +26,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(
-    localStorage.getItem("access_token")
+    localStorage.getItem("token")
   );
   const [user, setUser] = useState<User | null>(null);
 
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [token]);
 
   const login = (newToken: string, userData?: any) => {
-    localStorage.setItem("access_token", newToken);
+    localStorage.setItem("token", newToken);
     setToken(newToken);
     
     if (userData) {
@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = () => {
     const userData = cloneDeep(user);
-    localStorage.removeItem("access_token");
+    localStorage.removeItem("token");
     setToken(null);
     setUser(null);
     if (userData?.role === "admin") {

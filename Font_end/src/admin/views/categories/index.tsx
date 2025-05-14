@@ -8,6 +8,7 @@ import {
   fetchCategories,
   fetchParentCategories,
   setShowAddModal,
+  setFilter,
 } from "@/store/reducers/adminCategorySlice";
 import AddCategoryModal from "./create";
 import UpdateCategoryModal from "./update";
@@ -18,8 +19,10 @@ const CategoriesPage = () => {
 
   useEffect(() => {
     dispatch(fetchParentCategories());
+    dispatch(setFilter({ keyword: "", parentId: null }));
     dispatch(fetchCategories());
   }, [dispatch]);
+
   const handleAdd = () => {
     dispatch(setShowAddModal(true));
   };
