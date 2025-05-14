@@ -12,8 +12,9 @@ use App\Services\EmailService;
 use App\Services\NotificationService;
 
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
+use App\Models\Notification;
 
+use Illuminate\Http\Request;
 use App\Helpers\BaseResponse;
 use App\Models\ProductVariant;
 use App\Models\OrderStatusHistory;
@@ -551,6 +552,10 @@ class OrderRepositories
             $order->note = $request->input('note');
             $order->save();
 
+            event(new \App\Events\UserNotification($order));
+
+            //thông báo trạng thái đơn hàng cho người dùng
+
             DB::commit();
             return BaseResponse::success($order);
 
@@ -743,6 +748,98 @@ class OrderRepositories
                 'code' => 500,
                 'data' => []
             ];
+        }
+    }
+    public function cancelOrderByClient(Request $request)
+    {
+
+        \Log::info('Bắt đầu xử lý hủy đơn hàng', [
+            'orderCode' => $request->input('orderCode'),
+            'userId' => auth()->id()
+        ]);
+
+        $orderCode = $request->input('orderCode');
+        $user = auth()->user();
+        $order = Order::where('code', $orderCode)
+            ->where('users_id', $user->id)
+            ->first();
+
+        if (!$order) {
+            \Log::warning('Đơn hàng không tồn tại hoặc không thuộc về user', [
+                'orderCode' => $orderCode,
+                'userId' => $user->id
+            ]);
+            return BaseResponse::failure('404', 'Đơn hàng không tồn tại hoặc không thuộc quyền sở hữu của bạn', 'order.not.found', []);
+        }
+
+        \Log::info('Tìm thấy đơn hàng', ['order' => $order->toArray()]);
+
+        try {
+            DB::beginTransaction();
+            // Cập nhật trạng thái đơn hàng
+            $order->status = 'Cancelled';
+            $order->updated_at = now();
+            $order->save();
+            \Log::info('Đã cập nhật trạng thái đơn hàng thành công');
+
+            DB::commit();
+            return BaseResponse::success('Hủy đơn hàng thành công', 'order.cancelled.success', $order);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Lỗi khi hủy đơn hàng', [
+                'error' => $e->getMessage(),
+                'orderCode' => $orderCode
+            ]);
+            return BaseResponse::failure('500', 'Đã xảy ra lỗi khi hủy đơn hàng', 'order.cancel.error', []);
+        }
+    }
+
+    private function UserOrderStatusNotification($order){
+
+        $user = $order->user_id;
+        if ($user) {
+            if($order->status == 'CONFIRMED'){
+                 Notification::create([
+                'user_id' => $order->user_id,
+                'order_id' => $order->id,
+                'message' => 'Đơn hàng '.$order->code.' mới đã được đặt',
+                'title' => 'Thông báo đơn hàng mới',
+                'is_read' => false,
+                'recipient_type' => $order->user_id ? 'user' : 'admin'
+                ]); 
+            }else if($order->status == 'Cancel Confirm'){
+                Notification::create([
+                'user_id' => $order->user_id,
+                'order_id' => $order->id,
+                'message' => 'Đơn hàng '.$order->code.' đã được hủy bên hệ thống',
+                'title' => 'Thông báo đơn hàng đã hủy',
+                'is_read' => false,
+                'recipient_type' => $order->user_id ? 'user' : 'admin'
+                ]);
+            }else if($order->status == 'Shipping'){
+                Notification::create([
+                'user_id' => $order->user_id,
+                'order_id' => $order->id,
+                'message' => 'Đơn hàng '.$order->code.' đã được giao vui lòng thường xuyên kiểm tra điện thoại để nhận thông báo từ nhân viên giao hàng',
+                'title' => 'Thông báo đơn hàng đang được giao',
+                'is_read' => false,
+                'recipient_type' => $order->user_id ? 'user' : 'admin'
+                ]);
+            }else if($order->status == 'Delivered'){
+                Notification::create([
+                'user_id' => $order->user_id,
+                'order_id' => $order->id,
+                'message' => 'Đơn hàng '.$order->code.' đã được giao thành công vui lòng kiểm tra lại đơn hàng của bạn', 
+                'title' => 'Thông báo đơn hàng đã giao',
+                'is_read' => false,
+                'recipient_type' => $order->user_id ? 'user' : 'admin'
+                ]);
+
+            }
+            // Gửi thông báo cho người dùng
+            event(new \App\Events\UserNotification($order));
+        } else {
+            \Log::warning('Không tìm thấy người dùng cho đơn hàng', ['orderId' => $order->id]);
         }
     }
 }

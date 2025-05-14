@@ -4,12 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+/**
+ * Class Cart
+ * 
+ * @property int $id
+ * @property int $user_id
+ * @property int $order_id
+ * @property string|null $title
+ * @property string|null $message
+ * @property boolean $is_read
+ * @property string $recipient_type
+ *
+ * @package App\Models
+ */
 class Notification extends Model
 {
     use HasFactory;
 
+    protected $table = 'notifications';
     protected $fillable = [
         'user_id',
         'type',
@@ -18,29 +30,9 @@ class Notification extends Model
         'link',
         'is_read'
     ];
-
     protected $casts = [
         'is_read' => 'boolean',
     ];
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function markAsRead()
-    {
-        $this->update([
-            'status' => 'read',
-            'read_at' => now()
-        ]);
-    }
-
-    public function markAsUnread()
-    {
-        $this->update([
-            'status' => 'unread',
-            'read_at' => null
-        ]);
-    }
-} 
+    
+}
