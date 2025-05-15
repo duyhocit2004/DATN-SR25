@@ -525,7 +525,13 @@ const MyAccount: React.FC = () => {
                   <div className="text-gray-500 text-sm">Thêm, sửa, xóa các địa chỉ nhận hàng của bạn</div>
                 </div>
                 <div className="p-8">
-                  <LocationManager />
+                  <LocationManager 
+                    onAddSuccess={() => {
+                      // Handle success logic here
+                      console.log("Address added successfully");
+                    }} 
+                    onlyAddMode={false} 
+                  />
                 </div>
               </div>
             ) : activeSection === 'orders' ? (

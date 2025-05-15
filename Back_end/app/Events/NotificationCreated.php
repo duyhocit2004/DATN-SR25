@@ -24,17 +24,8 @@ class NotificationCreated implements ShouldBroadcast
 
     public function broadcastOn(): array
     {
-        // Nếu là thông báo cho admin
-        if ($this->notification->type === 'new_order' || $this->notification->type === 'order_update') {
-            return [
-                new PrivateChannel('admin.notifications'),
-                new PrivateChannel('user.' . $this->notification->user_id)
-            ];
-        }
-
-        // Nếu là thông báo cho user thông thường
         return [
-            new PrivateChannel('user.' . $this->notification->user_id)
+            new PrivateChannel('notifications.' . $this->notification->user_id)
         ];
     }
 
@@ -44,7 +35,7 @@ class NotificationCreated implements ShouldBroadcast
             'notification' => [
                 'id' => $this->notification->id,
                 'title' => $this->notification->title,
-                'content' => $this->notification->content,
+                'message' => $this->notification->message,
                 'type' => $this->notification->type,
                 'status' => $this->notification->status,
                 'data' => $this->notification->data,

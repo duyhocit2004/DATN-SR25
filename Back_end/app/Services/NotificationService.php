@@ -36,7 +36,11 @@ class NotificationService
                 'title' => 'Đơn hàng mới',
                 'type' => 'new_order',
                 'message' => "Có đơn hàng mới #{$order->code} từ khách hàng {$order->customer_name}",
-                'is_read' => false
+                'is_read' => false,
+                'data' => json_encode([
+                    'order_id' => $order->id,
+                    'order_code' => $order->code
+                ])
             ]);
 
             // Broadcast notification event
@@ -50,7 +54,11 @@ class NotificationService
                 'title' => 'Đặt hàng thành công',
                 'type' => 'new_order',
                 'message' => "Đơn hàng #{$order->code} của bạn đã được đặt thành công",
-                'is_read' => false
+                'is_read' => false,
+                'data' => json_encode([
+                    'order_id' => $order->id,
+                    'order_code' => $order->code
+                ])
             ]);
 
             // Broadcast notification event
@@ -70,7 +78,11 @@ class NotificationService
                 'title' => $title,
                 'type' => 'order_update',
                 'message' => $message,
-                'is_read' => false
+                'is_read' => false,
+                'data' => json_encode([
+                    'order_id' => $order->id,
+                    'order_code' => $order->code
+                ])
             ]);
 
             // Broadcast notification event
@@ -85,7 +97,11 @@ class NotificationService
                 'title' => "Cập nhật đơn hàng #{$order->code}",
                 'type' => 'order_update',
                 'message' => "Đơn hàng #{$order->code} đã được cập nhật trạng thái từ {$oldStatus} thành {$newStatus}",
-                'is_read' => false
+                'is_read' => false,
+                'data' => json_encode([
+                    'order_id' => $order->id,
+                    'order_code' => $order->code
+                ])
             ]);
 
             // Broadcast notification event

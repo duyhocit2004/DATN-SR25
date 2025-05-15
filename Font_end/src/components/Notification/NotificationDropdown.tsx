@@ -38,7 +38,10 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             onViewDetail(notification);
             setOpen(false);
           }}
-          onMarkAsRead={onMarkAsRead}
+          onMarkAsRead={(id) => {
+            onMarkAsRead(id);
+            setOpen(false);
+          }}
         />
       </div>
     </div>

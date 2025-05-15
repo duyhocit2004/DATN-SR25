@@ -85,9 +85,9 @@ Route::prefix('users')->group(function () {
 Route::post('/vnpay/create', [VNPayController::class, 'createPayment']);
 Route::get('/vnpay/return', [VNPayController::class, 'returnPayment']);
 
-Route::post('/momo/createAtm',[MoMoController::class,'createPaymentUrlMoMoATM']);
-Route::post('/momo/createPay',[MoMoController::class,'createPaymentUrlPayMoMo']);
-Route::get('/momo/return',[MoMoController::class,'handleReturnMoMo']);
+Route::post('/momo/createAtm', [MoMoController::class, 'createPaymentUrlMoMoATM']);
+Route::post('/momo/createPay', [MoMoController::class, 'createPaymentUrlPayMoMo']);
+Route::get('/momo/return', [MoMoController::class, 'handleReturnMoMo']);
 
 //các api cần authen
 Route::middleware('jwt.auth')->group(function () {
@@ -106,14 +106,6 @@ Route::middleware('jwt.auth')->group(function () {
         Route::post('/changePassword', [AuthController::class, 'changePassword']);
     });
     Route::post('/uploadImage', [CommonController::class, 'uploadImage']);
-
-    // Notification routes
-    Route::prefix('notifications')->group(function () {
-        Route::get('/', [NotificationController::class, 'index']);
-        Route::post('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
-        Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
-        Route::post('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
-    });
 
     // Orders routes
     Route::prefix('orders')->group(function () {
@@ -183,6 +175,13 @@ Route::middleware('jwt.auth')->group(function () {
             Route::post('/updateBanner', [BannerController::class, 'updateBanner'])->middleware('manager');
             Route::post('/deleteBanner', [BannerController::class, 'deleteBanner'])->middleware('admin');
         });
+        
+        Route::prefix('notifications')->group(function () {
+            Route::get('/getAllNotifications', [NotificationController::class, 'index']);
+            Route::post('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+            Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
+            Route::post('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+        });
     });
 });
 
@@ -209,7 +208,7 @@ Route::get('/test-broadcast', function () {
         'total_price' => 100000,
         'status' => 'PENDING'
     ];
-    
+
     return response()->json([
         'message' => 'Test broadcast sent successfully',
         'order' => $testOrder

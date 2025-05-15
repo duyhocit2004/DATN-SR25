@@ -4,6 +4,7 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { useNavigate } from 'react-router-dom';
 
 dayjs.extend(relativeTime);
 dayjs.locale('vi');
@@ -11,11 +12,15 @@ dayjs.locale('vi');
 interface NotificationItem {
   id: string;
   title: string;
-  message: string;
-  type: string;
-  is_read: boolean;
+  message?: string;
+  type?: string;
+  is_read?: boolean;
   link?: string;
   created_at: string;
+  data?: {
+    order_id?: string;
+    order_code?: string;
+  };
 }
 
 interface NotificationListProps {
@@ -29,6 +34,8 @@ const NotificationList: React.FC<NotificationListProps> = ({
   onViewDetail,
   onMarkAsRead,
 }) => {
+  const navigate = useNavigate();
+
   const getStatusIcon = (type: string) => {
     // You can customize this based on your notification types
     switch (type) {
@@ -45,6 +52,61 @@ const NotificationList: React.FC<NotificationListProps> = ({
     return dayjs(timestamp).fromNow();
   };
 
+  const handleNotificationClick = async (item: NotificationItem) => {
+    try {
+      await onMarkAsRead(item.id);
+      
+      // Kiểm tra nếu là thông báo đơn hàng
+      if (item.type === 'order_update' || item.type === 'new_order') {
+        // Lấy order_code từ data hoặc từ message
+        let orderCode = null;
+        
+        if (item.data?.order_code) {
+          orderCode = item.data.order_code;
+        } else if (item.message) {
+          const match = item.message.match(/#([A-Z0-9]+)/);
+          if (match) {
+            orderCode = match[1];
+          }
+        }
+        
+        if (orderCode) {
+          navigate(`/admin/orders/${orderCode}`);
+          return;
+        }
+      }
+      
+      // Nếu không phải thông báo đơn hàng hoặc không tìm thấy order_code
+      onViewDetail(item);
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+
+  const handleViewDetail = (e: React.MouseEvent, item: NotificationItem) => {
+    e.stopPropagation();
+    
+    if (item.type === 'order_update' || item.type === 'new_order') {
+      let orderCode = null;
+      
+      if (item.data?.order_code) {
+        orderCode = item.data.order_code;
+      } else if (item.message) {
+        const match = item.message.match(/#([A-Z0-9]+)/);
+        if (match) {
+          orderCode = match[1];
+        }
+      }
+      
+      if (orderCode) {
+        navigate(`/admin/orders/${orderCode}`);
+        return;
+      }
+    }
+    
+    onViewDetail(item);
+  };
+
   return (
     <List
       className="notification-list"
@@ -54,7 +116,7 @@ const NotificationList: React.FC<NotificationListProps> = ({
         <List.Item
           key={item.id}
           className={`notification-item ${!item.is_read ? 'unread' : ''}`}
-          onClick={() => onViewDetail(item)}
+          onClick={() => handleNotificationClick(item)}
         >
           <div className="notification-content">
             <Space align="start">
@@ -69,13 +131,10 @@ const NotificationList: React.FC<NotificationListProps> = ({
                 <Space className="notification-meta">
                   <ClockCircleOutlined />
                   <span>{formatTime(item.created_at)}</span>
-                  {item.link && (
+                  {(item.type === 'order_update' || item.type === 'new_order') && (
                     <Button
                       type="link"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onViewDetail(item);
-                      }}
+                      onClick={(e) => handleViewDetail(e, item)}
                     >
                       Xem Chi Tiết
                     </Button>

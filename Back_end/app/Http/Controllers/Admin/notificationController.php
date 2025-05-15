@@ -18,4 +18,10 @@ class notificationController extends Controller
         $result = $this->Notification->getAllNotification($request);
         return response()->json($result);
     }
+
+    public function markAsRead(Request $request)
+    {
+        $result = $this->Notification->markAsRead($request);
+        return response()->json($result);
+    }
 }

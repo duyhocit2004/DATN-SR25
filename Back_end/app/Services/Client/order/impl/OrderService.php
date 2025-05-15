@@ -62,8 +62,31 @@ class OrderService implements IOrderService
         
         // Broadcast notification event
         if ($order) {
+            // Thông báo cho user
+            Notification::create([
+                'user_id' => $order->users_id,
+                'order_id' => $order->id,
+                'message' => 'Đơn hàng '.$order->code.' của bạn đã được đặt thành công',
+                'title' => 'Thông báo đơn hàng mới',
+                'is_read' => false,
+                'recipient_type' => 'user',
+                'type' => 'new_order'
+            ]);
+            // Thông báo cho admin (gửi cho tất cả Quản trị viên và Quản lý)
+            $admins = \App\Models\User::whereIn('role', ['Quản trị viên', 'Quản lý'])->get();
+            foreach ($admins as $admin) {
+                Notification::create([
+                    'user_id' => $admin->id,
+                    'order_id' => $order->id,
+                    'message' => 'Đơn hàng '.$order->code.' mới đã được đặt',
+                    'title' => 'Thông báo đơn hàng mới',
+                    'is_read' => false,
+                    'recipient_type' => $admin->role,
+                    'type' => 'new_order'
+                ]);
+            }
+            // Broadcast notification event nếu cần
             app(\App\Services\NotificationService::class)->createNewOrderNotification($order);
-            
             // Send order confirmation email
             $this->emailService->sendOrderConfirmation($order);
         }
@@ -426,7 +449,8 @@ class OrderService implements IOrderService
             'message' => 'Đơn hàng '.$order->code.' mới đã được đặt',
             'title' => 'Thông báo đơn hàng mới',
             'is_read' => false,
-            'recipient_type' => 'admin'
+            'recipient_type' => 'admin',
+            'type' => 'new_order'
         ]); 
         // Gửi thông báo đến người dùng
         Notification::create([
@@ -435,7 +459,8 @@ class OrderService implements IOrderService
             'message' => 'Đơn hàng '.$order->code.' của bạn đã được đặt thành công',
             'title' => 'Thông báo đơn hàng mới',
             'is_read' => false,
-            'recipient_type' => 'user'
+            'recipient_type' => 'user',
+            'type' => 'new_order'
         ]);
         return true;
     }

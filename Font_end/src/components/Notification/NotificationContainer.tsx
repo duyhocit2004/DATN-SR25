@@ -91,7 +91,7 @@ const NotificationContainer: React.FC = () => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await axiosClient.get('/notifications?limit=10&order=desc');
+      const response = await axiosClient.get('/api/notifications?limit=10&order=desc');
       if (response.status === 200) {
         setNotifications(response.data.data);
       }
@@ -146,10 +146,26 @@ const NotificationContainer: React.FC = () => {
   return (
     <div className="notification-container">
       <NotificationList
-        notifications={notifications}
-        onViewDetail={handleViewDetail}
+        notifications={notifications.map(({ id, title, created_at }) => ({
+          id,
+          title,
+          created_at,
+        }))}
+        onViewDetail={(notification) => {
+          const fullNotification = notifications.find(n => n.id === notification.id);
+          if (fullNotification) {
+            handleViewDetail(fullNotification);
+          }
+        }}
         onMarkAsRead={handleMarkAsRead}
       />
+      {unreadCount > 0 && (
+        <div className="notification-footer">
+          <button onClick={handleViewAll}>
+            Xem tất cả ({unreadCount} chưa đọc)
+          </button>
+        </div>
+      )}
     </div>
   );
 };

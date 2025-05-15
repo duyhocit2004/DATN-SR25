@@ -371,4 +371,17 @@ class AdminService implements IAdminService
         $notification = $this->productRepositories->getAllNotification($request);
         return $notification;
     }
+
+    public function markAsRead(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
+
+            JWTAuth::invalidate(JWTAuth::getToken());
+            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        $notification = $this->productRepositories->markAsRead($request);
+        return $notification;
+    }
 }
