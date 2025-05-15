@@ -258,6 +258,18 @@ class AdminApi extends BaseApi<{ data: any }> {
       .get(`${this.uri}/dashboard/most-cancelled-products`)
       .then((res) => res.data);
   };
+
+   getAllNotifications = (): Promise<IResponseData<IProduct[]>> => {
+    return axiosClient
+      .get(`${this.uri}/notifications/getAllNotifications`)
+      .then((res) => res.data);
+  };
+
+  markNotificationAsRead = (id: string): Promise<IResponseData<any>> => {
+    return axiosClient
+      .post(`${this.uri}/notifications/${id}/mark-as-read`)
+      .then(res => res.data);
+  };
 }
 
 const adminApi = new AdminApi();

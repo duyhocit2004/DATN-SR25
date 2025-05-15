@@ -8,10 +8,41 @@ import Echo from 'laravel-echo';
 // @ts-ignore
 import Pusher from 'pusher-js';
 import { jwtDecode } from "jwt-decode";
+import axiosClient from '@/configs/axiosClient';
+import adminApi from '@/api/adminApi';
+import { HttpCodeString } from '@/utils/constants';
+import { message } from 'antd';
+
+declare global {
+  interface Window {
+    Pusher: any;
+  }
+}
 
 const HeaderAdmin = () => {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  // Đặt fetchNotifications ở ngoài useEffect để có thể gọi lại
+  const fetchNotifications = async () => {
+    try {
+      const response = await adminApi.getAllNotifications();
+      if (response?.status === 200 || response?.status === "200") {
+        const notifications = (response.data || []).map((n: any) => ({
+          ...n,
+          is_read: n.isRead,
+          created_at: n.createdAt,
+          updated_at: n.updatedAt,
+        }));
+        setNotifications(notifications);
+        setUnreadCount(notifications.filter((n: any) => n.is_read === false || n.status === 'unread').length);
+      } else {
+        message.error('Không thể tải thông báo');
+      }
+    } catch (error) {
+      message.error('Không thể tải thông báo');
+    }
+  };
 
   useEffect(() => {
     window.Pusher = Pusher;
@@ -36,6 +67,9 @@ const HeaderAdmin = () => {
     type DecodedUser = { id: number };
     const user = token ? jwtDecode(token) as DecodedUser : null;
     const userId = user?.id;
+
+    // Gọi API lấy danh sách notification qua service
+    fetchNotifications();
 
     // Lắng nghe channel notification cá nhân
     if (userId) {
@@ -76,9 +110,17 @@ const HeaderAdmin = () => {
     }
   };
 
-  const handleMarkAsRead = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'read' } : n));
-    setUnreadCount(count => (count > 0 ? count - 1 : 0));
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      const response = await adminApi.markNotificationAsRead(id);
+      if (response?.status === 200 || response?.status === "200") {
+        fetchNotifications();
+      } else {
+        message.error('Không thể đánh dấu đã đọc');
+      }
+    } catch (error) {
+      message.error('Không thể đánh dấu đã đọc');
+    }
   };
 
   return (

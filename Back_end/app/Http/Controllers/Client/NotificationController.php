@@ -54,7 +54,7 @@ class NotificationController extends Controller
             }
 
             $count = Notification::where('user_id', $user->id)
-                ->where('status', 'unread')
+                ->where('is_read', false)
                 ->count();
 
             return response()->json([
@@ -92,7 +92,8 @@ class NotificationController extends Controller
 
             $notification->update([
                 'status' => 'read',
-                'read_at' => now()
+                'read_at' => now(),
+                'is_read' => true
             ]);
 
             return response()->json([
@@ -119,10 +120,11 @@ class NotificationController extends Controller
             }
 
             Notification::where('user_id', $user->id)
-                ->where('status', 'unread')
+                ->where('is_read', false)
                 ->update([
                     'status' => 'read',
-                    'read_at' => now()
+                    'read_at' => now(),
+                    'is_read' => true
                 ]);
 
             return response()->json([
