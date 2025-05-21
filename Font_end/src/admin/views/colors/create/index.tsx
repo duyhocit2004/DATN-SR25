@@ -59,11 +59,17 @@ const AddColorModal: React.FC<IProps> = ({ refreshData }) => {
         });
       } else {
         showToast({
-          content: "Thêm màu thất bại",
+          content: response?.message || "Thêm màu thất bại",
           duration: 5,
           type: "error",
         });
       }
+    } catch (error: any) {
+      showToast({
+        content: error?.response?.data?.message || "Thêm màu thất bại",
+        duration: 5,
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }

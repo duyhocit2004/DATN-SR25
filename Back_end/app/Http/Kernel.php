@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'jwt.auth' => \App\Http\Middleware\JWTAuthMiddleware::class,
         'manager' => \App\Http\Middleware\ManagerMiddleware::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'user.active' => \App\Http\Middleware\CheckUserActive::class,
     ];
 }

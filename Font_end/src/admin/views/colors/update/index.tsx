@@ -84,11 +84,17 @@ const UpdateColorModal: React.FC<IProps> = ({ refreshData }) => {
         });
       } else {
         showToast({
-          content: "Cập nhật màu thất bại",
+          content: response?.message || "Cập nhật màu thất bại",
           duration: 5,
           type: "error",
         });
       }
+    } catch (error: any) {
+      showToast({
+        content: error?.response?.data?.message || "Cập nhật màu thất bại",
+        duration: 5,
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }

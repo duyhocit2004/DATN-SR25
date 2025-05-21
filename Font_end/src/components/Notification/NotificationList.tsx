@@ -54,23 +54,14 @@ const NotificationList: React.FC<NotificationListProps> = ({
 
   const handleNotificationClick = async (item: NotificationItem) => {
     try {
+      // Đánh dấu thông báo đã đọc trước
       await onMarkAsRead(item.id);
       
       // Kiểm tra nếu là thông báo đơn hàng
       if (item.type === 'order_update' || item.type === 'new_order') {
-        // Lấy order_code từ data hoặc từ message
-        let orderCode = null;
-        
-        if (item.data?.order_code) {
-          orderCode = item.data.order_code;
-        } else if (item.message) {
-          const match = item.message.match(/#([A-Z0-9]+)/);
-          if (match) {
-            orderCode = match[1];
-          }
-        }
-        
+        const orderCode = item.data?.order_code;
         if (orderCode) {
+          // Điều hướng đến trang chi tiết đơn hàng sử dụng order_code
           navigate(`/admin/orders/${orderCode}`);
           return;
         }
@@ -79,32 +70,8 @@ const NotificationList: React.FC<NotificationListProps> = ({
       // Nếu không phải thông báo đơn hàng hoặc không tìm thấy order_code
       onViewDetail(item);
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      console.error('Error handling notification click:', error);
     }
-  };
-
-  const handleViewDetail = (e: React.MouseEvent, item: NotificationItem) => {
-    e.stopPropagation();
-    
-    if (item.type === 'order_update' || item.type === 'new_order') {
-      let orderCode = null;
-      
-      if (item.data?.order_code) {
-        orderCode = item.data.order_code;
-      } else if (item.message) {
-        const match = item.message.match(/#([A-Z0-9]+)/);
-        if (match) {
-          orderCode = match[1];
-        }
-      }
-      
-      if (orderCode) {
-        navigate(`/admin/orders/${orderCode}`);
-        return;
-      }
-    }
-    
-    onViewDetail(item);
   };
 
   return (
@@ -120,7 +87,7 @@ const NotificationList: React.FC<NotificationListProps> = ({
         >
           <div className="notification-content">
             <Space align="start">
-              <span className="notification-icon">{getStatusIcon(item.type)}</span>
+              <span className="notification-icon">{getStatusIcon(item.type || '')}</span>
               <div className="notification-details">
                 <Typography.Title level={5} className="notification-title">
                   {item.title}
@@ -134,7 +101,10 @@ const NotificationList: React.FC<NotificationListProps> = ({
                   {(item.type === 'order_update' || item.type === 'new_order') && (
                     <Button
                       type="link"
-                      onClick={(e) => handleViewDetail(e, item)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNotificationClick(item);
+                      }}
                     >
                       Xem Chi Tiết
                     </Button>

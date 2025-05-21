@@ -70,7 +70,8 @@ class User extends Authenticatable implements JWTSubject
         'password',
         // bcrypt('password'),
         'remember_token',
-        'status'
+        'status',
+        'token_version',
     ];
 
     public function carts()
@@ -119,6 +120,7 @@ class User extends Authenticatable implements JWTSubject
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
+            'token_version' => $this->token_version,
         ];
     }
 

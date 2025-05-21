@@ -22,8 +22,7 @@ class ColorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            // 'code' => 'required|string|max:7|regex:/^#[0-9A-Fa-f]{6}$/'
+            'name' => 'required|string|max:255|unique:colors,name,' . ($this->route('id') ?? ''),
         ];
     }
 
@@ -38,10 +37,7 @@ class ColorRequest extends FormRequest
             'name.required' => 'Tên màu là bắt buộc',
             'name.string' => 'Tên màu phải là chuỗi',
             'name.max' => 'Tên màu không được vượt quá 255 ký tự',
-            // 'code.required' => 'Mã màu là bắt buộc',
-            // 'code.string' => 'Mã màu phải là chuỗi',
-            // 'code.max' => 'Mã màu không được vượt quá 7 ký tự',
-            // 'code.regex' => 'Mã màu phải có định dạng hex hợp lệ (ví dụ: #FF0000)'
+            'name.unique' => 'Màu này đã tồn tại trong hệ thống'
         ];
     }
 }

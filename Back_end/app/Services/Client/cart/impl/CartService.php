@@ -88,6 +88,9 @@ class CartService implements ICartService
     public function addCart(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
+        if ($user->status !== 'ACTIVE') {
+            return BaseResponse::failure(403, 'Tài khoản của bạn đã bị khóa hoặc không hoạt động.', 'account.locked', []);
+        }
         $userId = $user->id;
         $cart = $this->cartRepositories->addCart($request, $userId);
         return $cart;
@@ -129,6 +132,9 @@ class CartService implements ICartService
     public function updateCart(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
+        if ($user->status !== 'ACTIVE') {
+            return BaseResponse::failure(403, 'Tài khoản của bạn đã bị khóa hoặc không hoạt động.', 'account.locked', []);
+        }
         $userId = $user->id;
 
         if(!is_null($request->input('cartId')) && !is_null($request->input('quantity'))){
@@ -142,6 +148,9 @@ class CartService implements ICartService
     public function clearCart(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
+        if ($user->status !== 'ACTIVE') {
+            return BaseResponse::failure(403, 'Tài khoản của bạn đã bị khóa hoặc không hoạt động.', 'account.locked', []);
+        }
         return $this->cartRepositories->clearCart($user->id);
     }
 }

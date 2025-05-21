@@ -28,8 +28,11 @@ class Color extends Model
 	protected $table = 'colors';
 
 	protected $fillable = [
-		'name',
-		// 'code'
+		'name'
+	];
+
+	protected $rules = [
+		'name' => 'required|unique:colors,name'
 	];
 
 	public function product_variants()

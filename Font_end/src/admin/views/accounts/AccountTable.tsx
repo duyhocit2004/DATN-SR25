@@ -61,7 +61,7 @@ const AccountTable = () => {
       dataIndex: "role",
       minWidth: 180,
       render: (role) => {
-        return <div>{getLabelByValue(RoleData, role)}</div>;
+        return <div>{getLabelByValue(RoleData, role) || role}</div>;
       },
     },
     {

@@ -14,9 +14,21 @@ class DashboardController extends Controller
     public function getLatestOrders()
     {
         $orders = Order::with(['user', 'order_details'])
-            ->select('id', 'code', 'users_id', 'total_price', 'status', 'created_at', 'customer_name')
+            ->select(
+                'id', 
+                'code', 
+                'users_id', 
+                'total_price', 
+                'status', 
+                'created_at', 
+                'customer_name',
+                'phone_number',
+                'shipping_address',
+                'payment_method',
+                'payment_status'
+            )
             ->orderBy('created_at', 'desc')
-            ->take(10)
+            ->take(5)
             ->get()
             ->map(function ($order) {
                 return [
@@ -26,6 +38,11 @@ class DashboardController extends Controller
                     'totalPrice' => $order->total_price,
                     'status' => $order->status,
                     'createdAt' => $order->created_at,
+                    'phoneNumber' => $order->phone_number,
+                    'shippingAddress' => $order->shipping_address,
+                    'paymentMethod' => $order->payment_method,
+                    'paymentStatus' => $order->payment_status,
+                    'productCount' => $order->order_details->count()
                 ];
             });
 
@@ -34,44 +51,58 @@ class DashboardController extends Controller
 
     public function getPopularProducts()
     {
-        $products = Product::withCount(['order_details as total_orders' => function ($query) {
+        $products = Product::withCount([
+            'order_details as total_orders' => function ($query) {
                 $query->whereHas('order', function ($q) {
-                    $q->where('status', '!=', 'cancelled');
+                    $q->whereNotIn('status', ['Cancel', 'Cancel Confirm']);
                 });
-            }])
-            ->having('total_orders', '>', 1)
-            ->orderBy('total_orders', 'desc')
-            ->take(10)
-            ->get()
-            ->map(function ($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'totalOrders' => $product->total_orders,
-                ];
-            });
+            },
+            'order_details as total_cancelled' => function ($query) {
+                $query->whereHas('order', function ($q) {
+                    $q->whereIn('status', ['Cancel', 'Cancel Confirm']);
+                });
+            }
+        ])
+        ->having('total_orders', '>', 0)
+        ->orderBy('total_orders', 'desc')
+        ->take(5)
+        ->get()
+        ->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'totalOrders' => $product->total_orders,
+                'totalCancelled' => $product->total_cancelled,
+            ];
+        });
 
         return BaseResponse::success($products);
     }
 
     public function getMostCancelledProducts()
     {
-        $products = Product::withCount(['order_details as total_cancelled' => function ($query) {
+        $products = Product::withCount([
+            'order_details as total_orders' => function ($query) {
+                $query->whereHas('order');
+            },
+            'order_details as total_cancelled' => function ($query) {
                 $query->whereHas('order', function ($q) {
-                    $q->where('status', 'cancelled');
+                    $q->whereIn('status', ['Cancel', 'Cancel Confirm']);
                 });
-            }])
-            ->having('total_cancelled', '>', 1)
-            ->orderBy('total_cancelled', 'desc')
-            ->take(10)
-            ->get()
-            ->map(function ($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'totalCancelled' => $product->total_cancelled,
-                ];
-            });
+            }
+        ])
+        ->having('total_cancelled', '>', 0)
+        ->orderBy('total_cancelled', 'desc')
+        ->take(5)
+        ->get()
+        ->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'totalOrders' => $product->total_orders,
+                'totalCancelled' => $product->total_cancelled,
+            ];
+        });
 
         return BaseResponse::success($products);
     }

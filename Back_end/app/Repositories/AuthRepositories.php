@@ -48,11 +48,22 @@ class AuthRepositories
         try {
             $user = User::findOrFail($request->input('id'));
             
-            $updateData = [
-                'name' => $request->input('name'),
-                'phone_number' => $request->input('phoneNumber'),
-                'gender' => $request->input('gender'),
-            ];
+            $updateData = [];
+            if ($request->has('name')) {
+                $updateData['name'] = $request->input('name');
+            }
+            if ($request->has('phoneNumber')) {
+                $updateData['phone_number'] = $request->input('phoneNumber');
+            }
+            if ($request->has('gender')) {
+                $updateData['gender'] = $request->input('gender');
+            }
+            if ($request->has('status')) {
+                $updateData['status'] = $request->input('status');
+                if ($request->input('status') === 'INACTIVE') {
+                    $updateData['token_version'] = $user->token_version + 1;
+                }
+            }
 
             // Add image URL if provided
             if ($imageLink) {

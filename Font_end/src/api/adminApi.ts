@@ -266,9 +266,7 @@ class AdminApi extends BaseApi<{ data: any }> {
   };
 
   markNotificationAsRead = (id: string): Promise<IResponseData<any>> => {
-    return axiosClient
-      .post(`${this.uri}/notifications/${id}/mark-as-read`)
-      .then(res => res.data);
+    return axiosClient.post(`/notifications/${id}/mark-as-read`).then(res => res.data);
   };
 }
 

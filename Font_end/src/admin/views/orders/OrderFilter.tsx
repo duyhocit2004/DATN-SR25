@@ -138,15 +138,33 @@ const OrderFilter = () => {
           format="DD/MM/YYYY"
         />
       </div>
-      <div className="flex items-center gap-2 !w-1/4">
+      <div className="flex gap-2">
         <Button type="primary" onClick={handleSearch} loading={loading}>
           Tìm kiếm
         </Button>
-        {/* {showDeleteAllButton && (
-            <Button type="primary" danger onClick={handleDeleteAll}>
-              Xóa toàn bộ
-            </Button>
-          )} */}
+        <Button 
+          onClick={() => {
+            setFilterData({
+              orderCode: "",
+              phoneNumber: "",
+              status: [],
+              paymentStatus: null,
+              paymentMethod: null,
+              dateTime: [null, null],
+            });
+            dispatch(setFilter({
+              orderCode: "",
+              phoneNumber: "",
+              status: null,
+              paymentStatus: null,
+              paymentMethod: null,
+              dateTime: [null, null],
+            }));
+            dispatch(fetchOrders());
+          }}
+        >
+          Tất cả đơn hàng
+        </Button>
       </div>
     </div>
   );

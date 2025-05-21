@@ -158,13 +158,30 @@ const ProductDetail = () => {
           type: "success",
         });
       } else {
+        const res = response?.data;
         showToast({
-            content: "Thêm giỏ hàng thất bại!",
+          content: res?.message || 'Thêm giỏ hàng thất bại!',
           duration: 5,
-          type: "error",
+          type: 'error',
         });
+        if (res?.messageKey === 'account.locked' || res?.messageKey === 'token.invalidated') {
+          localStorage.removeItem('accessToken');
+          window.location.href = '/login';
+        }
       }
-      } catch { }
+      } catch (error: any) {
+        // Sửa lại: luôn lấy message từ error.response.data nếu có
+        const res = error?.response?.data;
+        showToast({
+          content: res?.message || error?.message || 'Thêm giỏ hàng thất bại!',
+          duration: 5,
+          type: 'error',
+        });
+        if (res?.messageKey === 'account.locked' || res?.messageKey === 'token.invalidated') {
+          localStorage.removeItem('accessToken');
+          window.location.href = '/login';
+        }
+      }
     } else {
       addToCart(
         productDetail?.id,
