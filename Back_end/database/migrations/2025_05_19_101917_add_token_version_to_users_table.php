@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('colors', function (Blueprint $table) {
-            $table->id();
-            $table->string("name",255)->unique();
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->integer('token_version')->default(1)->after('status');
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('colors');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('token_version');
+        });
     }
 };

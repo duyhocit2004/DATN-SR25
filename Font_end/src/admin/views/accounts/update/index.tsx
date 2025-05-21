@@ -79,8 +79,9 @@ const UpdateAccountForm: React.FC = () => {
     setLoading(true);
 
     const payload = {
-      ...formData,  
-      ...values,    
+      id: formData.id,
+      email: formData.email,
+      status: values.status
     };
     const payloadFormData = objectToFormData(payload);
 

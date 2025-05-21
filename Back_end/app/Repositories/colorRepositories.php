@@ -36,9 +36,14 @@ class ColorRepositories
 
     public function addColor(Request $request)
     {
+        // Check if color name already exists
+        $existingColor = Color::where('name', $request->input('name'))->first();
+        if ($existingColor) {
+            return BaseResponse::failure('400', 'Màu này đã tồn tại trong hệ thống', 'color.already.exists', []);
+        }
+
         $color = Color::create([
             'name' => $request->input('name'),
-            // 'code' => $request->input('code'),
         ]);
         return $color;
     }
@@ -51,9 +56,16 @@ class ColorRepositories
             return BaseResponse::failure('400', 'Màu sắc không tồn tại', 'color.not.found', []);
         }
 
+        // Check if new name already exists for other colors
+        $existingColor = Color::where('name', $request->input('name'))
+            ->where('id', '!=', $color->id)
+            ->first();
+        if ($existingColor) {
+            return BaseResponse::failure('400', 'Màu này đã tồn tại trong hệ thống', 'color.already.exists', []);
+        }
+
         $color->update([
             'name' => $request->input('name', $color->name),
-            // 'code' => $request->input('code', $color->code),
         ]);
 
         return $color;

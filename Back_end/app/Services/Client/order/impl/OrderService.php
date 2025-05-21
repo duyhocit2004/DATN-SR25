@@ -298,36 +298,23 @@ class OrderService implements IOrderService
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
-        }
-        $list = $this->orderRepositories->updateOrder($request);
-        return $list;
-    }
-
-
-    public function deleteOrder(Request $request)
-    {
-        
-        // Xác thực người dùng
-        $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
             return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
-        // Xóa đơn hàng
-        $orderId = $request->input('id');
-        $result = $this->orderRepositories->deleteOrder($orderId);
-
-        if ($result) {
-            return BaseResponse::success(['message' => 'Đơn hàng đã được xóa thành công']);
-        } else {
-            return BaseResponse::failure(400, 'Không thể xóa đơn hàng', 'order.delete.failed', []);
-        }
+        $order = $this->orderRepositories->updateOrder($request);
+        return $order;
     }
 
+    public function deleteOrder(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
 
+        $order = $this->orderRepositories->deleteOrder($request);
+        return $order;
+    }
 
     public function refundOrder(Request $request)
     {
@@ -357,9 +344,6 @@ class OrderService implements IOrderService
             throw new \Exception('Hoàn tiền thất bại.');
         }
     }
-
-
-
 
     public function cancelOrderByClient(Request $request)
     {

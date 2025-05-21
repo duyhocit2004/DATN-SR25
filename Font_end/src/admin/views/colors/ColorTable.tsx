@@ -3,6 +3,7 @@ import { IColor } from "@/types/interface";
 import { DeleteOutlined } from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
 import { TablePaginationConfig } from "antd/es/table";
+import dayjs from "dayjs";
 
 interface ColorTableProps {
   colors: IColor[];
@@ -33,7 +34,7 @@ const ColorTable: React.FC<ColorTableProps> = ({ colors, loading, onEdit, onDele
       key: "created_at",
       minWidth: 150,
       render: (date: string) => {
-        return date ? new Date(date).toLocaleDateString("vi-VN") : "";
+       return dayjs(date).format("DD/MM/YYYY ");
       },
     },
     {

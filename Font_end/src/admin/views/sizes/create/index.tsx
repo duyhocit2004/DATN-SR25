@@ -1,6 +1,6 @@
 import adminApi from "@/api/adminApi";
 import { showToast } from "@/components/toast";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setShowAddModal } from "@/store/reducers/adminSizeSlice";
 import { HttpCodeString } from "@/utils/constants";
 import { Modal, Input, Button, Form } from "antd";
@@ -8,6 +8,7 @@ import { useState } from "react";
 
 interface ISizeForm {
   size: string;
+  type: 'numeric' | 'text';
 }
 
 interface IProps {
@@ -16,24 +17,24 @@ interface IProps {
 
 const AddSizeModal: React.FC<IProps> = ({refreshData}) => {
   const dispatch = useAppDispatch();
-  const [form] = Form.useForm(); // Khởi tạo form
+  const { filter } = useAppSelector((state) => state.adminSize);
+  const [form] = Form.useForm();
   const [formData, setFormData] = useState<ISizeForm>({
     size: "",
+    type: filter.type || 'numeric'
   });
   const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
-    setFormData({ size: "" }); // Reset state
-    form.resetFields(); // Reset form
+    setFormData({ size: "", type: filter.type || 'numeric' });
+    form.resetFields();
   };
 
-  // Hàm cập nhật state & form
   const onChangeFormData = (key: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
     form.setFieldsValue({ [key]: value });
   };
 
-  // Lưu dữ liệu
   const handleSave = () => {
     form
       .validateFields()
@@ -49,7 +50,7 @@ const AddSizeModal: React.FC<IProps> = ({refreshData}) => {
     try {
       const response = await adminApi.addSize(payload);
       if (response?.status === HttpCodeString.SUCCESS) {
-        refreshData()
+        refreshData();
         resetForm();
         onClose();
         showToast({
@@ -59,19 +60,22 @@ const AddSizeModal: React.FC<IProps> = ({refreshData}) => {
         });
       } else {
         showToast({
-          content: "Thêm kích thước thất bại",
+          content: response?.message || "Thêm kích thước thất bại",
           duration: 5,
           type: "error",
-          if (condition) {
-            // Handle error condition here
-            
-          }
         });
       }
+    } catch (error: any) {
+      showToast({
+        content: error?.response?.data?.message || "Thêm kích thước thất bại",
+        duration: 5,
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
   };
+
   const onClose = () => {
     dispatch(setShowAddModal(false));
   };
@@ -89,26 +93,33 @@ const AddSizeModal: React.FC<IProps> = ({refreshData}) => {
       centered
       closable={false}
       bodyStyle={{ padding: "20px 24px" }}
-      style={{ top: 20 }} 
-      destroyOnClose={true} // Destroy modal when closed
-      centered // Center the modal vertically
-      closable={false} // Disable close button
+      style={{ top: 20 }}
     >
       <Form form={form} layout="vertical">
-        {/* Chọn màu */}
         <Form.Item
           label="Kích thước"
           name="size"
-          rules={[{ required: true, message: "Vui lòng nhập kích thước!" }]}
+          rules={[
+            { required: true, message: "Vui lòng nhập kích thước!" },
+            { 
+              validator: async (_, value) => {
+                if (formData.type === 'numeric' && isNaN(Number(value))) {
+                  throw new Error('Kích thước số phải là một số!');
+                }
+                if (formData.type === 'text' && !isNaN(Number(value))) {
+                  throw new Error('Kích thước chữ không được là số!');
+                }
+              }
+            }
+          ]}
         >
           <Input
             value={formData.size}
             onChange={(e) => onChangeFormData("size", e.target.value)}
-            placeholder="Nhập kích thước"
+            placeholder={`Nhập kích thước ${formData.type === 'numeric' ? 'số' : 'chữ'}`}
           />
         </Form.Item>
 
-        {/* Nút hành động */}
         <div className="flex justify-end gap-2">
           <Button onClick={onClose}>Hủy</Button>
           <Button type="primary" loading={loading} onClick={handleSave}>

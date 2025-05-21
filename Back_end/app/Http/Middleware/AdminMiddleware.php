@@ -12,7 +12,7 @@ class AdminMiddleware
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
-            $adminRoles = ['admin', 'Admin', 'Quản trị viên'];
+            $adminRoles = ['Quản trị viên', 'Quản lý'];
             if (empty($user) || !in_array($user->role, $adminRoles)) {
                 return response()->json([
                     'status' => 403,

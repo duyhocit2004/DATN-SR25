@@ -53,7 +53,7 @@ class AuthService implements IAuthService
 
             if ($user->status !== config('constants.STATUS_ACTIVE')) {
                 JWTAuth::invalidate(JWTAuth::getToken());
-                return BaseResponse::failure(400, 'Tài khoản chưa được kích hoạt', 'user.does.not.active', []);
+                return BaseResponse::failure(403, 'Tài khoản của bạn đã bị khóa hoặc không hoạt động.', 'account.locked', []);
             }
 
             $payload = JWTAuth::setToken($token)->getPayload();
@@ -93,7 +93,7 @@ class AuthService implements IAuthService
             $user = auth()->user();
 
             // Kiểm tra xem người dùng có phải là admin hoặc manager không
-            if (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== 'Quản lý') {
+            if (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER')) {
                 // Hủy token nếu không phải admin hoặc manager
                 JWTAuth::invalidate(JWTAuth::getToken());
                 BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
@@ -104,20 +104,28 @@ class AuthService implements IAuthService
                 BaseResponse::failure(400, 'User does not active', 'user.does.not.active', []);
             }
 
+            $payload = JWTAuth::setToken($token)->getPayload();
+            $expiresIn = $payload['exp'] - time();
 
+            return [
+                "accessToken" => $token,
+                "tokenType" => "Bearer",
+                "expiresIn" => $expiresIn * 1000,
+                "expiresTime" => $payload['exp'],
+                "user" => [
+                    "id" => $user->id,
+                    "name" => $user->name,
+                    "email" => $user->email,
+                    "phone_number" => $user->phone_number,
+                    "role" => $user->role,
+                    "gender" => $user->gender,
+                    "userImage" => $user->user_image,
+                    "status" => $user->status
+                ]
+            ];
         } catch (JWTException $e) {
             BaseResponse::failure(500, '', 'Could not create token', []);
         }
-
-        $payload = JWTAuth::setToken($token)->getPayload();
-        $expiresIn = $payload['exp'] - time();
-
-        return [
-            "accessToken" => $token,
-            "tokenType" => "Bearer",
-            "expiresIn" => $expiresIn * 1000,
-            "expiresTime" => $payload['exp'],
-        ];
     }
 
     public function register(Request $request)
@@ -173,22 +181,51 @@ class AuthService implements IAuthService
 
     public function getUser(Request $request)
     {
-        $user = \Tymon\JWTAuth\Facades\JWTAuth::parseToken()->authenticate();
+        $email = $request->input('email');
+        if ($email) {
+            $user = $this->authRepositories->getAccountByEmail($email);
+            if (!$user) {
+                return \App\Helpers\BaseResponse::failure(404, 'User not found', 'user.not.found', []);
+            }
+            return $user;
+        }
 
+        // Nếu không truyền email thì lấy user từ token (giữ nguyên logic cũ)
+        $user = \Tymon\JWTAuth\Facades\JWTAuth::parseToken()->authenticate();
         if (empty($user)) {
             \Tymon\JWTAuth\Facades\JWTAuth::invalidate(\Tymon\JWTAuth\Facades\JWTAuth::getToken());
             return \App\Helpers\BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
-        // Trả về user lấy từ JWT
         return $user;
     }
 
     public function updateUserAdmin(Request $request)
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('constants.STATUS_INACTIVE') ) {
+        $currentUser = JWTAuth::parseToken()->authenticate();
+        if (empty($currentUser) || (!empty($currentUser) && $currentUser->role !== config('constants.USER_TYPE_ADMIN') && $currentUser->role !== config('constants.USER_TYPE_MANAGER')) || $currentUser->status == config('constants.STATUS_INACTIVE')) {
             JWTAuth::invalidate(JWTAuth::getToken());
             BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        }
+
+        // Get the target user to update
+        $targetUser = User::find($request->input('id'));
+        if (!$targetUser) {
+            return BaseResponse::failure(404, 'User not found', 'user.not.found', []);
+        }
+
+        // Check if trying to lock the current user's account
+        if ($targetUser->id === $currentUser->id) {
+            return BaseResponse::failure(400, 'Không thể khóa tài khoản đang đăng nhập', 'cannot.lock.current.account', []);
+        }
+
+        // Check if trying to lock the last admin account
+        if ($targetUser->role === config('constants.USER_TYPE_ADMIN') && $request->input('status') === config('constants.STATUS_INACTIVE')) {
+            $adminCount = User::where('role', config('constants.USER_TYPE_ADMIN'))
+                            ->where('status', config('constants.STATUS_ACTIVE'))
+                            ->count();
+            if ($adminCount <= 1) {
+                return BaseResponse::failure(400, 'Không thể khóa tài khoản admin cuối cùng', 'cannot.lock.last.admin', []);
+            }
         }
 
         $uploadedFile = null;

@@ -4,6 +4,7 @@ import NotificationList from './NotificationList';
 import './NotificationList.css';
 import axiosClient from '@/configs/axiosClient';
 import echo from '@/configs/echo';
+import { useNavigate } from 'react-router-dom';
 
 interface NotificationData {
   id: string;
@@ -23,6 +24,7 @@ interface NotificationData {
 const NotificationContainer: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationData[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchNotifications();
@@ -50,7 +52,7 @@ const NotificationContainer: React.FC = () => {
           console.log('Received notification on user channel:', e);
           setNotifications(prevNotifications => {
             const newNotifications = [e.notification, ...prevNotifications];
-            return newNotifications.slice(0, 10); // Giới hạn 10 thông báo mới nhất
+            return newNotifications.slice(0, 10);
           });
           message.info('Bạn có thông báo mới!');
         });
@@ -62,7 +64,7 @@ const NotificationContainer: React.FC = () => {
             console.log('Received notification on admin channel:', e);
             setNotifications(prevNotifications => {
               const newNotifications = [e.notification, ...prevNotifications];
-              return newNotifications.slice(0, 10); // Giới hạn 10 thông báo mới nhất
+              return newNotifications.slice(0, 10);
             });
             message.info('Bạn có thông báo mới!');
           });
@@ -104,14 +106,19 @@ const NotificationContainer: React.FC = () => {
   };
 
   const handleViewDetail = (notification: NotificationData) => {
-    if (notification.data.order_id) {
-      window.location.href = `/orders/${notification.data.order_id}`;
+    if (notification.type === 'order_update' || notification.type === 'new_order') {
+      const orderCode = notification.data?.order_code;
+      if (orderCode) {
+        navigate(`/admin/orders/${orderCode}`);
+        return;
+      }
     }
+    console.log('Viewing notification:', notification);
   };
 
   const handleMarkAsRead = async (id: string) => {
     try {
-      const response = await axiosClient.post(`/notifications/${id}/mark-as-read`);
+      const response = await axiosClient.post(`/api/notifications/${id}/mark-as-read`);
       if (response.status === 200) {
         setNotifications(prevNotifications =>
           prevNotifications.map(notification =>
@@ -120,7 +127,6 @@ const NotificationContainer: React.FC = () => {
               : notification
           )
         );
-        message.success('Đã đánh dấu đã đọc');
       }
     } catch (error) {
       console.error('Error marking notification as read:', error);
@@ -129,8 +135,7 @@ const NotificationContainer: React.FC = () => {
   };
 
   const handleViewAll = () => {
-    // Navigate to notifications page
-    window.location.href = '/notifications';
+    navigate('/admin/notifications');
   };
 
   const unreadCount = notifications.filter(n => n.status === 'unread').length;
@@ -146,17 +151,16 @@ const NotificationContainer: React.FC = () => {
   return (
     <div className="notification-container">
       <NotificationList
-        notifications={notifications.map(({ id, title, created_at }) => ({
-          id,
-          title,
-          created_at,
+        notifications={notifications.map(notification => ({
+          id: notification.id,
+          title: notification.title,
+          message: notification.content,
+          type: notification.type,
+          is_read: notification.status === 'read',
+          created_at: notification.created_at,
+          data: notification.data
         }))}
-        onViewDetail={(notification) => {
-          const fullNotification = notifications.find(n => n.id === notification.id);
-          if (fullNotification) {
-            handleViewDetail(fullNotification);
-          }
-        }}
+        onViewDetail={handleViewDetail}
         onMarkAsRead={handleMarkAsRead}
       />
       {unreadCount > 0 && (

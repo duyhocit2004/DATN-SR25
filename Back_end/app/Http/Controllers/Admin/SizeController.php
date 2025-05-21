@@ -16,17 +16,26 @@ class SizeController extends Controller
     }
     public function addSize(Request $request)
     {
-        $products = $this->adminService->addSize($request);
-        return BaseResponse::success($products);
+        $result = $this->adminService->addSize($request);
+        if (isset($result['status']) && $result['status'] === '400') {
+            return BaseResponse::failure($result['status'], $result['message'], $result['messageKey'], $result['data']);
+        }
+        return BaseResponse::success($result);
     }
     public function updateSize(Request $request)
     {
-        $size = $this->adminService->updateSize($request);
-        return BaseResponse::success($size);
+        $result = $this->adminService->updateSize($request);
+        if (isset($result['status']) && $result['status'] === '400') {
+            return BaseResponse::failure($result['status'], $result['message'], $result['messageKey'], $result['data']);
+        }
+        return BaseResponse::success($result);
     }
     public function deleteSize(Request $request)
     {
-        $size = $this->adminService->deleteSize($request);
-        return BaseResponse::success($size);
+        $result = $this->adminService->deleteSize($request);
+        if (isset($result['status']) && $result['status'] === '400') {
+            return BaseResponse::failure($result['status'], $result['message'], $result['messageKey'], $result['data']);
+        }
+        return BaseResponse::success($result);
     }
 }

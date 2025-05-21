@@ -43,6 +43,29 @@ class JWTAuthMiddleware
                         'data' => []
                     ], 401);
                 }
+
+                // Kiểm tra token_version
+                $payload = JWTAuth::parseToken()->getPayload();
+                $tokenVersion = $payload->get('token_version');
+                if ($user->token_version != $tokenVersion) {
+                    return response()->json([
+                        'status' => 401,
+                        'messageKey' => 'token.invalidated',
+                        'message' => 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+                        'data' => []
+                    ], 401);
+                }
+
+                // Check if user account is locked
+                if ($user->is_locked) {
+                    return response()->json([
+                        'status' => 403,
+                        'messageKey' => 'account.locked',
+                        'message' => 'Your account has been locked. Please contact support for assistance.',
+                        'data' => []
+                    ], 403);
+                }
+
                 auth()->setUser($user);
             } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
                 return response()->json([

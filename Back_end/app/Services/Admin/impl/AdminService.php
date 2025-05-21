@@ -57,9 +57,7 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $dashboardSummary = $this->productRepositories->getDataStats($request);
@@ -71,9 +69,7 @@ class AdminService implements IAdminService
         $user = JWTAuth::parseToken()->authenticate();
 
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $dashboardRevenue = $this->productRepositories->getDashboardChart($request);
@@ -86,9 +82,7 @@ class AdminService implements IAdminService
         $userId = $user->id;
 
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
         $vouchers = $this->voucherRepositories->getAllVoucher($request);
         return $vouchers;
@@ -98,8 +92,7 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $voucher = $this->voucherRepositories->addVoucher($request);
@@ -110,8 +103,7 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $voucher = $this->voucherRepositories->updateVoucher($request);
@@ -122,19 +114,18 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Bạn không có quyền xóa', 'no.permission.delete', []);
+            return BaseResponse::failure(403, 'Bạn không có quyền xóa', 'no.permission.delete', []);
         }
 
         $voucher = $this->voucherRepositories->deleteVoucher($request);
         return $voucher;
     }
+
     public function toggleStatus(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $voucher = $this->voucherRepositories->toggleStatus($request);
@@ -145,10 +136,8 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
 
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $color = $this->colorRepositories->addColor($request);
@@ -159,10 +148,8 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
 
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $color = $this->colorRepositories->updateColor($request);
@@ -173,8 +160,7 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Bạn không có quyền xóa', 'no.permission.delete', []);
+            return BaseResponse::failure(403, 'Bạn không có quyền xóa', 'no.permission.delete', []);
         }
 
         $color = $this->colorRepositories->deleteColor($request);
@@ -185,10 +171,8 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
 
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $size = $this->sizeRepositories->addSize($request);
@@ -199,21 +183,19 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
 
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $size = $this->sizeRepositories->updateSize($request);
         return $size;
     }
+
     public function deleteSize(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Bạn không có quyền xóa', 'no.permission.delete', []);
+            return BaseResponse::failure(403, 'Bạn không có quyền xóa', 'no.permission.delete', []);
         }
 
         $size = $this->sizeRepositories->deleteSize($request);
@@ -224,9 +206,8 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $uploadedFile = null;
@@ -244,9 +225,8 @@ class AdminService implements IAdminService
     public function updateCategory(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN'))) {
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $uploadedFile = null;
@@ -260,12 +240,12 @@ class AdminService implements IAdminService
         $category = $this->categoriesRepositories->updateCategory($request, $secureUrl);
         return $category;
     }
+
     public function deleteCategory(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Bạn không có quyền xóa', 'no.permission.delete', []);
+            return BaseResponse::failure(403, 'Bạn không có quyền xóa', 'no.permission.delete', []);
         }
 
         $category = $this->categoriesRepositories->deleteCategory($request);
@@ -277,8 +257,7 @@ class AdminService implements IAdminService
         $user = JWTAuth::parseToken()->authenticate();
         $userId = $user->id;
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
         $user = $this->authRepositories->getAllUser($request);
         return $user;
@@ -288,10 +267,19 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Bạn không có quyền xóa', 'no.permission.delete', []);
+            return BaseResponse::failure(403, 'Bạn không có quyền xóa', 'no.permission.delete', []);
         }
         $user = $this->authRepositories->deleteUser($request);
+        return $user;
+    }
+
+    public function toggleUserStatus(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
+            return BaseResponse::failure(403, 'Bạn không có quyền khóa/mở khóa tài khoản', 'no.permission.toggle', []);
+        }
+        $user = $this->authRepositories->toggleUserStatus($request);
         return $user;
     }
 
@@ -299,20 +287,18 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $categories = $this->categoriesRepositories->getAllCategoriesNonTree($request);
         return $categories;
     }
+
     public function addBanner(Request $request)
     {
-
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $uploadedFile = null;
@@ -328,11 +314,9 @@ class AdminService implements IAdminService
 
     public function updateBanner(Request $request)
     {
-
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $uploadedFile = null;
@@ -346,13 +330,12 @@ class AdminService implements IAdminService
         $banner = $this->bannersRepositories->updateBanner($request, $secureUrl);
         return $banner;
     }
+
     public function deleteBanner(Request $request)
     {
-
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN')) || $user->status == config('contants.STATUS_INACTIVE')) {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Bạn không có quyền xóa', 'no.permission.delete', []);
+            return BaseResponse::failure(403, 'Bạn không có quyền xóa', 'no.permission.delete', []);
         }
 
         $banner = $this->bannersRepositories->deleteBanner($request);
@@ -363,9 +346,7 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $notification = $this->productRepositories->getAllNotification($request);
@@ -376,9 +357,7 @@ class AdminService implements IAdminService
     {
         $user = JWTAuth::parseToken()->authenticate();
         if (empty($user) || (!empty($user) && $user->role !== config('constants.USER_TYPE_ADMIN') && $user->role !== config('constants.USER_TYPE_MANAGER'))) {
-
-            JWTAuth::invalidate(JWTAuth::getToken());
-            BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
+            return BaseResponse::failure(403, 'Forbidden: Access is denied', 'forbidden', []);
         }
 
         $notification = $this->productRepositories->markAsRead($request);

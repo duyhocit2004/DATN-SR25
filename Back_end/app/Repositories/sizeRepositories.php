@@ -44,24 +44,100 @@ class SizeRepositories
 
     public function addSize(Request $request)
     {
+        // Check if size already exists
+        $existingSize = Size::where('size', $request->input('size'))
+            ->where('type', $request->input('type'))
+            ->first();
+        if ($existingSize) {
+            return [
+                'status' => '400',
+                'message' => 'Kích thước này đã tồn tại trong hệ thống',
+                'messageKey' => 'size.already.exists',
+                'data' => []
+            ];
+        }
+
+        // Validate size type
+        $type = $request->input('type', 'numeric');
+        $size = $request->input('size');
+        
+        if ($type === 'numeric' && !is_numeric($size)) {
+            return [
+                'status' => '400',
+                'message' => 'Kích thước số phải là một số!',
+                'messageKey' => 'size.invalid.numeric',
+                'data' => []
+            ];
+        }
+        
+        if ($type === 'text' && is_numeric($size)) {
+            return [
+                'status' => '400',
+                'message' => 'Kích thước chữ không được là số!',
+                'messageKey' => 'size.invalid.text',
+                'data' => []
+            ];
+        }
+
         $size = Size::create([
             'size' => $request->input('size'),
-            'type' => $request->input('type', 'numeric')
+            'type' => $type
         ]);
         return $size;
     }
 
     public function updateSize(Request $request)
     {
-        $size= Size::find($request->input('id'));
+        $size = Size::find($request->input('id'));
 
         if (!$size) {
-            BaseResponse::failure('400', 'size not found', 'size.not.found', []);
+            return [
+                'status' => '400',
+                'message' => 'Kích thước không tồn tại',
+                'messageKey' => 'size.not.found',
+                'data' => []
+            ];
+        }
+
+        // Check if new size already exists for other sizes
+        $existingSize = Size::where('size', $request->input('size'))
+            ->where('type', $request->input('type'))
+            ->where('id', '!=', $size->id)
+            ->first();
+        if ($existingSize) {
+            return [
+                'status' => '400',
+                'message' => 'Kích thước này đã tồn tại trong hệ thống',
+                'messageKey' => 'size.already.exists',
+                'data' => []
+            ];
+        }
+
+        // Validate size type
+        $type = $request->input('type', $size->type);
+        $newSize = $request->input('size', $size->size);
+        
+        if ($type === 'numeric' && !is_numeric($newSize)) {
+            return [
+                'status' => '400',
+                'message' => 'Kích thước số phải là một số!',
+                'messageKey' => 'size.invalid.numeric',
+                'data' => []
+            ];
+        }
+        
+        if ($type === 'text' && is_numeric($newSize)) {
+            return [
+                'status' => '400',
+                'message' => 'Kích thước chữ không được là số!',
+                'messageKey' => 'size.invalid.text',
+                'data' => []
+            ];
         }
 
         $size->update([
-            'size' => $request->input('size', $size->size),
-            'type' => $request->input('type', $size->type)
+            'size' => $newSize,
+            'type' => $type
         ]);
 
         return $size;
@@ -69,15 +145,18 @@ class SizeRepositories
 
     public function deleteSize(Request $request)
     {
-        $size= Size::find($request->input('id'));
+        $size = Size::find($request->input('id'));
 
         if (!$size) {
-            BaseResponse::failure('400', 'size not found', 'size.not.found', []);
+            return [
+                'status' => '400',
+                'message' => 'Kích thước không tồn tại',
+                'messageKey' => 'size.not.found',
+                'data' => []
+            ];
         }
 
-        //không cần check các bảng sử dụng size_id là khoá ngoại để xoá theo vì trong database đã set on delete cascade
         $size->delete();
-
         return $size;
     }
 }
