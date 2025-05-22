@@ -81,24 +81,25 @@ class NotificationController extends Controller
                 ], 401);
             }
 
-            $notification = Notification::findOrFail($id);
-            
-            if ($notification->user_id !== $user->id) {
+            $notification = Notification::where('id', $id)
+                ->where('user_id', $user->id)
+                ->first();
+
+            if (!$notification) {
                 return response()->json([
-                    'status' => 403,
-                    'message' => 'Unauthorized'
-                ], 403);
+                    'status' => 404,
+                    'message' => 'Notification not found'
+                ], 404);
             }
 
             $notification->update([
-                'status' => 'read',
-                'read_at' => now(),
-                'is_read' => true
+                'is_read' => true,
+                'read_at' => now()
             ]);
 
             return response()->json([
                 'status' => 200,
-                'message' => 'success'
+                'message' => 'Notification marked as read successfully'
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -122,14 +123,13 @@ class NotificationController extends Controller
             Notification::where('user_id', $user->id)
                 ->where('is_read', false)
                 ->update([
-                    'status' => 'read',
-                    'read_at' => now(),
-                    'is_read' => true
+                    'is_read' => true,
+                    'read_at' => now()
                 ]);
 
             return response()->json([
                 'status' => 200,
-                'message' => 'success'
+                'message' => 'All notifications marked as read successfully'
             ]);
         } catch (Exception $e) {
             return response()->json([

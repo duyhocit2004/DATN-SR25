@@ -9,9 +9,9 @@ import { useNavigate } from 'react-router-dom';
 interface NotificationData {
   id: string;
   title: string;
-  content: string;
+  message: string;
   type: string;
-  status: 'read' | 'unread';
+  is_read: boolean;
   data: {
     order_id?: string;
     order_code?: string;
@@ -24,77 +24,13 @@ interface NotificationData {
 const NotificationContainer: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchNotifications();
-    setupWebSocket();
-
-    return () => {
-      cleanupWebSocket();
-    };
-  }, []);
-
-  const setupWebSocket = () => {
-    try {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const userId = user.id;
-      const userRole = user.role;
-
-      if (!userId) {
-        console.error('User ID not found');
-        return;
-      }
-
-      // Subscribe to user's private channel
-      echo.private(`user.${userId}`)
-        .listen('NotificationCreated', (e: { notification: NotificationData }) => {
-          console.log('Received notification on user channel:', e);
-          setNotifications(prevNotifications => {
-            const newNotifications = [e.notification, ...prevNotifications];
-            return newNotifications.slice(0, 10);
-          });
-          message.info('Bạn có thông báo mới!');
-        });
-
-      // If user is admin, also subscribe to admin channel
-      if (userRole === 'Admin') {
-        echo.private('admin.notifications')
-          .listen('NotificationCreated', (e: { notification: NotificationData }) => {
-            console.log('Received notification on admin channel:', e);
-            setNotifications(prevNotifications => {
-              const newNotifications = [e.notification, ...prevNotifications];
-              return newNotifications.slice(0, 10);
-            });
-            message.info('Bạn có thông báo mới!');
-          });
-      }
-    } catch (error) {
-      console.error('Error setting up WebSocket:', error);
-    }
-  };
-
-  const cleanupWebSocket = () => {
-    try {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const userId = user.id;
-      const userRole = user.role;
-
-      if (userId) {
-        echo.leave(`user.${userId}`);
-        if (userRole === 'Admin') {
-          echo.leave('admin.notifications');
-        }
-      }
-    } catch (error) {
-      console.error('Error cleaning up WebSocket:', error);
-    }
-  };
 
   const fetchNotifications = async () => {
     try {
-      const response = await axiosClient.get('/api/notifications?limit=10&order=desc');
-      if (response.status === 200) {
+      const response = await axiosClient.get('/notifications');
+      if (response.data.status === 200) {
         setNotifications(response.data.data);
       }
     } catch (error) {
@@ -105,71 +41,74 @@ const NotificationContainer: React.FC = () => {
     }
   };
 
-  const handleViewDetail = (notification: NotificationData) => {
-    if (notification.type === 'order_update' || notification.type === 'new_order') {
-      const orderCode = notification.data?.order_code;
-      if (orderCode) {
-        navigate(`/admin/orders/${orderCode}`);
-        return;
+  const fetchUnreadCount = async () => {
+    try {
+      const response = await axiosClient.get('/notifications/unread-count');
+      if (response.data.status === 200) {
+        setUnreadCount(response.data.data);
       }
+    } catch (error) {
+      console.error('Error fetching unread count:', error);
     }
-    console.log('Viewing notification:', notification);
   };
 
   const handleMarkAsRead = async (id: string) => {
     try {
-      const response = await axiosClient.post(`/api/notifications/${id}/mark-as-read`);
-      if (response.status === 200) {
+      const response = await axiosClient.post(`/notifications/${id}/mark-as-read`);
+      if (response.data.status === 200) {
         setNotifications(prevNotifications =>
           prevNotifications.map(notification =>
             notification.id === id
-              ? { ...notification, status: 'read' }
+              ? { ...notification, is_read: true }
               : notification
           )
         );
+        setUnreadCount(prev => Math.max(0, prev - 1));
       }
     } catch (error) {
       console.error('Error marking notification as read:', error);
-      message.error('Không thể đánh dấu đã đọc');
+      message.error('Không thể đánh dấu thông báo đã đọc');
     }
   };
 
-  const handleViewAll = () => {
-    navigate('/admin/notifications');
+  const handleViewDetail = (notification: NotificationData) => {
+    if (notification.type === 'new_order' || notification.type === 'order_update') {
+      const orderCode = notification.data.order_code;
+      if (orderCode) {
+        navigate(`/admin/orders/${orderCode}`);
+      }
+    }
   };
 
-  const unreadCount = notifications.filter(n => n.status === 'unread').length;
+  useEffect(() => {
+    fetchNotifications();
+    fetchUnreadCount();
+
+    // Subscribe to notifications channel
+    const channel = echo.private(`notifications.${localStorage.getItem('user_id')}`);
+    
+    channel.listen('new-notification', (data: { notification: NotificationData }) => {
+      setNotifications(prevNotifications => [data.notification, ...prevNotifications]);
+      setUnreadCount(prev => prev + 1);
+      message.info('Bạn có thông báo mới');
+    });
+
+    return () => {
+      channel.stopListening('new-notification');
+    };
+  }, []);
 
   if (loading) {
-    return (
-      <div style={{ textAlign: 'center', padding: '20px' }}>
-        <Spin />
-      </div>
-    );
+    return <Spin size="large" />;
   }
 
   return (
     <div className="notification-container">
       <NotificationList
-        notifications={notifications.map(notification => ({
-          id: notification.id,
-          title: notification.title,
-          message: notification.content,
-          type: notification.type,
-          is_read: notification.status === 'read',
-          created_at: notification.created_at,
-          data: notification.data
-        }))}
+        notifications={notifications}
         onViewDetail={handleViewDetail}
         onMarkAsRead={handleMarkAsRead}
       />
-      {unreadCount > 0 && (
-        <div className="notification-footer">
-          <button onClick={handleViewAll}>
-            Xem tất cả ({unreadCount} chưa đọc)
-          </button>
-        </div>
-      )}
     </div>
   );
 };

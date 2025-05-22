@@ -56,17 +56,15 @@ const NotificationList: React.FC<NotificationListProps> = ({
     try {
       // Đánh dấu thông báo đã đọc trước
       await onMarkAsRead(item.id);
-      
       // Kiểm tra nếu là thông báo đơn hàng
       if (item.type === 'order_update' || item.type === 'new_order') {
         const orderCode = item.data?.order_code;
         if (orderCode) {
           // Điều hướng đến trang chi tiết đơn hàng sử dụng order_code
-          navigate(`/admin/orders/${orderCode}`);
+          setTimeout(() => navigate(`/admin/orders/${orderCode}`), 0);
           return;
         }
       }
-      
       // Nếu không phải thông báo đơn hàng hoặc không tìm thấy order_code
       onViewDetail(item);
     } catch (error) {
@@ -83,7 +81,7 @@ const NotificationList: React.FC<NotificationListProps> = ({
         <List.Item
           key={item.id}
           className={`notification-item ${!item.is_read ? 'unread' : ''}`}
-          onClick={() => handleNotificationClick(item)}
+          onClick={async () => await handleNotificationClick(item)}
         >
           <div className="notification-content">
             <Space align="start">
@@ -101,9 +99,9 @@ const NotificationList: React.FC<NotificationListProps> = ({
                   {(item.type === 'order_update' || item.type === 'new_order') && (
                     <Button
                       type="link"
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         e.stopPropagation();
-                        handleNotificationClick(item);
+                        await handleNotificationClick(item);
                       }}
                     >
                       Xem Chi Tiết
