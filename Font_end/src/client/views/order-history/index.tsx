@@ -21,7 +21,7 @@ const OrderHistory: React.FC = () => {
   }, []);
 
   return (
-    <div className="order-history-container container mx-auto px-6 pb-6 pt-20">
+    <div className="order-history-container container mx-auto px-6 pb-6 pt-10 min-h-[899px]">
       {/* <div className="p-6 bg-white rounded-lg shadow-lg"> */}
       {!isSearched && <CheckPhoneNumber />}
 

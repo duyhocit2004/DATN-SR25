@@ -46,6 +46,11 @@ class HomeApi extends BaseApi<Home> {
       .post(`${this.uri}/getAllBanners`, payload)
       .then((res) => res.data);
   };
+  getHomeSummary = (topNumber: number = 8) => {
+    return axiosClient
+      .get(`${this.uri}/summary?topNumber=${topNumber}`)
+      .then((res) => res.data);
+  };
 }
 
 const homeApi = new HomeApi();

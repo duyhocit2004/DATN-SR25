@@ -23,7 +23,7 @@ class CartRepositories
                     ->where('products.status', 'active');
 
                 $result = $query->where('product_variants.product_id', $item['productId'])
-                    ->where('colors.code', $item['color'])
+                    ->where('colors.name', $item['color'])
                     ->where('sizes.size', $item['size'])->get();
 
                 foreach ($result as $product) {

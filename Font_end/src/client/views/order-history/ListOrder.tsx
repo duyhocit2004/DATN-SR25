@@ -58,7 +58,7 @@ const ListOrder = () => {
   };
 
   return (
-    <div className="list-order-container">
+    <div className="list-order-container ">
       {isMobile ? (
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Danh sách đơn hàng</h2>
@@ -76,7 +76,7 @@ const ListOrder = () => {
         </div>
       ) : (
         <div className="header-section">
-          <h2 className="text-lg font-semibold mb-4">Danh sách đơn hàng</h2>
+            <h2 className="text-3xl font-bold mb-4 text-center">Danh sách đơn hàng</h2>
           <OrderFilter />
         </div>
       )}

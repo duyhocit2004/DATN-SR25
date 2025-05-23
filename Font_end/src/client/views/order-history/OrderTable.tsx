@@ -3,36 +3,77 @@ import { fetchOrders, setSelectedOrder } from "@/store/reducers/orderSlice";
 import { IOrder, IProductOrder } from "@/types/interface";
 import { OrderStatusDataClient } from "@/utils/constantData";
 import { getColorOrderStatus, getLabelByValue } from "@/utils/functions";
-import { Table, Tag, Button, Modal, Card, Image } from "antd";
+import { Table, Tag, Button, Modal, Card, Image, Pagination } from "antd";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import orderApi from "@/api/orderApi";
 import { message } from "antd";
+import commentApi from "@/api/commentApi";
+import { Rate, Input } from "antd";
 
 const OrderTable = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
-  const [selectedOrder, setSelectedOrderForReview] = useState<IOrder | null>(null);
+  const [selectedOrderForReview, setSelectedOrderForReview] = useState<IOrder | null>(null);
   const { orders, loading, phoneNumber } = useAppSelector(
     (state) => state.order
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const [reviewingProduct, setReviewingProduct] = useState<IProductOrder | null>(null);
+  const [reviewContent, setReviewContent] = useState("");
+  const [reviewRate, setReviewRate] = useState(0);
+  const [reviewedProductIds, setReviewedProductIds] = useState<number[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [reviewingProductId, setReviewingProductId] = useState<number | null>(null);
 
   const handleReviewClick = (order: IOrder) => {
-    if (order.products && order.products.length === 1) {
-      const product = order.products[0];
-      navigate(`/products/${product.productId}`);
-    } else {
-      setSelectedOrderForReview(order);
-      setIsReviewModalVisible(true);
-    }
+    setSelectedOrderForReview(order);
+    setIsReviewModalVisible(true);
+    setReviewingProductId(null);
   };
 
-  const handleProductReview = (productId: number) => {
-    setIsReviewModalVisible(false);
-    navigate(`/products/${productId}`);
+  const handleProductReview = (product: IProductOrder) => {
+    if (reviewingProductId === product.productId) return;
+    setReviewingProduct(product);
+    setReviewContent("");
+    setReviewRate(0);
+    setReviewingProductId(product.productId);
+  };
+
+  const handleSubmitReview = async () => {
+    if (!reviewingProduct) return;
+    setSubmitting(true);
+    const orderPhone =
+      selectedOrderForReview?.receiverPhoneNumber ||
+      selectedOrderForReview?.phoneNumber ||
+      "";
+    try {
+      await commentApi.addComment({
+        productId: reviewingProduct.productId,
+        content: reviewContent,
+        rate: reviewRate,
+        phoneNumber: orderPhone,
+      });
+      message.success("Đánh giá thành công!");
+      setReviewedProductIds((prev) => [...prev, reviewingProduct.productId]);
+      setReviewingProduct(null);
+      setReviewingProductId(null);
+      if (
+        selectedOrderForReview?.products.every((p: IProductOrder) =>
+          reviewedProductIds.includes(p.productId) || p.productId === reviewingProduct.productId
+        )
+      ) {
+        setIsReviewModalVisible(false);
+      }
+    } catch (error: any) {
+      message.error(error?.response?.data?.message || "Đánh giá thất bại!");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleConfirmReceived = async (order: IOrder) => {
@@ -108,6 +149,7 @@ const OrderTable = () => {
               <Button
                 type="primary"
                 onClick={() => handleReviewClick(record)}
+                disabled={record.products.every((p) => reviewedProductIds.includes(p.productId))}
               >
                 Đánh giá
               </Button>
@@ -140,64 +182,99 @@ const OrderTable = () => {
     const dateB = new Date(b.createdAt).getTime();
     return dateB - dateA;
   });
+  const paginatedOrders = sortedOrders.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
     <>
       <Table
         loading={loading}
         columns={columns}
-        dataSource={sortedOrders}
+        dataSource={paginatedOrders}
         rowKey="id"
         pagination={false}
         scroll={{ x: "100%" }}
       />
+      <div className="flex justify-end mt-4">
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={sortedOrders.length}
+          onChange={setCurrentPage}
+          showSizeChanger={false}
+        />
+      </div>
 
-      <Modal
-        title="Chọn sản phẩm để đánh giá"
-        open={isReviewModalVisible}
-        onCancel={() => setIsReviewModalVisible(false)}
-        footer={null}
-        width={800}
-      >
-        <div className="grid grid-cols-1 gap-4">
-          {selectedOrder?.products?.map((product: IProductOrder) => (
-            <Card 
-              key={product.id} 
-              hoverable 
-              className="flex cursor-pointer"
-              onClick={() => handleProductReview(product.productId)}
-            >
-              <div className="flex items-center space-x-4">
-                <div className="w-24 h-24 flex-shrink-0">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover rounded"
-                    preview={false}
-                  />
-                </div>
-                <div className="flex-grow">
-                  <h3 className="text-lg font-medium mb-2">{product.name}</h3>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-gray-500">Số lượng: {product.quantity}</p>
-                      <p className="text-gray-500">
-                        Màu sắc: {product.color}, Size: {product.size}
-                      </p>
-                      <p className="text-red-500 font-medium">
-                        Giá: {product.priceSale?.toLocaleString() || product.priceRegular.toLocaleString()} đ
-                      </p>
+      {selectedOrderForReview && Array.isArray(selectedOrderForReview.products) && (
+        <Modal
+          title="Chọn sản phẩm để đánh giá"
+          open={isReviewModalVisible}
+          onCancel={() => setIsReviewModalVisible(false)}
+          footer={null}
+          width={800}
+        >
+          <div className="grid grid-cols-1 gap-4">
+            {selectedOrderForReview.products.map((product: IProductOrder) => (
+              <Card
+                key={product.id}
+                hoverable
+                className={`flex flex-col cursor-pointer relative mb-2 ${reviewedProductIds.includes(product.productId) ? 'opacity-50 pointer-events-none' : ''}`}
+                onClick={() =>
+                  !reviewedProductIds.includes(product.productId) &&
+                  reviewingProductId !== product.productId &&
+                  handleProductReview(product)
+                }
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="w-24 h-24 flex-shrink-0">
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover rounded"
+                      preview={false}
+                    />
+                  </div>
+                  <div className="flex-grow">
+                    <h3 className="text-lg font-medium mb-2">{product.name}</h3>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-gray-500">Số lượng: {product.quantity}</p>
+                        <p className="text-gray-500">
+                          Màu sắc: {product.color}, Size: {product.size}
+                        </p>
+                        <p className="text-red-500 font-medium">
+                          Giá: {product.priceSale?.toLocaleString() || product.priceRegular.toLocaleString()} đ
+                        </p>
+                      </div>
+                      {reviewedProductIds.includes(product.productId) && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-70">
+                          <span className="text-gray-600 font-semibold">Đã đánh giá</span>
+                        </div>
+                      )}
                     </div>
-                    <Button type="primary" size="large">
-                      Đánh giá ngay
-                    </Button>
                   </div>
                 </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </Modal>
+                {reviewingProductId === product.productId && !reviewedProductIds.includes(product.productId) && (
+                  <div className="mt-4 border-t pt-4">
+                    <Rate value={reviewRate} onChange={setReviewRate} allowClear />
+                    <Input.TextArea
+                      rows={4}
+                      value={reviewContent}
+                      onChange={e => setReviewContent(e.target.value)}
+                      placeholder="Nhập nội dung đánh giá..."
+                      className="mt-2"
+                    />
+                    <div className="mt-2 text-right">
+                      <Button type="primary" loading={submitting} onClick={handleSubmitReview} disabled={reviewRate === 0}>
+                        Gửi đánh giá
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </Card>
+            ))}
+          </div>
+        </Modal>
+      )}
     </>
   );
 };

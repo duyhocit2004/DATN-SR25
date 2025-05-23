@@ -14,7 +14,7 @@ const Dashboard = () => {
   const [filterType, setFilterType] = useState<FilterType>(FilterType.Year);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container page-transition">
       <DashboardStats filterType={filterType} selectedDate={selectedDate} />
       <DashboardChart
         filterType={filterType}

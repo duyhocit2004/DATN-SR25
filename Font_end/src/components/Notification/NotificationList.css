@@ -8,7 +8,7 @@
   padding: 16px;
   border-bottom: 1px solid #f5f5f5;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .notification-item:hover {
@@ -16,7 +16,13 @@
 }
 
 .notification-item.unread {
-  background-color: #f5f5f5;
+  background-color: #f0f7ff;
+  border-left: 3px solid #1890ff;
+}
+
+.notification-item:not(.unread) {
+  opacity: 0.8;
+  background-color: #fff;
 }
 
 .notification-content {
@@ -34,14 +40,26 @@
 
 .notification-title {
   margin-bottom: 8px !important;
-  color: #222;
   font-size: 14px !important;
+}
+
+.notification-item.unread .notification-title {
+  color: #1890ff;
+  font-weight: 500;
+}
+
+.notification-item:not(.unread) .notification-title {
+  color: #666;
 }
 
 .notification-message {
   color: #666;
   margin-bottom: 8px !important;
   font-size: 13px;
+}
+
+.notification-item:not(.unread) .notification-message {
+  color: #999;
 }
 
 .notification-meta {
@@ -53,11 +71,11 @@
   font-size: 12px;
   padding: 0;
   height: auto;
-  color: #ee4d2d;
+  color: #1890ff;
 }
 
 .notification-meta .ant-btn-link:hover {
-  color: #ff6b4c;
+  color: #40a9ff;
 }
 
 .notification-meta .anticon {
@@ -88,12 +106,12 @@
 }
 
 .notification-header .view-all-link {
-  color: #ee4d2d;
+  color: #1890ff;
   font-size: 13px;
 }
 
 .notification-header .view-all-link:hover {
-  color: #ff6b4c;
+  color: #40a9ff;
 }
 
 .notification-body {
@@ -114,10 +132,10 @@
 }
 
 .notification-trigger:hover .notification-icon {
-  color: #ee4d2d;
+  color: #1890ff;
 }
 
 /* Badge styles */
 .notification-trigger .ant-badge-count {
-  background: #ee4d2d;
+  background: #1890ff;
 } 

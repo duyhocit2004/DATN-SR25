@@ -301,8 +301,8 @@ const DashboardTables = () => {
 
   return (
     <div className="dashboard-tables">
-      <div className="table-section bg-white p-6 rounded-lg border border-gray-200">
-        <h2 className="text-xl font-bold mb-4 text-primary border-b-2 border-primary pb-2">
+      <div className="table-section bg-white p-6 rounded-lg border border-gray-200 slide-in">
+        <h2 className="text-xl font-bold mb-4 text-primary border-b-2 border-primary pb-2 typing">
           <span className="text-blue-500 mr-2">📋</span>
           Đơn hàng mới nhất
         </h2>
@@ -317,8 +317,8 @@ const DashboardTables = () => {
         />
       </div>
 
-      <div className="table-section mt-8 bg-white p-6 rounded-lg border border-gray-200">
-        <h2 className="text-xl font-bold mb-4 text-primary border-b-2 border-primary pb-2">
+      <div className="table-section mt-8 bg-white p-6 rounded-lg border border-gray-200 slide-in">
+        <h2 className="text-xl font-bold mb-4 text-primary border-b-2 border-primary pb-2 typing">
           <span className="text-green-500 mr-2">🏆</span>
           Sản phẩm bán chạy nhất (dựa trên số đơn thành công)
         </h2>
@@ -333,8 +333,8 @@ const DashboardTables = () => {
         />
       </div>
 
-      <div className="table-section mt-8 bg-white p-6 rounded-lg border border-gray-200">
-        <h2 className="text-xl font-bold mb-4 text-primary border-b-2 border-primary pb-2">
+      <div className="table-section mt-8 bg-white p-6 rounded-lg border border-gray-200 slide-in">
+        <h2 className="text-xl font-bold mb-4 text-primary border-b-2 border-primary pb-2 typing">
           <span className="text-red-500 mr-2">⚠️</span>
           Sản phẩm có tỷ lệ hủy đơn cao nhất
         </h2>

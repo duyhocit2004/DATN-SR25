@@ -54,21 +54,26 @@ const NotificationList: React.FC<NotificationListProps> = ({
 
   const handleNotificationClick = async (item: NotificationItem) => {
     try {
-      // Đánh dấu thông báo đã đọc trước
+      console.log('Notification click:', item);
       await onMarkAsRead(item.id);
-      // Kiểm tra nếu là thông báo đơn hàng
       if (item.type === 'order_update' || item.type === 'new_order') {
-        const orderCode = item.data?.order_code;
+        console.log('Notification data:', item.data);
+        const orderCode = item.data?.order_code || item.data?.orderCode;
+        const orderId = item.data?.order_id || item.data?.orderId;
         if (orderCode) {
-          // Điều hướng đến trang chi tiết đơn hàng sử dụng order_code
           setTimeout(() => navigate(`/admin/orders/${orderCode}`), 0);
+          return;
+        } else if (orderId) {
+          setTimeout(() => navigate(`/admin/orders/${orderId}`), 0);
+          return;
+        } else {
+          window.alert('Không tìm thấy mã đơn hàng trong thông báo!');
           return;
         }
       }
-      // Nếu không phải thông báo đơn hàng hoặc không tìm thấy order_code
       onViewDetail(item);
     } catch (error) {
-      console.error('Error handling notification click:', error);
+      window.alert('Có lỗi khi xử lý notification!');
     }
   };
 

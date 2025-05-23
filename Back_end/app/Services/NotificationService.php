@@ -25,12 +25,13 @@ class NotificationService
         );
     }
 
+    /**
+     * Tạo notification cho tất cả admin/manager khi có đơn hàng mới
+     */
     public function createNewOrderNotification(Order $order)
     {
-        // Create notification for admin
-        $adminUsers = User::whereIn('role', ['Admin', 'Quản trị viên', 'Quản lý'])->get();
-        
-        foreach ($adminUsers as $admin) {
+        $admins = User::whereIn('role', ['Quản trị viên', 'Quản lý'])->get();
+        foreach ($admins as $admin) {
             $notification = Notification::create([
                 'user_id' => $admin->id,
                 'order_id' => $order->id,
@@ -38,71 +39,24 @@ class NotificationService
                 'title' => 'Đơn hàng mới',
                 'message' => "Có đơn hàng mới #{$order->code} từ khách hàng {$order->customer_name}",
                 'is_read' => false,
-                'data' => json_encode([
+                'data' => [
                     'order_id' => $order->id,
                     'order_code' => $order->code
-                ])
+                ]
             ]);
-
-            // Broadcast notification event
             $this->pusher->trigger('notifications.' . $admin->id, 'new-notification', [
-                'notification' => $notification
-            ]);
-        }
-
-        // Create notification for customer if they have an account
-        if ($order->users_id) {
-            $notification = Notification::create([
-                'user_id' => $order->users_id,
-                'order_id' => $order->id,
-                'type' => 'new_order',
-                'title' => 'Đặt hàng thành công',
-                'message' => "Đơn hàng #{$order->code} của bạn đã được đặt thành công",
-                'is_read' => false,
-                'data' => json_encode([
-                    'order_id' => $order->id,
-                    'order_code' => $order->code
-                ])
-            ]);
-
-            // Broadcast notification event
-            $this->pusher->trigger('notifications.' . $order->users_id, 'new-notification', [
                 'notification' => $notification
             ]);
         }
     }
 
+    /**
+     * Tạo notification cập nhật trạng thái đơn hàng cho admin/manager
+     */
     public function createOrderStatusNotification(Order $order, string $oldStatus, string $newStatus, string $note = null)
     {
-        $title = $this->getOrderStatusTitle($newStatus);
-        $message = $this->getOrderStatusContent($order->code, $newStatus, $note);
-
-        // Create notification for customer
-        if ($order->users_id) {
-            $notification = Notification::create([
-                'user_id' => $order->users_id,
-                'order_id' => $order->id,
-                'type' => 'order_update',
-                'title' => $title,
-                'message' => $message,
-                'is_read' => false,
-                'data' => json_encode([
-                    'order_id' => $order->id,
-                    'order_code' => $order->code,
-                    'old_status' => $oldStatus,
-                    'new_status' => $newStatus
-                ])
-            ]);
-
-            // Broadcast notification event
-            $this->pusher->trigger('notifications.' . $order->users_id, 'new-notification', [
-                'notification' => $notification
-            ]);
-        }
-
-        // Create notification for admin
-        $adminUsers = User::whereIn('role', ['Admin', 'Quản trị viên', 'Quản lý'])->get();
-        foreach ($adminUsers as $admin) {
+        $admins = User::whereIn('role', ['Quản trị viên', 'Quản lý'])->get();
+        foreach ($admins as $admin) {
             $notification = Notification::create([
                 'user_id' => $admin->id,
                 'order_id' => $order->id,
@@ -110,15 +64,14 @@ class NotificationService
                 'title' => "Cập nhật đơn hàng #{$order->code}",
                 'message' => "Đơn hàng #{$order->code} đã được cập nhật trạng thái từ {$oldStatus} thành {$newStatus}",
                 'is_read' => false,
-                'data' => json_encode([
+                'data' => [
                     'order_id' => $order->id,
                     'order_code' => $order->code,
                     'old_status' => $oldStatus,
-                    'new_status' => $newStatus
-                ])
+                    'new_status' => $newStatus,
+                    'note' => $note
+                ]
             ]);
-
-            // Broadcast notification event
             $this->pusher->trigger('notifications.' . $admin->id, 'new-notification', [
                 'notification' => $notification
             ]);

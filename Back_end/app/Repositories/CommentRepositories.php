@@ -75,7 +75,10 @@ class CommentRepositories
         }
 
         // Find the most recent order for this phone number that contains this product
-        $order = Order::where('phone_number', $phoneNumber)
+        $order = Order::where(function($q) use ($phoneNumber) {
+                $q->where('phone_number', $phoneNumber)
+                  ->orWhere('receiver_phone_number', $phoneNumber);
+            })
             ->whereHas('order_details', function ($query) use ($productId) {
                 $query->where('product_id', $productId);
             })

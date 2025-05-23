@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Services\EmailService;
+use App\Services\NotificationService;
 
 
 class OrderService implements IOrderService
@@ -23,15 +24,18 @@ class OrderService implements IOrderService
     public OrderRepositories $orderRepositories;
     public VoucherRepositories $voucherRepositories;
     protected $emailService;
+    protected $notificationService;
 
     public function __construct(
         OrderRepositories $orderRepositories,
         VoucherRepositories $voucherRepositories,
-        EmailService $emailService
+        EmailService $emailService,
+        NotificationService $notificationService
     ) {
         $this->orderRepositories = $orderRepositories;
         $this->voucherRepositories = $voucherRepositories;
         $this->emailService = $emailService;
+        $this->notificationService = $notificationService;
     }
 
 
@@ -58,34 +62,22 @@ class OrderService implements IOrderService
         $validatedData['voucher'] = $validatedData['voucher'] ?? null;
 
         // Gửi dữ liệu đến repository
-        $order = $this->orderRepositories->addOrder($validatedData);
-        
-        // Broadcast notification event
-        if ($order) {
-            // Thông báo cho admin (gửi cho tất cả Quản trị viên và Quản lý)
-            $admins = \App\Models\User::whereIn('role', ['Quản trị viên', 'Quản lý'])->get();
-            foreach ($admins as $admin) {
-                Notification::create([
-                    'user_id' => $admin->id,
-                    'order_id' => $order->id,
-                    'message' => 'Đơn hàng '.$order->code.' mới đã được đặt',
-                    'title' => 'Thông báo đơn hàng mới',
-                    'is_read' => false,
-                    'recipient_type' => $admin->role,
-                    'type' => 'new_order'
-                ]);
+        $orderData = $this->orderRepositories->addOrder($validatedData);
+
+        // Trả về kết quả ngay lập tức nếu tạo thành công
+        if ($orderData) {
+            // Chuyển đổi mảng thành đối tượng Order
+            $order = Order::find($orderData['id']);
+            
+            if ($order) {
+                // Tạo thông báo cho admin và người dùng
+                $this->notificationService->createNewOrderNotification($order);
+                
+                // Gửi email xác nhận đơn hàng
+                dispatch(new \App\Jobs\SendOrderConfirmationEmail($order->id));
             }
-            // Broadcast notification event nếu cần
-            app(\App\Services\NotificationService::class)->createNewOrderNotification($order);
-            // Send order confirmation email
-            $this->emailService->sendOrderConfirmation($order);
         }
-        
-        // if($order){
-        //     $this->AddNotificationToAdmin($order);
-        //     // Gửi thông báo đến admin
-        // }
-        return $order;
+        return $orderData;
     }
 
     public function getOrders(Request $request)

@@ -613,7 +613,7 @@ const Payment = () => {
         🛒 Thanh Toán Đơn Hàng
       </h2>
       {loading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-40">
           <Spin size="large" />
         </div>
       )}

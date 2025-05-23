@@ -57,6 +57,7 @@ Route::prefix('home')->group(function () {
     Route::post('/getAllBanners', [HomeController::class, 'getAllBanners']);
     Route::post('/getParentCategories', [HomeController::class, 'getParentCategories']);
     Route::post('/getChildrenCategories', [HomeController::class, 'getChildrenCategories']);
+    Route::get('/summary', [HomeController::class, 'getHomeSummary']);
 });
 
 Route::prefix('carts')->group(function () {
@@ -216,9 +217,9 @@ Route::get('/test-broadcast', function () {
 });
 
 // Notification routes
-Route::middleware('auth:api')->group(function () {
-    Route::get('/notifications', [NotificationController::class, 'index']);
-    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
-    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
-    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+Route::middleware('jwt.auth')->group(function () {
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/mark-as-read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/mark-all-as-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead']);
+    Route::get('/notifications/unread-count', [\App\Http\Controllers\NotificationController::class, 'unreadCount']);
 });
