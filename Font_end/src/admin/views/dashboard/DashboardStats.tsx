@@ -217,13 +217,13 @@ const DashboardStats = ({
         {statsData?.map((stat, index) => (
           <Card
             key={index}
-            className="cursor-pointer hover:shadow-md transition"
+            className="cursor-pointer hover:shadow-md transition stats-card bounce-in"
             onClick={() => handleCardClick(stat)}
             style={{ borderColor: stat.color }}
           >
             <div className="flex items-center">
               <div 
-                className="text-3xl p-4 rounded-lg flex justify-center items-center mr-4"
+                className="text-3xl p-4 rounded-lg flex justify-center items-center mr-4 float"
                 style={{ 
                   backgroundColor: `${stat.color}15`,
                   color: stat.color
@@ -233,7 +233,7 @@ const DashboardStats = ({
               </div>
               <div>
                 <h3 className="text-sm text-gray-500">{stat.title}</h3>
-                <p className="text-xl font-semibold" style={{ color: stat.color }}>
+                <p className="text-xl font-semibold pulse" style={{ color: stat.color }}>
                   {stat.key === "revenue"
                     ? `${(stat.value || 0).toLocaleString("vi-VN")} đ`
                     : stat.value}

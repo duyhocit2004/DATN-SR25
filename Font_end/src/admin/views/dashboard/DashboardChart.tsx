@@ -56,11 +56,17 @@ const DashboardChart = ({
   const getData = async () => {
     setLoading(true);
     try {
-      const payload: { startDate?: string; endDate?: string } = {};
+      const payload: { startDate?: string; endDate?: string; filterType?: string } = {};
       
       if (dateRange) {
         payload.startDate = dateRange[0];
         payload.endDate = dateRange[1];
+        // Xác định filterType dựa vào số ngày chọn
+        if (dateRange[0] === dateRange[1]) {
+          payload.filterType = 'day';
+        } else {
+          payload.filterType = 'week';
+        }
       }
 
       const response = await adminApi.getDashboardChart(payload);

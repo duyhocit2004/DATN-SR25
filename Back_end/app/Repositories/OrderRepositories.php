@@ -43,147 +43,115 @@ class OrderRepositories
             $totalAmount = 0;
             $voucherAmount = 0;
 
-            // Validate products
+            // Lấy toàn bộ productId, color, size
+            $productIds = array_column($products, 'productId');
+            $colorNames = array_unique(array_column($products, 'color'));
+            $sizeNames = array_unique(array_column($products, 'size'));
+
+            $productMap = \App\Models\Product::whereIn('id', $productIds)->get()->keyBy('id');
+            $colorMap = \App\Models\Color::whereIn('name', $colorNames)->get()->keyBy('name');
+            $sizeMap = \App\Models\Size::whereIn('size', $sizeNames)->get()->keyBy('size');
+
+            // Lấy toàn bộ variant liên quan (tối ưu, tránh N+1 query)
+            $variantKeys = [];
             foreach ($products as $product) {
-                \Log::info('Processing product for order', [
-                    'product' => $product,
-                    'productId' => $product['productId'],
-                    'color' => $product['color'],
-                    'size' => $product['size']
-                ]);
-
-                $productReal = Product::where('id', $product['productId'])->first();
-                if (!$productReal) {
-                    \Log::error('Product not found', ['productId' => $product['productId']]);
-                    return BaseResponse::failure('400', 'Product not found', 'product.not.found', []);
-                }
-
-                // Kiểm tra status sản phẩm
-                if ($productReal->status !== 'active') {
-                    \Log::error('Product not available', [
-                        'productId' => $product['productId'],
-                        'status' => $productReal->status
-                    ]);
-                    return BaseResponse::failure('400', 'Sản phẩm ' . $productReal->name . ' hiện không khả dụng', 'product.not.available', []);
-                }
-
-                $color = \App\Models\Color::where('name', $product['color'])->first();
-                if (!$color) {
-                    \Log::error('Color not found', [
-                        'colorName' => $product['color'],
-                        'product' => $product
-                    ]);
-                    return BaseResponse::failure('400', 'Color not found', 'color.not.found', []);
-                }
-
-                $size = \App\Models\Size::where('size', $product['size'])->first();
-                if (!$size) {
-                    \Log::error('Size not found', ['size' => $product['size']]);
-                    return BaseResponse::failure('400', 'Size not found', 'size.not.found', []);
-                }
-
-                $productVariant = ProductVariant::where('product_id', $product['productId'])
-                    ->where('color_id', $color->id)
-                    ->where('size_id', $size->id)
-                    ->first();
-
-                \Log::info('Product variant search result', [
-                    'productVariant' => $productVariant,
-                    'colorId' => $color->id,
-                    'sizeId' => $size->id
-                ]);
-
-                if (!$productVariant) {
-                    \Log::error('Product variant not found', [
-                        'productId' => $product['productId'],
-                        'colorId' => $color->id,
-                        'sizeId' => $size->id
-                    ]);
-                    return BaseResponse::failure('400', 'Product variant not found', 'product.variant.not.found', []);
-                }
-
-                if ($productVariant['quantity'] < $product['quantity']) {
-                    return BaseResponse::failure(
-                        '400',
-                        'Sản phẩm ' . $productReal->name . ' (Màu: ' . $color->name . ', Size: ' . $size->size . ') đã hết hàng hoặc không đủ số lượng.',
-                        'product.out.of.stock',
-                        [
-                            'productName' => $productReal->name,
-                            'color' => $color->name,
-                            'size' => $size->size,
-                            'availableQuantity' => $productVariant['quantity']
-                        ]
-                    );
-                }
-
-                if (!empty($productReal['price_sale'])) {
-                    $totalAmount += $productReal['price_sale'] * $product['quantity'];
-                } else {
-                    $totalAmount += $productReal['price_regular'] * $product['quantity'];
+                $productId = $product['productId'];
+                $colorId = $colorMap[$product['color']]->id ?? null;
+                $sizeId = $sizeMap[$product['size']]->id ?? null;
+                if ($colorId && $sizeId) {
+                    $variantKeys[] = [
+                        'product_id' => $productId,
+                        'color_id' => $colorId,
+                        'size_id' => $sizeId
+                    ];
                 }
             }
+            // Truy vấn 1 lần tất cả variant
+            $variantQuery = \App\Models\ProductVariant::query();
+            foreach ($variantKeys as $key) {
+                $variantQuery->orWhere(function($q) use ($key) {
+                    $q->where('product_id', $key['product_id'])
+                      ->where('color_id', $key['color_id'])
+                      ->where('size_id', $key['size_id']);
+                });
+            }
+            $variants = $variantQuery->get();
+            $variantMap = [];
+            foreach ($variants as $variant) {
+                $variantMap[$variant->product_id . '-' . $variant->color_id . '-' . $variant->size_id] = $variant;
+            }
 
-            // Validate voucher                 
+            // Validate products & tính tổng tiền
+            foreach ($products as $product) {
+                $productReal = $productMap[$product['productId']] ?? null;
+                if (!$productReal) {
+                    throw new \Exception('Product not found: ' . $product['productId']);
+                }
+                if ($productReal->status !== 'active') {
+                    throw new \Exception('Sản phẩm ' . $productReal->name . ' hiện không khả dụng');
+                }
+                $color = $colorMap[$product['color']] ?? null;
+                if (!$color) {
+                    throw new \Exception('Color not found: ' . $product['color']);
+                }
+                $size = $sizeMap[$product['size']] ?? null;
+                if (!$size) {
+                    throw new \Exception('Size not found: ' . $product['size']);
+                }
+                $variantKey = $product['productId'] . '-' . $color->id . '-' . $size->id;
+                $productVariant = $variantMap[$variantKey] ?? null;
+                if (!$productVariant) {
+                    throw new \Exception('Product variant not found: ' . $variantKey);
+                }
+                // Gộp kiểm tra tồn kho
+                if ($productVariant->quantity < $product['quantity'] || $productReal->quantity < $product['quantity']) {
+                    throw new \Exception('Sản phẩm ' . $productReal->name . ' (Màu: ' . $color->name . ', Size: ' . $size->size . ') đã hết hàng hoặc không đủ số lượng.');
+                }
+                // Tính tổng tiền: ưu tiên price_sale nếu có, nếu không thì price_regular
+                $price = !empty($productReal['price_sale']) ? $productReal['price_sale'] : $productReal['price_regular'];
+                $totalAmount += $price * $product['quantity'];
+            }
+
+            // Validate voucher
             if (!empty($data['voucher'])) {
-                $voucher = Voucher::where('code', $data['voucher'])->first();
+                $voucher = \App\Models\Voucher::where('code', $data['voucher'])->first();
                 if ($voucher) {
                     if ($voucher->end_date && $voucher->end_date < now()) {
-                        return BaseResponse::failure('400', 'Voucher đã hết hạn sử dụng', 'voucher.expired', []);
+                        throw new \Exception('Voucher đã hết hạn sử dụng');
                     }
                     if ($voucher->min_order_value && $totalAmount < $voucher->min_order_value) {
-                        return BaseResponse::failure('400', 'Đơn hàng chưa đạt giá trị tối thiểu ' . number_format($voucher->min_order_value) . ' VNĐ để áp dụng voucher', 'order.not.meet.min.value', []);
+                        throw new \Exception('Đơn hàng chưa đạt giá trị tối thiểu để áp dụng voucher');
                     }
                     if ($voucher->used >= $voucher->quantity) {
-                        // Update voucher status to INACTIVE when usage limit is reached
-                        $voucher->update([
-                            'status' => 'INACTIVE'
-                        ]);
-                        return BaseResponse::failure('400', 'Voucher đã hết lượt sử dụng. Số lượt đã sử dụng: ' . $voucher->used . '/' . $voucher->quantity, 'voucher.usage.limit.reached', []);
+                        $voucher->update(['status' => 'INACTIVE']);
+                        throw new \Exception('Voucher đã hết lượt sử dụng.');
                     }
                     if ($voucher->status !== 'ACTIVE') {
-                        return BaseResponse::failure('400', 'Voucher không còn hoạt động', 'voucher.not.active', []);
+                        throw new \Exception('Voucher không còn hoạt động');
                     }
                     $voucherAmount = $voucher->voucher_price;
                     $totalAmount -= $voucherAmount;
-
-                    // Update voucher usage count
                     $voucher->update([
                         'used' => $voucher->used + 1,
-                        // If this is the last usage, set status to INACTIVE
                         'status' => ($voucher->used + 1 >= $voucher->quantity) ? 'INACTIVE' : $voucher->status
                     ]);
                 } else {
-                    return BaseResponse::failure('400', 'Voucher không tồn tại hoặc không hợp lệ', 'voucher.not.found', []);
+                    throw new \Exception('Voucher không tồn tại hoặc không hợp lệ');
                 }
             }
-
-            if ($totalAmount < 0) {
-                $totalAmount = 0;
-            }
-
-            // Validate addresses
+            if ($totalAmount < 0) $totalAmount = 0;
             if (empty($data['shippingAddress'])) {
-                return BaseResponse::failure('400', 'Shipping address is required', 'shipping.address.required', []);
+                throw new \Exception('Shipping address is required');
             }
-
-            // Optional: Validate address format (e.g., contains at least street, ward, district, city)
             if (!preg_match('/.*,.*,.*,.*$/', $data['shippingAddress'])) {
-                return BaseResponse::failure('400', 'Invalid shipping address format', 'invalid.shipping.address.format', []);
+                throw new \Exception('Invalid shipping address format');
             }
-
             if (!empty($data['receiverAddress']) && !preg_match('/.*,.*,.*,.*$/', $data['receiverAddress'])) {
-                return BaseResponse::failure('400', 'Invalid receiver address format', 'invalid.receiver.address.format', []);
+                throw new \Exception('Invalid receiver address format');
             }
 
             DB::beginTransaction();
-
             $user = JWTAuth::parseToken()->authenticate();
-            \Log::info('EMAIL DEBUG', [
-                'user' => $user,
-                'data' => $data,
-                'user_email' => $user->email ?? null,
-                'data_email' => $data['email'] ?? null
-            ]);
             $order = Order::create([
                 'users_id' => $user->id ?? null,
                 'code' => 'Od' . Str::random(4),
@@ -206,18 +174,13 @@ class OrderRepositories
                 'updated_at' => now()
             ]);
 
-            // Process order details
-            foreach ($data['products'] as $product) {
-                $productReal = Product::where('id', $product['productId'])->first();
-                // Kiểm tra tồn kho tổng sản phẩm
-                if ($productReal->quantity < $product['quantity']) {
-                    return BaseResponse::failure(
-                        '400',
-                        'Sản phẩm ' . $productReal->name . ' đã hết số lượng!',
-                        'product.out.of.stock',
-                        []
-                    );
-                }
+            foreach ($products as $product) {
+                $productReal = $productMap[$product['productId']];
+                $color = $colorMap[$product['color']];
+                $size = $sizeMap[$product['size']];
+                $variantKey = $product['productId'] . '-' . $color->id . '-' . $size->id;
+                $productVariant = $variantMap[$variantKey];
+
                 OrderDetail::create([
                     'order_id' => $order->id,
                     'name' => $productReal['name'],
@@ -230,55 +193,21 @@ class OrderRepositories
                     'quantity_order' => $product['quantity'],
                     'product_id' => $product['productId'],
                 ]);
-
-                // Update product variant quantity
-                $productVariant = ProductVariant::where('product_id', $product['productId'])
-                    ->where('color_id', function ($query) use ($product) {
-                        $query->select('id')
-                            ->from('colors')
-                            ->where('name', $product['color'])
-                            ->first();
-                    })
-                    ->where('size_id', function ($query) use ($product) {
-                        $query->select('id')
-                            ->from('sizes')
-                            ->where('size', $product['size'])
-                            ->first();
-                    })
-                    ->first();
-
-                // Kiểm tra tồn kho biến thể
-                if ($productVariant && $productVariant->quantity < $product['quantity']) {
-                    return BaseResponse::failure(
-                        '400',
-                        'Sản phẩm ' . $productReal->name . ' (Màu: ' . ($productVariant->color->name ?? $product['color']) . ', Size: ' . ($productVariant->size->size ?? $product['size']) . ') đã hết hàng hoặc không đủ số lượng. Số lượng còn lại: ' . $productVariant->quantity,
-                        'product.out.of.stock',
-                        [
-                            'productName' => $productReal->name,
-                            'color' => $productVariant->color->name ?? $product['color'],
-                            'size' => $productVariant->size->size ?? $product['size'],
-                            'availableQuantity' => $productVariant->quantity
-                        ]
-                    );
-                }
-
-                if ($productVariant) {
-                    $productVariant->quantity -= $product['quantity'];
-                    $productVariant->save();
-                }
-
-                // Update product total quantity
+                // Update tồn kho
+                $productVariant->quantity -= $product['quantity'];
+                $productVariant->save();
                 $productReal->quantity -= $product['quantity'];
                 $productReal->quantity_sold += $product['quantity'];
                 $productReal->save();
             }
-
             DB::commit();
-
-            // Send order confirmation email
-            $this->emailService->sendOrderConfirmation($order);
-
-            return $order;
+            // Chỉ trả về dữ liệu cần thiết
+            return [
+                'id' => $order->id,
+                'code' => $order->code,
+                'status' => $order->status,
+                'message' => 'Đặt hàng thành công!'
+            ];
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -843,3 +772,4 @@ class OrderRepositories
         }
     }
 }
+

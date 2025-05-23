@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('user_id'); // admin/manager id
             $table->unsignedBigInteger('order_id')->nullable();
-            $table->string('type')->default('new_order'); // new_order, order_update, system
+            $table->string('type')->default('new_order'); // new_order, order_update
             $table->string('title');
             $table->text('message');
             $table->boolean('is_read')->default(false);
-            $table->json('data')->nullable(); // Additional data like order_code
+            $table->json('data')->nullable(); // order_code, etc
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
 

@@ -24,14 +24,18 @@ class Notification extends Model
     protected $table = 'notifications';
     protected $fillable = [
         'user_id',
+        'order_id',
         'type',
         'title',
         'message',
-        'link',
-        'is_read'
+        'is_read',
+        'data',
+        'read_at',
     ];
     protected $casts = [
         'is_read' => 'boolean',
+        'data' => 'array',
+        'read_at' => 'datetime',
     ];
 
     

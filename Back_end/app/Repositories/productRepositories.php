@@ -127,13 +127,26 @@ class ProductRepositories
 
     public function getDashboardChart(Request $request)
     {
-        $filterType = $request->input('time', 'month');
+        // Ưu tiên lấy filterType từ request, nếu không có thì tự động xác định
+        $filterType = $request->input('filterType');
         $startDate = $request->input('startDate') 
             ? Carbon::createFromFormat('d/m/Y', $request->input('startDate'))->startOfDay()
             : null;
         $endDate = $request->input('endDate')
             ? Carbon::createFromFormat('d/m/Y', $request->input('endDate'))->endOfDay()
             : null;
+
+        // Nếu không truyền filterType thì tự động xác định
+        if (!$filterType && $startDate && $endDate) {
+            if ($startDate->eq($endDate)) {
+                $filterType = 'day';
+            } else {
+                $filterType = 'week';
+            }
+        }
+        if (!$filterType) {
+            $filterType = 'month';
+        }
 
         $listResult = [];
 

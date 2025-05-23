@@ -624,13 +624,16 @@ const OrderDetail: React.FC = () => {
                     className="!w-60"
                     value={order?.status}
                     onChange={(value) => onChangeData("status", value)}
-                    options={OrderStatusDataAdmin.map((status) => ({
-                      ...status,
-                      disabled: isStatusDisabled(
-                        originOrder?.status || "",
-                        status.value
-                      )
-                    }))}
+                    options={OrderStatusDataAdmin
+                      .filter((status) => status.value !== OrderStatus.RECEIVED)
+                      .map((status) => ({
+                        ...status,
+                        disabled: isStatusDisabled(
+                          originOrder?.status || "",
+                          status.value
+                        )
+                      }))
+                    }
                     disabled={order?.status === OrderStatus.RECEIVED}
                   />
                 </div>

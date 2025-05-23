@@ -22,14 +22,16 @@ import productApi from "@/api/productApi";
 import { HttpCodeString } from "@/utils/constants";
 import { useNavigate } from "react-router-dom";
 import "./index.scss";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { fetchCategories } from "@/store/reducers/adminProductSlice";
 
 
 const brands = [imgBrand1, imgBrand2, imgBrand3, imgBrand4];
 
 const Home = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [categories, setCategories] = useState<IListCategory[]>([]);
+  const dispatch = useAppDispatch();
+  const categories = useAppSelector((state) => state.adminProduct.categories);
   const [banners, setBanners] = useState<IAllBanner | null>(null);
   const [topDiscountedProducts, setTopDiscountedProducts] = useState<IProduct[]>([]);
   const [topNewestProducts, setTopNewestProducts] = useState<IProduct[]>([]);
@@ -37,45 +39,39 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!categories || categories.length === 0) {
+      dispatch(fetchCategories());
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
     const fetchAllData = async () => {
       try {
         setLoading(true);
-        const [
-          categoriesResponse,
-          bannersResponse,
-          discountedResponse,
-          newestResponse,
-          bestSellingResponse
-        ] = await Promise.all([
-          homeApi.getAllCategories(),
-          homeApi.getAllBanners(),
-          productApi.getTopDiscountedProducts({ topNumber: 8 }),
-          productApi.getTopNewestProducts({ topNumber: 8 }),
-          productApi.getTopBestSellingProducts({ topNumber: 8 })
-        ]);
-
-        if (categoriesResponse?.status === HttpCodeString.SUCCESS) {
-          setCategories(categoriesResponse.data);
+        // Cache FE 2 phút
+        const cacheKey = 'home_summary_cache';
+        const cacheStr = localStorage.getItem(cacheKey);
+        let cache: any = null;
+        if (cacheStr) {
+          try {
+            cache = JSON.parse(cacheStr);
+          } catch {}
         }
-
-        if (bannersResponse?.status === HttpCodeString.SUCCESS) {
-          setBanners(bannersResponse.data as IAllBanner);
+        if (cache && cache.timestamp && Date.now() - cache.timestamp < 2 * 60 * 1000) {
+          setBanners(cache.data.banners);
+          setTopDiscountedProducts(cache.data.topDiscountedProducts);
+          setTopNewestProducts(cache.data.topNewestProducts);
+          setTopBestSellingProducts(cache.data.topBestSellingProducts);
+          setLoading(false);
+          return;
         }
-
-        if (discountedResponse?.status === HttpCodeString.SUCCESS) {
-          const sortedProducts = discountedResponse.data
-            .sort((a, b) => Number(b.discount) - Number(a.discount))
-            .slice(0, 8);
-          setTopDiscountedProducts(sortedProducts);
-        }
-
-        if (newestResponse?.status === HttpCodeString.SUCCESS) {
-          setTopNewestProducts(newestResponse.data);
-        }
-
-        if (bestSellingResponse?.status === HttpCodeString.SUCCESS) {
-          setTopBestSellingProducts(bestSellingResponse.data);
-        }
+        const data = await homeApi.getHomeSummary(8);
+        setBanners(data.banners);
+        setTopDiscountedProducts(data.topDiscountedProducts);
+        setTopNewestProducts(data.topNewestProducts);
+        setTopBestSellingProducts(data.topBestSellingProducts);
+        localStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: Date.now() }));
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -94,7 +90,7 @@ const Home = () => {
     <div className="space-y-12">
       {/* Banner (Slider) */}
       <CarouselCustom
-        className="main-slide h-[500px]"
+        className="main-slide"
         autoplay
         autoplaySpeed={3000}
       >
@@ -104,11 +100,11 @@ const Home = () => {
           return (
             <div
               key={e.id}
-              className="h-[500px] bg-cover bg-center !flex justify-center"
+              className="banner-wrapper"
             >
-              <a href={productLink}>
+              <a href={productLink} className="banner-link">
                 <img
-                  className="h-full bg-cover bg-center cursor-pointer"
+                  className="banner-image"
                   src={e.image}
                   alt={"banner " + (index + 1)}
                 />
@@ -117,8 +113,64 @@ const Home = () => {
           );
         })}
       </CarouselCustom>
- 
 
+      <style jsx>{`
+        .banner-wrapper {
+          position: relative;
+          overflow: hidden;
+          width: 100vw;
+          height: 70vh;
+          min-height: 350px;
+          max-height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .banner-link {
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+
+        .banner-image {
+          width: 100vw;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.5s ease;
+        }
+
+        .banner-wrapper:hover .banner-image {
+          transform: scale(1.05);
+        }
+
+        .main-slide {
+          width: 100vw;
+          height: 70vh;
+          min-height: 350px;
+          max-height: 100vh;
+          position: relative;
+        }
+
+        .main-slide :global(.slick-slide) {
+          transition: all 0.5s ease;
+        }
+
+        .main-slide :global(.slick-active) {
+          z-index: 1;
+        }
+
+        .main-slide :global(.slick-prev),
+        .main-slide :global(.slick-next) {
+          z-index: 2;
+          transition: all 0.3s ease;
+        }
+
+        .main-slide :global(.slick-prev:hover),
+        .main-slide :global(.slick-next:hover) {
+          transform: scale(1.1);
+        }
+      `}</style>
 
       <section className="container mx-auto px-4 mt-10">
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6`}>

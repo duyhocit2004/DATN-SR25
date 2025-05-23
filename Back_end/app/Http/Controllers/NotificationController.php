@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Pusher\Pusher;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class NotificationController extends Controller
 {
@@ -23,31 +24,57 @@ class NotificationController extends Controller
         );
     }
 
-    public function index()
+    // Lấy danh sách notification cho admin/manager
+    public function index(Request $request)
     {
-        $notifications = auth()->user()->notifications()
+        $user = JWTAuth::parseToken()->authenticate();
+        $notifications = Notification::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
-
-        return response()->json($notifications);
+        return response()->json([
+            'status' => 200,
+            'data' => $notifications
+        ]);
     }
 
+    // Đánh dấu 1 notification đã đọc
     public function markAsRead($id)
     {
-        $notification = Notification::findOrFail($id);
-        
-        if ($notification->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        $user = JWTAuth::parseToken()->authenticate();
+        $notification = Notification::where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
+        if (!$notification) {
+            return response()->json(['status' => 404, 'message' => 'Notification not found'], 404);
         }
-
-        $notification->update(['is_read' => true]);
-        return response()->json(['message' => 'Notification marked as read']);
+        $notification->update([
+            'is_read' => true,
+            'read_at' => now()
+        ]);
+        return response()->json(['status' => 200, 'message' => 'Notification marked as read']);
     }
 
+    // Đánh dấu tất cả đã đọc
     public function markAllAsRead()
     {
-        auth()->user()->notifications()->update(['is_read' => true]);
-        return response()->json(['message' => 'All notifications marked as read']);
+        $user = JWTAuth::parseToken()->authenticate();
+        Notification::where('user_id', $user->id)
+            ->where('is_read', false)
+            ->update([
+                'is_read' => true,
+                'read_at' => now()
+            ]);
+        return response()->json(['status' => 200, 'message' => 'All notifications marked as read']);
+    }
+
+    // Đếm số lượng chưa đọc
+    public function unreadCount()
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $count = Notification::where('user_id', $user->id)
+            ->where('is_read', false)
+            ->count();
+        return response()->json(['status' => 200, 'data' => $count]);
     }
 
     public function sendNotification($userId, $type, $title, $message, $link = null)
