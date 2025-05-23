@@ -62,16 +62,6 @@ class OrderService implements IOrderService
         
         // Broadcast notification event
         if ($order) {
-            // Thông báo cho user
-            Notification::create([
-                'user_id' => $order->users_id,
-                'order_id' => $order->id,
-                'message' => 'Đơn hàng '.$order->code.' của bạn đã được đặt thành công',
-                'title' => 'Thông báo đơn hàng mới',
-                'is_read' => false,
-                'recipient_type' => 'user',
-                'type' => 'new_order'
-            ]);
             // Thông báo cho admin (gửi cho tất cả Quản trị viên và Quản lý)
             $admins = \App\Models\User::whereIn('role', ['Quản trị viên', 'Quản lý'])->get();
             foreach ($admins as $admin) {

@@ -83,7 +83,7 @@ const DashboardTables = () => {
     {
       title: (
         <span>
-          <BarcodeOutlined className="mr-2" />
+          <span className="text-blue-500 mr-1">🔖</span>
           Mã đơn hàng
         </span>
       ),
@@ -93,7 +93,7 @@ const DashboardTables = () => {
     {
       title: (
         <span>
-          <UserOutlined className="mr-2" />
+          <span className="text-purple-500 mr-1">👤</span>
           Khách hàng
         </span>
       ),
@@ -103,7 +103,7 @@ const DashboardTables = () => {
     {
       title: (
         <span>
-          <PhoneOutlined className="mr-2" />
+          <span className="text-green-500 mr-1">📱</span>
           Số điện thoại
         </span>
       ),
@@ -113,7 +113,7 @@ const DashboardTables = () => {
     {
       title: (
         <span>
-          <EnvironmentOutlined className="mr-2" />
+          <span className="text-orange-500 mr-1">📍</span>
           Địa chỉ giao hàng
         </span>
       ),
@@ -124,7 +124,7 @@ const DashboardTables = () => {
     {
       title: (
         <span>
-          <ShoppingCartOutlined className="mr-2" />
+          <span className="text-blue-500 mr-1">🛍️</span>
           Số sản phẩm
         </span>
       ),
@@ -134,7 +134,7 @@ const DashboardTables = () => {
     {
       title: (
         <span>
-          <CreditCardOutlined className="mr-2" />
+          <span className="text-green-500 mr-1">💳</span>
           Hình thức thanh toán
         </span>
       ),
@@ -149,7 +149,7 @@ const DashboardTables = () => {
     {
       title: (
         <span>
-          <CarOutlined className="mr-2" />
+          <span className="text-purple-500 mr-1">🚚</span>
           Trạng thái giao hàng
         </span>
       ),
@@ -164,7 +164,7 @@ const DashboardTables = () => {
     {
       title: (
         <span>
-          <DollarOutlined className="mr-2" />
+          <span className="text-red-500 mr-1">💰</span>
           Tổng tiền
         </span>
       ),
@@ -175,7 +175,7 @@ const DashboardTables = () => {
     {
       title: (
         <span>
-          <ClockCircleOutlined className="mr-2" />
+          <span className="text-blue-500 mr-1">⏰</span>
           Giờ tạo
         </span>
       ),
@@ -186,7 +186,7 @@ const DashboardTables = () => {
     {
       title: (
         <span>
-          <CalendarOutlined className="mr-2" />
+          <span className="text-green-500 mr-1">📅</span>
           Ngày tạo
         </span>
       ),
@@ -198,19 +198,45 @@ const DashboardTables = () => {
 
   const productColumns: ColumnsType<Product> = [
     {
-      title: "Tên sản phẩm",
+      title: (
+        <span>
+          <span className="text-blue-500 mr-1">📦</span>
+          Tên sản phẩm
+        </span>
+      ),
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Số đơn hàng",
+      title: (
+        <span>
+          <span className="text-green-500 mr-1">🚚</span>
+          Số đơn hàng đã giao
+        </span>
+      ),
       dataIndex: "totalOrders",
       key: "totalOrders",
     },
     {
-      title: "Số đơn hủy",
+      title: (
+        <span>
+          <span className="text-red-500 mr-1">❌</span>
+          Số đơn hủy
+        </span>
+      ),
       dataIndex: "totalCancelled",
       key: "totalCancelled",
+    },
+    {
+      title: (
+        <span>
+          <span className="text-purple-500 mr-1">📊</span>
+          Tổng số đơn hàng
+        </span>
+      ),
+      dataIndex: "totalOrders",
+      key: "totalOrders",
+      render: (_, record) => (record.totalOrders || 0) + (record.totalCancelled || 0),
     },
     {
       title: (
@@ -232,19 +258,29 @@ const DashboardTables = () => {
 
   const cancelledProductColumns: ColumnsType<Product> = [
     {
-      title: "Tên sản phẩm",
+      title: (
+        <span>
+          <span className="text-blue-500 mr-1">📦</span>
+          Tên sản phẩm
+        </span>
+      ),
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Số đơn hủy",
+      title: (
+        <span>
+          <span className="text-red-500 mr-1">❌</span>
+          Số đơn hủy
+        </span>
+      ),
       dataIndex: "totalCancelled",
       key: "totalCancelled",
     },
     {
       title: (
         <span>
-          <span className="text-green-500 mr-1">✅</span>
+          <span className="text-orange-500 mr-1">📊</span>
           Tỷ lệ hủy (%)
         </span>
       ),
@@ -266,7 +302,10 @@ const DashboardTables = () => {
   return (
     <div className="dashboard-tables">
       <div className="table-section bg-white p-6 rounded-lg border border-gray-200">
-        <h2 className="text-xl font-bold mb-4 text-primary border-b-2 border-primary pb-2">Đơn hàng mới nhất</h2>
+        <h2 className="text-xl font-bold mb-4 text-primary border-b-2 border-primary pb-2">
+          <span className="text-blue-500 mr-2">📋</span>
+          Đơn hàng mới nhất
+        </h2>
         <Table
           columns={orderColumns}
           dataSource={latestOrders}
@@ -279,7 +318,10 @@ const DashboardTables = () => {
       </div>
 
       <div className="table-section mt-8 bg-white p-6 rounded-lg border border-gray-200">
-        <h2 className="text-xl font-bold mb-4 text-primary border-b-2 border-primary pb-2">Sản phẩm bán chạy nhất (dựa trên số đơn thành công)</h2>
+        <h2 className="text-xl font-bold mb-4 text-primary border-b-2 border-primary pb-2">
+          <span className="text-green-500 mr-2">🏆</span>
+          Sản phẩm bán chạy nhất (dựa trên số đơn thành công)
+        </h2>
         <Table
           columns={productColumns}
           dataSource={popularProducts}
@@ -292,7 +334,10 @@ const DashboardTables = () => {
       </div>
 
       <div className="table-section mt-8 bg-white p-6 rounded-lg border border-gray-200">
-        <h2 className="text-xl font-bold mb-4 text-primary border-b-2 border-primary pb-2">Sản phẩm có tỷ lệ hủy đơn cao nhất</h2>
+        <h2 className="text-xl font-bold mb-4 text-primary border-b-2 border-primary pb-2">
+          <span className="text-red-500 mr-2">⚠️</span>
+          Sản phẩm có tỷ lệ hủy đơn cao nhất
+        </h2>
         <Table
           columns={cancelledProductColumns}
           dataSource={mostCancelledProducts}
